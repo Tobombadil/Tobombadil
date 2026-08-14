@@ -1,25 +1,39 @@
-# Personal Operating Model
+# Andrew T. Gibson — Personal Operating Model
 
-A personal website in the shape of a financial model. Six sheets, a formula bar, editable
-assumption cells, and a sensitivity table — built as one static HTML file with no dependencies,
-no build step, and no server.
+A personal website in the shape of a financial model, for someone who builds them for a living.
+Eight sheets, a formula bar, editable assumption cells, and a working illustrative project-finance
+model with a sensitivity table and a tie-out check — built as one static HTML file with no
+dependencies, no build step, and no server.
 
 Open `index.html` in a browser. That's the whole toolchain.
 
 ## What's inside
 
-`index.html` contains a small spreadsheet engine (~400 lines of vanilla JS) and the content that
+`index.html` contains a small spreadsheet engine (~500 lines of vanilla JS) and the content that
 fills it. Formulas are parsed by a recursive-descent parser — no `eval` anywhere — and evaluated
 lazily with memoisation and circular-reference detection.
 
 | Sheet | What it holds |
 | --- | --- |
 | Summary | Cover page: key metrics, capability build, executive summary, font-convention legend |
-| Experience | Employment schedule with live tenure (the current role ends at `=TODAY()`, so it accrues) |
-| Projects | Portfolio of work as an investment schedule, with hours in and users out |
-| Education | Degrees and continuing education |
-| Assumptions | Every editable input, the outputs derived from them, and a 5×5 sensitivity table |
-| Contact | How to reach you, and availability |
+| Experience | Employment schedule with live tenure, plus deliverables by period |
+| Experience II | Continuation of deliverables, and community leadership |
+| Transactions | Selected mandates as a transaction schedule, with portfolio metrics |
+| Education | Degree, graduate coursework, awards, technical skills |
+| Assumptions | The illustrative project's inputs — every one of them editable |
+| Model | Ten-year cash flow, valuation, returns, checks, and an NPV sensitivity table |
+| Contact | How to reach you, and coverage |
+
+### The illustrative model
+
+The Assumptions and Model sheets hold a generic 40 MW biomass project, sized to be recognisable
+rather than accurate. **It describes no live transaction and contains no confidential terms.**
+
+It is a real model, not a picture of one. Change the PPA price and NPV, IRR, DSCR and the
+sensitivity table all move. The Model sheet builds ten explicit years plus a terminal value; the
+Checks block values the same cash flows in a single closed-form line and shows the difference,
+which is zero at every set of assumptions. If you break that, the tie-out cell says `CHECK`
+instead of `OK`.
 
 ### Font convention
 
@@ -43,12 +57,12 @@ sheet, keyed by cell reference. Nothing else needs touching.
 
 ```js
 {
-  name:'Summary', rows:42,
-  cols:[26, 330, 104, 104, 24, 128, 210, 96],   // pixel width of columns A, B, C, …
+  name:'Summary', rows:44,
+  cols:[26, 336, 100, 104, 24, 120, 220, 96],   // pixel width of columns A, B, C, …
   cells:{
-    B2:{v:'ANDREW [LAST NAME] — PERSONAL OPERATING MODEL', c:'title', span:3},
-    C12:{v:'=YEARFRAC(Experience!D7,TODAY())', f:'num1'},
-    C22:{v:5, f:'num0', input:true},
+    B2:{v:'ANDREW T. GIBSON — ENERGY PROJECT FINANCE', c:'title', span:3},
+    C12:{v:'=Experience!F13', f:'num1', c:'link'},
+    C23:{v:5, f:'num0', input:true},
   }
 }
 ```
@@ -58,28 +72,38 @@ Cell properties:
 | Key | Meaning |
 | --- | --- |
 | `v` | Value: a number, a string, or a formula beginning with `=` |
-| `f` | Number format: `num0` `num1` `num2` `pct0` `pct1` `usd` `yr` `yr2` `date` `mmmyy` |
-| `c` | Space-separated CSS classes: `title` `sub` `sec` `hdr` `ind` `hard` `link` `subtot` `tot` `note` `memo` `ctr` `rt` `bar` `shade` |
+| `f` | Number format: `num0` `num1` `num2` `num3` `pct0` `pct1` `x2` `usd` `yr` `yr2` `date` `mmmyy` |
+| `c` | Space-separated CSS classes: `title` `sub` `sec` `hdr` `ind` `hard` `link` `subtot` `tot` `note` `memo` `ctr` `rt` `bar` `shade` `ok` |
 | `span` | Column span, for prose that runs across the grid |
 | `input` | `true` makes the cell an editable blue input |
 | `href` | Renders the cell as a link |
 | `action` | `'reset'` wires the cell to the reset-assumptions handler |
 
-Placeholders are written in `[square brackets]` and the sample schedule rows are marked
-`SAMPLE` in comments — search for either to find everything that still needs replacing.
+The Model sheet's year columns and both data tables are generated in loops immediately after the
+`SHEETS` array, rather than written out cell by cell.
 
 ### Supported functions
 
 `SUM` `AVERAGE` `COUNT` `COUNTIF` `MIN` `MAX` `ABS` `ROUND` `IF` `REPT` `SUMPRODUCT`
-`TODAY` `DATE` `YEAR` `MONTH` `YEARFRAC`
+`PMT` `NPV` `IRR` `TODAY` `DATE` `YEAR` `MONTH` `YEARFRAC`
 
-Plus `+ - * / ^ &`, comparisons, parentheses, ranges (`C7:C13`), and cross-sheet references
-(`Assumptions!C22`). Dates are Excel serial numbers with the 1899-12-30 epoch, so date
-arithmetic behaves the way it does in a real workbook.
+Plus `+ - * / ^ &`, comparisons, parentheses, ranges (`D18:M18`), and cross-sheet references
+(`Assumptions!C34`). `IRR` solves by bisection. Dates are Excel serial numbers with the
+1899-12-30 epoch, so date arithmetic behaves the way it does in a real workbook — which is why
+the current role's tenure accrues against `=TODAY()` on every visit.
+
+## Still to decide
+
+Two cells are placeholders, both on the Contact sheet:
+
+- `C11` — phone number, currently *"[on request]"*. The CV carries it; a public web page is a
+  different exposure. Add it if you want it public.
+- `C18` — availability status, currently *"[Set availability]"*.
 
 ## Deployment
 
 `.github/workflows/deploy.yml` publishes the repo root to GitHub Pages on every push.
 
 One manual step is needed first: **Settings → Pages → Source → GitHub Actions**. After that the
-site serves at `https://tobombadil.github.io`.
+site serves at `https://tobombadil.github.io`. To serve it at `andrewtgibson.com` instead, add a
+`CNAME` file containing the domain and point a DNS `ALIAS`/`A` record at GitHub Pages.
