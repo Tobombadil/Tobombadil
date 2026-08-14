@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personal Operating Model</title>
+<meta name="description" content="A personal website built as a financial model.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23fbfbf9'/%3E%3Cpath d='M2 4h12M2 8h12M2 12h12M6 2v12M10 2v12' stroke='%23c9c9c4' stroke-width='1'/%3E%3Crect x='6' y='4' width='4' height='4' fill='%231a4f8f' opacity='.75'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --paper:#ffffff;
+    --desk:#e6e6e1;
+    --rule:#dcdcd6;
+    --chrome:#f4f4f1;
+    --chrome-line:#d0d0c9;
+    --ink:#16181a;
+    --muted:#6b6f74;
+    --hard:#1a3fcf;      /* blue: hardcoded input */
+    --link:#0a7040;      /* green: link to another sheet */
+    --sel:#17457f;
+    --shade:#f6f1dd;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    background:var(--desk);
+    overflow:hidden;
+    color:var(--ink);
+    font:12px/1.35 Arial,"Helvetica Neue",Helvetica,sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-text-size-adjust:100%;
+    overflow-x:hidden;
+  }
+
+  .app{max-width:1180px;margin:0 auto;height:100vh;height:100dvh;background:var(--paper);
+       border-left:1px solid var(--chrome-line);border-right:1px solid var(--chrome-line);
+       display:flex;flex-direction:column}
+
+  /* ---- minimal chrome ---- */
+  .titlebar{display:flex;align-items:baseline;gap:10px;padding:9px 12px;
+            background:var(--chrome);border-bottom:1px solid var(--chrome-line);flex-wrap:wrap}
+  .filename{font-size:11px;font-weight:700;letter-spacing:.04em}
+  .filemeta{font-size:10px;color:var(--muted)}
+  .filemeta b{font-weight:700;color:#3d4145}
+
+  .formulabar{display:flex;align-items:stretch;background:var(--paper);
+              border-bottom:1px solid var(--chrome-line)}
+  .namebox{flex:0 0 84px;border-right:1px solid var(--chrome-line);padding:5px 8px;
+           font-size:11px;font-weight:700;color:#3d4145;background:var(--chrome)}
+  .fx{flex:0 0 26px;display:flex;align-items:center;justify-content:center;
+      font:italic 700 12px Georgia,"Times New Roman",serif;color:var(--muted);
+      border-right:1px solid var(--chrome-line)}
+  .formula{flex:1 1 auto;padding:5px 9px;font:11px/1.5 "SFMono-Regular",Consolas,"Liberation Mono",monospace;
+           color:#22262a;white-space:nowrap;overflow-x:auto;min-width:0}
+  .formula.is-formula{color:#7a2f8a}
+
+  /* ---- grid ---- */
+  .viewport{flex:1 1 auto;min-height:0;overflow:auto;background:var(--paper)}
+  table{border-collapse:separate;border-spacing:0;table-layout:fixed}
+  th,td{padding:0;margin:0}
+  .colhead,.rowhead{
+    background:var(--chrome);color:#7a7f85;font-size:10px;font-weight:400;text-align:center;
+    border-right:1px solid var(--chrome-line);border-bottom:1px solid var(--chrome-line);
+    height:18px;user-select:none;position:sticky;z-index:2}
+  .colhead{top:0}
+  .rowhead{left:0;z-index:1;width:34px}
+  .corner{position:sticky;top:0;left:0;z-index:3;background:var(--chrome);
+          border-right:1px solid var(--chrome-line);border-bottom:1px solid var(--chrome-line)}
+  td.cell{
+    height:21px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    padding:0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    vertical-align:middle;cursor:cell}
+  td.cell.rt{text-align:right}
+  td.cell.ctr{text-align:center}
+  td.cell.sel{outline:2px solid var(--sel);outline-offset:-2px;position:relative;z-index:1}
+
+  /* ---- banker's model typography ---- */
+  .title{font:700 17px/1.25 Georgia,"Times New Roman",serif;letter-spacing:.01em;overflow:visible}
+  .sub{font-size:11px;font-style:italic;color:var(--muted);overflow:visible}
+  .sec{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+       border-bottom:1.5px solid #16181a;overflow:visible}
+  .hdr{font-weight:700;font-size:11px;border-bottom:1px solid #9a9ea2}
+  .ind{padding-left:16px !important}
+  .hard{color:var(--hard)}
+  .link{color:var(--link)}
+  .in{color:var(--hard);background:#eef2ff;box-shadow:inset 0 -1px 0 #b9c6f2}
+  .in:hover{background:#e4ebff}
+  .subtot{border-top:1px solid #16181a;font-weight:600}
+  .tot{border-top:1px solid #16181a;box-shadow:inset 0 -4px 0 -2px #16181a, inset 0 -1px 0 #16181a;font-weight:700}
+  .note{font-size:10px;font-style:italic;color:var(--muted);overflow:visible}
+  .memo{font-size:11px;color:#33383d;overflow:visible}
+  .shade{background:var(--shade)}
+  .boxhdr{font-size:9px;font-weight:700;letter-spacing:.1em;color:#4a4e52;
+          background:var(--chrome);border-bottom:1px solid var(--chrome-line)}
+  .boxrow{font-size:10px;background:#fbfbf8}
+  .bar{color:#4c6b8a;letter-spacing:-1px;font-size:10px}
+  td.cell a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+  td.cell input{width:100%;height:19px;border:0;padding:0;margin:0;background:transparent;
+                font:inherit;color:var(--hard);text-align:right;outline:none}
+
+  /* ---- tabs / status ---- */
+  .tabbar{display:flex;align-items:center;gap:0;background:var(--chrome);
+          border-top:1px solid var(--chrome-line);padding:0 8px;overflow-x:auto}
+  .tab{appearance:none;border:0;background:transparent;font:11px Arial,sans-serif;color:#5a5f64;
+       padding:7px 13px;cursor:pointer;border-right:1px solid var(--chrome-line);white-space:nowrap}
+  .tab:hover{color:#16181a}
+  .tab[aria-selected="true"]{background:var(--paper);color:#16181a;font-weight:700;
+       box-shadow:inset 0 2px 0 var(--link)}
+  .status{margin-left:auto;font-size:10px;color:var(--muted);padding:0 6px;white-space:nowrap}
+  .legend-key{display:inline-block;width:9px;height:9px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.25)}
+
+  @media (max-width:720px){
+    .filemeta{display:none}
+    .namebox{flex-basis:64px}
+    .title{font-size:15px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="titlebar">
+    <span class="filename">PERSONAL_OPERATING_MODEL_v3.2.xlsx</span>
+    <span class="filemeta">Base case &nbsp;·&nbsp; <b>Calculation:</b> Automatic &nbsp;·&nbsp; <b>Circularity:</b> off &nbsp;·&nbsp; Blue cells are editable</span>
+  </div>
+
+  <div class="formulabar">
+    <div class="namebox" id="namebox">A1</div>
+    <div class="fx">fx</div>
+    <div class="formula" id="formula"></div>
+  </div>
+
+  <div class="viewport" id="viewport"></div>
+
+  <div class="tabbar" id="tabbar" role="tablist"></div>
+</div>
+
+<script>
+"use strict";
+
+/* ════════════════════════════════════════════════════════════════════════
+   1. CONTENT  —  everything you need to edit lives in this section.
+      Placeholders are written in [square brackets]. Sample rows are marked
+      SAMPLE: replace them with your real history.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const SHEETS = [
+
+/* ───────────────────────────── SUMMARY ───────────────────────────── */
+{
+  name:'Summary', rows:42,
+  cols:[26, 330, 104, 104, 24, 128, 210, 96],   /* A B C D E F G H */
+  cells:{
+    B2:{v:'ANDREW [LAST NAME] — PERSONAL OPERATING MODEL', c:'title', span:3},
+    B3:{v:'Historical performance and forward projections · Base case · All figures unaudited', c:'sub', span:3},
+
+    B5:{v:'Prepared by'},            C5:{v:'[Your Name]', c:'hard'},
+    B6:{v:'Last updated'},           C6:{v:'=TODAY()', f:'date'},
+    B7:{v:'Model version'},          C7:{v:'3.2', c:'hard', c2:'rt'},
+    B8:{v:'Basis of preparation'},   C8:{v:'Actuals unless stated', c:'hard', span:2},
+
+    /* font-convention legend box */
+    F2:{v:'FONT CONVENTION', c:'boxhdr', span:2},
+    F3:{v:'Blue', c:'boxrow hard'},   G3:{v:'Hardcoded input', c:'boxrow'},
+    F4:{v:'Black', c:'boxrow'},       G4:{v:'Calculation', c:'boxrow'},
+    F5:{v:'Green', c:'boxrow link'},  G5:{v:'Link to another sheet', c:'boxrow'},
+    F7:{v:'Click any cell to read its formula. Arrow keys navigate.', c:'note', span:3},
+
+    B10:{v:'Key operating metrics', c:'sec', span:3},
+    C11:{v:'Value', c:'hdr rt'}, D11:{v:'Unit', c:'hdr ctr'},
+
+    B12:{v:'Years of professional experience', c:'ind'},
+      C12:{v:'=Experience!F12', f:'num1', c:'link'}, D12:{v:'years', c:'note ctr'},
+    B13:{v:'Employers to date', c:'ind'},
+      C13:{v:'=COUNT(Experience!F7:F11)', f:'num0'}, D13:{v:'count', c:'note ctr'},
+    B14:{v:'Projects shipped, cumulative', c:'ind'},
+      C14:{v:'=Projects!C24', f:'num0', c:'link'}, D14:{v:'count', c:'note ctr'},
+    B15:{v:'Languages run in production', c:'ind'},
+      C15:{v:7, f:'num0', c:'hard'}, D15:{v:'count', c:'note ctr'},
+    B16:{v:'Coffee consumed, career to date', c:'ind'},
+      C16:{v:'=Assumptions!C26', f:'num0', c:'link'}, D16:{v:'cups', c:'note ctr'},
+    B17:{v:'Lines of code, cumulative', c:'ind'},
+      C17:{v:'=Assumptions!C25', f:'num0', c:'link'}, D17:{v:'lines', c:'note ctr'},
+    B18:{v:'Personal uptime', c:'ind'},
+      C18:{v:'=Assumptions!C31', f:'pct1', c:'link'}, D18:{v:'% of year', c:'note ctr'},
+
+    B20:{v:'Capability build', c:'sec', span:3},
+    C21:{v:'Depth (÷5)', c:'hdr rt'}, D21:{v:'Years', c:'hdr rt'},
+
+    /* SAMPLE — swap for your own stack. Depth and Years are blue inputs. */
+    B22:{v:'Python', c:'ind'},                 C22:{v:5, f:'num0', input:true}, D22:{v:9, f:'num1', input:true},
+    B23:{v:'TypeScript / JavaScript', c:'ind'},C23:{v:4, f:'num0', input:true}, D23:{v:7, f:'num1', input:true},
+    B24:{v:'SQL & data modelling', c:'ind'},   C24:{v:5, f:'num0', input:true}, D24:{v:8, f:'num1', input:true},
+    B25:{v:'Go', c:'ind'},                     C25:{v:3, f:'num0', input:true}, D25:{v:3, f:'num1', input:true},
+    B26:{v:'Infrastructure & CI/CD', c:'ind'}, C26:{v:4, f:'num0', input:true}, D26:{v:6, f:'num1', input:true},
+    B27:{v:'Systems design', c:'ind'},         C27:{v:4, f:'num0', input:true}, D27:{v:5, f:'num1', input:true},
+    B28:{v:'Total', c:'subtot'},               C28:{v:'', c:'subtot'},          D28:{v:'=SUM(D22:D27)', f:'num1', c:'subtot'},
+    B29:{v:'Weighted capability index', c:'tot'},
+      C29:{v:'=SUMPRODUCT(C22:C27,D22:D27)/D28', f:'num2', c:'tot'}, D29:{v:'', c:'tot'},
+
+    B31:{v:'Executive summary', c:'sec', span:3},
+    B32:{v:'[Two or three lines on who you are. Written like a model cover page: what you build, at what', c:'memo', span:4},
+    B33:{v:'scale, and the sort of problem you want next. Keep it factual — the format does the joking.]', c:'memo', span:4},
+    B35:{v:'[Optional line: current focus, or what you are looking for.]', c:'memo', span:4},
+
+    B38:{v:'Source: management estimates. Figures are illustrative, prepared on a going-concern basis,', c:'note', span:4},
+    B39:{v:'and do not constitute investment advice. Past performance is not indicative of future results.', c:'note', span:4},
+  }
+},
+
+/* ──────────────────────────── EXPERIENCE ─────────────────────────── */
+{
+  name:'Experience', rows:34,
+  cols:[26, 206, 236, 88, 88, 82, 82, 176],   /* A B C D E F G H */
+  cells:{
+    B2:{v:'EXPERIENCE — HISTORICAL BUILD', c:'title', span:4},
+    B3:{v:'Tenure calculated on an actual/365 basis. The current role is marked to today, so it accrues live.', c:'sub', span:5},
+
+    B5:{v:'Employment schedule', c:'sec', span:7},
+    B6:{v:'Company', c:'hdr'}, C6:{v:'Role', c:'hdr'}, D6:{v:'Start', c:'hdr ctr'},
+    E6:{v:'End', c:'hdr ctr'}, F6:{v:'Tenure (yrs)', c:'hdr rt'}, G6:{v:'% career', c:'hdr rt'},
+    H6:{v:'Tenure profile', c:'hdr'},
+
+    /* SAMPLE ROWS — replace company names, roles and dates. */
+    B7:{v:'[Company D]'}, C7:{v:'Staff Engineer'},
+      D7:{v:'=DATE(2022,3,1)', f:'mmmyy', c:'hard ctr'}, E7:{v:'=TODAY()', f:'mmmyy', c:'ctr'},
+      F7:{v:'=YEARFRAC(D7,E7)', f:'num1'}, G7:{v:'=F7/F12', f:'pct0'},
+      H7:{v:'=REPT("█",ROUND(F7*4,0))', c:'bar'},
+    B8:{v:'[Company C]'}, C8:{v:'Senior Engineer'},
+      D8:{v:'=DATE(2019,6,1)', f:'mmmyy', c:'hard ctr'}, E8:{v:'=DATE(2022,2,28)', f:'mmmyy', c:'hard ctr'},
+      F8:{v:'=YEARFRAC(D8,E8)', f:'num1'}, G8:{v:'=F8/F12', f:'pct0'},
+      H8:{v:'=REPT("█",ROUND(F8*4,0))', c:'bar'},
+    B9:{v:'[Company B]'}, C9:{v:'Engineer'},
+      D9:{v:'=DATE(2017,8,1)', f:'mmmyy', c:'hard ctr'}, E9:{v:'=DATE(2019,5,31)', f:'mmmyy', c:'hard ctr'},
+      F9:{v:'=YEARFRAC(D9,E9)', f:'num1'}, G9:{v:'=F9/F12', f:'pct0'},
+      H9:{v:'=REPT("█",ROUND(F9*4,0))', c:'bar'},
+    B10:{v:'[Company A]'}, C10:{v:'Junior Engineer'},
+      D10:{v:'=DATE(2016,1,11)', f:'mmmyy', c:'hard ctr'}, E10:{v:'=DATE(2017,7,31)', f:'mmmyy', c:'hard ctr'},
+      F10:{v:'=YEARFRAC(D10,E10)', f:'num1'}, G10:{v:'=F10/F12', f:'pct0'},
+      H10:{v:'=REPT("█",ROUND(F10*4,0))', c:'bar'},
+    B11:{v:'Independent'}, C11:{v:'Contract & freelance'},
+      D11:{v:'=DATE(2015,6,1)', f:'mmmyy', c:'hard ctr'}, E11:{v:'=DATE(2015,12,31)', f:'mmmyy', c:'hard ctr'},
+      F11:{v:'=YEARFRAC(D11,E11)', f:'num1'}, G11:{v:'=F11/F12', f:'pct0'},
+      H11:{v:'=REPT("█",ROUND(F11*4,0))', c:'bar'},
+
+    B12:{v:'Total career to date', c:'tot'}, C12:{v:'', c:'tot'}, D12:{v:'', c:'tot'}, E12:{v:'', c:'tot'},
+      F12:{v:'=SUM(F7:F11)', f:'num1', c:'tot'}, G12:{v:'=SUM(G7:G11)', f:'pct0', c:'tot'}, H12:{v:'', c:'tot'},
+
+    B14:{v:'Memo', c:'sec', span:7},
+    B15:{v:'Longest single tenure (yrs)', c:'ind'}, F15:{v:'=MAX(F7:F11)', f:'num1'},
+    B16:{v:'Average tenure per employer (yrs)', c:'ind'}, F16:{v:'=AVERAGE(F7:F11)', f:'num1'},
+    B17:{v:'Share of career at current employer', c:'ind'}, F17:{v:'=F7/F12', f:'pct0'},
+
+    B19:{v:'Selected deliverables by period', c:'sec', span:7},
+    B20:{v:'[Company D] · 2022–present', c:'hdr', span:3},
+    B21:{v:'— [What you own, and the number that proves it. One line per bullet.]', c:'memo ind', span:6},
+    B22:{v:'— [Second deliverable. Scale, latency, revenue, headcount — whatever is real.]', c:'memo ind', span:6},
+    B24:{v:'[Company C] · 2019–2022', c:'hdr', span:3},
+    B25:{v:'— [Deliverable.]', c:'memo ind', span:6},
+    B26:{v:'— [Deliverable.]', c:'memo ind', span:6},
+    B28:{v:'[Company B] · 2017–2019', c:'hdr', span:3},
+    B29:{v:'— [Deliverable.]', c:'memo ind', span:6},
+
+    B32:{v:'Dates in blue are hardcoded. The end date of the current role is =TODAY(), so tenure recalculates on every visit.', c:'note', span:7},
+  }
+},
+
+/* ───────────────────────────── PROJECTS ──────────────────────────── */
+{
+  name:'Projects', rows:30,
+  cols:[26, 224, 62, 200, 84, 84, 100, 92],   /* A B C D E F G H */
+  cells:{
+    B2:{v:'PROJECT PORTFOLIO — INVESTMENT SCHEDULE', c:'title', span:4},
+    B3:{v:'Hours invested are management estimates. Returns are unaudited and, in one case, optimistic.', c:'sub', span:5},
+
+    B5:{v:'Portfolio holdings', c:'sec', span:7},
+    B6:{v:'Project', c:'hdr'}, C6:{v:'Year', c:'hdr ctr'}, D6:{v:'Stack', c:'hdr'},
+    E6:{v:'Hours', c:'hdr rt'}, F6:{v:'Users', c:'hdr rt'}, G6:{v:'Status', c:'hdr ctr'},
+    H6:{v:'Users / hr', c:'hdr rt'},
+
+    /* SAMPLE ROWS — hours and users are blue inputs; edit them and the metrics below move. */
+    B7:{v:'[Project name]'},  C7:{v:2025, f:'yr', c:'hard ctr'}, D7:{v:'Python · Postgres · React'},
+      E7:{v:340, f:'num0', input:true}, F7:{v:12000, f:'num0', input:true}, G7:{v:'Shipped', c:'ctr'}, H7:{v:'=F7/E7', f:'num1'},
+    B8:{v:'[Project name]'},  C8:{v:2024, f:'yr', c:'hard ctr'}, D8:{v:'Go · Kafka'},
+      E8:{v:180, f:'num0', input:true}, F8:{v:2400, f:'num0', input:true}, G8:{v:'Shipped', c:'ctr'}, H8:{v:'=F8/E8', f:'num1'},
+    B9:{v:'[Project name]'},  C9:{v:2024, f:'yr', c:'hard ctr'}, D9:{v:'TypeScript · SQLite'},
+      E9:{v:95, f:'num0', input:true},  F9:{v:800, f:'num0', input:true},  G9:{v:'Shipped', c:'ctr'}, H9:{v:'=F9/E9', f:'num1'},
+    B10:{v:'[Project name]'}, C10:{v:2023, f:'yr', c:'hard ctr'}, D10:{v:'Rust · WASM'},
+      E10:{v:260, f:'num0', input:true}, F10:{v:430, f:'num0', input:true}, G10:{v:'Shipped', c:'ctr'}, H10:{v:'=F10/E10', f:'num1'},
+    B11:{v:'[Project name]'}, C11:{v:2023, f:'yr', c:'hard ctr'}, D11:{v:'Python · dbt'},
+      E11:{v:120, f:'num0', input:true}, F11:{v:60, f:'num0', input:true},  G11:{v:'Shipped', c:'ctr'}, H11:{v:'=F11/E11', f:'num1'},
+    B12:{v:'[Project name]'}, C12:{v:2022, f:'yr', c:'hard ctr'}, D12:{v:'Elixir · Phoenix'},
+      E12:{v:210, f:'num0', input:true}, F12:{v:150, f:'num0', input:true}, G12:{v:'Sunset', c:'ctr'}, H12:{v:'=F12/E12', f:'num1'},
+    B13:{v:'[Project name]'}, C13:{v:2026, f:'yr', c:'hard ctr'}, D13:{v:'[Stack]'},
+      E13:{v:70, f:'num0', input:true},  F13:{v:0, f:'num0', input:true},   G13:{v:'In progress', c:'ctr'}, H13:{v:'=F13/E13', f:'num1'},
+
+    B14:{v:'Portfolio total', c:'tot'}, C14:{v:'', c:'tot'}, D14:{v:'', c:'tot'},
+      E14:{v:'=SUM(E7:E13)', f:'num0', c:'tot'}, F14:{v:'=SUM(F7:F13)', f:'num0', c:'tot'},
+      G14:{v:'', c:'tot'}, H14:{v:'=F14/E14', f:'num1', c:'tot'},
+
+    B16:{v:'Portfolio metrics', c:'sec', span:7},
+    B17:{v:'Holdings in portfolio', c:'ind'},              C17:{v:'=COUNT(E7:E13)', f:'num0'}, D17:{v:'count', c:'note'},
+    B18:{v:'Largest single investment', c:'ind'},          C18:{v:'=MAX(E7:E13)', f:'num0'},   D18:{v:'hours', c:'note'},
+    B19:{v:'Smallest single investment', c:'ind'},         C19:{v:'=MIN(E7:E13)', f:'num0'},   D19:{v:'hours', c:'note'},
+    B20:{v:'Average hours per project', c:'ind'},          C20:{v:'=AVERAGE(E7:E13)', f:'num0'}, D20:{v:'hours', c:'note'},
+    B21:{v:'Blended return', c:'ind'},                     C21:{v:'=F14/E14', f:'num1'},       D21:{v:'users per hour', c:'note'},
+    B22:{v:'Full-time-equivalent years invested', c:'ind'},C22:{v:'=E14/1800', f:'num2'},      D22:{v:'FTE years', c:'note'},
+    B23:{v:'Work in progress', c:'ind'},                   C23:{v:'=COUNTIF(G7:G13,"In progress")', f:'num0'}, D23:{v:'count', c:'note'},
+    B24:{v:'Projects shipped, cumulative', c:'subtot'},    C24:{v:'=COUNTIF(G7:G13,"Shipped")', f:'num0', c:'subtot'}, D24:{v:'count', c:'note subtot'},
+
+    B27:{v:'Cell C24 feeds Summary!C14. Change a status above and the cover page moves with it.', c:'note', span:6},
+  }
+},
+
+/* ──────────────────────────── EDUCATION ──────────────────────────── */
+{
+  name:'Education', rows:26,
+  cols:[26, 268, 268, 88, 88, 120],   /* A B C D E F */
+  cells:{
+    B2:{v:'EDUCATION & ACCREDITATION', c:'title', span:3},
+    B3:{v:'Formal education amortised in full. Continuing education expensed as incurred.', c:'sub', span:4},
+
+    B5:{v:'Formal education', c:'sec', span:5},
+    B6:{v:'Institution', c:'hdr'}, C6:{v:'Qualification', c:'hdr'},
+    D6:{v:'Start', c:'hdr ctr'}, E6:{v:'End', c:'hdr ctr'}, F6:{v:'Result', c:'hdr ctr'},
+
+    /* SAMPLE ROWS */
+    B7:{v:'[University]'}, C7:{v:'[BSc Subject]'},
+      D7:{v:'=DATE(2012,9,1)', f:'yr2', c:'hard ctr'}, E7:{v:'=DATE(2015,6,30)', f:'yr2', c:'hard ctr'},
+      F7:{v:'[Grade]', c:'ctr'},
+    B8:{v:'[School / college]'}, C8:{v:'[Qualification]'},
+      D8:{v:'=DATE(2010,9,1)', f:'yr2', c:'hard ctr'}, E8:{v:'=DATE(2012,6,30)', f:'yr2', c:'hard ctr'},
+      F8:{v:'[Grade]', c:'ctr'},
+    B9:{v:'Years in formal education', c:'subtot'}, C9:{v:'', c:'subtot'}, D9:{v:'', c:'subtot'}, E9:{v:'', c:'subtot'},
+      F9:{v:'=YEARFRAC(D8,E7)', f:'num1', c:'subtot'},
+
+    B11:{v:'Continuing education', c:'sec', span:5},
+    B12:{v:'Provider', c:'hdr'}, C12:{v:'Certification / course', c:'hdr'},
+      D12:{v:'Year', c:'hdr ctr'}, E12:{v:'Status', c:'hdr ctr'}, F12:{v:'Hours', c:'hdr rt'},
+
+    B13:{v:'[Provider]'}, C13:{v:'[Certification]'}, D13:{v:2024, f:'yr', c:'hard ctr'}, E13:{v:'Current', c:'ctr'}, F13:{v:40, f:'num0', input:true},
+    B14:{v:'[Provider]'}, C14:{v:'[Course]'},        D14:{v:2023, f:'yr', c:'hard ctr'}, E14:{v:'Complete', c:'ctr'}, F14:{v:24, f:'num0', input:true},
+    B15:{v:'[Provider]'}, C15:{v:'[Course]'},        D15:{v:2021, f:'yr', c:'hard ctr'}, E15:{v:'Complete', c:'ctr'}, F15:{v:16, f:'num0', input:true},
+    B16:{v:'Total continuing education', c:'tot'}, C16:{v:'', c:'tot'}, D16:{v:'', c:'tot'}, E16:{v:'', c:'tot'},
+      F16:{v:'=SUM(F13:F15)', f:'num0', c:'tot'},
+
+    B18:{v:'Memo', c:'sec', span:5},
+    B19:{v:'Certifications held', c:'ind'}, F19:{v:'=COUNTIF(E13:E15,"Current")', f:'num0'},
+    B20:{v:'Continuing education as % of one working year', c:'ind'}, F20:{v:'=F16/(Assumptions!C8*Assumptions!C10)', f:'pct1', c:'link'},
+
+    B23:{v:'[Add languages, publications or speaking here if they earn their row.]', c:'note', span:4},
+  }
+},
+
+/* ─────────────────────────── ASSUMPTIONS ─────────────────────────── */
+{
+  name:'Assumptions', rows:46,
+  cols:[26, 320, 96, 128, 96, 96, 96, 96],   /* A B C D E F G H */
+  cells:{
+    B2:{v:'ASSUMPTIONS & SENSITIVITIES', c:'title', span:3},
+    B3:{v:'Every blue cell below is editable. Type a number, press Enter, and the whole model recalculates.', c:'sub', span:5},
+    B4:{v:'Reset to base case', c:'link', action:'reset', span:2},
+
+    B6:{v:'Operating assumptions', c:'sec', span:3},
+    C7:{v:'Input', c:'hdr rt'}, D7:{v:'Unit', c:'hdr'},
+
+    B8:{v:'Working days per year', c:'ind'},              C8:{v:232, f:'num0', input:true},  D8:{v:'days', c:'note'},
+    B9:{v:'Career start year', c:'ind'},                  C9:{v:2016, f:'yr', input:true},   D9:{v:'year', c:'note'},
+    B10:{v:'Productive hours per working day', c:'ind'},   C10:{v:4.5, f:'num1', input:true}, D10:{v:'hours', c:'note'},
+    B11:{v:'Lines of code per productive hour', c:'ind'},  C11:{v:42, f:'num0', input:true},  D11:{v:'lines', c:'note'},
+    B12:{v:'Coffee per working day', c:'ind'},             C12:{v:3.5, f:'num1', input:true}, D12:{v:'cups', c:'note'},
+    B13:{v:'Defect rate', c:'ind'},                        C13:{v:1.8, f:'num1', input:true}, D13:{v:'per 1,000 lines', c:'note'},
+    B14:{v:'Sleep per night', c:'ind'},                    C14:{v:7.2, f:'num1', input:true}, D14:{v:'hours', c:'note'},
+    B15:{v:'Meetings per week', c:'ind'},                  C15:{v:11, f:'num0', input:true},  D15:{v:'count', c:'note'},
+    B16:{v:'Average meeting duration', c:'ind'},           C16:{v:0.6, f:'num1', input:true}, D16:{v:'hours', c:'note'},
+    B17:{v:'Unplanned downtime', c:'ind'},                 C17:{v:6, f:'num0', input:true},   D17:{v:'days p.a.', c:'note'},
+    B18:{v:'Working weeks per year', c:'ind'},             C18:{v:46, f:'num0', input:true},  D18:{v:'weeks', c:'note'},
+
+    B20:{v:'Derived outputs', c:'sec', span:3},
+    C21:{v:'Value', c:'hdr rt'}, D21:{v:'Unit', c:'hdr'},
+
+    B22:{v:'Years since career start', c:'ind'},           C22:{v:'=YEARFRAC(DATE(C9,1,1),TODAY())', f:'num1'}, D22:{v:'years', c:'note'},
+    B23:{v:'Working days elapsed', c:'ind'},               C23:{v:'=C22*C8', f:'num0'},        D23:{v:'days', c:'note'},
+    B24:{v:'Productive hours delivered', c:'ind'},         C24:{v:'=C23*C10', f:'num0'},       D24:{v:'hours', c:'note'},
+    B25:{v:'Lines of code, cumulative', c:'ind'},          C25:{v:'=C24*C11', f:'num0'},       D25:{v:'lines', c:'note'},
+    B26:{v:'Coffee consumed, career to date', c:'ind'},    C26:{v:'=C23*C12', f:'num0'},       D26:{v:'cups', c:'note'},
+    B27:{v:'Defects introduced (estimate)', c:'ind'},      C27:{v:'=C25/1000*C13', f:'num0'},  D27:{v:'count', c:'note'},
+    B28:{v:'Hours in meetings p.a.', c:'ind'},             C28:{v:'=C15*C16*C18', f:'num0'},   D28:{v:'hours p.a.', c:'note'},
+    B29:{v:'Meetings as % of productive year', c:'ind'},   C29:{v:'=C28/(C8*C10)', f:'pct1'},  D29:{v:'% of capacity', c:'note'},
+    B30:{v:'Hours slept since career start', c:'ind'},     C30:{v:'=C22*365.25*C14', f:'num0'},D30:{v:'hours', c:'note'},
+    B31:{v:'Personal uptime', c:'ind'},                    C31:{v:'=1-C17/365.25', f:'pct1'},  D31:{v:'% of year', c:'note'},
+    B32:{v:'Discretionary hours p.a.', c:'subtot'},
+      C32:{v:'=365.25*24-C14*365.25-C8*C10-C28', f:'num0', c:'subtot'}, D32:{v:'hours p.a.', c:'note subtot'},
+
+    B34:{v:'Sensitivity — annual code output (lines p.a.)', c:'sec', span:6},
+    B35:{v:'Rows flex lines per productive hour; columns flex productive hours per day. Shaded cell is the base case.', c:'note', span:6},
+    B36:{v:'Lines/hr ↓   Hours/day →', c:'hdr'},
+
+    B43:{v:'Data tables are the only honest way to admit a number is a guess.', c:'note', span:6},
+  }
+},
+
+/* ───────────────────────────── CONTACT ───────────────────────────── */
+{
+  name:'Contact', rows:26,
+  cols:[26, 236, 336, 200],   /* A B C D */
+  cells:{
+    B2:{v:'CONTACT & DEAL TEAM', c:'title', span:3},
+    B3:{v:'For enquiries, coverage, or a copy of the underlying workbook.', c:'sub', span:3},
+
+    B5:{v:'Primary contact', c:'sec', span:3},
+    B6:{v:'Name', c:'ind'},      C6:{v:'[Your Name]', c:'hard'},
+    B7:{v:'Location', c:'ind'},  C7:{v:'[City, Country]', c:'hard'},
+    B8:{v:'Email', c:'ind'},     C8:{v:'[you@example.com]', c:'link', href:'mailto:you@example.com'},
+    B9:{v:'GitHub', c:'ind'},    C9:{v:'github.com/Tobombadil', c:'link', href:'https://github.com/Tobombadil'},
+    B10:{v:'LinkedIn', c:'ind'}, C10:{v:'[linkedin.com/in/your-handle]', c:'link', href:'https://www.linkedin.com/'},
+    B11:{v:'Website', c:'ind'},  C11:{v:'[yourdomain.com]', c:'link', href:'#'},
+
+    B13:{v:'Availability', c:'sec', span:3},
+    B14:{v:'Status', c:'ind'},                 C14:{v:'[Open to select opportunities]', c:'hard'},
+    B15:{v:'Notice period (weeks)', c:'ind'},  C15:{v:8, f:'num0', input:true},
+    B16:{v:'Available from', c:'ind'},         C16:{v:'=TODAY()+C15*7', f:'date'},
+    B17:{v:'Response time', c:'ind'},          C17:{v:'=IF(C15>0,"Within 48 hours","Immediate")'},
+    B18:{v:'Timezone', c:'ind'},               C18:{v:'[GMT / UTC+0]', c:'hard'},
+
+    B20:{v:'Basis of preparation', c:'sec', span:3},
+    B21:{v:'This site is a spreadsheet held together by about four hundred lines of JavaScript. There is no', c:'note', span:3},
+    B22:{v:'Excel involved, no server, and no analytics. Everything recalculates in your browser.', c:'note', span:3},
+    B24:{v:'Source available at github.com/Tobombadil/Tobombadil', c:'note link', span:3, href:'https://github.com/Tobombadil/Tobombadil'},
+  }
+},
+];
+
+/* Build the 5×5 sensitivity data table on the Assumptions sheet.
+   Headers flex ±20% off the base inputs, so the centre cell is always the base case. */
+(function buildDataTable(){
+  const s = SHEETS.find(x => x.name === 'Assumptions');
+  const cols = ['C','D','E','F','G'];
+  const flex = [0.8, 0.9, 1, 1.1, 1.2];
+  cols.forEach((cl, i) => {
+    s.cells[cl + '36'] = { v:`=$C$10*${flex[i]}`, f:'num1', c:'hdr rt' };
+  });
+  for (let r = 0; r < 5; r++) {
+    const rn = 37 + r;
+    s.cells['B' + rn] = { v:`=$C$11*${flex[r]}`, f:'num0', c:'hdr rt' };
+    cols.forEach((cl, i) => {
+      s.cells[cl + rn] = {
+        v: `=$B${rn}*${cl}$36*$C$8`,
+        f: 'num0',
+        c: (r === 2 && i === 2) ? 'shade' : ''
+      };
+    });
+  }
+})();
+
+/* ════════════════════════════════════════════════════════════════════════
+   2. FORMULA ENGINE
+   ════════════════════════════════════════════════════════════════════════ */
+
+const SHEET_BY_NAME = Object.fromEntries(SHEETS.map(s => [s.name, s]));
+const overrides = Object.create(null);   /* "Sheet!REF" -> number typed by the visitor */
+let cache = new Map();
+const evalStack = new Set();
+
+const EPOCH = Date.UTC(1899, 11, 30);
+const serial = (y, m, d) => Math.round((Date.UTC(y, m - 1, d) - EPOCH) / 864e5);
+const fromSerial = s => new Date(EPOCH + Math.round(s) * 864e5);
+const todaySerial = () => { const n = new Date(); return serial(n.getFullYear(), n.getMonth() + 1, n.getDate()); };
+
+const colLetter = i => { let s = '', n = i + 1; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+const colIndex = L => { let n = 0; for (const ch of L) n = n * 26 + (ch.charCodeAt(0) - 64); return n - 1; };
+
+/* ---- tokenizer ---- */
+const RE_NUM  = /^\d+(?:\.\d+)?/;
+const RE_STR  = /^"([^"]*)"/;
+const RE_REF  = /^(?:([A-Za-z][A-Za-z0-9_]*)!)?\$?([A-Z]{1,2})\$?(\d{1,4})(?![A-Za-z0-9_])/;
+const RE_ID   = /^[A-Za-z][A-Za-z0-9_.]*/;
+const RE_OP   = /^(<=|>=|<>|[+\-*/^&(),:<>=])/;
+
+function tokenize(src) {
+  const out = [];
+  let s = src;
+  while (s.length) {
+    if (/^\s/.test(s)) { s = s.replace(/^\s+/, ''); continue; }
+    let m;
+    if ((m = RE_STR.exec(s))) { out.push({ t: 'str', v: m[1] }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_NUM.exec(s))) { out.push({ t: 'num', v: parseFloat(m[0]) }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_REF.exec(s))) { out.push({ t: 'ref', sheet: m[1] || null, col: m[2], row: +m[3] }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_ID.exec(s)))  { out.push({ t: 'id', v: m[0].toUpperCase() }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_OP.exec(s)))  { out.push({ t: 'op', v: m[0] }); s = s.slice(m[0].length); continue; }
+    throw new Error('#SYNTAX!');
+  }
+  return out;
+}
+
+/* ---- functions ---- */
+const flat = args => args.flatMap(a => Array.isArray(a) ? a : [a]);
+const nums = args => flat(args).filter(v => typeof v === 'number' && isFinite(v));
+
+const FN = {
+  SUM:  a => nums(a).reduce((x, y) => x + y, 0),
+  COUNT:a => nums(a).length,
+  AVERAGE: a => { const n = nums(a); return n.length ? n.reduce((x, y) => x + y, 0) / n.length : 0; },
+  MAX:  a => { const n = nums(a); return n.length ? Math.max(...n) : 0; },
+  MIN:  a => { const n = nums(a); return n.length ? Math.min(...n) : 0; },
+  ABS:  a => Math.abs(+a[0]),
+  ROUND:a => { const p = Math.pow(10, a[1] === undefined ? 0 : +a[1]); return Math.round(+a[0] * p) / p; },
+  IF:   a => (a[0] ? a[1] : a[2] !== undefined ? a[2] : false),
+  REPT: a => String(a[0]).repeat(Math.max(0, Math.min(200, Math.round(+a[1] || 0)))),
+  TODAY:() => todaySerial(),
+  DATE: a => serial(+a[0], +a[1], +a[2]),
+  YEAR: a => fromSerial(+a[0]).getUTCFullYear(),
+  MONTH:a => fromSerial(+a[0]).getUTCMonth() + 1,
+  YEARFRAC: a => (+a[1] - +a[0]) / 365.25,
+  SUMPRODUCT: a => {
+    const arrs = a.map(x => Array.isArray(x) ? x : [x]);
+    const len = Math.min(...arrs.map(x => x.length));
+    let total = 0;
+    for (let i = 0; i < len; i++) total += arrs.reduce((p, x) => p * (typeof x[i] === 'number' ? x[i] : 0), 1);
+    return total;
+  },
+  COUNTIF: a => {
+    const range = Array.isArray(a[0]) ? a[0] : [a[0]];
+    const crit = String(a[1]).toLowerCase();
+    return range.filter(v => String(v).toLowerCase() === crit).length;
+  },
+};
+
+/* ---- recursive-descent parser / evaluator ---- */
+function evaluate(src, ctxSheet) {
+  const tk = tokenize(src);
+  let p = 0;
+  const peek = () => tk[p];
+  const isOp = v => peek() && peek().t === 'op' && peek().v === v;
+  const eat = v => { if (!isOp(v)) throw new Error('#SYNTAX!'); p++; };
+
+  function primary() {
+    const t = peek();
+    if (!t) throw new Error('#SYNTAX!');
+    if (t.t === 'num' || t.t === 'str') { p++; return t.v; }
+    if (t.t === 'op' && t.v === '(') { p++; const v = expr(); eat(')'); return v; }
+    if (t.t === 'op' && t.v === '-') { p++; return -primary(); }
+    if (t.t === 'op' && t.v === '+') { p++; return primary(); }
+    if (t.t === 'ref') {
+      p++;
+      if (isOp(':') && tk[p + 1] && tk[p + 1].t === 'ref') {
+        p++;
+        const b = tk[p++];
+        return readRange(t, b, ctxSheet);
+      }
+      return readCell(t.sheet || ctxSheet, t.col + t.row);
+    }
+    if (t.t === 'id') {
+      p++;
+      const name = t.v;
+      if (!isOp('(')) throw new Error('#NAME?');
+      eat('(');
+      const args = [];
+      if (!isOp(')')) { args.push(expr()); while (isOp(',')) { p++; args.push(expr()); } }
+      eat(')');
+      const fn = FN[name];
+      if (!fn) throw new Error('#NAME?');
+      return fn(args);
+    }
+    throw new Error('#SYNTAX!');
+  }
+  function power()  { let v = primary(); while (isOp('^')) { p++; v = Math.pow(v, primary()); } return v; }
+  function term()   { let v = power(); while (isOp('*') || isOp('/')) { const o = peek().v; p++; const r = power(); v = o === '*' ? v * r : (r === 0 ? NaN : v / r); } return v; }
+  function add()    { let v = term(); while (isOp('+') || isOp('-')) { const o = peek().v; p++; const r = term(); v = o === '+' ? v + r : v - r; } return v; }
+  function concat() { let v = add(); while (isOp('&')) { p++; v = String(v) + String(add()); } return v; }
+  function expr() {
+    let v = concat();
+    while (peek() && peek().t === 'op' && ['<', '>', '=', '<=', '>=', '<>'].includes(peek().v)) {
+      const o = peek().v; p++; const r = concat();
+      v = o === '<' ? v < r : o === '>' ? v > r : o === '=' ? v === r
+        : o === '<=' ? v <= r : o === '>=' ? v >= r : v !== r;
+    }
+    return v;
+  }
+  const result = expr();
+  if (p !== tk.length) throw new Error('#SYNTAX!');
+  return result;
+}
+
+function readRange(a, b, ctxSheet) {
+  const sheet = a.sheet || ctxSheet;
+  const c1 = colIndex(a.col), c2 = colIndex(b.col);
+  const r1 = a.row, r2 = b.row;
+  const out = [];
+  for (let r = Math.min(r1, r2); r <= Math.max(r1, r2); r++)
+    for (let c = Math.min(c1, c2); c <= Math.max(c1, c2); c++)
+      out.push(readCell(sheet, colLetter(c) + r));
+  return out;
+}
+
+function rawOf(sheetName, ref) {
+  const key = sheetName + '!' + ref;
+  if (key in overrides) return overrides[key];
+  const sh = SHEET_BY_NAME[sheetName];
+  if (!sh) return '';
+  const cell = sh.cells[ref];
+  return cell ? cell.v : '';
+}
+
+function readCell(sheetName, ref) {
+  const key = sheetName + '!' + ref;
+  if (cache.has(key)) return cache.get(key);
+  if (evalStack.has(key)) throw new Error('#CIRC!');
+  const raw = rawOf(sheetName, ref);
+  let val;
+  if (raw === '' || raw === null || raw === undefined) val = 0;
+  else if (typeof raw === 'number') val = raw;
+  else if (typeof raw === 'string' && raw[0] === '=') {
+    evalStack.add(key);
+    try { val = evaluate(raw.slice(1), sheetName); }
+    catch (e) { val = (e && /^#/.test(e.message)) ? e.message : '#ERROR!'; }
+    finally { evalStack.delete(key); }
+  } else val = raw;
+  cache.set(key, val);
+  return val;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   3. NUMBER FORMATTING
+   ════════════════════════════════════════════════════════════════════════ */
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function group(v, dec) {
+  const neg = v < 0;
+  const s = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return neg ? '(' + s + ')' : s;
+}
+
+function formatValue(v, f) {
+  if (typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+  if (typeof v === 'string') return v;
+  if (v === null || v === undefined) return '';
+  if (typeof v !== 'number' || !isFinite(v)) return '—';
+  switch (f) {
+    case 'yr':   return String(Math.round(v));
+    case 'num0': return group(v, 0);
+    case 'num1': return group(v, 1);
+    case 'num2': return group(v, 2);
+    case 'pct0': return group(v * 100, 0) + '%';
+    case 'pct1': return group(v * 100, 1) + '%';
+    case 'usd':  return '$' + group(v, 0);
+    case 'date': { const d = fromSerial(v); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
+    case 'mmmyy':{ const d = fromSerial(v); return MONTHS[d.getUTCMonth()] + '-' + String(d.getUTCFullYear()).slice(2); }
+    case 'yr2':  return String(fromSerial(v).getUTCFullYear());
+    default:     return group(v, Math.abs(v % 1) > 1e-9 ? 1 : 0);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   4. RENDER
+   ════════════════════════════════════════════════════════════════════════ */
+
+const viewport = document.getElementById('viewport');
+const tabbar   = document.getElementById('tabbar');
+const namebox  = document.getElementById('namebox');
+const formula  = document.getElementById('formula');
+
+const state = { sheet: SHEETS[0].name, ref: 'B2', editing: false };
+const grids = {};   /* sheet -> { el, map: {ref: td}, cellAt: [r][c] -> td, rows, cols } */
+
+function buildSheet(sh) {
+  const table = document.createElement('table');
+  table.dataset.sheet = sh.name;
+
+  const cg = document.createElement('colgroup');
+  const head = document.createElement('col'); head.style.width = '34px'; cg.appendChild(head);
+  sh.cols.forEach(w => { const c = document.createElement('col'); c.style.width = w + 'px'; cg.appendChild(c); });
+  table.appendChild(cg);
+
+  const thead = document.createElement('thead');
+  const hr = document.createElement('tr');
+  const corner = document.createElement('th'); corner.className = 'colhead corner'; hr.appendChild(corner);
+  sh.cols.forEach((_, i) => { const th = document.createElement('th'); th.className = 'colhead'; th.textContent = colLetter(i); hr.appendChild(th); });
+  thead.appendChild(hr); table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  const map = {}, cellAt = [];
+  for (let r = 1; r <= sh.rows; r++) {
+    const tr = document.createElement('tr');
+    const th = document.createElement('th'); th.className = 'rowhead'; th.textContent = r; tr.appendChild(th);
+    cellAt[r] = [];
+    let skip = 0;
+    for (let c = 0; c < sh.cols.length; c++) {
+      const ref = colLetter(c) + r;
+      if (skip > 0) { skip--; cellAt[r][c] = cellAt[r][c - 1]; continue; }
+      const def = sh.cells[ref];
+      const td = document.createElement('td');
+      td.className = 'cell';
+      td.dataset.ref = ref;
+      td.dataset.sheet = sh.name;
+      if (def) {
+        if (def.c)  td.className += ' ' + def.c;
+        if (def.c2) td.className += ' ' + def.c2;
+        if (def.input)  td.className += ' in';
+        if (def.action) td.dataset.action = def.action;
+        if (def.span && def.span > 1) {
+          const span = Math.min(def.span, sh.cols.length - c);
+          td.colSpan = span;
+          skip = span - 1;
+        }
+      }
+      tr.appendChild(td);
+      map[ref] = td;
+      cellAt[r][c] = td;
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  grids[sh.name] = { el: table, map, cellAt, rows: sh.rows, cols: sh.cols.length };
+  return table;
+}
+
+function paint() {
+  cache = new Map();
+  for (const sh of SHEETS) {
+    const g = grids[sh.name];
+    for (const ref in g.map) {
+      const td = g.map[ref];
+      if (td.dataset.editing === '1') continue;
+      const def = sh.cells[ref];
+      const val = readCell(sh.name, ref);
+      const raw = rawOf(sh.name, ref);
+      const isNum = typeof val === 'number';
+      const text = (raw === '' || raw === null || raw === undefined) ? '' : formatValue(val, def && def.f);
+
+      td.classList.toggle('rt', isNum && !(def && /ctr/.test(def.c || '')));
+
+      if (def && def.href) {
+        td.textContent = '';
+        const a = document.createElement('a');
+        a.href = def.href;
+        a.textContent = text;
+        if (/^https?:/.test(def.href)) { a.target = '_blank'; a.rel = 'noopener'; }
+        td.appendChild(a);
+      } else {
+        td.textContent = text;
+      }
+    }
+  }
+}
+
+function buildTabs() {
+  SHEETS.forEach(sh => {
+    const b = document.createElement('button');
+    b.className = 'tab';
+    b.type = 'button';
+    b.role = 'tab';
+    b.textContent = sh.name;
+    b.dataset.sheet = sh.name;
+    b.addEventListener('click', () => showSheet(sh.name));
+    tabbar.appendChild(b);
+  });
+  const status = document.createElement('div');
+  status.className = 'status';
+  status.id = 'status';
+  tabbar.appendChild(status);
+}
+
+function showSheet(name) {
+  state.sheet = name;
+  for (const sh of SHEETS) grids[sh.name].el.style.display = (sh.name === name ? '' : 'none');
+  tabbar.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.sheet === name)));
+  const first = firstContentRef(name);
+  select(name, first, false);
+  viewport.scrollTop = 0;
+}
+
+function firstContentRef(name) {
+  const sh = SHEET_BY_NAME[name];
+  const refs = Object.keys(sh.cells);
+  return refs.length ? refs[0] : 'A1';
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   5. SELECTION, EDITING, KEYBOARD
+   ════════════════════════════════════════════════════════════════════════ */
+
+function tdFor(sheet, ref) { return grids[sheet].map[ref]; }
+
+function select(sheet, ref, scroll = true) {
+  const prev = tdFor(state.sheet, state.ref);
+  if (prev) prev.classList.remove('sel');
+  state.sheet = sheet; state.ref = ref;
+  const td = tdFor(sheet, ref);
+  if (!td) return;
+  td.classList.add('sel');
+  if (scroll) td.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+
+  namebox.textContent = ref;
+  const raw = rawOf(sheet, ref);
+  const isF = typeof raw === 'string' && raw[0] === '=';
+  formula.textContent = raw === '' ? '' : String(raw);
+  formula.classList.toggle('is-formula', isF);
+
+  const val = readCell(sheet, ref);
+  const status = document.getElementById('status');
+  if (status) {
+    const def = SHEET_BY_NAME[sheet].cells[ref];
+    status.textContent = typeof val === 'number'
+      ? 'Value: ' + formatValue(val, def && def.f)
+      : (def && def.input ? 'Editable input' : 'Ready');
+  }
+}
+
+function positionOf(sheet, ref) {
+  const g = grids[sheet];
+  for (let r = 1; r <= g.rows; r++)
+    for (let c = 0; c < g.cols; c++)
+      if (g.cellAt[r][c] && g.cellAt[r][c].dataset.ref === ref) return { r, c };
+  return { r: 1, c: 0 };
+}
+
+function move(dr, dc, jump) {
+  if (state.editing) return;
+  const g = grids[state.sheet];
+  let { r, c } = positionOf(state.sheet, state.ref);
+  const steps = jump ? 200 : 1;
+  let last = null;
+  for (let i = 0; i < steps; i++) {
+    const nr = r + dr, nc = c + dc;
+    if (nr < 1 || nr > g.rows || nc < 0 || nc >= g.cols) break;
+    r = nr; c = nc;
+    const td = g.cellAt[r][c];
+    if (jump && td && td.textContent.trim() !== '') { last = td; break; }
+    last = td;
+  }
+  if (last && last.dataset.ref) select(state.sheet, last.dataset.ref);
+}
+
+function beginEdit(prefill) {
+  const sh = SHEET_BY_NAME[state.sheet];
+  const def = sh.cells[state.ref];
+  if (!def || !def.input) return;
+  const td = tdFor(state.sheet, state.ref);
+  const key = state.sheet + '!' + state.ref;
+  const current = (key in overrides) ? overrides[key] : def.v;
+
+  state.editing = true;
+  td.dataset.editing = '1';
+  td.textContent = '';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.inputMode = 'decimal';
+  input.value = prefill !== undefined ? prefill : String(current);
+  td.appendChild(input);
+  input.focus();
+  if (prefill === undefined) input.select();
+
+  const finish = commit => {
+    if (!state.editing) return;
+    state.editing = false;
+    delete td.dataset.editing;
+    if (commit) {
+      const n = parseFloat(String(input.value).replace(/[, ]/g, ''));
+      if (isFinite(n)) overrides[key] = n;
+    }
+    input.remove();
+    paint();
+    select(state.sheet, state.ref, false);
+  };
+
+  input.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Enter')      { finish(true);  move(1, 0, false); }
+    else if (e.key === 'Tab')   { e.preventDefault(); finish(true); move(0, 1, false); }
+    else if (e.key === 'Escape'){ finish(false); }
+  });
+  input.addEventListener('blur', () => finish(true));
+}
+
+function resetAssumptions() {
+  for (const k in overrides) delete overrides[k];
+  paint();
+  select(state.sheet, state.ref, false);
+}
+
+/* ---- events ---- */
+viewport.addEventListener('mousedown', e => {
+  const td = e.target.closest('td.cell');
+  if (!td) return;
+  if (e.target.tagName === 'A') return;
+  if (td.dataset.action === 'reset') { e.preventDefault(); resetAssumptions(); return; }
+  if (td.dataset.editing === '1') return;
+  select(td.dataset.sheet, td.dataset.ref);
+});
+
+viewport.addEventListener('dblclick', e => {
+  const td = e.target.closest('td.cell');
+  if (td && td.classList.contains('in')) { select(td.dataset.sheet, td.dataset.ref); beginEdit(); }
+});
+
+document.addEventListener('keydown', e => {
+  if (state.editing) return;
+  if (e.target.closest && e.target.closest('.tabbar')) return;   /* keep tabs keyboard-reachable */
+  const jump = e.ctrlKey || e.metaKey;
+  switch (e.key) {
+    case 'ArrowUp':    e.preventDefault(); move(-1, 0, jump); return;
+    case 'ArrowDown':  e.preventDefault(); move(1, 0, jump);  return;
+    case 'ArrowLeft':  e.preventDefault(); move(0, -1, jump); return;
+    case 'ArrowRight': e.preventDefault(); move(0, 1, jump);  return;
+    case 'Tab':        e.preventDefault(); move(0, e.shiftKey ? -1 : 1, false); return;
+    case 'Enter':      e.preventDefault(); beginEdit(); return;
+    case 'F2':         e.preventDefault(); beginEdit(); return;
+    case 'PageDown':   e.preventDefault(); move(15, 0, false); return;
+    case 'PageUp':     e.preventDefault(); move(-15, 0, false); return;
+  }
+  if (e.key === 'Home') { e.preventDefault(); select(state.sheet, firstContentRef(state.sheet)); return; }
+  /* typing a digit over a blue cell starts an edit, like a real spreadsheet */
+  if (!jump && /^[0-9.\-]$/.test(e.key)) { e.preventDefault(); beginEdit(e.key); }
+});
+
+/* ---- boot ---- */
+SHEETS.forEach(sh => viewport.appendChild(buildSheet(sh)));
+buildTabs();
+paint();
+showSheet(SHEETS[0].name);
+</script>
+</body>
+</html>
