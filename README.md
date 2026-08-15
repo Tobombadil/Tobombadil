@@ -1,7 +1,7 @@
 # Andrew T. Gibson — Personal Operating Model
 
 A personal website in the shape of a financial model, for someone who builds them for a living.
-Eight sheets, a formula bar, editable assumption cells, and a working illustrative project-finance
+Nine sheets, a formula bar, editable assumption cells, and a working illustrative project-finance
 model with a sensitivity table and a tie-out check — built as one static HTML file with no
 dependencies, no build step, and no server.
 
@@ -19,7 +19,8 @@ lazily with memoisation and circular-reference detection.
 | Experience | Employment schedule with live tenure, plus deliverables by period |
 | Experience II | Continuation of deliverables, and community leadership |
 | Transactions | Selected mandates as a transaction schedule, with portfolio metrics |
-| Education | Degree, graduate coursework, awards, technical skills |
+| Research | ERCOT crowding coefficient model (live) and the patent-pending document processor |
+| Education | Degree, graduate coursework, recognition, technical skills |
 | Assumptions | The illustrative project's inputs — every one of them editable |
 | Model | Ten-year cash flow, valuation, returns, checks, and an NPV sensitivity table |
 | Contact | How to reach you, and coverage |
@@ -65,12 +66,12 @@ sheet, keyed by cell reference. Nothing else needs touching.
 
 ```js
 {
-  name:'Summary', rows:44,
+  name:'Summary', rows:52,
   cols:[26, 336, 100, 104, 24, 120, 220, 96],   // pixel width of columns A, B, C, …
   cells:{
     B2:{v:'ANDREW T. GIBSON — ENERGY PROJECT FINANCE', c:'title', span:3},
     C12:{v:'=Experience!F13', f:'num1', c:'link'},
-    C23:{v:5, f:'num0', input:true},
+    C27:{v:5, f:'num0', input:true},
   }
 }
 ```
@@ -87,8 +88,8 @@ Cell properties:
 | `href` | Renders the cell as a link |
 | `action` | `'reset'` wires the cell to the reset-assumptions handler |
 
-The Model sheet's year columns and both data tables are generated in loops immediately after the
-`SHEETS` array, rather than written out cell by cell.
+The Model sheet's year columns, both of its data tables, and the Research sheet's basis row are
+generated in loops immediately after the `SHEETS` array, rather than written out cell by cell.
 
 ### Supported functions
 
