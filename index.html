@@ -19,6 +19,7 @@
     --link:#0a7040;      /* green: link to another sheet */
     --sel:#17457f;
     --shade:#f6f1dd;
+    --rh:34px;          /* row-header width; ROWHEAD_W in the script must match */
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;height:100%}
@@ -54,7 +55,13 @@
   .formula.is-formula{color:#7a2f8a}
 
   /* ---- grid ---- */
-  .viewport{flex:1 1 auto;min-height:0;overflow:auto;background:var(--paper)}
+  .viewport{flex:1 1 auto;min-height:0;overflow:auto;background:var(--paper);
+            -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;position:relative}
+  /* right-edge fade: tells you there is more sheet off to the right */
+  .scrollhint{position:absolute;top:0;right:0;bottom:0;width:26px;pointer-events:none;
+              opacity:0;transition:opacity .18s;z-index:4;
+              background:linear-gradient(to right,rgba(255,255,255,0),rgba(120,124,128,.16))}
+  .scrollhint.on{opacity:1}
   table{border-collapse:separate;border-spacing:0;table-layout:fixed}
   th,td{padding:0;margin:0}
   .colhead,.rowhead{
@@ -62,7 +69,7 @@
     border-right:1px solid var(--chrome-line);border-bottom:1px solid var(--chrome-line);
     height:18px;user-select:none;position:sticky;z-index:2}
   .colhead{top:0}
-  .rowhead{left:0;z-index:1;width:34px}
+  .rowhead{left:0;z-index:1;width:var(--rh)}
   .corner{position:sticky;top:0;left:0;z-index:3;background:var(--chrome);
           border-right:1px solid var(--chrome-line);border-bottom:1px solid var(--chrome-line)}
   td.cell{
@@ -72,6 +79,13 @@
   td.cell.rt{text-align:right}
   td.cell.ctr{text-align:center}
   td.cell.sel{outline:2px solid var(--sel);outline-offset:-2px;position:relative;z-index:1}
+  /* frozen label column — keeps row labels on screen while the numbers scroll.
+     Only applied to single-column cells; prose that spans the grid scrolls away. */
+  td.cell.stick{position:sticky;left:var(--rh);z-index:2;background:var(--paper)}
+  td.cell.stick.sel{z-index:3}
+  .viewport.scrolled td.cell.stick{box-shadow:6px 0 6px -5px rgba(0,0,0,.16)}
+  .viewport.scrolled td.cell.stick.tot{box-shadow:6px 0 6px -5px rgba(0,0,0,.16),
+                                        inset 0 -4px 0 -2px #16181a, inset 0 -1px 0 #16181a}
 
   /* ---- banker's model typography ---- */
   .title{font:700 17px/1.25 Georgia,"Times New Roman",serif;letter-spacing:.01em;overflow:visible}
@@ -110,8 +124,21 @@
 
   @media (max-width:720px){
     .filemeta{display:none}
-    .namebox{flex-basis:64px}
-    .title{font-size:15px}
+    .namebox{flex-basis:60px;font-size:10px}
+    .title{font-size:14px}
+    .app{border-left:0;border-right:0}
+    .titlebar{padding:7px 10px}
+    .filename{font-size:10px}
+    /* taller rows: 21px is a mouse target, not a finger */
+    td.cell{height:26px}
+    .colhead,.rowhead{height:20px}
+    .tab{padding:10px 14px;font-size:12px}
+    .tabbar{scroll-snap-type:x proximity}
+    .tab{scroll-snap-align:start}
+    /* 16px stops iOS zooming the page when a cell goes into edit */
+    td.cell input{font-size:16px}
+    .sub,.note{font-size:10px}
+    .memo{font-size:10.5px}
   }
 </style>
 </head>
@@ -889,6 +916,7 @@ const tabbar   = document.getElementById('tabbar');
 const namebox  = document.getElementById('namebox');
 const formula  = document.getElementById('formula');
 
+const ROWHEAD_W = 34;   /* must match --rh in the stylesheet */
 const state = { sheet: SHEETS[0].name, ref: 'B2', editing: false };
 const grids = {};   /* sheet -> { el, map: {ref: td}, cellAt: [r][c] -> td, rows, cols } */
 
@@ -897,8 +925,8 @@ function buildSheet(sh) {
   table.dataset.sheet = sh.name;
 
   const cg = document.createElement('colgroup');
-  const head = document.createElement('col'); head.style.width = '34px'; cg.appendChild(head);
-  sh.cols.forEach(w => { const c = document.createElement('col'); c.style.width = w + 'px'; cg.appendChild(c); });
+  const head = document.createElement('col'); head.style.width = ROWHEAD_W + 'px'; cg.appendChild(head);
+  sh.cols.forEach(() => cg.appendChild(document.createElement('col')));
   table.appendChild(cg);
 
   const thead = document.createElement('thead');
@@ -932,6 +960,9 @@ function buildSheet(sh) {
           skip = span - 1;
         }
       }
+      /* column B is the label column: freeze it, unless it spans the grid */
+      if (c === 1 && td.colSpan === 1) td.classList.add('stick');
+
       tr.appendChild(td);
       map[ref] = td;
       cellAt[r][c] = td;
@@ -941,6 +972,43 @@ function buildSheet(sh) {
   table.appendChild(tbody);
   grids[sh.name] = { el: table, map, cellAt, rows: sh.rows, cols: sh.cols.length };
   return table;
+}
+
+/* Column widths are applied here rather than baked into the colgroup, so a phone
+   gets a narrower grid than a desktop without changing the content model.
+   Spacer columns keep their width; everything else scales, and the frozen label
+   column is capped so it can never eat the whole screen. */
+function applyWidths() {
+  const vw = window.innerWidth;
+  const narrow = vw <= 720;
+  const labelCap = Math.round(vw * 0.54);
+  for (const sh of SHEETS) {
+    const g = grids[sh.name];
+    const cols = g.el.querySelectorAll('colgroup col');
+    let total = ROWHEAD_W;
+    sh.cols.forEach((w, i) => {
+      let out = w;
+      if (narrow && w > 30) {
+        out = Math.max(54, Math.round(w * 0.74));
+        if (i === 1) out = Math.min(out, labelCap);        /* the frozen label column */
+        else out = Math.min(out, Math.round(vw * 0.62));
+      }
+      cols[i + 1].style.width = out + 'px';
+      total += out;
+    });
+    /* The table must carry its own width. Left to shrink-to-fit, table-layout:fixed
+       compresses every column to squeeze the grid into the viewport, which both
+       breaks the frozen column's offset and makes the numbers unreadable. */
+    g.el.style.width = total + 'px';
+  }
+}
+
+function updateScrollHint() {
+  const hint = document.getElementById('scrollhint');
+  if (!hint) return;
+  const more = viewport.scrollWidth - viewport.clientWidth - viewport.scrollLeft;
+  hint.classList.toggle('on', more > 4);
+  viewport.classList.toggle('scrolled', viewport.scrollLeft > 2);
 }
 
 function paint() {
@@ -996,6 +1064,7 @@ function showSheet(name) {
   select(name, firstContentRef(name), false);
   viewport.scrollTop = 0;
   viewport.scrollLeft = 0;
+  updateScrollHint();
 }
 
 function firstContentRef(name) {
@@ -1143,9 +1212,20 @@ document.addEventListener('keydown', e => {
 
 /* ---- boot ---- */
 SHEETS.forEach(sh => viewport.appendChild(buildSheet(sh)));
+const hint = document.createElement('div');
+hint.className = 'scrollhint'; hint.id = 'scrollhint';
+viewport.appendChild(hint);
 buildTabs();
+applyWidths();
 paint();
 showSheet(SHEETS[0].name);
+
+viewport.addEventListener('scroll', updateScrollHint, { passive: true });
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { applyWidths(); updateScrollHint(); }, 120);
+});
 </script>
 </body>
 </html>

@@ -44,6 +44,14 @@ The colours are the standard modelling convention, and they are load-bearing:
 - **Black** — a calculation.
 - **Green** — a link to another sheet.
 
+### On a phone
+
+The grid keeps its real column widths and scrolls horizontally rather than compressing.
+The label column is frozen against the row gutter, so row labels stay on screen while the
+numbers scroll past — the one thing that makes a wide schedule readable on a small screen.
+Prose that spans the grid scrolls away normally rather than freezing. Rows are taller for
+touch, and cell inputs are 16px so iOS does not zoom the page when you edit an assumption.
+
 ### Keyboard
 
 Arrow keys move the selection, Ctrl/Cmd+Arrow jumps to the next cell with content, Tab and
