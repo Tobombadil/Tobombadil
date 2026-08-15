@@ -3,766 +3,455 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Andrew T. Gibson — Operating Model</title>
-<meta name="description" content="Andrew T. Gibson — energy project finance, transaction modeling and underwriting. A personal site built as a working financial model.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23fbfbf9'/%3E%3Cpath d='M2 4h12M2 8h12M2 12h12M6 2v12M10 2v12' stroke='%23c9c9c4' stroke-width='1'/%3E%3Crect x='6' y='4' width='4' height='4' fill='%231a4f8f' opacity='.75'/%3E%3C/svg%3E">
+<title>Andrew T. Gibson — Energy Project Finance</title>
+<meta name="description" content="Andrew T. Gibson — energy project finance, transaction structuring and underwriting. Denver, CO. A personal site built in the language of a financial model, with a live illustrative deal.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23fbfbf9'/%3E%3Cpath d='M2 4h12M2 8h12M2 12h12M6 2v12M10 2v12' stroke='%23d8d8d2' stroke-width='1'/%3E%3Crect x='6' y='4' width='4' height='4' fill='%231a3fcf' opacity='.8'/%3E%3C/svg%3E">
 <style>
-  :root{
-    --paper:#ffffff;
-    --desk:#e6e6e1;
-    --rule:#dcdcd6;
-    --chrome:#f4f4f1;
-    --chrome-line:#d0d0c9;
-    --ink:#16181a;
-    --muted:#6b6f74;
-    --hard:#1a3fcf;      /* blue: hardcoded input */
-    --link:#0a7040;      /* green: link to another sheet */
-    --sel:#17457f;
-    --shade:#f6f1dd;
-    --rh:34px;          /* row-header width; ROWHEAD_W in the script must match */
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;height:100%}
-  body{
-    background:var(--desk);
-    overflow:hidden;
-    color:var(--ink);
-    font:12px/1.35 Arial,"Helvetica Neue",Helvetica,sans-serif;
-    font-variant-numeric:tabular-nums;
-    -webkit-text-size-adjust:100%;
-  }
+/* ═══════════════════════════════════════════════════════════════════════
+   A website in the language of a financial model.
 
-  .app{max-width:1180px;margin:0 auto;height:100vh;height:100dvh;background:var(--paper);
-       border-left:1px solid var(--chrome-line);border-right:1px solid var(--chrome-line);
-       display:flex;flex-direction:column}
+   The page commits to a single visual world on purpose: a banker's working
+   paper is white paper, and inverting it would break the conceit. Every
+   colour is an explicit token and the body paints its own ground, so the
+   page holds whatever theme the host is in.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --paper:#ffffff;
+  --paper-2:#faf9f6;      /* warm-biased neutral: printed stock, not screen grey */
+  --chrome:#f4f4f1;
+  --rule:#dcdcd6;
+  --rule-2:#eceae4;
+  --ink:#16181a;
+  --ink-2:#55595e;
+  --ink-3:#83878c;
+  --input:#1a3fcf;        /* modelling convention: hardcoded input */
+  --linkc:#0a7040;        /* modelling convention: link to another schedule */
+  --series-1:#2a78d6;
+  --series-2:#eb6834;
+  --good:#0ca30c;
+  --shade:#f6f1dd;
+  --maxw:1120px;
+  --sans:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  --serif:Georgia,"Times New Roman",Times,serif;
+  --mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:104px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font:15px/1.55 var(--sans);
+  font-variant-numeric:tabular-nums;
+  -webkit-text-size-adjust:100%;
+  /* faint worksheet ruling: the page reads as squared paper, not as a grid */
+  background-image:linear-gradient(var(--rule-2) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--rule-2) 1px,transparent 1px);
+  background-size:100% 28px,28px 100%;
+  background-position:-1px -1px;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
 
-  /* ---- minimal chrome ---- */
-  .titlebar{display:flex;align-items:baseline;gap:10px;padding:9px 12px;
-            background:var(--chrome);border-bottom:1px solid var(--chrome-line);flex-wrap:wrap}
-  .filename{font-size:11px;font-weight:700;letter-spacing:.04em}
-  .filemeta{font-size:10px;color:var(--muted)}
-  .filemeta b{font-weight:700;color:#3d4145}
+/* ── toolbar + formula bar ─────────────────────────────────────────── */
+.bar{position:sticky;top:0;z-index:40;background:var(--chrome);border-bottom:1px solid var(--rule)}
+.bar-in{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:center;gap:18px;height:38px}
+.fname{font:700 11px var(--sans);letter-spacing:.045em;white-space:nowrap}
+.fname span{color:var(--ink-3);font-weight:400}
+nav{margin-left:auto;display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{display:block;padding:11px 13px;font:11px var(--sans);color:var(--ink-2);text-decoration:none;
+      border-left:1px solid var(--rule);white-space:nowrap}
+nav a:last-child{border-right:1px solid var(--rule)}
+nav a:hover{color:var(--ink);background:var(--paper)}
+nav a.on{color:var(--ink);font-weight:700;background:var(--paper);box-shadow:inset 0 -2px 0 var(--linkc)}
+nav a:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--input);outline-offset:2px}
 
-  .formulabar{display:flex;align-items:stretch;background:var(--paper);
-              border-bottom:1px solid var(--chrome-line)}
-  .namebox{flex:0 0 84px;border-right:1px solid var(--chrome-line);padding:5px 8px;
-           font-size:11px;font-weight:700;color:#3d4145;background:var(--chrome)}
-  .fx{flex:0 0 26px;display:flex;align-items:center;justify-content:center;
-      font:italic 700 12px Georgia,"Times New Roman",serif;color:var(--muted);
-      border-right:1px solid var(--chrome-line)}
-  .formula{flex:1 1 auto;padding:5px 9px;font:11px/1.5 "SFMono-Regular",Consolas,"Liberation Mono",monospace;
-           color:#22262a;white-space:nowrap;overflow-x:auto;min-width:0}
-  .formula.is-formula{color:#7a2f8a}
+.fbar{position:sticky;top:38px;z-index:39;background:var(--paper);border-bottom:1px solid var(--rule)}
+.fbar-in{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:stretch;height:30px}
+.fref{flex:0 0 96px;display:flex;align-items:center;font:700 11px var(--sans);color:var(--ink-2);
+      border-right:1px solid var(--rule)}
+.ffx{flex:0 0 30px;display:flex;align-items:center;justify-content:center;
+     font:italic 700 12px var(--serif);color:var(--ink-3);border-right:1px solid var(--rule)}
+.ftext{flex:1 1 auto;display:flex;align-items:center;padding:0 11px;min-width:0;
+       font:11px/1 var(--mono);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ftext.live{color:#7a2f8a}
 
-  /* ---- grid ---- */
-  .viewport{flex:1 1 auto;min-height:0;overflow:auto;background:var(--paper);
-            -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;position:relative}
-  /* right-edge fade: tells you there is more sheet off to the right */
-  .scrollhint{position:absolute;top:0;right:0;bottom:0;width:26px;pointer-events:none;
-              opacity:0;transition:opacity .18s;z-index:4;
-              background:linear-gradient(to right,rgba(255,255,255,0),rgba(120,124,128,.16))}
-  .scrollhint.on{opacity:1}
-  table{border-collapse:separate;border-spacing:0;table-layout:fixed}
-  th,td{padding:0;margin:0}
-  .colhead,.rowhead{
-    background:var(--chrome);color:#7a7f85;font-size:10px;font-weight:400;text-align:center;
-    border-right:1px solid var(--chrome-line);border-bottom:1px solid var(--chrome-line);
-    height:18px;user-select:none;position:sticky;z-index:2}
-  .colhead{top:0}
-  .rowhead{left:0;z-index:1;width:var(--rh)}
-  .corner{position:sticky;top:0;left:0;z-index:3;background:var(--chrome);
-          border-right:1px solid var(--chrome-line);border-bottom:1px solid var(--chrome-line)}
-  td.cell{
-    height:21px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
-    padding:0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    vertical-align:middle;cursor:cell}
-  td.cell.rt{text-align:right}
-  td.cell.ctr{text-align:center}
-  td.cell.sel{outline:2px solid var(--sel);outline-offset:-2px;position:relative;z-index:1}
-  /* frozen label column — keeps row labels on screen while the numbers scroll.
-     Only applied to single-column cells; prose that spans the grid scrolls away. */
-  td.cell.stick{position:sticky;left:var(--rh);z-index:2;background:var(--paper)}
-  td.cell.stick.sel{z-index:3}
-  .viewport.scrolled td.cell.stick{box-shadow:6px 0 6px -5px rgba(0,0,0,.16)}
-  .viewport.scrolled td.cell.stick.tot{box-shadow:6px 0 6px -5px rgba(0,0,0,.16),
-                                        inset 0 -4px 0 -2px #16181a, inset 0 -1px 0 #16181a}
+/* ── section furniture ─────────────────────────────────────────────── */
+section{padding:52px 0 4px}
+.shead{display:flex;align-items:baseline;gap:12px;border-bottom:1.5px solid var(--ink);padding-bottom:6px;margin-bottom:22px}
+.shead h2{margin:0;font:700 11px var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.shead .idx{font:400 10px var(--mono);color:var(--ink-3);letter-spacing:.04em}
+.shead .rt{margin-left:auto;font:italic 11px var(--sans);color:var(--ink-3)}
 
-  /* ---- banker's model typography ---- */
-  .title{font:700 17px/1.25 Georgia,"Times New Roman",serif;letter-spacing:.01em;overflow:visible}
-  .sub{font-size:11px;font-style:italic;color:var(--muted);overflow:visible}
-  .sec{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
-       border-bottom:1.5px solid #16181a;overflow:visible}
-  .hdr{font-weight:700;font-size:11px;border-bottom:1px solid #9a9ea2}
-  .ind{padding-left:16px !important}
-  .hard{color:var(--hard)}
-  .link{color:var(--link)}
-  .in{color:var(--hard);background:#eef2ff;box-shadow:inset 0 -1px 0 #b9c6f2}
-  .in:hover{background:#e4ebff}
-  .subtot{border-top:1px solid #16181a;font-weight:600}
-  .tot{border-top:1px solid #16181a;box-shadow:inset 0 -4px 0 -2px #16181a, inset 0 -1px 0 #16181a;font-weight:700}
-  .note{font-size:10px;font-style:italic;color:var(--muted);overflow:visible}
-  .memo{font-size:11px;color:#33383d;overflow:visible}
-  .shade{background:var(--shade)}
-  .boxhdr{font-size:9px;font-weight:700;letter-spacing:.1em;color:#4a4e52;
-          background:var(--chrome);border-bottom:1px solid var(--chrome-line)}
-  .boxrow{font-size:10px;background:#fbfbf8}
-  .bar{color:#4c6b8a;letter-spacing:-1px;font-size:10px}
-  .ok{color:var(--link);font-weight:700}
-  td.cell a{color:inherit;text-decoration:underline;text-underline-offset:2px}
-  td.cell input{width:100%;height:19px;border:0;padding:0;margin:0;background:transparent;
-                font:inherit;color:var(--hard);text-align:right;outline:none}
+/* ── hero ──────────────────────────────────────────────────────────── */
+.hero{padding:46px 0 8px;display:grid;grid-template-columns:1.55fr 1fr;gap:44px;align-items:start}
+.eyebrow{font:700 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-wrap:balance}
+.role{margin:12px 0 0;font:400 17px/1.4 var(--serif);color:var(--ink-2);font-style:italic;text-wrap:balance}
+.lede{margin:20px 0 0;max-width:60ch;font-size:14.5px;line-height:1.62;color:#2c3034}
+.cta{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid var(--rule);
+     background:var(--paper);color:var(--ink);font:12px var(--sans);text-decoration:none;cursor:pointer}
+.btn:hover{border-color:var(--ink-3);background:var(--paper-2)}
+.btn.primary{background:var(--input);border-color:var(--input);color:#fff}
+.btn.primary:hover{background:#1535ad;border-color:#1535ad}
 
-  /* ---- tabs / status ---- */
-  .tabbar{display:flex;align-items:center;gap:0;background:var(--chrome);
-          border-top:1px solid var(--chrome-line);padding:0 8px;overflow-x:auto}
-  .tab{appearance:none;border:0;background:transparent;font:11px Arial,sans-serif;color:#5a5f64;
-       padding:7px 13px;cursor:pointer;border-right:1px solid var(--chrome-line);white-space:nowrap}
-  .tab:hover{color:#16181a}
-  .tab[aria-selected="true"]{background:var(--paper);color:#16181a;font-weight:700;
-       box-shadow:inset 0 2px 0 var(--link)}
-  .status{margin-left:auto;font-size:10px;color:var(--muted);padding:0 6px;white-space:nowrap}
+.cover{border:1px solid var(--rule);background:var(--paper)}
+.cover h3{margin:0;padding:9px 13px;background:var(--chrome);border-bottom:1px solid var(--rule);
+          font:700 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-2)}
+.crow{display:flex;gap:14px;padding:8px 13px;border-bottom:1px solid var(--rule-2);font-size:12.5px}
+.crow:last-child{border-bottom:0}
+.crow dt{flex:1 1 auto;margin:0;color:var(--ink-2)}
+.crow dd{flex:0 0 auto;margin:0;text-align:right}
+.legend{padding:10px 13px;border-top:1px solid var(--rule);background:var(--paper-2)}
+.legend p{margin:0 0 5px;font:700 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.legend li{list-style:none;font-size:11.5px;color:var(--ink-2);line-height:1.7}
+.legend ul{margin:0;padding:0}
+.legend b{font-weight:700}
 
-  /* ═══ mobile layout ═══
-     A faithful grid cannot fit a phone, so below 720px the same sheet data is
-     rendered as stacked groups instead. The spreadsheet identity carries through
-     the chrome, the font convention and the total rules — not through gridlines. */
-  .mobile{display:none}
-  .msheet{display:none;flex-direction:column;gap:13px;padding:12px 12px 20px}
-  .msheet.on{display:flex}
-  .mhead{display:flex;flex-direction:column;gap:4px}
-  .mtitle{font:700 17px/1.22 Georgia,"Times New Roman",serif;text-wrap:balance}
-  .msub{font-size:11px;font-style:italic;color:var(--muted);line-height:1.4}
+/* ── stat tiles ────────────────────────────────────────────────────── */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule);background:var(--paper)}
+.tile{padding:15px 16px;border-right:1px solid var(--rule)}
+.tile:last-child{border-right:0}
+.tile .k{font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+         display:block;margin-bottom:7px}
+.tile .v{font:400 27px/1 var(--serif);letter-spacing:-.01em;display:block}
+.tile .u{font-size:11px;color:var(--ink-2);margin-top:5px;display:block}
+.tiles.sub .tile .v{font-size:21px}
 
-  .mgrp{border:1px solid var(--chrome-line);background:var(--paper)}
-  .mgh{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
-       background:var(--chrome);border:0;border-bottom:1px solid var(--chrome-line);
-       padding:10px 11px;cursor:pointer;text-align:left;color:var(--ink);
-       font:700 10px/1.25 Arial,sans-serif;letter-spacing:.11em;text-transform:uppercase}
-  .mgh .cnt{font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);font-size:10px}
-  .mgh .chev{flex:0 0 auto;transition:transform .16s;font-size:9px;color:var(--muted)}
-  .mgrp[data-open="0"] .chev{transform:rotate(-90deg)}
-  .mgrp[data-open="0"] .mgb{display:none}
+/* ── ruled data rows ───────────────────────────────────────────────── */
+.sched{width:100%;border-collapse:collapse;font-size:13px}
+.sched th{font:700 10.5px var(--sans);letter-spacing:.05em;text-align:left;color:var(--ink-2);
+          border-bottom:1px solid var(--ink-3);padding:0 10px 6px 0;white-space:nowrap}
+.sched td{padding:9px 10px 9px 0;border-bottom:1px solid var(--rule-2);vertical-align:top;line-height:1.45}
+.sched td.n,.sched th.n{text-align:right;white-space:nowrap}
+.sched tbody tr:hover{background:var(--paper-2)}
+.sched .desc{color:var(--ink-2);font-size:12.5px}
+.chip{display:inline-block;padding:2px 7px;border:1px solid var(--rule);background:var(--paper-2);
+      font:10.5px var(--sans);color:var(--ink-2);white-space:nowrap}
+.chip.live{border-color:#b9c6f2;background:#eef2ff;color:var(--input)}
 
-  .mrow{display:flex;align-items:baseline;gap:12px;padding:8px 11px;
-        border-bottom:1px solid var(--rule)}
-  .mrow:last-child{border-bottom:0}
-  .mrow .ml{flex:1 1 auto;font-size:12px;line-height:1.3}
-  .mrow .mv{flex:0 0 auto;text-align:right;font-size:12.5px;font-variant-numeric:tabular-nums}
-  .mrow .mu{display:block;font-size:9px;font-style:italic;color:var(--muted);
-            letter-spacing:.01em;margin-top:1px}
-  .mrow.msubt{border-top:1px solid #16181a}
-  .mrow.msubt .ml,.mrow.msubt .mv{font-weight:600}
-  .mrow.mtot{border-top:1px solid #16181a;border-bottom:3px double #16181a;background:#fcfcfa}
-  .mrow.mtot .ml,.mrow.mtot .mv{font-weight:700}
-  .mrow.editable .mv{color:var(--hard);background:#eef2ff;box-shadow:inset 0 -1px 0 #b9c6f2;
-                     padding:2px 6px;min-width:64px}
-  .mrow input{width:82px;border:0;background:transparent;font:inherit;font-size:16px;
-              color:var(--hard);text-align:right;outline:none}
-  .msub2{padding:9px 11px 3px;font:700 11px/1.3 Arial,sans-serif;border-bottom:1px solid var(--rule)}
-  .mprose{padding:6px 11px;font-size:11.5px;line-height:1.5;color:#33383d}
-  .mnote{padding:6px 11px;font-size:10px;font-style:italic;line-height:1.45;color:var(--muted)}
+/* ── experience ────────────────────────────────────────────────────── */
+.roles{display:flex;flex-direction:column;gap:0}
+.job{padding:20px 0;border-bottom:1px solid var(--rule-2)}
+.job:last-child{border-bottom:0}
+.job-h{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:baseline}
+.job h3{margin:0;font:700 16px var(--sans)}
+.job .co{margin:2px 0 0;font:italic 13.5px var(--serif);color:var(--ink-2)}
+.job .when{text-align:right;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.job .when b{display:block;font:400 15px var(--serif);color:var(--ink)}
+.tbar{height:5px;background:var(--rule-2);margin:11px 0 13px;position:relative}
+.tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--series-1);display:block}
+.job ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.job li{padding-left:15px;position:relative;font-size:13.5px;line-height:1.55;color:#2c3034;max-width:78ch}
+.job li::before{content:"—";position:absolute;left:0;color:var(--ink-3)}
 
-  .mcard{padding:10px 11px;border-bottom:1px solid var(--rule)}
-  .mcard:last-child{border-bottom:0}
-  .mcard .t{font-weight:700;font-size:12.5px;line-height:1.3}
-  .mcard .s{font-size:11.5px;color:#33383d;line-height:1.4;margin-top:2px}
-  .mcard .m{display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:5px;
-            font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .mcard .m b{font-weight:700;color:#33383d}
+/* ── the live model ────────────────────────────────────────────────── */
+.model{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--rule);background:var(--paper)}
+.inputs{border-right:1px solid var(--rule);background:var(--paper-2)}
+.inputs h3,.outputs h3{margin:0;padding:10px 14px;background:var(--chrome);border-bottom:1px solid var(--rule);
+        font:700 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-2);
+        display:flex;justify-content:space-between;align-items:center;gap:10px}
+.reset{appearance:none;border:0;background:none;padding:0;cursor:pointer;
+       font:400 10px var(--sans);letter-spacing:.02em;text-transform:none;color:var(--linkc);text-decoration:underline}
+.fld{padding:11px 14px;border-bottom:1px solid var(--rule-2)}
+.fld:last-child{border-bottom:0}
+.fld-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:7px}
+.fld label{font-size:12px;color:var(--ink-2)}
+.fld output{font:700 13px var(--sans);color:var(--input);font-variant-numeric:tabular-nums}
+.fld .u{font-weight:400;font-size:10.5px;color:var(--ink-3);margin-left:3px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;cursor:pointer;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule);border-radius:2px}
+input[type=range]::-moz-range-track{height:3px;background:var(--rule);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--input);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--input);margin-top:-6px}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(--paper);border-radius:50%;
+  background:var(--input);box-shadow:0 0 0 1px var(--input)}
+.outputs{min-width:0}
+.otiles{display:grid;grid-template-columns:repeat(4,1fr)}
+.otile{padding:14px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.otile:nth-child(4){border-right:0}
+.otile .k{font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:block}
+.otile .v{font:400 26px/1.15 var(--serif);display:block;margin-top:6px}
+.otile .n{font-size:10.5px;color:var(--ink-3);display:block;margin-top:3px}
+.otile .v.neg{color:#b3312f}
+.viz{padding:16px 14px 6px}
+.viz + .viz{border-top:1px solid var(--rule)}
+.viz h4{margin:0 0 2px;font:700 12px var(--sans)}
+.viz .cap{margin:0 0 12px;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.45}
+.legend-row{display:flex;gap:16px;margin:0 0 10px;font-size:11px;color:var(--ink-2)}
+.legend-row span{display:flex;align-items:center;gap:6px}
+.swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
+.chartbox{overflow-x:auto}
+svg.chart{display:block;min-width:440px;width:100%;height:auto}
+.tick{font:10px var(--sans);fill:var(--ink-3)}
+.axis{stroke:var(--rule);stroke-width:1}
+.gridline{stroke:var(--rule-2);stroke-width:1}
+.tie{display:flex;align-items:center;gap:8px;padding:11px 14px;border-top:1px solid var(--rule);
+     background:var(--paper-2);font-size:12px;color:var(--ink-2)}
+.tie b{color:var(--good);font-weight:700;display:inline-flex;align-items:center;gap:5px}
+.tie b.bad{color:#b3312f}
 
-  .mstep{display:flex;align-items:center;justify-content:space-between;gap:8px;
-         padding:8px 11px;border-bottom:1px solid var(--rule);background:#fbfbf8}
-  .mstep button{appearance:none;border:1px solid var(--chrome-line);background:var(--paper);
-                color:var(--ink);width:40px;height:32px;font-size:15px;cursor:pointer;line-height:1}
-  .mstep button:disabled{opacity:.32;cursor:default}
-  .mstep .lab{flex:1 1 auto;text-align:center;font:700 11px Arial,sans-serif;letter-spacing:.05em}
+/* sensitivity heatmap */
+table.heat{border-collapse:separate;border-spacing:2px;font-size:11.5px;margin:0 auto}
+table.heat th{font:700 10px var(--sans);color:var(--ink-2);padding:3px 5px;white-space:nowrap}
+table.heat th.corner{font:italic 9.5px var(--sans);color:var(--ink-3);text-align:right}
+table.heat td{padding:9px 6px;text-align:right;min-width:56px;cursor:default;
+              font-variant-numeric:tabular-nums;border-radius:2px}
+table.heat td.base{outline:2px solid var(--ink);outline-offset:-2px}
+.heatwrap{overflow-x:auto;padding-bottom:4px}
 
-  .mgridwrap{padding:8px 6px 10px;overflow-x:auto}
-  .mgcap{padding:0 5px 7px;font-size:10px;font-style:italic;color:var(--muted);line-height:1.4}
-  table.mgrid{width:100%;border-collapse:collapse;font-size:10.5px;
-              font-variant-numeric:tabular-nums;table-layout:fixed}
-  table.mgrid th,table.mgrid td{padding:6px 3px;text-align:right;border-bottom:1px solid var(--rule)}
-  table.mgrid thead th{font-weight:700;border-bottom:1px solid #9a9ea2}
-  table.mgrid tbody th{font-weight:700;text-align:right}
-  table.mgrid td.shade{background:var(--shade)}
+/* tooltip */
+.tip{position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .1s;
+     background:#1c1e20;color:#fff;padding:7px 9px;font:11px/1.5 var(--sans);max-width:230px;
+     box-shadow:0 3px 12px rgba(0,0,0,.24)}
+.tip.on{opacity:1}
+.tip b{display:block;font-size:11px;margin-bottom:3px}
+.tip i{font-style:normal;color:#b9bcc0}
 
-  @media (max-width:720px){
-    .viewport{display:none}
-    .mobile{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;
-            -webkit-overflow-scrolling:touch;background:var(--paper)}
-    .filemeta{display:none}
-    .namebox{flex-basis:60px;font-size:10px}
-    .title{font-size:14px}
-    .app{border-left:0;border-right:0}
-    .titlebar{padding:7px 10px}
-    .filename{font-size:10px}
-    /* taller rows: 21px is a mouse target, not a finger */
-    td.cell{height:26px}
-    .colhead,.rowhead{height:20px}
-    .tab{padding:10px 14px;font-size:12px}
-    .tabbar{scroll-snap-type:x proximity}
-    .tab{scroll-snap-align:start}
-    /* 16px stops iOS zooming the page when a cell goes into edit */
-    td.cell input{font-size:16px}
-    .sub,.note{font-size:10px}
-    .memo{font-size:10.5px}
-  }
+/* ── two-column lists ──────────────────────────────────────────────── */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:38px}
+.blk h3{margin:0 0 10px;font:700 12px var(--sans)}
+.deflist{margin:0;font-size:13px}
+.deflist div{display:flex;gap:14px;padding:7px 0;border-bottom:1px solid var(--rule-2)}
+.deflist dt{flex:0 0 34%;margin:0;color:var(--ink-2)}
+.deflist dd{flex:1 1 auto;margin:0}
+.paper{border:1px solid var(--rule);background:var(--paper);padding:16px 18px}
+.paper h3{margin:0 0 4px;font:700 14px var(--sans)}
+.paper .cap{margin:0 0 12px;font:italic 11.5px var(--sans);color:var(--ink-3)}
+.paper p{margin:0 0 10px;font-size:13.5px;line-height:1.6;color:#2c3034;max-width:72ch}
+.paper p:last-child{margin-bottom:0}
+
+/* ── contact + footer ──────────────────────────────────────────────── */
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:start}
+a.mail{color:var(--linkc);text-decoration:underline;text-underline-offset:2px}
+footer{margin-top:56px;border-top:1px solid var(--rule);background:var(--paper-2)}
+footer .wrap{padding-top:20px;padding-bottom:26px}
+footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:86ch}
+
+/* values wired to the workbook get a quiet affordance */
+[data-cell]{cursor:help;text-decoration:underline;text-decoration-style:dotted;
+            text-decoration-color:var(--rule);text-underline-offset:3px}
+[data-cell]:hover,[data-cell]:focus-visible{text-decoration-color:var(--ink-3)}
+.calc{color:var(--ink)}
+.link{color:var(--linkc)}
+.hard{color:var(--input)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr;gap:30px}
+  .model{grid-template-columns:1fr}
+  .inputs{border-right:0;border-bottom:1px solid var(--rule)}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .tile:nth-child(2){border-right:0}
+  .tile:nth-child(1),.tile:nth-child(2){border-bottom:1px solid var(--rule)}
+  .cols,.contact{grid-template-columns:1fr;gap:26px}
+}
+@media (max-width:680px){
+  html{scroll-padding-top:96px}
+  .wrap{padding:0 15px}
+  .bar-in,.fbar-in{padding:0 15px}
+  h1{font-size:33px}
+  .role{font-size:15px}
+  section{padding:38px 0 4px}
+  .otiles{grid-template-columns:repeat(2,1fr)}
+  .otile:nth-child(2){border-right:0}
+  .fref{flex-basis:74px;font-size:10px}
+  .tiles.sub{grid-template-columns:repeat(2,1fr)}
+  .tiles.sub .tile:nth-child(1),.tiles.sub .tile:nth-child(2){border-bottom:1px solid var(--rule)}
+  .job-h{grid-template-columns:1fr}
+  .job .when{text-align:left}
+  .job .when b{display:inline;margin-right:7px}
+  .deflist div{flex-direction:column;gap:2px}
+  .deflist dt{flex-basis:auto}
+  .sched thead{display:none}
+  .sched tr{display:block;padding:12px 0;border-bottom:1px solid var(--rule-2)}
+  .sched td{display:block;border:0;padding:1px 0}
+  .sched td.n{text-align:left}
+  .sched td[data-l]::before{content:attr(data-l) " ";color:var(--ink-3);font-size:11px}
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="titlebar">
-    <span class="filename">ATG_OPERATING_MODEL_v1.0.xlsx</span>
-    <span class="filemeta">Base case &nbsp;·&nbsp; <b>Calculation:</b> Automatic &nbsp;·&nbsp; <b>Circularity:</b> off &nbsp;·&nbsp; Blue cells are editable</span>
+
+<div class="bar">
+  <div class="bar-in">
+    <span class="fname">ATG_OPERATING_MODEL_v1.0 <span>· base case</span></span>
+    <nav id="nav" aria-label="Sections"></nav>
   </div>
-
-  <div class="formulabar">
-    <div class="namebox" id="namebox">A1</div>
-    <div class="fx">fx</div>
-    <div class="formula" id="formula"></div>
-  </div>
-
-  <div class="viewport" id="viewport"></div>
-
-  <div class="tabbar" id="tabbar" role="tablist"></div>
 </div>
+
+<div class="fbar">
+  <div class="fbar-in">
+    <div class="fref" id="fref">—</div>
+    <div class="ffx" aria-hidden="true">fx</div>
+    <div class="ftext" id="ftext">Hover any calculated figure to read the formula behind it</div>
+  </div>
+</div>
+
+<main id="main"></main>
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
 
-/* ════════════════════════════════════════════════════════════════════════
-   1. CONTENT  —  everything worth editing lives in this section.
-      Anything in [square brackets] is a placeholder awaiting a decision.
-   ════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   1. THE WORKBOOK — the data layer.
+   Numbers that are calculated live here as formulas, exactly as they would
+   in a real model. The page above is a view onto it; every figure the site
+   renders from these cells can show its own formula.
+   ═══════════════════════════════════════════════════════════════════════ */
 
 const SHEETS = [
 
-/* ───────────────────────────── SUMMARY ───────────────────────────── */
+/* Headline figures, as disclosed on the CV. */
 {
-  name:'Summary', rows:52,
-  cols:[26, 336, 100, 104, 24, 120, 220, 96],   /* A B C D E F G H */
-  /* the legend box sits alongside the metadata rows; on mobile it gets its own block */
-  mskip:['E','F','G','H'],
-  mlegend:{ title:'Font convention', rows:[['F3','G3'],['F4','G4'],['F5','G5']] },
-  cells:{
-    B2:{v:'ANDREW T. GIBSON — ENERGY PROJECT FINANCE', c:'title', span:3},
-    B3:{v:'Origination, structuring and underwriting · Biopower, solar and storage · Denver, CO', c:'sub', span:4},
-
-    B5:{v:'Prepared by'},            C5:{v:'Andrew T. Gibson', c:'hard', span:2},
-    B6:{v:'Last updated'},           C6:{v:'=TODAY()', f:'date'},
-    B7:{v:'Sector coverage'},        C7:{v:'Biopower, solar, storage, energy infrastructure', c:'hard', span:2},
-    B8:{v:'Basis of preparation'},   C8:{v:'Actuals; illustrative deal model on later sheets', c:'hard', span:2},
-
-    /* font-convention legend box */
-    F2:{v:'FONT CONVENTION', c:'boxhdr', span:2},
-    F3:{v:'Blue', c:'boxrow hard'},   G3:{v:'Hardcoded input', c:'boxrow'},
-    F4:{v:'Black', c:'boxrow'},       G4:{v:'Calculation', c:'boxrow'},
-    F5:{v:'Green', c:'boxrow link'},  G5:{v:'Link to another sheet', c:'boxrow'},
-    F7:{v:'Click any cell to read its formula. Arrow keys navigate.', c:'note', span:3},
-
-    B10:{v:'Key operating metrics', c:'sec', span:3},
-    C11:{v:'Value', c:'hdr rt'}, D11:{v:'Unit', c:'hdr ctr'},
-
-    B12:{v:'Years in finance', c:'ind'},
-      C12:{v:'=Experience!F13', f:'num1', c:'link'}, D12:{v:'years', c:'note ctr'},
-    B13:{v:'Employers to date', c:'ind'},
-      C13:{v:'=COUNT(Experience!F7:F10)', f:'num0', c:'link'}, D13:{v:'count', c:'note ctr'},
-    B14:{v:'Transaction size underwritten — low', c:'ind'},
-      C14:{v:50, f:'num0', c:'hard'}, D14:{v:'$M', c:'note ctr'},
-    B15:{v:'Transaction size underwritten — high', c:'ind'},
-      C15:{v:1200, f:'num0', c:'hard'}, D15:{v:'$M', c:'note ctr'},
-    B16:{v:'Feedstock agreements structured', c:'ind'},
-      C16:{v:500, f:'num0', c:'hard'}, D16:{v:'$M', c:'note ctr'},
-    B17:{v:'Offtake agreements structured', c:'ind'},
-      C17:{v:800, f:'num0', c:'hard'}, D17:{v:'$M', c:'note ctr'},
-    B18:{v:'Total agreements structured', c:'subtot'},
-      C18:{v:'=C16+C17', f:'num0', c:'subtot'}, D18:{v:'$M', c:'note ctr subtot'},
-    B19:{v:'Biopower developments directed', c:'ind'},
-      C19:{v:5, f:'num0', c:'hard'}, D19:{v:'count', c:'note ctr'},
-    B20:{v:'Capex reduction, relocation structure', c:'ind'},
-      C20:{v:0.70, f:'pct0', c:'hard'}, D20:{v:'% saved', c:'note ctr'},
-    B21:{v:'Revenue uplift, relocation structure', c:'ind'},
-      C21:{v:1.40, f:'pct0', c:'hard'}, D21:{v:'% uplift', c:'note ctr'},
-    B22:{v:'Feedstock and offtake rights secured', c:'ind'},
-      C22:{v:3.0, f:'num1', c:'hard'}, D22:{v:'m tons', c:'note ctr'},
-    B23:{v:'Mandates on schedule', c:'ind'},
-      C23:{v:'=Transactions!C22', f:'num0', c:'link'}, D23:{v:'count', c:'note ctr'},
-
-    B25:{v:'Capability build', c:'sec', span:3},
-    C26:{v:'Depth (÷5)', c:'hdr rt'}, D26:{v:'Years', c:'hdr rt'},
-
-    B27:{v:'Transaction structuring and underwriting', c:'ind'}, C27:{v:5, f:'num0', input:true}, D27:{v:3,  f:'num0', input:true},
-    B28:{v:'Project finance modeling and debt sizing', c:'ind'}, C28:{v:5, f:'num0', input:true}, D28:{v:11, f:'num0', input:true},
-    B29:{v:'Waterfall and DSCR modeling', c:'ind'},              C29:{v:5, f:'num0', input:true}, D29:{v:3,  f:'num0', input:true},
-    B30:{v:'Valuation, DCF and equity returns', c:'ind'},        C30:{v:5, f:'num0', input:true}, D30:{v:11, f:'num0', input:true},
-    B31:{v:'Scenario, sensitivity and Monte Carlo', c:'ind'},    C31:{v:5, f:'num0', input:true}, D31:{v:11, f:'num0', input:true},
-    B32:{v:'PPA, ESA and offtake structures', c:'ind'},          C32:{v:4, f:'num0', input:true}, D32:{v:3,  f:'num0', input:true},
-    B33:{v:'Dispatch economics and ERCOT mechanics', c:'ind'},   C33:{v:4, f:'num0', input:true}, D33:{v:2,  f:'num0', input:true},
-    B34:{v:'Diligence and independent engineering', c:'ind'},    C34:{v:5, f:'num0', input:true}, D34:{v:3,  f:'num0', input:true},
-    B35:{v:'Advanced Excel and VBA', c:'ind'},                   C35:{v:5, f:'num0', input:true}, D35:{v:11, f:'num0', input:true},
-    B36:{v:'Python, SQL and knowledge graphs', c:'ind'},         C36:{v:4, f:'num0', input:true}, D36:{v:8,  f:'num0', input:true},
-    B37:{v:'Total', c:'subtot'}, C37:{v:'', c:'subtot'},         D37:{v:'=SUM(D27:D36)', f:'num0', c:'subtot'},
-    B38:{v:'Weighted capability index', c:'tot'},
-      C38:{v:'=SUMPRODUCT(C27:C36,D27:D36)/D37', f:'num2', c:'tot'}, D38:{v:'', c:'tot'},
-    B39:{v:'Depth and years are self-assessed inputs. Edit them — they are blue for a reason.', c:'note', span:4},
-
-    B41:{v:'Executive summary', c:'sec', span:3},
-    B42:{v:'Project finance professional with a decade across energy infrastructure, physical commodity markets and quantitative', c:'memo', span:5},
-    B43:{v:'analytics. Originates, structures and underwrites energy transactions from development through close — project', c:'memo', span:5},
-    B44:{v:'economics, capital structure, offtake pricing and return sensitivities — then runs the diligence, independent', c:'memo', span:5},
-    B45:{v:'engineering, data rooms and lender materials that carry a project to financing. Morgan Stanley trained; negotiates', c:'memo', span:5},
-    B46:{v:'commercial terms as well as models them.', c:'memo', span:5},
-
-    B48:{v:'The Assumptions and Model sheets hold a generic project sized to be recognisable, not accurate. They describe no', c:'note', span:5},
-    B49:{v:'live transaction and contain no confidential terms. Figures elsewhere are as disclosed on the CV.', c:'note', span:5},
+  name:'Facts', rows:20, cols:[], cells:{
+    C3:{v:50,   f:'num0'},          /* transaction size underwritten — low  ($M) */
+    C4:{v:1200, f:'num0'},          /* transaction size underwritten — high ($M) */
+    C5:{v:500,  f:'num0'},          /* feedstock agreements structured ($M) */
+    C6:{v:800,  f:'num0'},          /* offtake agreements structured   ($M) */
+    C7:{v:'=C5+C6', f:'num0'},      /* total agreements structured */
+    C8:{v:5,    f:'num0'},          /* biopower developments directed */
+    C9:{v:0.70, f:'pct0'},          /* capex reduction, relocation structure */
+    C10:{v:1.40,f:'pct0'},          /* revenue uplift, relocation structure */
+    C11:{v:3.0, f:'num1'},          /* feedstock & offtake rights (m tons) */
+    C12:{v:1.0, f:'num1'},          /* venture capital raised ($M) */
+    C13:{v:6000,f:'num0'},          /* commodity flows supported ($M) */
+    C14:{v:'=C13/1000', f:'num0'},  /* the same, in $B, for display */
   }
 },
 
-/* ──────────────────────────── EXPERIENCE ─────────────────────────── */
+/* Employment dates. Tenure accrues against TODAY() on every visit. */
 {
-  name:'Experience', rows:40,
-  cols:[26, 232, 234, 88, 88, 82, 76, 124, 120],   /* A B C D E F G H I */
-  /* on a phone the schedule reads better as cards than as a wide table */
-  mskip:['H'],
-  mrecords:[{ r0:7, r1:10, title:'B', sub:'C', meta:['D','E','F','G'], foot:'I' }],
-  cells:{
-    B2:{v:'EXPERIENCE — HISTORICAL BUILD', c:'title', span:4},
-    B3:{v:'Tenure on an actual/365 basis. The current role is marked to today, so it accrues live.', c:'sub', span:5},
-
-    B5:{v:'Employment schedule', c:'sec', span:8},
-    B6:{v:'Company', c:'hdr'}, C6:{v:'Role', c:'hdr'}, D6:{v:'Start', c:'hdr ctr'},
-    E6:{v:'End', c:'hdr ctr'}, F6:{v:'Tenure (yrs)', c:'hdr rt'}, G6:{v:'% span', c:'hdr rt'},
-    H6:{v:'Tenure profile', c:'hdr'}, I6:{v:'Location', c:'hdr'},
-
-    B7:{v:'Compass Intl. Trading Group'}, C7:{v:'Principal'},
-      D7:{v:'=DATE(2024,3,1)', f:'mmmyy', c:'hard ctr'}, E7:{v:'=TODAY()', f:'mmmyy', c:'ctr'},
-      F7:{v:'=YEARFRAC(D7,E7)', f:'num1'}, G7:{v:'=F7/F13', f:'pct0'},
-      H7:{v:'=REPT("█",ROUND(F7*4,0))', c:'bar'}, I7:{v:'Denver, CO'},
-    B8:{v:'Pakira, Inc.'}, C8:{v:'Co-Founder & President'},
-      D8:{v:'=DATE(2018,8,1)', f:'mmmyy', c:'hard ctr'}, E8:{v:'=DATE(2024,3,1)', f:'mmmyy', c:'hard ctr'},
-      F8:{v:'=YEARFRAC(D8,E8)', f:'num1'}, G8:{v:'=F8/F13', f:'pct0'},
-      H8:{v:'=REPT("█",ROUND(F8*4,0))', c:'bar'}, I8:{v:'Cambridge, MA'},
-    B9:{v:'Forest City Trading Group'}, C9:{v:'Commodity Trader'},
-      D9:{v:'=DATE(2017,3,1)', f:'mmmyy', c:'hard ctr'}, E9:{v:'=DATE(2018,8,1)', f:'mmmyy', c:'hard ctr'},
-      F9:{v:'=YEARFRAC(D9,E9)', f:'num1'}, G9:{v:'=F9/F13', f:'pct0'},
-      H9:{v:'=REPT("█",ROUND(F9*4,0))', c:'bar'}, I9:{v:'Nashua, NH'},
-    B10:{v:'Morgan Stanley'}, C10:{v:'Financial Analyst'},
-      D10:{v:'=DATE(2015,5,1)', f:'mmmyy', c:'hard ctr'}, E10:{v:'=DATE(2017,5,1)', f:'mmmyy', c:'hard ctr'},
-      F10:{v:'=YEARFRAC(D10,E10)', f:'num1'}, G10:{v:'=F10/F13', f:'pct0'},
-      H10:{v:'=REPT("█",ROUND(F10*4,0))', c:'bar'}, I10:{v:'Portsmouth, NH'},
-
-    B12:{v:'Total recorded tenure', c:'subtot'}, C12:{v:'', c:'subtot'}, D12:{v:'', c:'subtot'}, E12:{v:'', c:'subtot'},
-      F12:{v:'=SUM(F7:F10)', f:'num1', c:'subtot'}, G12:{v:'=SUM(G7:G10)', f:'pct0', c:'subtot'},
-      H12:{v:'', c:'subtot'}, I12:{v:'', c:'subtot'},
-    B13:{v:'Career span, first start to date', c:'tot'}, C13:{v:'', c:'tot'}, D13:{v:'', c:'tot'}, E13:{v:'', c:'tot'},
-      F13:{v:'=YEARFRAC(D10,TODAY())', f:'num1', c:'tot'}, G13:{v:'=F13/F13', f:'pct0', c:'tot'},
-      H13:{v:'', c:'tot'}, I13:{v:'', c:'tot'},
-    B14:{v:'Recorded tenure exceeds the career span, and percentages sum above 100%, owing to a two-month overlap', c:'note', span:7},
-    B15:{v:'between Morgan Stanley and Forest City in 2017. Left unreconciled on purpose: it is what actually happened.', c:'note', span:7},
-
-    B17:{v:'Memo', c:'sec', span:8},
-    B18:{v:'Longest single tenure (yrs)', c:'ind'}, F18:{v:'=MAX(F7:F10)', f:'num1'},
-    B19:{v:'Average tenure per employer (yrs)', c:'ind'}, F19:{v:'=AVERAGE(F7:F10)', f:'num1'},
-    B20:{v:'Share of career at current employer', c:'ind'}, F20:{v:'=F7/F13', f:'pct0'},
-
-    B22:{v:'Selected deliverables — Compass International Trading Group', c:'sec', span:8},
-    B23:{v:'Principal · Denver, CO · March 2024 – present', c:'hdr', span:4},
-    B24:{v:'Energy and infrastructure deal origination, structuring and underwriting.', c:'memo', span:6},
-
-    B26:{v:'— Build and own transaction models across dozens of energy and infrastructure projects ($50M–$1.2B), underwriting', c:'memo ind', span:8},
-    B27:{v:'   assets from development through sale across technology, capex, interconnection and offtake structure', c:'memo ind', span:8},
-    B28:{v:'— Lead the FEL-2 feasibility study for the Red Sands project, a two-unit, 40 MW biomass power relocation from', c:'memo ind', span:8},
-    B29:{v:'   Michigan to Arizona; own the financial model and update it with study inputs for independent engineering validation', c:'memo ind', span:8},
-    B30:{v:'— Scoped and procured $400,000 of engineering across three firms covering equipment condition assessment, electrical', c:'memo ind', span:8},
-    B31:{v:'   and interconnection design, site permitting, a Class-3 cost estimate and a lender-grade Independent Engineer report', c:'memo ind', span:8},
-    B32:{v:'— Negotiated exclusive feedstock and offtake rights covering 3 million tons of bioenergy products at zero-cost supply;', c:'memo ind', span:8},
-    B33:{v:'   structured $500M in feedstock agreements and $800M in offtake agreements', c:'memo ind', span:8},
-    B34:{v:'— Directed commercial strategy across five biopower developments ($30–100M each), delivering lender-ready packages', c:'memo ind', span:8},
-    B35:{v:'   covering capital stack, PPA offtake, CAPEX/OPEX, debt service coverage and IRR analysis; the relocation structure', c:'memo ind', span:8},
-    B36:{v:'   yielded a 70% CAPEX reduction and a 140% revenue uplift', c:'memo ind', span:8},
-    B37:{v:'— Manage investor data rooms, diligence trackers and third-party engineering reports across live transactions', c:'memo ind', span:8},
-    B38:{v:'— Invented a patent-pending knowledge graph processor for financial document analysis and institutional lender', c:'memo ind', span:8},
-    B39:{v:'   package preparation', c:'memo ind', span:8},
+  name:'Career', rows:16, cols:[], cells:{
+    D7:{v:'=DATE(2024,3,1)'},  E7:{v:'=TODAY()'},        F7:{v:'=YEARFRAC(D7,E7)',  f:'num1'}, G7:{v:'=F7/F13', f:'pct0'},
+    D8:{v:'=DATE(2018,8,1)'},  E8:{v:'=DATE(2024,3,1)'}, F8:{v:'=YEARFRAC(D8,E8)',  f:'num1'}, G8:{v:'=F8/F13', f:'pct0'},
+    D9:{v:'=DATE(2017,3,1)'},  E9:{v:'=DATE(2018,8,1)'}, F9:{v:'=YEARFRAC(D9,E9)',  f:'num1'}, G9:{v:'=F9/F13', f:'pct0'},
+    D10:{v:'=DATE(2015,5,1)'}, E10:{v:'=DATE(2017,5,1)'},F10:{v:'=YEARFRAC(D10,E10)',f:'num1'},G10:{v:'=F10/F13',f:'pct0'},
+    F12:{v:'=SUM(F7:F10)', f:'num1'},        /* total recorded tenure */
+    F13:{v:'=YEARFRAC(D10,TODAY())', f:'num1'}, /* career span, first start to date */
+    F14:{v:'=MAX(F7:F10)', f:'num1'},
+    F15:{v:'=AVERAGE(F7:F10)', f:'num1'},
   }
 },
 
-/* ─────────────────────────── EXPERIENCE II ───────────────────────── */
+/* ERCOT crowding coefficient — the author's own published result. */
 {
-  name:'Experience II', rows:36,
-  cols:[26, 232, 234, 88, 88, 82, 76, 124, 120],
-  cells:{
-    B2:{v:'EXPERIENCE — DELIVERABLES CONTINUED', c:'title', span:4},
-    B3:{v:'Continuation of the schedule on the Experience sheet.', c:'sub', span:4},
-
-    B5:{v:'Pakira, Inc.', c:'sec', span:6},
-    B6:{v:'Co-Founder & President · Cambridge, MA · August 2018 – March 2024', c:'hdr', span:4},
-    B7:{v:'Venture-backed B2B commodity market analytics platform. MIT FinTech Grand Prize.', c:'memo', span:6},
-    B8:{v:'— Raised over $1M in venture capital at a $12M valuation and led the company through to a successful exit', c:'memo ind', span:8},
-    B9:{v:'— Scaled to 1,000+ paying enterprise clients at 30%+ month-over-month growth; led a 60-person team across product,', c:'memo ind', span:8},
-    B10:{v:'   engineering and data', c:'memo ind', span:8},
-    B11:{v:'— Built quantitative pricing tools, geospatial supply chain modeling and market intelligence infrastructure for the', c:'memo ind', span:8},
-    B12:{v:'   building materials and forest products industries', c:'memo ind', span:8},
-    B13:{v:'— Built and managed a data platform covering 155,000 companies, 300,000 products and 160,000 contacts; reconciled', c:'memo ind', span:8},
-    B14:{v:'   over 1 million records from 300 external sources with standardized quality controls and audit tracking', c:'memo ind', span:8},
-    B15:{v:'— Designed the weekly, monthly and annual reporting infrastructure leadership and investors used to track', c:'memo ind', span:8},
-    B16:{v:'   performance against plan', c:'memo ind', span:8},
-
-    B18:{v:'Forest City Trading Group', c:'sec', span:6},
-    B19:{v:'Commodity Trader · Nashua, NH · March 2017 – August 2018', c:'hdr', span:4},
-    B20:{v:'— Finished top of analyst cohort; grew commodity book of business to over $1M in volume', c:'memo ind', span:8},
-    B21:{v:'— Analyzed physical spreads and real-time pricing to support trade execution, inventory management and position', c:'memo ind', span:8},
-    B22:{v:'   reporting', c:'memo ind', span:8},
-    B23:{v:'— Led deployment of trading and analytics systems supporting 300+ traders managing $6B in commodity flows', c:'memo ind', span:8},
-
-    B25:{v:'Morgan Stanley', c:'sec', span:6},
-    B26:{v:'Financial Analyst · Portsmouth, NH · May 2015 – May 2017', c:'hdr', span:4},
-    B27:{v:'— Conducted financial statement analysis, account reconciliation and investment assessments for institutional and', c:'memo ind', span:8},
-    B28:{v:'   ultra-high-net-worth portfolios', c:'memo ind', span:8},
-    B29:{v:'— Built analytical systems consolidating 18,000+ client records using database and querying tools to identify', c:'memo ind', span:8},
-    B30:{v:'   opportunities', c:'memo ind', span:8},
-    B31:{v:'— Developed standardized weekly and monthly reporting workflows across the team', c:'memo ind', span:8},
-
-    B33:{v:'Board leadership', c:'sec', span:6},
-    B34:{v:'Board Member, Vice President & Stewardship Chair · Big Brothers Big Sisters of NH & VT · 2017–2026', c:'hdr', span:8},
-    B35:{v:'— Advised leadership on a data-driven strategic plan; navigated four mergers; youngest board member ever elected', c:'memo ind', span:8},
+  name:'Research', rows:20, cols:[], cells:{
+    C10:{v:3.17, f:'num2', input:true, min:1, max:6, step:0.01},
+    C11:{v:0.92, f:'pct0'},
+    C12:{v:'=1-C11', f:'pct0'},
   }
 },
 
-/* ─────────────────────────── TRANSACTIONS ────────────────────────── */
+/* Illustrative project inputs. Generic; no live transaction. */
 {
-  name:'Transactions', rows:32,
-  cols:[26, 250, 372, 108, 84, 88, 104],   /* A B C D E F G */
-  mrecords:[{ r0:7, r1:19, title:'B', sub:'C', meta:['D','E','F','G'] }],
-  cells:{
-    B2:{v:'SELECTED TRANSACTIONS & MANDATES', c:'title', span:4},
-    B3:{v:'Sizes as disclosed. Counterparties and commercial terms omitted where confidential.', c:'sub', span:5},
+  name:'Assumptions', rows:44, cols:[], cells:{
+    C9: {v:40,    f:'num0', input:true, min:5,    max:120,  step:1},     /* nameplate MW */
+    C10:{v:0.85,  f:'pct0', input:true, min:0.4,  max:0.95, step:0.01},  /* capacity factor */
+    C11:{v:0.92,  f:'pct0', input:true, min:0.7,  max:0.99, step:0.01},  /* availability */
+    C12:{v:3500,  f:'num0', input:true, min:1500, max:6000, step:50},    /* capex $/kW */
+    C13:{v:25,    f:'num0', input:true, min:10,   max:35,   step:1},     /* project life */
+    C17:{v:95,    f:'num0', input:true, min:40,   max:180,  step:1},     /* PPA $/MWh */
+    C18:{v:0.02,  f:'pct1', input:true, min:0,    max:0.05, step:0.005}, /* escalation */
+    C19:{v:120,   f:'num0', input:true, min:40,   max:250,  step:5},     /* fixed O&M $/kW-yr */
+    C20:{v:28,    f:'num0', input:true, min:5,    max:70,   step:1},     /* variable O&M $/MWh */
+    C24:{v:0.65,  f:'pct0', input:true, min:0,    max:0.85, step:0.01},  /* debt share */
+    C25:{v:0.075, f:'pct1', input:true, min:0.03, max:0.14, step:0.005}, /* interest */
+    C26:{v:18,    f:'num0', input:true, min:5,    max:25,   step:1},     /* tenor */
+    C27:{v:0.09,  f:'pct1', input:true, min:0.05, max:0.16, step:0.005}, /* WACC */
 
-    B5:{v:'Schedule', c:'sec', span:6},
-    B6:{v:'Mandate', c:'hdr'}, C6:{v:'Description', c:'hdr'}, D6:{v:'Period', c:'hdr ctr'},
-    E6:{v:'Size', c:'hdr rt'}, F6:{v:'Unit', c:'hdr ctr'}, G6:{v:'Status', c:'hdr ctr'},
-
-    B7:{v:'Red Sands'}, C7:{v:'Two-unit, 40 MW biomass power relocation, Michigan to Arizona; FEL-2 feasibility lead'},
-      D7:{v:'2024–present', c:'ctr'}, E7:{v:40, f:'num0', c:'hard'}, F7:{v:'MW', c:'note ctr'}, G7:{v:'In progress', c:'ctr'},
-    B8:{v:'Biopower development programme'}, C8:{v:'Commercial strategy across five developments; lender-ready packages, capital stack to IRR'},
-      D8:{v:'2024–present', c:'ctr'}, E8:{v:100, f:'num0', c:'hard'}, F8:{v:'$M each (max)', c:'note ctr'}, G8:{v:'Ongoing', c:'ctr'},
-    B9:{v:'Offtake agreements'}, C9:{v:'Bioenergy offtake structured'},
-      D9:{v:'2024–present', c:'ctr'}, E9:{v:800, f:'num0', c:'hard'}, F9:{v:'$M', c:'note ctr'}, G9:{v:'Structured', c:'ctr'},
-    B10:{v:'Feedstock agreements'}, C10:{v:'Supply agreements structured'},
-      D10:{v:'2024–present', c:'ctr'}, E10:{v:500, f:'num0', c:'hard'}, F10:{v:'$M', c:'note ctr'}, G10:{v:'Structured', c:'ctr'},
-    B11:{v:'Feedstock & offtake rights'}, C11:{v:'Exclusive rights negotiated at zero-cost supply'},
-      D11:{v:'2024', c:'ctr'}, E11:{v:3.0, f:'num1', c:'hard'}, F11:{v:'m tons', c:'note ctr'}, G11:{v:'Closed', c:'ctr'},
-    B12:{v:'Energy & infrastructure book'}, C12:{v:'Development-through-sale underwriting: technology, capex, interconnection, offtake'},
-      D12:{v:'2024–present', c:'ctr'}, E12:{v:1200, f:'num0', c:'hard'}, F12:{v:'$M (max)', c:'note ctr'}, G12:{v:'Ongoing', c:'ctr'},
-    B13:{v:'Engineering procurement'}, C13:{v:'Three firms: condition assessment, electrical and interconnection design, permitting, Class-3 estimate, IE report'},
-      D13:{v:'2024', c:'ctr'}, E13:{v:0.4, f:'num1', c:'hard'}, F13:{v:'$M', c:'note ctr'}, G13:{v:'Closed', c:'ctr'},
-    B14:{v:'Pakira venture raise'}, C14:{v:'Raised at a $12M valuation; led the company through to exit'},
-      D14:{v:'2018–2024', c:'ctr'}, E14:{v:1.0, f:'num1', c:'hard'}, F14:{v:'$M', c:'note ctr'}, G14:{v:'Exited', c:'ctr'},
-    B15:{v:'Pakira client base'}, C15:{v:'1,000+ paying enterprise clients at 30%+ month-over-month growth'},
-      D15:{v:'2018–2024', c:'ctr'}, E15:{v:1000, f:'num0', c:'hard'}, F15:{v:'clients', c:'note ctr'}, G15:{v:'Exited', c:'ctr'},
-    B16:{v:'Pakira data platform'}, C16:{v:'155k companies, 300k products, 160k contacts; 1m+ records merged from 300 sources'},
-      D16:{v:'2018–2024', c:'ctr'}, E16:{v:1.0, f:'num1', c:'hard'}, F16:{v:'m records', c:'note ctr'}, G16:{v:'Delivered', c:'ctr'},
-    B17:{v:'Trading & analytics systems'}, C17:{v:'Deployment supporting 300+ traders managing $6bn in commodity flows'},
-      D17:{v:'2017–2018', c:'ctr'}, E17:{v:6000, f:'num0', c:'hard'}, F17:{v:'$M flows', c:'note ctr'}, G17:{v:'Delivered', c:'ctr'},
-    B18:{v:'Commodity book'}, C18:{v:'Physical spreads and real-time pricing; top of analyst cohort'},
-      D18:{v:'2017–2018', c:'ctr'}, E18:{v:1.0, f:'num1', c:'hard'}, F18:{v:'$M volume', c:'note ctr'}, G18:{v:'Closed', c:'ctr'},
-    B19:{v:'Morgan Stanley analytics'}, C19:{v:'Institutional and UHNW portfolio analysis; 18,000+ client records consolidated'},
-      D19:{v:'2015–2017', c:'ctr'}, E19:{v:18000, f:'num0', c:'hard'}, F19:{v:'records', c:'note ctr'}, G19:{v:'Delivered', c:'ctr'},
-
-    B21:{v:'Portfolio metrics', c:'sec', span:6},
-    B22:{v:'Mandates on schedule', c:'ind'},   C22:{v:'=COUNT(E7:E19)', f:'num0'},
-    B23:{v:'Closed, delivered, structured or exited', c:'ind'},
-      C23:{v:'=COUNTIF(G7:G19,"Closed")+COUNTIF(G7:G19,"Delivered")+COUNTIF(G7:G19,"Exited")+COUNTIF(G7:G19,"Structured")', f:'num0'},
-    B24:{v:'Live mandates', c:'ind'},
-      C24:{v:'=COUNTIF(G7:G19,"In progress")+COUNTIF(G7:G19,"Ongoing")', f:'num0'},
-    B25:{v:'Agreements structured ($M)', c:'ind'}, C25:{v:'=E9+E10', f:'num0'},
-    B26:{v:'Largest disclosed transaction ($M)', c:'ind'}, C26:{v:'=Summary!C15', f:'num0', c:'link'},
-    B27:{v:'Underwriting range ($M)', c:'subtot'},
-      C27:{v:'=Summary!C14&" – "&Summary!C15', c:'subtot link rt'},
-    B28:{v:'Sizes are denominated in different units and are deliberately not summed into a single total.', c:'note', span:5},
+    C31:{v:'=C9*1000', f:'num0'},
+    C32:{v:'=C9*8760*C10*C11', f:'num0'},
+    C33:{v:'=C32/1000', f:'num1'},
+    C34:{v:'=C31*C12/1000000', f:'num1'},
+    C35:{v:'=C34*C24', f:'num1'},
+    C36:{v:'=C34-C35', f:'num1'},
+    C37:{v:'=PMT(C25,C26,C35)', f:'num1'},
+    C38:{v:'=C31*C19/1000000', f:'num1'},
+    C39:{v:'=C32*C20/1000000', f:'num1'},
   }
 },
 
-/* ──────────────────────────── RESEARCH ───────────────────────────── */
+/* Ten-year schedule, valuation, and the tie-out. */
 {
-  name:'Research', rows:34,
-  cols:[26, 320, 104, 116, 92, 92, 92, 92, 92],   /* A B C D E F G H I */
-  mpairs:[{ labelRow:16, valueRow:17, cols:['C','D','E','F','G','H','I'],
-            lsuffix:' GW', vprefix:'$', vsuffix:'/MWh' }],
-  cells:{
-    B2:{v:'SELECTED INDEPENDENT WORK', c:'title', span:4},
-    B3:{v:'Original research and systems built outside mandate work.', c:'sub', span:4},
-    B4:{v:'Reset to base case', c:'link', action:'reset', span:2},
-
-    B5:{v:'ERCOT wholesale power market — crowding coefficient model', c:'sec', span:8},
-    B6:{v:'An original quantitative framework explaining day-ahead to real-time price basis variance in ERCOT as a', c:'memo', span:8},
-    B7:{v:'function of generator zone crowding, supported by an agent-based market simulation built in Python.', c:'memo', span:8},
-
-    C9:{v:'Value', c:'hdr rt'}, D9:{v:'Unit', c:'hdr'},
-    B10:{v:'Crowding coefficient (α)', c:'ind'},      C10:{v:3.17, f:'num2', input:true}, D10:{v:'$/MWh per GW', c:'note'},
-    B11:{v:'Basis variance explained (R²)', c:'ind'}, C11:{v:0.92, f:'pct0', input:true}, D11:{v:'% of observed', c:'note'},
-    B12:{v:'Variance unexplained', c:'subtot'},       C12:{v:'=1-C11', f:'pct0', c:'subtot'}, D12:{v:'% of observed', c:'note subtot'},
-
-    B14:{v:'Implied day-ahead to real-time basis', c:'sec', span:8},
-    B15:{v:'Basis = α × crowding. Zone crowding in GW across the columns; α is editable above.', c:'note', span:8},
-    B16:{v:'Zone crowding (GW)', c:'hdr'},
-    B17:{v:'Implied basis ($/MWh)', c:'subtot'},
-
-    B21:{v:'Patent-pending financial document processor', c:'sec', span:8},
-    B22:{v:'A knowledge graph system that ingests unstructured project finance documents, audits document sets for', c:'memo', span:8},
-    B23:{v:'structural gaps, drafts the missing components, and assembles institutional-grade lender submission packages.', c:'memo', span:8},
-    B25:{v:'Status', c:'ind'},        C25:{v:'Patent application filed; production system deployed', c:'hard', span:4},
-    B26:{v:'Application', c:'ind'},   C26:{v:'Project finance document analysis and lender package preparation', c:'hard', span:4},
-    B27:{v:'Built at', c:'ind'},      C27:{v:'Compass International Trading Group', c:'hard', span:3},
-
-    B30:{v:'Figures on this sheet are the author’s own published results. The basis table below the coefficient is a direct', c:'note', span:8},
-    B31:{v:'application of the stated linear relationship, not a separate estimate.', c:'note', span:8},
-  }
-},
-
-/* ──────────────────────────── EDUCATION ──────────────────────────── */
-{
-  name:'Education', rows:34,
-  cols:[26, 274, 500, 120, 120],   /* A B C D E */
-  cells:{
-    B2:{v:'EDUCATION & ACCREDITATION', c:'title', span:3},
-    B3:{v:'Formal education amortised in full. Continuing education expensed as incurred.', c:'sub', span:3},
-
-    B5:{v:'Formal education', c:'sec', span:4},
-    B6:{v:'Institution', c:'hdr'}, C6:{v:'Qualification', c:'hdr'}, D6:{v:'Result', c:'hdr ctr'}, E6:{v:'Location', c:'hdr'},
-    B7:{v:'University of New Hampshire'}, C7:{v:'B.S. Finance, Quantitative Finance and Business Analytics'},
-      D7:{v:'GPA 3.8', c:'ctr'}, E7:{v:'Durham, NH'},
-
-    B9:{v:'Graduate coursework', c:'sec', span:4},
-    B10:{v:'Institution', c:'hdr'}, C10:{v:'Programme', c:'hdr'}, D10:{v:'Note', c:'hdr ctr'},
-    B11:{v:'MIT'}, C11:{v:'AI Venture Studio'},
-    B12:{v:'MIT'}, C12:{v:'Startup Sandbox'},
-    B13:{v:'MIT'}, C13:{v:'Venture Mentoring Services'},
-    B14:{v:'MassChallenge'}, C14:{v:'Accelerator programme'}, D14:{v:'2 cohorts', c:'ctr'},
-
-    B16:{v:'Recognition', c:'sec', span:4},
-    B17:{v:'MIT FinTech Grand Prize'}, C17:{v:'Awarded to Pakira, Inc.'},
-    B18:{v:'MIT Startup Spotlight'}, C18:{v:'Awarded to Pakira, Inc.'},
-    B19:{v:'FinTech Connect Award'}, C19:{v:'Awarded to Pakira, Inc.'},
-
-    B21:{v:'Technical skills', c:'sec', span:4},
-    B22:{v:'Transaction & structuring'}, C22:{v:'Project finance modeling, underwriting, capital structure analysis, debt sizing and DSCR, waterfall'},
-    B23:{v:'', c:'ind'},                 C23:{v:'modeling, PPA and offtake analysis, valuation, DCF, IRR and equity returns, scenario and'},
-    B24:{v:'', c:'ind'},                 C24:{v:'sensitivity analysis, Monte Carlo simulation'},
-    B25:{v:'Deal execution'},            C25:{v:'Diligence coordination, independent engineering management, data room management, lender and'},
-    B26:{v:'', c:'ind'},                 C26:{v:'investor materials, term negotiation, milestone and capital budget tracking'},
-    B27:{v:'Energy'},                    C27:{v:'Dispatch economics, grid interconnection, PPA and ESA structures, feedstock and supply'},
-    B28:{v:'', c:'ind'},                 C28:{v:'agreements, ERCOT wholesale market mechanics, biopower, solar, storage'},
-    B29:{v:'Technical'},                 C29:{v:'Advanced Excel, Python (pandas, NumPy), SQL, VBA, knowledge graph construction, AI tooling'},
-    B30:{v:'', c:'ind'},                 C30:{v:'for financial analysis'},
-  }
-},
-
-/* ─────────────────────────── ASSUMPTIONS ─────────────────────────── */
-{
-  name:'Assumptions', rows:40,
-  cols:[26, 330, 100, 150, 300],   /* A B C D E */
-  cells:{
-    B2:{v:'ASSUMPTIONS — ILLUSTRATIVE PROJECT', c:'title', span:3},
-    B3:{v:'A generic 40 MW biomass project, sized to be recognisable rather than accurate. It describes no live', c:'sub', span:4},
-    B4:{v:'transaction and contains no confidential terms. Every blue cell is editable — the model recalculates.', c:'sub', span:4},
-    B5:{v:'Reset to base case', c:'link', action:'reset', span:2},
-
-    B7:{v:'Project configuration', c:'sec', span:3},
-    C8:{v:'Input', c:'hdr rt'}, D8:{v:'Unit', c:'hdr'},
-    B9:{v:'Nameplate capacity', c:'ind'},          C9:{v:40, f:'num0', input:true},      D9:{v:'MW', c:'note'},
-    B10:{v:'Capacity factor', c:'ind'},            C10:{v:0.85, f:'pct0', input:true},   D10:{v:'% of nameplate', c:'note'},
-    B11:{v:'Availability', c:'ind'},               C11:{v:0.92, f:'pct0', input:true},   D11:{v:'% of hours', c:'note'},
-    B12:{v:'Capex', c:'ind'},                      C12:{v:3500, f:'num0', input:true},   D12:{v:'$ per kW', c:'note'},
-    B13:{v:'Project life', c:'ind'},               C13:{v:25, f:'num0', input:true},     D13:{v:'years', c:'note'},
-
-    B15:{v:'Commercial assumptions', c:'sec', span:3},
-    C16:{v:'Input', c:'hdr rt'}, D16:{v:'Unit', c:'hdr'},
-    B17:{v:'PPA price, year 1', c:'ind'},          C17:{v:95, f:'num0', input:true},     D17:{v:'$ per MWh', c:'note'},
-    B18:{v:'Escalation', c:'ind'},                 C18:{v:0.02, f:'pct1', input:true},   D18:{v:'% p.a.', c:'note'},
-    B19:{v:'Fixed O&M', c:'ind'},                  C19:{v:120, f:'num0', input:true},    D19:{v:'$ per kW-yr', c:'note'},
-    B20:{v:'Variable O&M and fuel', c:'ind'},      C20:{v:28, f:'num0', input:true},     D20:{v:'$ per MWh', c:'note'},
-
-    B22:{v:'Financing assumptions', c:'sec', span:3},
-    C23:{v:'Input', c:'hdr rt'}, D23:{v:'Unit', c:'hdr'},
-    B24:{v:'Debt share of capex', c:'ind'},        C24:{v:0.65, f:'pct0', input:true},   D24:{v:'% of capex', c:'note'},
-    B25:{v:'Interest rate', c:'ind'},              C25:{v:0.075, f:'pct1', input:true},  D25:{v:'% p.a.', c:'note'},
-    B26:{v:'Debt tenor', c:'ind'},                 C26:{v:18, f:'num0', input:true},     D26:{v:'years', c:'note'},
-    B27:{v:'Discount rate (WACC)', c:'ind'},       C27:{v:0.09, f:'pct1', input:true},   D27:{v:'% p.a.', c:'note'},
-
-    B29:{v:'Derived', c:'sec', span:3},
-    C30:{v:'Value', c:'hdr rt'}, D30:{v:'Unit', c:'hdr'},
-    B31:{v:'Net capacity', c:'ind'},               C31:{v:'=C9*1000', f:'num0'},                 D31:{v:'kW', c:'note'},
-    B32:{v:'Annual generation', c:'ind'},          C32:{v:'=C9*8760*C10*C11', f:'num0'},         D32:{v:'MWh', c:'note'},
-    B33:{v:'Annual generation', c:'ind'},          C33:{v:'=C32/1000', f:'num1'},                D33:{v:'GWh', c:'note'},
-    B34:{v:'Total capex', c:'ind'},                C34:{v:'=C31*C12/1000000', f:'num1'},         D34:{v:'$M', c:'note'},
-    B35:{v:'Debt', c:'ind'},                       C35:{v:'=C34*C24', f:'num1'},                 D35:{v:'$M', c:'note'},
-    B36:{v:'Equity', c:'ind'},                     C36:{v:'=C34-C35', f:'num1'},                 D36:{v:'$M', c:'note'},
-    B37:{v:'Annual debt service', c:'ind'},        C37:{v:'=PMT(C25,C26,C35)', f:'num1'},        D37:{v:'$M', c:'note'},
-    B38:{v:'Year-1 fixed O&M', c:'ind'},           C38:{v:'=C31*C19/1000000', f:'num1'},         D38:{v:'$M', c:'note'},
-    B39:{v:'Year-1 variable O&M and fuel', c:'ind'},C39:{v:'=C32*C20/1000000', f:'num1'},        D39:{v:'$M', c:'note'},
-  }
-},
-
-/* ────────────────────────────── MODEL ────────────────────────────── */
-{
-  name:'Model', rows:48,
-  cols:[26, 244, 86, 74, 74, 74, 74, 74, 74, 74, 74, 74, 74],   /* A B C(yr0) D..M(yrs 1-10) */
-  /* ten year columns cannot fit a phone, so mobile steps through them one at a time */
-  mseries:{ cols:['D','E','F','G','H','I','J','K','L','M'], yearRow:6, label:'Year' },
-  mtables:[{ r0:41, r1:46, cols:['B','C','D','E','F','G'], caption:'Project NPV ($M) — PPA price down the side, capex per kW across' }],
-  cells:{
-    B2:{v:'ILLUSTRATIVE CASH FLOW — YEARS 1 TO 10', c:'title', span:5},
-    B3:{v:'Driven entirely off the Assumptions sheet. Generic project; no live transaction, no confidential terms.', c:'sub', span:7},
-
-    B5:{v:'Operating schedule ($M unless stated)', c:'sec', span:12},
-    B6:{v:'Year', c:'hdr'},
-    B7:{v:'Generation (GWh)', c:'ind'},
-    B8:{v:'PPA price ($/MWh)', c:'ind'},
-    B9:{v:'Revenue', c:'ind'},
-    B10:{v:'Fixed O&M', c:'ind'},
-    B11:{v:'Variable O&M and fuel', c:'ind'},
-    B12:{v:'EBITDA', c:'subtot'},
-    B13:{v:'EBITDA margin', c:'ind'},
-    B14:{v:'Debt service', c:'ind'},
-    B15:{v:'Cash flow after debt service', c:'subtot'},
-    B16:{v:'DSCR', c:'ind'},
-    B17:{v:'Discount factor', c:'ind'},
-    B18:{v:'PV of EBITDA', c:'ind'},
-
-    B20:{v:'Valuation', c:'sec', span:12},
-    B21:{v:'Total capex', c:'ind'},                             C21:{v:'=-Assumptions!C34', f:'num1', c:'link'},
-    B22:{v:'PV of EBITDA, years 1–10', c:'ind'},                C22:{v:'=SUM(D18:M18)', f:'num1'},
-    B23:{v:'Terminal value at year 10 (years 11–25)', c:'ind'},
-      C23:{v:'=M12*(1+Assumptions!C18)*(1-((1+Assumptions!C18)/(1+Assumptions!C27))^(Assumptions!C13-10))/(Assumptions!C27-Assumptions!C18)', f:'num1'},
-    B24:{v:'PV of terminal value', c:'ind'},                    C24:{v:'=C23*M17', f:'num1'},
-    B25:{v:'Project NPV', c:'tot'},                             C25:{v:'=C21+C22+C24', f:'num1', c:'tot'},
-    B26:{v:'Unlevered cash flow', c:'ind'},
-    B27:{v:'Project IRR (unlevered)', c:'tot'},                 C27:{v:'=IRR(C26:M26)', f:'pct1', c:'tot'},
-    B28:{v:'Minimum DSCR, years 1–10', c:'ind'},                C28:{v:'=MIN(D16:M16)', f:'x2'},
-    B29:{v:'Simple payback (years)', c:'ind'},                  C29:{v:'=Assumptions!C34/D12', f:'num1'},
-
-    B31:{v:'Checks', c:'sec', span:12},
-    B32:{v:'Closed-form NPV, 25-year growing annuity', c:'ind'},
-      C32:{v:'=D12*(1-((1+Assumptions!C18)/(1+Assumptions!C27))^Assumptions!C13)/(Assumptions!C27-Assumptions!C18)-Assumptions!C34', f:'num1'},
-    B33:{v:'Schedule NPV', c:'ind'},                            C33:{v:'=C25', f:'num1'},
-    B34:{v:'Difference', c:'subtot'},                           C34:{v:'=C33-C32', f:'num2', c:'subtot'},
-    B35:{v:'Tie-out', c:'ind'},                                 C35:{v:'=IF(ABS(C34)<0.01,"OK","CHECK")', c:'ok ctr'},
-    B36:{v:'The schedule builds ten explicit years plus a terminal value; the closed form values all twenty-five in one', c:'note', span:8},
-    B37:{v:'line. They are the same cash flows, so the difference is zero at every set of assumptions. That is the point.', c:'note', span:8},
-
-    B39:{v:'Sensitivity — project NPV ($M)', c:'sec', span:12},
-    B40:{v:'Rows flex the year-1 PPA price; columns flex capex per kW. Shaded cell is the base case.', c:'note', span:8},
-    B41:{v:'PPA $/MWh ↓   Capex $/kW →', c:'hdr'},
-  }
-},
-
-/* ───────────────────────────── CONTACT ───────────────────────────── */
-{
-  name:'Contact', rows:26,
-  cols:[26, 236, 360, 220],   /* A B C D */
-  cells:{
-    B2:{v:'CONTACT & COVERAGE', c:'title', span:3},
-    B3:{v:'For mandates, coverage, or a copy of the underlying workbook.', c:'sub', span:3},
-
-    B5:{v:'Primary contact', c:'sec', span:3},
-    B6:{v:'Name', c:'ind'},      C6:{v:'Andrew T. Gibson', c:'hard'},
-    B7:{v:'Location', c:'ind'},  C7:{v:'Denver, CO', c:'hard'},
-    B8:{v:'Email', c:'ind'},     C8:{v:'hello@andrewtgibson.com', c:'link', href:'mailto:hello@andrewtgibson.com'},
-    B9:{v:'LinkedIn', c:'ind'},  C9:{v:'linkedin.com/in/andrewthomasgibson', c:'link', href:'https://linkedin.com/in/andrewthomasgibson'},
-    B10:{v:'Website', c:'ind'},  C10:{v:'andrewtgibson.com', c:'link', href:'https://andrewtgibson.com'},
-    B11:{v:'Phone', c:'ind'},    C11:{v:'[on request — add it here if you want it public]', c:'hard'},
-
-    B13:{v:'Coverage', c:'sec', span:3},
-    B14:{v:'Sectors', c:'ind'},              C14:{v:'Biopower, solar, storage, energy and infrastructure assets', c:'hard'},
-    B15:{v:'Focus', c:'ind'},                C15:{v:'Origination, structuring, underwriting, deal execution', c:'hard'},
-    B16:{v:'Transaction range', c:'ind'},    C16:{v:'=Transactions!C27', c:'link rt'}, D16:{v:'$M', c:'note'},
-    B17:{v:'Geography', c:'ind'},            C17:{v:'Denver, CO — national mandates', c:'hard'},
-    B18:{v:'Status', c:'ind'},               C18:{v:'[Set availability]', c:'hard'},
-
-    B20:{v:'Basis of preparation', c:'sec', span:3},
-    B21:{v:'This site is a spreadsheet held together by about five hundred lines of JavaScript. No Excel, no server, no', c:'note', span:3},
-    B22:{v:'analytics, no tracking. Every figure recalculates in your browser, including the deal model on the Model sheet.', c:'note', span:3},
-    B23:{v:'The illustrative project is generic and describes no client, counterparty or live transaction.', c:'note', span:3},
-    B25:{v:'Source available at github.com/Tobombadil/Tobombadil', c:'note link', span:3, href:'https://github.com/Tobombadil/Tobombadil'},
+  name:'Model', rows:48, cols:[], cells:{
+    C21:{v:'=-Assumptions!C34', f:'num1'},
+    C22:{v:'=SUM(D18:M18)', f:'num1'},
+    C23:{v:'=M12*(1+Assumptions!C18)*(1-((1+Assumptions!C18)/(1+Assumptions!C27))^(Assumptions!C13-10))/(Assumptions!C27-Assumptions!C18)', f:'num1'},
+    C24:{v:'=C23*M17', f:'num1'},
+    C25:{v:'=C21+C22+C24', f:'num1'},
+    C27:{v:'=IRR(C26:M26)', f:'pct1'},
+    C28:{v:'=MIN(D16:M16)', f:'x2'},
+    C29:{v:'=Assumptions!C34/D12', f:'num1'},
+    C32:{v:'=D12*(1-((1+Assumptions!C18)/(1+Assumptions!C27))^Assumptions!C13)/(Assumptions!C27-Assumptions!C18)-Assumptions!C34', f:'num1'},
+    C33:{v:'=C25', f:'num1'},
+    C34:{v:'=C33-C32', f:'num2'},
+    C35:{v:'=IF(ABS(C34)<0.01,"OK","CHECK")'},
   }
 },
 ];
 
-/* ---- Build the crowding-basis row on the Research sheet ------------------ */
-(function buildBasis(){
-  const s = SHEETS.find(x => x.name === 'Research');
-  ['C','D','E','F','G','H','I'].forEach((cl, i) => {
-    s.cells[cl + '16'] = { v:(i + 1) * 2, f:'num0', c:'hdr rt' };
-    s.cells[cl + '17'] = { v:`=${cl}16*$C$10`, f:'num2', c:'subtot' };
-  });
-})();
-
-/* ---- Build the Model sheet's year columns (0 to 10) ---------------------- */
+/* ---- the ten year columns, built in a loop ---- */
 (function buildModel(){
   const s = SHEETS.find(x => x.name === 'Model');
   const YC = ['D','E','F','G','H','I','J','K','L','M'];
   const esc = 'Assumptions!C18';
-
-  s.cells['C6']  = { v:0, f:'num0', c:'hdr ctr' };
   s.cells['C26'] = { v:'=-Assumptions!C34', f:'num1' };
-
   YC.forEach((cl, i) => {
-    const prev = i ? YC[i - 1] : null;
-    s.cells[cl + '6']  = { v:i + 1, f:'num0', c:'hdr ctr' };
-    s.cells[cl + '7']  = { v:'=Assumptions!C33', f:'num1' };
-    s.cells[cl + '8']  = prev ? { v:`=${prev}8*(1+${esc})`, f:'num2' } : { v:'=Assumptions!C17', f:'num2' };
-    s.cells[cl + '9']  = { v:`=${cl}7*1000*${cl}8/1000000`, f:'num1' };
-    s.cells[cl + '10'] = prev ? { v:`=${prev}10*(1+${esc})`, f:'num1' } : { v:'=-Assumptions!C38', f:'num1' };
-    s.cells[cl + '11'] = prev ? { v:`=${prev}11*(1+${esc})`, f:'num1' } : { v:'=-Assumptions!C39', f:'num1' };
-    s.cells[cl + '12'] = { v:`=SUM(${cl}9:${cl}11)`, f:'num1', c:'subtot' };
-    s.cells[cl + '13'] = { v:`=${cl}12/${cl}9`, f:'pct0' };
-    s.cells[cl + '14'] = { v:'=-Assumptions!C37', f:'num1' };
-    s.cells[cl + '15'] = { v:`=${cl}12+${cl}14`, f:'num1', c:'subtot' };
-    s.cells[cl + '16'] = { v:`=-${cl}12/${cl}14`, f:'x2' };
-    s.cells[cl + '17'] = { v:`=1/(1+Assumptions!C27)^${cl}6`, f:'num3' };
-    s.cells[cl + '18'] = { v:`=${cl}12*${cl}17`, f:'num1' };
-    /* unlevered cash flow: EBITDA, with the terminal value landing in year 10 */
-    s.cells[cl + '26'] = (i === YC.length - 1)
-      ? { v:`=${cl}12+C23`, f:'num1' }
-      : { v:`=${cl}12`, f:'num1' };
+    const p = i ? YC[i - 1] : null;
+    s.cells[cl+'6']  = { v:i + 1, f:'num0' };
+    s.cells[cl+'7']  = { v:'=Assumptions!C33', f:'num1' };
+    s.cells[cl+'8']  = p ? { v:`=${p}8*(1+${esc})`, f:'num2' } : { v:'=Assumptions!C17', f:'num2' };
+    s.cells[cl+'9']  = { v:`=${cl}7*1000*${cl}8/1000000`, f:'num1' };
+    s.cells[cl+'10'] = p ? { v:`=${p}10*(1+${esc})`, f:'num1' } : { v:'=-Assumptions!C38', f:'num1' };
+    s.cells[cl+'11'] = p ? { v:`=${p}11*(1+${esc})`, f:'num1' } : { v:'=-Assumptions!C39', f:'num1' };
+    s.cells[cl+'12'] = { v:`=SUM(${cl}9:${cl}11)`, f:'num1' };
+    s.cells[cl+'13'] = { v:`=${cl}12/${cl}9`, f:'pct0' };
+    s.cells[cl+'14'] = { v:'=-Assumptions!C37', f:'num1' };
+    s.cells[cl+'15'] = { v:`=${cl}12+${cl}14`, f:'num1' };
+    s.cells[cl+'16'] = { v:`=-${cl}12/${cl}14`, f:'x2' };
+    s.cells[cl+'17'] = { v:`=1/(1+Assumptions!C27)^${cl}6`, f:'num3' };
+    s.cells[cl+'18'] = { v:`=${cl}12*${cl}17`, f:'num1' };
+    s.cells[cl+'26'] = (i === YC.length - 1) ? { v:`=${cl}12+C23`, f:'num1' } : { v:`=${cl}12`, f:'num1' };
   });
 })();
 
-/* ---- Build the 5×5 NPV sensitivity on the Model sheet -------------------- */
+/* ---- 5x5 NPV sensitivity: PPA price down the side, capex per kW across ---- */
 (function buildSensitivity(){
   const s = SHEETS.find(x => x.name === 'Model');
-  const cols = ['C','D','E','F','G'];
-  const flex = [0.8, 0.9, 1, 1.1, 1.2];
+  const cols = ['C','D','E','F','G'], flex = [0.8, 0.9, 1, 1.1, 1.2];
   const A = n => 'Assumptions!' + n;
-
-  cols.forEach((cl, i) => {
-    s.cells[cl + '41'] = { v:`=${A('C12')}*${flex[i]}`, f:'num0', c:'hdr rt' };
-  });
-
+  cols.forEach((cl, i) => { s.cells[cl+'41'] = { v:`=${A('C12')}*${flex[i]}`, f:'num0' }; });
   for (let r = 0; r < 5; r++) {
     const rn = 42 + r;
-    s.cells['B' + rn] = { v:`=${A('C17')}*${flex[r]}`, f:'num0', c:'hdr rt' };
-    cols.forEach((cl, i) => {
-      /* year-1 EBITDA at the flexed PPA price, valued as a 25-year growing
-         annuity, less capex at the flexed $/kW */
+    s.cells['B'+rn] = { v:`=${A('C17')}*${flex[r]}`, f:'num0' };
+    cols.forEach(cl => {
       const ebitda = `(${A('C32')}*$B${rn}/1000000-${A('C31')}*${A('C19')}/1000000-${A('C32')}*${A('C20')}/1000000)`;
-      const annuity = `(1-((1+${A('C18')})/(1+${A('C27')}))^${A('C13')})/(${A('C27')}-${A('C18')})`;
-      const capex = `${A('C31')}*${cl}$41/1000000`;
-      s.cells[cl + rn] = {
-        v: `=${ebitda}*${annuity}-${capex}`,
-        f: 'num0',
-        c: (r === 2 && i === 2) ? 'shade' : ''
-      };
+      const ann = `(1-((1+${A('C18')})/(1+${A('C27')}))^${A('C13')})/(${A('C27')}-${A('C18')})`;
+      s.cells[cl+rn] = { v:`=${ebitda}*${ann}-${A('C31')}*${cl}$41/1000000`, f:'num0' };
     });
   }
 })();
 
-/* ════════════════════════════════════════════════════════════════════════
+/* ---- the ERCOT basis row ---- */
+(function buildBasis(){
+  const s = SHEETS.find(x => x.name === 'Research');
+  ['C','D','E','F','G','H','I'].forEach((cl, i) => {
+    s.cells[cl+'16'] = { v:(i + 1) * 2, f:'num0' };
+    s.cells[cl+'17'] = { v:`=${cl}16*$C$10`, f:'num2' };
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════
    2. FORMULA ENGINE
-   ════════════════════════════════════════════════════════════════════════ */
+   Recursive-descent parser, no eval. Lazy evaluation with memoisation and
+   circular-reference detection. Dates are Excel serials on the 1899-12-30
+   epoch, so date arithmetic behaves as it does in a real workbook.
+   ═══════════════════════════════════════════════════════════════════════ */
 
 const SHEET_BY_NAME = Object.fromEntries(SHEETS.map(s => [s.name, s]));
-const overrides = Object.create(null);   /* "Sheet!REF" -> number typed by the visitor */
+const overrides = Object.create(null);
 let cache = new Map();
 const evalStack = new Set();
 
@@ -770,77 +459,67 @@ const EPOCH = Date.UTC(1899, 11, 30);
 const serial = (y, m, d) => Math.round((Date.UTC(y, m - 1, d) - EPOCH) / 864e5);
 const fromSerial = s => new Date(EPOCH + Math.round(s) * 864e5);
 const todaySerial = () => { const n = new Date(); return serial(n.getFullYear(), n.getMonth() + 1, n.getDate()); };
-
 const colLetter = i => { let s = '', n = i + 1; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
 const colIndex = L => { let n = 0; for (const ch of L) n = n * 26 + (ch.charCodeAt(0) - 64); return n - 1; };
 
-/* ---- tokenizer ---- */
-const RE_NUM  = /^\d+(?:\.\d+)?/;
-const RE_STR  = /^"([^"]*)"/;
-const RE_REF  = /^(?:([A-Za-z][A-Za-z0-9_]*)!)?\$?([A-Z]{1,2})\$?(\d{1,4})(?![A-Za-z0-9_])/;
-const RE_ID   = /^[A-Za-z][A-Za-z0-9_.]*/;
-const RE_OP   = /^(<=|>=|<>|[+\-*/^&(),:<>=])/;
+const RE_NUM = /^\d+(?:\.\d+)?/;
+const RE_STR = /^"([^"]*)"/;
+const RE_REF = /^(?:([A-Za-z][A-Za-z0-9_]*)!)?\$?([A-Z]{1,2})\$?(\d{1,4})(?![A-Za-z0-9_])/;
+const RE_ID  = /^[A-Za-z][A-Za-z0-9_.]*/;
+const RE_OP  = /^(<=|>=|<>|[+\-*/^&(),:<>=])/;
 
 function tokenize(src) {
-  const out = [];
-  let s = src;
+  const out = []; let s = src;
   while (s.length) {
     if (/^\s/.test(s)) { s = s.replace(/^\s+/, ''); continue; }
     let m;
-    if ((m = RE_STR.exec(s))) { out.push({ t: 'str', v: m[1] }); s = s.slice(m[0].length); continue; }
-    if ((m = RE_NUM.exec(s))) { out.push({ t: 'num', v: parseFloat(m[0]) }); s = s.slice(m[0].length); continue; }
-    if ((m = RE_REF.exec(s))) { out.push({ t: 'ref', sheet: m[1] || null, col: m[2], row: +m[3] }); s = s.slice(m[0].length); continue; }
-    if ((m = RE_ID.exec(s)))  { out.push({ t: 'id', v: m[0].toUpperCase() }); s = s.slice(m[0].length); continue; }
-    if ((m = RE_OP.exec(s)))  { out.push({ t: 'op', v: m[0] }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_STR.exec(s))) { out.push({ t:'str', v:m[1] }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_NUM.exec(s))) { out.push({ t:'num', v:parseFloat(m[0]) }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_REF.exec(s))) { out.push({ t:'ref', sheet:m[1] || null, col:m[2], row:+m[3] }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_ID.exec(s)))  { out.push({ t:'id', v:m[0].toUpperCase() }); s = s.slice(m[0].length); continue; }
+    if ((m = RE_OP.exec(s)))  { out.push({ t:'op', v:m[0] }); s = s.slice(m[0].length); continue; }
     throw new Error('#SYNTAX!');
   }
   return out;
 }
 
-/* ---- functions ---- */
-const flat = args => args.flatMap(a => Array.isArray(a) ? a : [a]);
-const nums = args => flat(args).filter(v => typeof v === 'number' && isFinite(v));
+const flat = a => a.flatMap(x => Array.isArray(x) ? x : [x]);
+const nums = a => flat(a).filter(v => typeof v === 'number' && isFinite(v));
 
 const FN = {
-  SUM:  a => nums(a).reduce((x, y) => x + y, 0),
+  SUM:a => nums(a).reduce((x, y) => x + y, 0),
   COUNT:a => nums(a).length,
-  AVERAGE: a => { const n = nums(a); return n.length ? n.reduce((x, y) => x + y, 0) / n.length : 0; },
-  MAX:  a => { const n = nums(a); return n.length ? Math.max(...n) : 0; },
-  MIN:  a => { const n = nums(a); return n.length ? Math.min(...n) : 0; },
-  ABS:  a => Math.abs(+a[0]),
+  AVERAGE:a => { const n = nums(a); return n.length ? n.reduce((x, y) => x + y, 0) / n.length : 0; },
+  MAX:a => { const n = nums(a); return n.length ? Math.max(...n) : 0; },
+  MIN:a => { const n = nums(a); return n.length ? Math.min(...n) : 0; },
+  ABS:a => Math.abs(+a[0]),
   ROUND:a => { const p = Math.pow(10, a[1] === undefined ? 0 : +a[1]); return Math.round(+a[0] * p) / p; },
-  IF:   a => (a[0] ? a[1] : a[2] !== undefined ? a[2] : false),
-  REPT: a => String(a[0]).repeat(Math.max(0, Math.min(200, Math.round(+a[1] || 0)))),
+  IF:a => (a[0] ? a[1] : a[2] !== undefined ? a[2] : false),
+  REPT:a => String(a[0]).repeat(Math.max(0, Math.min(200, Math.round(+a[1] || 0)))),
   TODAY:() => todaySerial(),
-  DATE: a => serial(+a[0], +a[1], +a[2]),
-  YEAR: a => fromSerial(+a[0]).getUTCFullYear(),
+  DATE:a => serial(+a[0], +a[1], +a[2]),
+  YEAR:a => fromSerial(+a[0]).getUTCFullYear(),
   MONTH:a => fromSerial(+a[0]).getUTCMonth() + 1,
-  YEARFRAC: a => (+a[1] - +a[0]) / 365.25,
-  SUMPRODUCT: a => {
+  YEARFRAC:a => (+a[1] - +a[0]) / 365.25,
+  SUMPRODUCT:a => {
     const arrs = a.map(x => Array.isArray(x) ? x : [x]);
     const len = Math.min(...arrs.map(x => x.length));
-    let total = 0;
-    for (let i = 0; i < len; i++) total += arrs.reduce((p, x) => p * (typeof x[i] === 'number' ? x[i] : 0), 1);
-    return total;
+    let t = 0;
+    for (let i = 0; i < len; i++) t += arrs.reduce((p, x) => p * (typeof x[i] === 'number' ? x[i] : 0), 1);
+    return t;
   },
-  COUNTIF: a => {
+  COUNTIF:a => {
     const range = Array.isArray(a[0]) ? a[0] : [a[0]];
     const crit = String(a[1]).toLowerCase();
     return range.filter(v => String(v).toLowerCase() === crit).length;
   },
-  /* level payment on an amortising loan, returned positive */
-  PMT: a => {
+  PMT:a => {
     const r = +a[0], n = +a[1], pv = +a[2];
     if (!isFinite(r) || !isFinite(n) || n <= 0) return NaN;
     return r === 0 ? pv / n : pv * r / (1 - Math.pow(1 + r, -n));
   },
-  /* Excel convention: cash flows begin at the end of period 1 */
-  NPV: a => {
-    const r = +a[0];
-    return nums(a.slice(1)).reduce((s, c, i) => s + c / Math.pow(1 + r, i + 1), 0);
-  },
-  /* bisection; cash flows begin at period 0 */
-  IRR: a => {
+  NPV:a => { const r = +a[0]; return nums(a.slice(1)).reduce((s, c, i) => s + c / Math.pow(1 + r, i + 1), 0); },
+  IRR:a => {
     const cf = nums(a);
     if (cf.length < 2) return NaN;
     const npv = r => cf.reduce((s, c, i) => s + c / Math.pow(1 + r, i), 0);
@@ -855,7 +534,6 @@ const FN = {
   },
 };
 
-/* ---- recursive-descent parser / evaluator ---- */
 function evaluate(src, ctxSheet) {
   const tk = tokenize(src);
   let p = 0;
@@ -872,11 +550,7 @@ function evaluate(src, ctxSheet) {
     if (t.t === 'op' && t.v === '+') { p++; return primary(); }
     if (t.t === 'ref') {
       p++;
-      if (isOp(':') && tk[p + 1] && tk[p + 1].t === 'ref') {
-        p++;
-        const b = tk[p++];
-        return readRange(t, b, ctxSheet);
-      }
+      if (isOp(':') && tk[p + 1] && tk[p + 1].t === 'ref') { p++; const b = tk[p++]; return readRange(t, b, ctxSheet); }
       return readCell(t.sheet || ctxSheet, t.col + t.row);
     }
     if (t.t === 'id') {
@@ -893,13 +567,13 @@ function evaluate(src, ctxSheet) {
     }
     throw new Error('#SYNTAX!');
   }
-  function power()  { let v = primary(); while (isOp('^')) { p++; v = Math.pow(v, primary()); } return v; }
-  function term()   { let v = power(); while (isOp('*') || isOp('/')) { const o = peek().v; p++; const r = power(); v = o === '*' ? v * r : (r === 0 ? NaN : v / r); } return v; }
-  function add()    { let v = term(); while (isOp('+') || isOp('-')) { const o = peek().v; p++; const r = term(); v = o === '+' ? v + r : v - r; } return v; }
-  function concat() { let v = add(); while (isOp('&')) { p++; v = fmtConcat(v) + fmtConcat(add()); } return v; }
+  function power(){ let v = primary(); while (isOp('^')) { p++; v = Math.pow(v, primary()); } return v; }
+  function term(){ let v = power(); while (isOp('*') || isOp('/')) { const o = peek().v; p++; const r = power(); v = o === '*' ? v * r : (r === 0 ? NaN : v / r); } return v; }
+  function add(){ let v = term(); while (isOp('+') || isOp('-')) { const o = peek().v; p++; const r = term(); v = o === '+' ? v + r : v - r; } return v; }
+  function concat(){ let v = add(); while (isOp('&')) { p++; v = fmtConcat(v) + fmtConcat(add()); } return v; }
   function expr() {
     let v = concat();
-    while (peek() && peek().t === 'op' && ['<', '>', '=', '<=', '>=', '<>'].includes(peek().v)) {
+    while (peek() && peek().t === 'op' && ['<','>','=','<=','>=','<>'].includes(peek().v)) {
       const o = peek().v; p++; const r = concat();
       v = o === '<' ? v < r : o === '>' ? v > r : o === '=' ? v === r
         : o === '<=' ? v <= r : o === '>=' ? v >= r : v !== r;
@@ -915,8 +589,7 @@ const fmtConcat = v => typeof v === 'number' ? group(v, Math.abs(v % 1) > 1e-9 ?
 
 function readRange(a, b, ctxSheet) {
   const sheet = a.sheet || ctxSheet;
-  const c1 = colIndex(a.col), c2 = colIndex(b.col);
-  const r1 = a.row, r2 = b.row;
+  const c1 = colIndex(a.col), c2 = colIndex(b.col), r1 = a.row, r2 = b.row;
   const out = [];
   for (let r = Math.min(r1, r2); r <= Math.max(r1, r2); r++)
     for (let c = Math.min(c1, c2); c <= Math.max(c1, c2); c++)
@@ -951,26 +624,19 @@ function readCell(sheetName, ref) {
   return val;
 }
 
-/* ════════════════════════════════════════════════════════════════════════
-   3. NUMBER FORMATTING
-   ════════════════════════════════════════════════════════════════════════ */
-
+/* ---- formatting ---- */
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
 function group(v, dec) {
-  const s = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
-  /* a residual that rounds to zero is zero — never show it in parentheses */
+  const s = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits:dec, maximumFractionDigits:dec });
   const neg = v < 0 && parseFloat(s.replace(/,/g, '')) !== 0;
   return neg ? '(' + s + ')' : s;
 }
-
 function formatValue(v, f) {
   if (typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
   if (typeof v === 'string') return v;
   if (v === null || v === undefined) return '';
   if (typeof v !== 'number' || !isFinite(v)) return '—';
   switch (f) {
-    case 'yr':   return String(Math.round(v));
     case 'num0': return group(v, 0);
     case 'num1': return group(v, 1);
     case 'num2': return group(v, 2);
@@ -980,708 +646,800 @@ function formatValue(v, f) {
     case 'pct1': return group(v * 100, 1) + '%';
     case 'usd':  return '$' + group(v, 0);
     case 'date': { const d = fromSerial(v); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
-    case 'mmmyy':{ const d = fromSerial(v); return MONTHS[d.getUTCMonth()] + '-' + String(d.getUTCFullYear()).slice(2); }
-    case 'yr2':  return String(fromSerial(v).getUTCFullYear());
+    case 'mmmyy':{ const d = fromSerial(v); return MONTHS[d.getUTCMonth()] + ' ’' + String(d.getUTCFullYear()).slice(2); }
     default:     return group(v, Math.abs(v % 1) > 1e-9 ? 1 : 0);
   }
 }
+const val = (sheet, ref) => readCell(sheet, ref);
+const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_NAME[sheet].cells[ref] || {}).f);
 
-/* ════════════════════════════════════════════════════════════════════════
-   4. RENDER
-   ════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   3. CONTENT — the prose the workbook has no opinion about.
+   ═══════════════════════════════════════════════════════════════════════ */
 
-const viewport = document.getElementById('viewport');
-const tabbar   = document.getElementById('tabbar');
-const namebox  = document.getElementById('namebox');
-const formula  = document.getElementById('formula');
+const SITE = {
+  name:'Andrew T. Gibson',
+  role:'Energy Project Finance · Transaction Structuring & Underwriting · Origination',
+  location:'Denver, CO',
+  email:'hello@andrewtgibson.com',
+  linkedin:'https://linkedin.com/in/andrewthomasgibson',
+  site:'https://andrewtgibson.com',
+  repo:'https://github.com/Tobombadil/Tobombadil',
+  lede:'Project finance professional with a decade across energy infrastructure, physical commodity markets and quantitative analytics. Originates, structures and underwrites energy transactions from development through close — project economics, capital structure, offtake pricing and return sensitivities — then runs the diligence, independent engineering, data rooms and lender materials that carry a project to financing. Morgan Stanley trained; negotiates commercial terms as well as models them.',
 
-const ROWHEAD_W = 34;   /* must match --rh in the stylesheet */
-const state = { sheet: SHEETS[0].name, ref: 'B2', editing: false };
-const grids = {};   /* sheet -> { el, map: {ref: td}, cellAt: [r][c] -> td, rows, cols } */
+  jobs:[
+    { row:7, title:'Principal', co:'Compass International Trading Group', where:'Denver, CO', span:'March 2024 – present',
+      note:'Energy and infrastructure deal origination, structuring and underwriting.',
+      bullets:[
+        'Build and own transaction models across dozens of energy and infrastructure projects ($50M–$1.2B), underwriting assets from development through sale across technology, capex, interconnection and offtake structure.',
+        'Lead the FEL-2 feasibility study for the Red Sands project, a two-unit, 40 MW biomass power relocation from Michigan to Arizona; own the financial model and update it with study inputs for independent engineering validation.',
+        'Scoped and procured $400,000 of engineering across three firms covering equipment condition assessment, electrical and interconnection design, site permitting, a Class-3 cost estimate and a lender-grade Independent Engineer report.',
+        'Negotiated exclusive feedstock and offtake rights covering 3 million tons of bioenergy products at zero-cost supply; structured $500M in feedstock agreements and $800M in offtake agreements.',
+        'Directed commercial strategy across five biopower developments ($30–100M each), delivering lender-ready packages covering capital stack, PPA offtake, CAPEX/OPEX, debt service coverage and IRR analysis; the relocation structure yielded a 70% capex reduction and a 140% revenue uplift.',
+        'Manage investor data rooms, diligence trackers and third-party engineering reports across live transactions.',
+        'Invented a patent-pending knowledge graph processor for financial document analysis and institutional lender package preparation.',
+      ] },
+    { row:8, title:'Co-Founder & President', co:'Pakira, Inc.', where:'Cambridge, MA', span:'August 2018 – March 2024',
+      note:'Venture-backed B2B commodity market analytics platform. MIT FinTech Grand Prize.',
+      bullets:[
+        'Raised over $1M in venture capital at a $12M valuation and led the company through to a successful exit.',
+        'Scaled to 1,000+ paying enterprise clients at 30%+ month-over-month growth; led a 60-person team across product, engineering and data.',
+        'Built quantitative pricing tools, geospatial supply chain modeling and market intelligence infrastructure for the building materials and forest products industries.',
+        'Built and managed a data platform covering 155,000 companies, 300,000 products and 160,000 contacts; reconciled over 1 million records from 300 external sources with standardized quality controls and audit tracking.',
+        'Designed the weekly, monthly and annual reporting infrastructure leadership and investors used to track performance against plan.',
+      ] },
+    { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'March 2017 – August 2018',
+      bullets:[
+        'Finished top of analyst cohort; grew commodity book of business to over $1M in volume.',
+        'Analyzed physical spreads and real-time pricing to support trade execution, inventory management and position reporting.',
+        'Led deployment of trading and analytics systems supporting 300+ traders managing $6B in commodity flows.',
+      ] },
+    { row:10, title:'Financial Analyst', co:'Morgan Stanley', where:'Portsmouth, NH', span:'May 2015 – May 2017',
+      bullets:[
+        'Conducted financial statement analysis, account reconciliation and investment assessments for institutional and ultra-high-net-worth portfolios.',
+        'Built analytical systems consolidating 18,000+ client records using database and querying tools to identify opportunities.',
+        'Developed standardized weekly and monthly reporting workflows across the team.',
+      ] },
+  ],
 
-function buildSheet(sh) {
-  const table = document.createElement('table');
-  table.dataset.sheet = sh.name;
+  deals:[
+    ['Red Sands','Two-unit, 40 MW biomass power relocation, Michigan to Arizona; FEL-2 feasibility lead','2024–','40 MW','In progress',1],
+    ['Biopower development programme','Commercial strategy across five developments; lender-ready packages from capital stack to IRR','2024–','$30–100M each','Ongoing',1],
+    ['Offtake agreements','Bioenergy offtake structured','2024–','$800M','Structured',0],
+    ['Feedstock agreements','Supply agreements structured','2024–','$500M','Structured',0],
+    ['Feedstock & offtake rights','Exclusive rights negotiated at zero-cost supply','2024','3.0m tons','Closed',0],
+    ['Energy & infrastructure book','Development-through-sale underwriting: technology, capex, interconnection, offtake','2024–','$50M–$1.2B','Ongoing',1],
+    ['Engineering procurement','Three firms: condition assessment, electrical and interconnection design, permitting, Class-3 estimate, IE report','2024','$0.4M','Closed',0],
+    ['Pakira venture raise','Raised at a $12M valuation; led the company through to exit','2018–2024','$1.0M','Exited',0],
+    ['Pakira client base','1,000+ paying enterprise clients at 30%+ month-over-month growth','2018–2024','1,000+ clients','Exited',0],
+    ['Pakira data platform','155k companies, 300k products, 160k contacts; 1m+ records merged from 300 sources','2018–2024','1m+ records','Delivered',0],
+    ['Trading & analytics systems','Deployment supporting 300+ traders managing $6bn in commodity flows','2017–2018','$6B flows','Delivered',0],
+    ['Commodity book','Physical spreads and real-time pricing; top of analyst cohort','2017–2018','$1M volume','Closed',0],
+    ['Morgan Stanley analytics','Institutional and UHNW portfolio analysis; 18,000+ client records consolidated','2015–2017','18,000+ records','Delivered',0],
+  ],
 
-  const cg = document.createElement('colgroup');
-  const head = document.createElement('col'); head.style.width = ROWHEAD_W + 'px'; cg.appendChild(head);
-  sh.cols.forEach(() => cg.appendChild(document.createElement('col')));
-  table.appendChild(cg);
-
-  const thead = document.createElement('thead');
-  const hr = document.createElement('tr');
-  const corner = document.createElement('th'); corner.className = 'colhead corner'; hr.appendChild(corner);
-  sh.cols.forEach((_, i) => { const th = document.createElement('th'); th.className = 'colhead'; th.textContent = colLetter(i); hr.appendChild(th); });
-  thead.appendChild(hr); table.appendChild(thead);
-
-  const tbody = document.createElement('tbody');
-  const map = {}, cellAt = [];
-  for (let r = 1; r <= sh.rows; r++) {
-    const tr = document.createElement('tr');
-    const th = document.createElement('th'); th.className = 'rowhead'; th.textContent = r; tr.appendChild(th);
-    cellAt[r] = [];
-    let skip = 0;
-    for (let c = 0; c < sh.cols.length; c++) {
-      const ref = colLetter(c) + r;
-      if (skip > 0) { skip--; cellAt[r][c] = cellAt[r][c - 1]; continue; }
-      const def = sh.cells[ref];
-      const td = document.createElement('td');
-      td.className = 'cell';
-      td.dataset.ref = ref;
-      td.dataset.sheet = sh.name;
-      if (def) {
-        if (def.c)  td.className += ' ' + def.c;
-        if (def.input)  td.className += ' in';
-        if (def.action) td.dataset.action = def.action;
-        if (def.span && def.span > 1) {
-          const span = Math.min(def.span, sh.cols.length - c);
-          td.colSpan = span;
-          skip = span - 1;
-        }
-      }
-      /* column B is the label column: freeze it, unless it spans the grid */
-      if (c === 1 && td.colSpan === 1) td.classList.add('stick');
-
-      tr.appendChild(td);
-      map[ref] = td;
-      cellAt[r][c] = td;
-    }
-    tbody.appendChild(tr);
-  }
-  table.appendChild(tbody);
-  grids[sh.name] = { el: table, map, cellAt, rows: sh.rows, cols: sh.cols.length };
-  return table;
-}
-
-/* Column widths are applied here rather than baked into the colgroup, so a phone
-   gets a narrower grid than a desktop without changing the content model.
-   Spacer columns keep their width; everything else scales, and the frozen label
-   column is capped so it can never eat the whole screen. */
-function applyWidths() {
-  const vw = window.innerWidth;
-  const narrow = vw <= 720;
-  const labelCap = Math.round(vw * 0.54);
-  for (const sh of SHEETS) {
-    const g = grids[sh.name];
-    const cols = g.el.querySelectorAll('colgroup col');
-    let total = ROWHEAD_W;
-    sh.cols.forEach((w, i) => {
-      let out = w;
-      if (narrow && w > 30) {
-        out = Math.max(54, Math.round(w * 0.74));
-        if (i === 1) out = Math.min(out, labelCap);        /* the frozen label column */
-        else out = Math.min(out, Math.round(vw * 0.62));
-      }
-      cols[i + 1].style.width = out + 'px';
-      total += out;
-    });
-    /* The table must carry its own width. Left to shrink-to-fit, table-layout:fixed
-       compresses every column to squeeze the grid into the viewport, which both
-       breaks the frozen column's offset and makes the numbers unreadable. */
-    g.el.style.width = total + 'px';
-  }
-}
-
-function updateScrollHint() {
-  const hint = document.getElementById('scrollhint');
-  if (!hint) return;
-  const more = viewport.scrollWidth - viewport.clientWidth - viewport.scrollLeft;
-  hint.classList.toggle('on', more > 4);
-  viewport.classList.toggle('scrolled', viewport.scrollLeft > 2);
-}
-
-function paint() {
-  cache = new Map();
-  for (const sh of SHEETS) {
-    const g = grids[sh.name];
-    for (const ref in g.map) {
-      const td = g.map[ref];
-      if (td.dataset.editing === '1') continue;
-      const def = sh.cells[ref];
-      const val = readCell(sh.name, ref);
-      const raw = rawOf(sh.name, ref);
-      const isNum = typeof val === 'number';
-      const text = (raw === '' || raw === null || raw === undefined) ? '' : formatValue(val, def && def.f);
-
-      td.classList.toggle('rt', isNum && !(def && /ctr/.test(def.c || '')));
-
-      if (def && def.href) {
-        td.textContent = '';
-        const a = document.createElement('a');
-        a.href = def.href;
-        a.textContent = text;
-        if (/^https?:/.test(def.href)) { a.target = '_blank'; a.rel = 'noopener'; }
-        td.appendChild(a);
-      } else {
-        td.textContent = text;
-      }
-    }
-  }
-  paintMobile();
-}
-
-function buildTabs() {
-  SHEETS.forEach(sh => {
-    const b = document.createElement('button');
-    b.className = 'tab';
-    b.type = 'button';
-    b.role = 'tab';
-    b.textContent = sh.name;
-    b.dataset.sheet = sh.name;
-    b.addEventListener('click', () => showSheet(sh.name));
-    tabbar.appendChild(b);
-  });
-  const status = document.createElement('div');
-  status.className = 'status';
-  status.id = 'status';
-  tabbar.appendChild(status);
-}
-
-function showSheet(name) {
-  state.sheet = name;
-  for (const sh of SHEETS) grids[sh.name].el.style.display = (sh.name === name ? '' : 'none');
-  mobileRoot.querySelectorAll('.msheet').forEach(m =>
-    m.classList.toggle('on', m.dataset.sheet === name));
-  tabbar.querySelectorAll('.tab').forEach(t => {
-    const sel = t.dataset.sheet === name;
-    t.setAttribute('aria-selected', String(sel));
-    if (sel) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  });
-  select(name, firstContentRef(name), false);
-  viewport.scrollTop = 0;
-  viewport.scrollLeft = 0;
-  mobileRoot.scrollTop = 0;
-  namebox.textContent = name;
-  formula.textContent = matchMedia('(max-width:720px)').matches ? 'Tap a row to read its formula' : '';
-  formula.classList.remove('is-formula');
-  updateScrollHint();
-}
-
-function firstContentRef(name) {
-  const refs = Object.keys(SHEET_BY_NAME[name].cells);
-  return refs.length ? refs[0] : 'A1';
-}
-
-/* ════════════════════════════════════════════════════════════════════════
-   4b. MOBILE VIEW
-   The same sheet data, rendered as stacked collapsible groups. A phone cannot
-   show a 1,100px grid without endless sideways scrolling, so below 720px the
-   grid is replaced rather than squeezed. Values stay live — everything reads
-   through the same engine.
-   ════════════════════════════════════════════════════════════════════════ */
-
-const mobileRoot = document.createElement('div');
-mobileRoot.className = 'mobile';
-mobileRoot.id = 'mobile';
-
-const mstate = { year: 0 };   /* index into a sheet's mseries.cols */
-
-const hasClass = (def, k) => !!(def && def.c && def.c.split(/\s+/).includes(k));
-const cellStr  = (sheet, ref) => {
-  const sh = SHEET_BY_NAME[sheet], def = sh.cells[ref];
-  if (!def) return '';
-  const raw = rawOf(sheet, ref);
-  if (raw === '' || raw === null || raw === undefined) return '';
-  return formatValue(readCell(sheet, ref), def.f);
+  education:[
+    ['University of New Hampshire','B.S. Finance, Quantitative Finance & Business Analytics — GPA 3.8'],
+    ['MIT','AI Venture Studio · Startup Sandbox · Venture Mentoring Services'],
+    ['MassChallenge','Accelerator, two cohorts'],
+  ],
+  awards:[
+    ['MIT FinTech Grand Prize','Pakira, Inc.'],
+    ['MIT Startup Spotlight','Pakira, Inc.'],
+    ['FinTech Connect Award','Pakira, Inc.'],
+  ],
+  skills:[
+    ['Transaction & structuring','Project finance modeling, underwriting, capital structure analysis, debt sizing and DSCR, waterfall modeling, PPA and offtake analysis, valuation, DCF, IRR and equity returns, scenario and sensitivity analysis, Monte Carlo simulation'],
+    ['Deal execution','Diligence coordination, independent engineering management, data room management, lender and investor materials, term negotiation, milestone and capital budget tracking'],
+    ['Energy','Dispatch economics, grid interconnection, PPA and ESA structures, feedstock and supply agreements, ERCOT wholesale market mechanics, biopower, solar, storage'],
+    ['Technical','Advanced Excel, Python (pandas, NumPy), SQL, VBA, knowledge graph construction, AI tooling for financial analysis'],
+  ],
+  board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire & Vermont', span:'2017 – 2026',
+          note:'Advised leadership on a data-driven strategic plan; navigated four mergers; youngest board member ever elected.' },
 };
 
-function mkValue(sheet, ref) {
-  const def = SHEET_BY_NAME[sheet].cells[ref];
-  const el = document.createElement('span');
-  el.className = 'mv' + (hasClass(def, 'link') ? ' link' : '') + (hasClass(def, 'hard') ? ' hard' : '');
-  el.dataset.ms = sheet; el.dataset.mr = ref;
-  return el;
+const SECTIONS = [
+  ['track','Track record'], ['experience','Experience'], ['transactions','Transactions'],
+  ['research','Research'], ['model','Live model'], ['background','Background'], ['contact','Contact'],
+];
+
+/* ═══════════════════════════════════════════════════════════════════════
+   4. VIEW
+   ═══════════════════════════════════════════════════════════════════════ */
+
+const $ = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const main = document.getElementById('main');
+const fref = document.getElementById('fref'), ftext = document.getElementById('ftext');
+
+/* A figure wired to the workbook. It knows its own cell, so it can show its formula. */
+function cell(sheet, ref, opts = {}) {
+  const e = $(opts.tag || 'span', (opts.cls || '') + ' ' + (opts.kind || 'calc'));
+  e.dataset.cell = sheet + '!' + ref;
+  if (opts.f) e.dataset.f = opts.f;
+  e.tabIndex = 0;
+  return e;
 }
 
-function buildMobileSheet(sh) {
-  const wrap = document.createElement('div');
-  wrap.className = 'msheet';
-  wrap.dataset.sheet = sh.name;
-
-  const skip = new Set(sh.mskip || []);
-  const consumed = new Set();
-  (sh.mrecords || []).forEach(r => { for (let i = r.r0; i <= r.r1; i++) consumed.add(i); });
-  (sh.mtables  || []).forEach(t => { for (let i = t.r0; i <= t.r1; i++) consumed.add(i); });
-  (sh.mpairs   || []).forEach(p => { consumed.add(p.labelRow); consumed.add(p.valueRow); });
-  if (sh.mseries) consumed.add(sh.mseries.yearRow);
-
-  const head = document.createElement('div'); head.className = 'mhead';
-  wrap.appendChild(head);
-
-  let group = null, body = null, count = 0;
-  const closeGroup = () => {
-    if (!group) return;
-    const prose = body.querySelectorAll('.mprose').length;
-    const rows  = body.children.length;
-    if (prose > 4 && prose >= rows - 1) {                 /* long prose blocks start folded */
-      group.dataset.open = '0';
-      group.querySelector('.cnt').textContent = prose + ' lines';
-    }
-    if (!rows) group.remove();
-    group = null; body = null;
-  };
-  const openGroup = title => {
-    closeGroup();
-    group = document.createElement('section');
-    group.className = 'mgrp'; group.dataset.open = '1';
-    const btn = document.createElement('button');
-    btn.className = 'mgh'; btn.type = 'button';
-    btn.setAttribute('aria-expanded', 'true');
-    btn.innerHTML = '<span class="ttl"></span><span class="cnt"></span><span class="chev">▼</span>';
-    btn.querySelector('.ttl').textContent = title;
-    btn.addEventListener('click', () => {
-      const open = group2 => group2.dataset.open === '1';
-      const g = btn.parentElement;
-      g.dataset.open = open(g) ? '0' : '1';
-      btn.setAttribute('aria-expanded', String(g.dataset.open === '1'));
-    });
-    body = document.createElement('div'); body.className = 'mgb';
-    group.appendChild(btn); group.appendChild(body);
-    wrap.appendChild(group);
-    count++;
-  };
-  const put = el => (body || head).appendChild(el);
-
-  /* ---- the row-by-row walk ---- */
-  for (let r = 1; r <= sh.rows; r++) {
-    if (consumed.has(r)) { renderBlocks(r); continue; }
-
-    const cells = [];
-    for (let c = 0; c < sh.cols.length; c++) {
-      const L = colLetter(c);
-      if (skip.has(L)) continue;
-      const ref = L + r;
-      if (sh.cells[ref]) cells.push({ L, c, ref, def: sh.cells[ref] });
-    }
-    if (!cells.length) continue;
-
-    const first = cells[0], d = first.def;
-    const txt = cellStr(sh.name, first.ref);
-
-    if (hasClass(d, 'title')) {
-      const e = document.createElement('div'); e.className = 'mtitle'; e.textContent = txt; head.appendChild(e); continue;
-    }
-    if (hasClass(d, 'sub')) {
-      const e = document.createElement('div'); e.className = 'msub'; e.textContent = txt; head.appendChild(e); continue;
-    }
-    if (hasClass(d, 'sec')) { openGroup(txt); continue; }
-    if (d.action === 'reset') {
-      const b = document.createElement('button');
-      b.className = 'mgh'; b.type = 'button'; b.style.borderBottom = '0';
-      b.innerHTML = '<span class="ttl"></span><span class="chev">↺</span>';
-      b.querySelector('.ttl').textContent = txt;
-      b.addEventListener('click', () => { resetAssumptions(); });
-      put(b); continue;
-    }
-
-    /* a spanning cell is prose, not a data row */
-    if (d.span && d.span > 1) {
-      const e = document.createElement('div');
-      e.className = hasClass(d, 'note') ? 'mnote' : (hasClass(d, 'hdr') ? 'msub2' : 'mprose');
-      e.textContent = txt;
-      put(e); continue;
-    }
-    /* a row of column headers carries no meaning once the grid is gone */
-    if (cells.every(x => hasClass(x.def, 'hdr'))) continue;
-
-    /* Spacer cells carry styling but no value; skipping them keeps a total row's
-       real figure (often several columns right) from being lost to an empty one. */
-    const filled = x => cellStr(sh.name, x.ref) !== '';
-    const vals  = cells.slice(1).filter(x => !hasClass(x.def, 'note')).filter(filled);
-    const units = cells.slice(1).filter(x =>  hasClass(x.def, 'note')).filter(filled);
-
-    const row = document.createElement('div');
-    row.className = 'mrow'
-      + (hasClass(d, 'tot') ? ' mtot' : '')
-      + (hasClass(d, 'subtot') ? ' msubt' : '');
-    const lab = document.createElement('div'); lab.className = 'ml'; lab.textContent = txt;
-    row.appendChild(lab);
-
-    const series = sh.mseries && vals.some(x => sh.mseries.cols.includes(x.L));
-    if (series) {
-      const el = document.createElement('span');
-      el.className = 'mv'; el.dataset.ms = sh.name; el.dataset.mseriesRow = r;
-      row.appendChild(el);
-    } else if (vals.length) {
-      const holder = document.createElement('span');
-      holder.style.textAlign = 'right';
-      const v = mkValue(sh.name, vals[0].ref);
-      holder.appendChild(v);
-      if (vals.length > 1) {
-        vals.slice(1, 3).forEach(x => {
-          const extra = mkValue(sh.name, x.ref);
-          extra.className += ' mu'; extra.style.fontStyle = 'normal';
-          holder.appendChild(extra);
-        });
-      }
-      if (units.length) {
-        const u = document.createElement('span'); u.className = 'mu';
-        u.textContent = units.map(x => cellStr(sh.name, x.ref)).join(' · ');
-        holder.appendChild(u);
-      }
-      row.appendChild(holder);
-      if (vals[0].def.input) {
-        row.classList.add('editable');
-        row.dataset.editRef = vals[0].ref;
-        row.dataset.editSheet = sh.name;
-      }
-    }
-    put(row);
-  }
-  closeGroup();
-
-  /* ---- record cards, data tables and label/value pairs ---- */
-  function renderBlocks(r) {
-    (sh.mrecords || []).forEach(cfg => {
-      if (r !== cfg.r0) return;
-      for (let i = cfg.r0; i <= cfg.r1; i++) {
-        const t = cellStr(sh.name, cfg.title + i);
-        if (!t) continue;
-        const card = document.createElement('div'); card.className = 'mcard';
-        const th = document.createElement('div'); th.className = 't'; th.textContent = t; card.appendChild(th);
-        const sv = cfg.sub ? cellStr(sh.name, cfg.sub + i) : '';
-        if (sv) { const e = document.createElement('div'); e.className = 's'; e.textContent = sv; card.appendChild(e); }
-        const meta = document.createElement('div'); meta.className = 'm';
-        (cfg.meta || []).forEach(L => {
-          const ref = L + i;
-          if (!sh.cells[ref]) return;
-          const val = cellStr(sh.name, ref);
-          if (!val) return;
-          const chip = document.createElement('span');
-          chip.dataset.ms = sh.name; chip.dataset.mr = ref;
-          chip.innerHTML = '<b></b>';
-          chip.querySelector('b').textContent = val;
-          meta.appendChild(chip);
-        });
-        const f = cfg.foot ? cellStr(sh.name, cfg.foot + i) : '';
-        if (f) { const e = document.createElement('span'); e.textContent = f; meta.appendChild(e); }
-        if (meta.children.length) card.appendChild(meta);
-        put(card);
-      }
-    });
-
-    (sh.mpairs || []).forEach(cfg => {
-      if (r !== cfg.labelRow) return;
-      cfg.cols.forEach(L => {
-        const row = document.createElement('div'); row.className = 'mrow';
-        const lab = document.createElement('div'); lab.className = 'ml';
-        lab.dataset.ms = sh.name; lab.dataset.mr = L + cfg.labelRow; lab.dataset.msuffix = cfg.lsuffix || '';
-        row.appendChild(lab);
-        const v = mkValue(sh.name, L + cfg.valueRow);
-        v.dataset.mprefix = cfg.vprefix || ''; v.dataset.msuffix = cfg.vsuffix || '';
-        row.appendChild(v);
-        put(row);
-      });
-    });
-
-    (sh.mtables || []).forEach(cfg => {
-      if (r !== cfg.r0) return;
-      const box = document.createElement('div'); box.className = 'mgridwrap';
-      if (cfg.caption) {
-        const cap = document.createElement('div'); cap.className = 'mgcap'; cap.textContent = cfg.caption;
-        box.appendChild(cap);
-      }
-      const tbl = document.createElement('table'); tbl.className = 'mgrid';
-      const thead = document.createElement('thead'); const htr = document.createElement('tr');
-      cfg.cols.forEach((L, i) => {
-        const th = document.createElement('th');
-        if (i > 0) { th.dataset.ms = sh.name; th.dataset.mr = L + cfg.r0; }
-        htr.appendChild(th);
-      });
-      thead.appendChild(htr); tbl.appendChild(thead);
-      const tb = document.createElement('tbody');
-      for (let i = cfg.r0 + 1; i <= cfg.r1; i++) {
-        const tr = document.createElement('tr');
-        cfg.cols.forEach((L, ci) => {
-          const ref = L + i;
-          const cell = document.createElement(ci === 0 ? 'th' : 'td');
-          cell.dataset.ms = sh.name; cell.dataset.mr = ref;
-          if (hasClass(sh.cells[ref], 'shade')) cell.className = 'shade';
-          tr.appendChild(cell);
-        });
-        tb.appendChild(tr);
-      }
-      tbl.appendChild(tb); box.appendChild(tbl); put(box);
-    });
-  }
-
-  /* ---- font-convention legend, rendered as its own block ---- */
-  if (sh.mlegend) {
-    closeGroup();
-    openGroup(sh.mlegend.title);
-    sh.mlegend.rows.forEach(([termRef, meaningRef]) => {
-      const row = document.createElement('div'); row.className = 'mrow';
-      const term = document.createElement('div'); term.className = 'ml';
-      const def = sh.cells[termRef];
-      term.textContent = cellStr(sh.name, termRef);
-      if (hasClass(def, 'hard')) term.classList.add('hard');
-      if (hasClass(def, 'link')) term.classList.add('link');
-      term.style.fontWeight = '700';
-      const mean = document.createElement('span'); mean.className = 'mv';
-      mean.style.fontSize = '11px'; mean.style.color = 'var(--muted)';
-      mean.textContent = cellStr(sh.name, meaningRef);
-      row.appendChild(term); row.appendChild(mean);
-      put(row);
-    });
-    closeGroup();
-  }
-
-  /* ---- year stepper for a sheet with a time series ---- */
-  if (sh.mseries) {
-    const target = wrap.querySelector('.mgrp .mgb');
-    if (target) {
-      const bar = document.createElement('div'); bar.className = 'mstep';
-      const prev = document.createElement('button'); prev.type = 'button'; prev.textContent = '‹';
-      prev.setAttribute('aria-label', 'Previous year');
-      const lab = document.createElement('div'); lab.className = 'lab'; lab.id = 'mstep-label';
-      const next = document.createElement('button'); next.type = 'button'; next.textContent = '›';
-      next.setAttribute('aria-label', 'Next year');
-      prev.addEventListener('click', () => { mstate.year = Math.max(0, mstate.year - 1); paintMobile(); });
-      next.addEventListener('click', () => { mstate.year = Math.min(sh.mseries.cols.length - 1, mstate.year + 1); paintMobile(); });
-      bar.appendChild(prev); bar.appendChild(lab); bar.appendChild(next);
-      target.insertBefore(bar, target.firstChild);
-      wrap._step = { bar, prev, next, lab, sh };
-    }
-  }
-
-  mobileRoot.appendChild(wrap);
-  return wrap;
-}
-
-function paintMobile() {
-  /* plain value cells */
-  mobileRoot.querySelectorAll('[data-mr]').forEach(el => {
-    const sheet = el.dataset.ms, ref = el.dataset.mr;
-    const txt = cellStr(sheet, ref);
-    const pre = el.dataset.mprefix || '', suf = el.dataset.msuffix || '';
-    const t = txt === '' ? '' : pre + txt + suf;
-    if (el.tagName === 'SPAN' && el.firstElementChild && el.firstElementChild.tagName === 'B')
-      el.firstElementChild.textContent = t;
-    else el.textContent = t;
+function paintCells(root = document) {
+  root.querySelectorAll('[data-cell]').forEach(e => {
+    const [sheet, ref] = e.dataset.cell.split('!');
+    const v = readCell(sheet, ref);
+    e.textContent = formatValue(v, e.dataset.f || (SHEET_BY_NAME[sheet].cells[ref] || {}).f);
   });
-  /* series cells follow the stepper */
-  for (const sh of SHEETS) {
-    if (!sh.mseries) continue;
-    const wrap = mobileRoot.querySelector(`.msheet[data-sheet="${sh.name}"]`);
-    if (!wrap) continue;
-    const col = sh.mseries.cols[mstate.year];
-    wrap.querySelectorAll('[data-mseries-row]').forEach(el => {
-      const ref = col + el.dataset.mseriesRow;
-      el.textContent = cellStr(sh.name, ref);
-      el.dataset.mr2 = ref;
-    });
-    if (wrap._step) {
-      const yr = cellStr(sh.name, col + sh.mseries.yearRow);
-      wrap._step.lab.textContent = (sh.mseries.label || 'Step') + ' ' + yr + ' of ' + sh.mseries.cols.length;
-      wrap._step.prev.disabled = mstate.year === 0;
-      wrap._step.next.disabled = mstate.year === sh.mseries.cols.length - 1;
-    }
-  }
 }
 
-/* tapping a mobile row shows its formula, exactly like selecting a cell */
-mobileRoot.addEventListener('click', e => {
-  if (e.target.closest('.mgh') || e.target.closest('.mstep') || e.target.tagName === 'INPUT') return;
-  const row = e.target.closest('.mrow');
-  if (!row) return;
-  if (row.dataset.editRef) { beginMobileEdit(row); return; }
-  const v = row.querySelector('[data-mr],[data-mseries-row]');
-  if (!v) return;
-  const ref = v.dataset.mr2 || v.dataset.mr;
-  if (ref) showFormulaFor(v.dataset.ms, ref);
-});
-
-function showFormulaFor(sheet, ref) {
-  namebox.textContent = ref;
+/* the formula bar */
+function showFormula(sheet, ref) {
   const raw = rawOf(sheet, ref);
-  formula.textContent = raw === '' ? '' : String(raw);
-  formula.classList.toggle('is-formula', typeof raw === 'string' && raw[0] === '=');
-}
-
-function beginMobileEdit(row) {
-  if (row.querySelector('input')) return;
-  const sheet = row.dataset.editSheet, ref = row.dataset.editRef;
-  const holder = row.querySelector('.mv');
-  const key = sheet + '!' + ref;
-  const def = SHEET_BY_NAME[sheet].cells[ref];
-  const current = (key in overrides) ? overrides[key] : def.v;
-  showFormulaFor(sheet, ref);
-
-  const input = document.createElement('input');
-  input.type = 'text'; input.inputMode = 'decimal'; input.value = String(current);
-  holder.textContent = ''; holder.appendChild(input);
-  input.focus(); input.select();
-
-  let done = false;
-  const finish = commit => {
-    if (done) return; done = true;
-    if (commit) {
-      const n = parseFloat(String(input.value).replace(/[, %]/g, ''));
-      if (isFinite(n)) overrides[key] = n;
-    }
-    input.remove();
-    paint();
-  };
-  input.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') finish(true); else if (e.key === 'Escape') finish(false); });
-  input.addEventListener('blur', () => finish(true));
-}
-
-/* ════════════════════════════════════════════════════════════════════════
-   5. SELECTION, EDITING, KEYBOARD
-   ════════════════════════════════════════════════════════════════════════ */
-
-function tdFor(sheet, ref) { return grids[sheet].map[ref]; }
-
-function select(sheet, ref, scroll = true) {
-  const prev = tdFor(state.sheet, state.ref);
-  if (prev) prev.classList.remove('sel');
-  state.sheet = sheet; state.ref = ref;
-  const td = tdFor(sheet, ref);
-  if (!td) return;
-  td.classList.add('sel');
-  if (scroll) td.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-
-  namebox.textContent = ref;
-  const raw = rawOf(sheet, ref);
+  fref.textContent = sheet + '!' + ref;
   const isF = typeof raw === 'string' && raw[0] === '=';
-  formula.textContent = raw === '' ? '' : String(raw);
-  formula.classList.toggle('is-formula', isF);
+  ftext.textContent = isF ? raw : String(raw);
+  ftext.classList.toggle('live', isF);
+}
+const HINT = matchMedia('(hover: none)').matches
+  ? 'Tap any calculated figure for its formula'
+  : 'Hover any calculated figure to read the formula behind it';
+function clearFormula() {
+  fref.textContent = '—';
+  ftext.textContent = HINT;
+  ftext.classList.remove('live');
+}
+document.addEventListener('pointerover', e => {
+  const t = e.target.closest('[data-cell]');
+  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r); }
+});
+document.addEventListener('focusin', e => {
+  const t = e.target.closest && e.target.closest('[data-cell]');
+  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r); }
+});
+document.addEventListener('pointerout', e => {
+  if (e.target.closest && e.target.closest('[data-cell]') && !e.relatedTarget?.closest?.('[data-cell]')) clearFormula();
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-cell]')) clearFormula();
+});
 
-  const val = readCell(sheet, ref);
-  const status = document.getElementById('status');
-  if (status) {
-    const def = SHEET_BY_NAME[sheet].cells[ref];
-    status.textContent = typeof val === 'number'
-      ? 'Value: ' + formatValue(val, def && def.f)
-      : (def && def.input ? 'Editable input' : 'Ready');
-  }
+/* tooltip */
+const tip = document.getElementById('tip');
+function showTip(html, x, y) {
+  tip.innerHTML = html; tip.classList.add('on');
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(Math.max(8, x - r.width / 2), innerWidth - r.width - 8) + 'px';
+  tip.style.top  = (y - r.height - 12 < 8 ? y + 16 : y - r.height - 12) + 'px';
+}
+const hideTip = () => tip.classList.remove('on');
+
+/* ── section helpers ─────────────────────────────────────────────── */
+function section(id, idx, title, right) {
+  const s = $('section'); s.id = id;
+  const w = $('div', 'wrap');
+  const h = $('div', 'shead');
+  h.appendChild($('span', 'idx', idx));
+  h.appendChild($('h2', null, title));
+  if (right) h.appendChild($('span', 'rt', right));
+  w.appendChild(h);
+  s.appendChild(w);
+  main.appendChild(s);
+  return w;
 }
 
-function positionOf(sheet, ref) {
-  const g = grids[sheet];
-  for (let r = 1; r <= g.rows; r++)
-    for (let c = 0; c < g.cols; c++)
-      if (g.cellAt[r][c] && g.cellAt[r][c].dataset.ref === ref) return { r, c };
-  return { r: 1, c: 0 };
-}
+/* ── hero ────────────────────────────────────────────────────────── */
+(function hero(){
+  const s = $('div', 'wrap hero');
+  const L = $('div');
+  L.appendChild($('div', 'eyebrow', SITE.role.split(' · ')[0] + ' · ' + SITE.location));
+  L.appendChild($('h1', null, SITE.name));
+  L.appendChild($('p', 'role', 'Transaction structuring, underwriting and origination — renewables and energy infrastructure'));
+  L.appendChild($('p', 'lede', SITE.lede));
+  const cta = $('div', 'cta');
+  const a1 = $('a', 'btn primary', 'Email me'); a1.href = 'mailto:' + SITE.email;
+  const a2 = $('a', 'btn', 'LinkedIn'); a2.href = SITE.linkedin; a2.target = '_blank'; a2.rel = 'noopener';
+  const a3 = $('a', 'btn', 'Run the deal model ↓'); a3.href = '#model';
+  cta.append(a1, a2, a3);
+  L.appendChild(cta);
 
-function move(dr, dc, jump) {
-  if (state.editing) return;
-  const g = grids[state.sheet];
-  let { r, c } = positionOf(state.sheet, state.ref);
-  const steps = jump ? 200 : 1;
-  let last = null;
-  for (let i = 0; i < steps; i++) {
-    const nr = r + dr, nc = c + dc;
-    if (nr < 1 || nr > g.rows || nc < 0 || nc >= g.cols) break;
-    r = nr; c = nc;
-    const td = g.cellAt[r][c];
-    if (jump && td && td.textContent.trim() !== '') { last = td; break; }
-    last = td;
-  }
-  if (last && last.dataset.ref) select(state.sheet, last.dataset.ref);
-}
-
-function beginEdit(prefill) {
-  const sh = SHEET_BY_NAME[state.sheet];
-  const def = sh.cells[state.ref];
-  if (!def || !def.input) return;
-  const td = tdFor(state.sheet, state.ref);
-  const key = state.sheet + '!' + state.ref;
-  const current = (key in overrides) ? overrides[key] : def.v;
-
-  state.editing = true;
-  td.dataset.editing = '1';
-  td.textContent = '';
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.inputMode = 'decimal';
-  input.value = prefill !== undefined ? prefill : String(current);
-  td.appendChild(input);
-  input.focus();
-  if (prefill === undefined) input.select();
-
-  const finish = commit => {
-    if (!state.editing) return;
-    state.editing = false;
-    delete td.dataset.editing;
-    if (commit) {
-      const n = parseFloat(String(input.value).replace(/[, %]/g, ''));
-      if (isFinite(n)) overrides[key] = n;
-    }
-    input.remove();
-    paint();
-    select(state.sheet, state.ref, false);
-  };
-
-  input.addEventListener('keydown', e => {
-    e.stopPropagation();
-    if (e.key === 'Enter')      { finish(true);  move(1, 0, false); }
-    else if (e.key === 'Tab')   { e.preventDefault(); finish(true); move(0, 1, false); }
-    else if (e.key === 'Escape'){ finish(false); }
+  const R = $('aside', 'cover');
+  R.appendChild($('h3', null, 'Cover'));
+  const rows = [
+    ['Prepared by', SITE.name, null],
+    ['Last updated', null, ['Career', 'E7', 'date']],
+    ['Sector coverage', 'Biopower, solar, storage, infrastructure', null],
+    ['Years in finance', null, ['Career', 'F13', 'num1', ' yrs']],
+    ['Basis of preparation', 'Actuals; illustrative deal model below', null],
+  ];
+  rows.forEach(([k, plain, c]) => {
+    const d = $('div', 'crow');
+    d.appendChild($('dt', null, k));
+    const dd = $('dd');
+    if (plain) dd.textContent = plain;
+    else { const e = cell(c[0], c[1], { f:c[2] }); dd.appendChild(e); if (c[3]) dd.append(c[3]); }
+    d.appendChild(dd);
+    R.appendChild(d);
   });
-  input.addEventListener('blur', () => finish(true));
+  const lg = $('div', 'legend');
+  lg.appendChild($('p', null, 'Font convention'));
+  const ul = $('ul');
+  [['hard', 'Blue', 'an input you can change'], ['calc', 'Black', 'a calculation'], ['link', 'Green', 'a link out']]
+    .forEach(([c, term, mean]) => {
+      const li = $('li');
+      const b = $('b', c, term); li.append(b, ' — ' + mean);
+      ul.appendChild(li);
+    });
+  lg.appendChild(ul);
+  R.appendChild(lg);
+
+  const dl = $('dl'); dl.style.margin = '0';
+  s.append(L, R);
+  main.appendChild(s);
+})();
+
+/* ── track record ────────────────────────────────────────────────── */
+(function track(){
+  const w = section('track', 'A1', 'Track record', 'Figures as disclosed');
+  const mk = (tiles, cls) => {
+    const g = $('div', 'tiles' + (cls ? ' ' + cls : ''));
+    tiles.forEach(([k, sheet, ref, f, unit, prefix, suffix]) => {
+      const t = $('div', 'tile');
+      t.appendChild($('span', 'k', k));
+      const v = $('span', 'v');
+      if (prefix) v.append(prefix);
+      v.appendChild(cell(sheet, ref, { f }));
+      if (suffix) v.append(suffix);
+      t.appendChild(v);
+      t.appendChild($('span', 'u', unit));
+      g.appendChild(t);
+    });
+    return g;
+  };
+  w.appendChild(mk([
+    ['Years in finance', 'Career', 'F13', 'num1', 'Since May 2015, accruing'],
+    ['Agreements structured', 'Facts', 'C7', 'num0', 'Feedstock $500M + offtake $800M', '$'],
+    ['Largest mandate', 'Facts', 'C4', 'num0', 'Per asset, up to ($M)', '$'],
+    ['Developments directed', 'Facts', 'C8', 'num0', 'Biopower, $30–100M each'],
+  ]));
+  const g2 = mk([
+    ['Capex reduction', 'Facts', 'C9', 'pct0', 'Relocation structure'],
+    ['Revenue uplift', 'Facts', 'C10', 'pct0', 'Relocation structure'],
+    ['Feedstock rights', 'Facts', 'C11', 'num1', 'Million tons, zero-cost supply'],
+    ['Commodity flows', 'Facts', 'C14', 'num0', 'Supported by systems deployed', '$', 'B'],
+  ], 'sub');
+  g2.style.marginTop = '-1px';
+  w.appendChild(g2);
+})();
+
+/* ── experience ──────────────────────────────────────────────────── */
+(function experience(){
+  const w = section('experience', 'A2', 'Experience', 'Tenure on an actual/365 basis');
+  const roles = $('div', 'roles');
+  const maxT = Math.max(...SITE.jobs.map(j => val('Career', 'F' + j.row)));
+  SITE.jobs.forEach(j => {
+    const d = $('div', 'job');
+    const h = $('div', 'job-h');
+    const l = $('div');
+    l.appendChild($('h3', null, j.title));
+    l.appendChild($('p', 'co', j.co + ' · ' + j.where));
+    const r = $('div', 'when');
+    const b = $('b'); b.appendChild(cell('Career', 'F' + j.row, { f:'num1' })); b.append(' yrs');
+    r.appendChild(b);
+    r.appendChild(document.createTextNode(j.span));
+    h.append(l, r);
+    d.appendChild(h);
+
+    const bar = $('div', 'tbar');
+    const fill = $('i');
+    fill.style.width = (val('Career', 'F' + j.row) / maxT * 100).toFixed(1) + '%';
+    fill.dataset.tbar = j.row;
+    bar.appendChild(fill);
+    bar.setAttribute('role', 'img');
+    bar.setAttribute('aria-label', 'Tenure ' + txt('Career', 'F' + j.row, 'num1') + ' years');
+    d.appendChild(bar);
+
+    if (j.note) { const n = $('p', 'co'); n.style.margin = '0 0 10px'; n.textContent = j.note; d.appendChild(n); }
+    const ul = $('ul');
+    j.bullets.forEach(t => ul.appendChild($('li', null, t)));
+    d.appendChild(ul);
+    roles.appendChild(d);
+  });
+  w.appendChild(roles);
+
+  const note = $('p');
+  note.style.cssText = 'margin:16px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:78ch;line-height:1.6';
+  note.append('Recorded tenure (');
+  note.appendChild(cell('Career', 'F12', { f:'num1' }));
+  note.append(' yrs) exceeds the career span (');
+  note.appendChild(cell('Career', 'F13', { f:'num1' }));
+  note.append(' yrs) owing to a two-month overlap between Morgan Stanley and Forest City in 2017. Left unreconciled on purpose: it is what actually happened.');
+  w.appendChild(note);
+})();
+
+/* ── transactions ────────────────────────────────────────────────── */
+(function transactions(){
+  const live = SITE.deals.filter(d => d[5]).length;
+  const w = section('transactions', 'A3', 'Selected transactions & mandates',
+                    SITE.deals.length + ' mandates · ' + live + ' live');
+  const t = $('table', 'sched');
+  const thead = $('thead'), htr = $('tr');
+  ['Mandate','Description','Period','Size','Status'].forEach((h, i) => {
+    const th = $('th', i === 3 ? 'n' : null, h); htr.appendChild(th);
+  });
+  thead.appendChild(htr); t.appendChild(thead);
+  const tb = $('tbody');
+  SITE.deals.forEach(([name, desc, period, size, status, isLive]) => {
+    const tr = $('tr');
+    const c1 = $('td'); c1.appendChild($('strong', null, name)); tr.appendChild(c1);
+    const c2 = $('td', 'desc', desc); c2.dataset.l = ''; tr.appendChild(c2);
+    const c3 = $('td', null, period); c3.dataset.l = 'Period'; tr.appendChild(c3);
+    const c4 = $('td', 'n', size); c4.dataset.l = 'Size'; tr.appendChild(c4);
+    const c5 = $('td'); c5.dataset.l = '';
+    c5.appendChild($('span', 'chip' + (isLive ? ' live' : ''), status));
+    tr.appendChild(c5);
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  w.appendChild(t);
+  const n = $('p');
+  n.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3)';
+  n.textContent = 'Sizes are denominated in different units and are deliberately not summed into a single total. Counterparties and commercial terms omitted where confidential.';
+  w.appendChild(n);
+})();
+
+/* ── research ────────────────────────────────────────────────────── */
+(function research(){
+  const w = section('research', 'A4', 'Independent research', 'Built outside mandate work');
+  const cols = $('div', 'cols');
+
+  const a = $('div', 'paper');
+  a.appendChild($('h3', null, 'ERCOT crowding coefficient model'));
+  a.appendChild($('p', 'cap', 'Original quantitative framework · supported by an agent-based market simulation in Python'));
+  a.appendChild($('p', null, 'Explains day-ahead to real-time price basis variance in ERCOT as a function of generator zone crowding. The coefficient below is the published result; the table applies it directly.'));
+
+  const stat = $('div', 'tiles'); stat.style.marginBottom = '14px';
+  [['Coefficient (α)', 'Research', 'C10', 'num2', '$/MWh per GW of crowding'],
+   ['Variance explained', 'Research', 'C11', 'pct0', 'R², observed basis variance'],
+   ['Unexplained', 'Research', 'C12', 'pct0', 'Residual']].forEach(([k, s, r, f, u]) => {
+    const t = $('div', 'tile');
+    t.appendChild($('span', 'k', k));
+    const v = $('span', 'v'); v.appendChild(cell(s, r, { f, kind:r === 'C10' ? 'hard' : 'calc' })); t.appendChild(v);
+    t.appendChild($('span', 'u', u));
+    stat.appendChild(t);
+  });
+  a.appendChild(stat);
+
+  const fld = $('div', 'fld'); fld.style.cssText = 'padding:0;border:0;margin-bottom:14px';
+  const fh = $('div', 'fld-h');
+  const lab = $('label', null, 'Flex the coefficient'); lab.htmlFor = 'alpha';
+  const out = $('output'); out.id = 'alpha-out';
+  fh.append(lab, out); fld.appendChild(fh);
+  const sl = $('input'); sl.type = 'range'; sl.id = 'alpha';
+  sl.min = 1; sl.max = 6; sl.step = 0.01; sl.value = 3.17;
+  sl.setAttribute('aria-label', 'Crowding coefficient, dollars per MWh per GW');
+  sl.addEventListener('input', () => { overrides['Research!C10'] = parseFloat(sl.value); recalc(); });
+  fld.appendChild(sl);
+  a.appendChild(fld);
+
+  const bt = $('table', 'sched'); bt.style.fontSize = '12px';
+  const bh = $('tr');
+  bh.appendChild($('th', null, 'Zone crowding'));
+  ['C','D','E','F','G','H','I'].forEach(c => bh.appendChild($('th', 'n', txt('Research', c + '16') + ' GW')));
+  const bthead = $('thead'); bthead.appendChild(bh); bt.appendChild(bthead);
+  const br = $('tr');
+  br.appendChild($('td', null, 'Implied basis ($/MWh)'));
+  ['C','D','E','F','G','H','I'].forEach(c => {
+    const td = $('td', 'n');
+    td.appendChild(cell('Research', c + '17', { f:'num2' }));
+    br.appendChild(td);
+  });
+  const btb = $('tbody'); btb.appendChild(br); bt.appendChild(btb);
+  a.appendChild(bt);
+
+  const b = $('div', 'paper');
+  b.appendChild($('h3', null, 'Patent-pending financial document processor'));
+  b.appendChild($('p', 'cap', 'Patent application filed · production system deployed'));
+  b.appendChild($('p', null, 'A knowledge graph system that ingests unstructured project finance documents, audits document sets for structural gaps, drafts the missing components, and assembles institutional-grade lender submission packages.'));
+  const dl = $('dl', 'deflist');
+  [['Application', 'Project finance document analysis and lender package preparation'],
+   ['Built at', 'Compass International Trading Group'],
+   ['Status', 'Patent pending; deployed']].forEach(([k, v]) => {
+    const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); dl.appendChild(d);
+  });
+  b.appendChild(dl);
+
+  cols.append(a, b);
+  w.appendChild(cols);
+})();
+
+/* ── the live model ──────────────────────────────────────────────── */
+const INPUTS = [
+  ['C9',  'Nameplate capacity', 'MW'],
+  ['C10', 'Capacity factor', ''],
+  ['C11', 'Availability', ''],
+  ['C12', 'Capex', '$/kW'],
+  ['C17', 'PPA price, year 1', '$/MWh'],
+  ['C18', 'Escalation', 'p.a.'],
+  ['C19', 'Fixed O&M', '$/kW-yr'],
+  ['C20', 'Variable O&M & fuel', '$/MWh'],
+  ['C24', 'Debt share of capex', ''],
+  ['C25', 'Interest rate', ''],
+  ['C26', 'Debt tenor', 'yrs'],
+  ['C27', 'Discount rate (WACC)', ''],
+  ['C13', 'Project life', 'yrs'],
+];
+
+(function model(){
+  const w = section('model', 'A5', 'Live deal model',
+                    'Illustrative 40 MW biomass project — not a live transaction');
+  const intro = $('p');
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:76ch;line-height:1.6';
+  intro.textContent = 'A generic project, sized to be recognisable rather than accurate. It describes no live transaction and contains no confidential terms. Move any input and the schedule, the returns, the chart and the sensitivity all recalculate.';
+  w.appendChild(intro);
+
+  const box = $('div', 'model');
+
+  /* inputs */
+  const inp = $('div', 'inputs');
+  const ih = $('h3'); ih.append('Assumptions');
+  const rb = $('button', 'reset', 'Reset to base case'); rb.type = 'button';
+  rb.addEventListener('click', () => {
+    Object.keys(overrides).forEach(k => delete overrides[k]);
+    document.querySelectorAll('input[type=range]').forEach(sl => {
+      const [s, r] = (sl.dataset.cell || 'Research!C10').split('!');
+      sl.value = SHEET_BY_NAME[s].cells[r].v;
+    });
+    recalc();
+  });
+  ih.appendChild(rb);
+  inp.appendChild(ih);
+
+  INPUTS.forEach(([ref, label, unit]) => {
+    const def = SHEET_BY_NAME['Assumptions'].cells[ref];
+    const f = $('div', 'fld');
+    const h = $('div', 'fld-h');
+    const l = $('label', null, label); l.htmlFor = 'in-' + ref;
+    const o = $('output'); o.id = 'out-' + ref; o.dataset.out = 'Assumptions!' + ref;
+    if (unit) { const u = $('span', 'u', unit); o.dataset.unit = unit; }
+    h.append(l, o); f.appendChild(h);
+    const sl = $('input'); sl.type = 'range'; sl.id = 'in-' + ref;
+    sl.min = def.min; sl.max = def.max; sl.step = def.step; sl.value = def.v;
+    sl.dataset.cell = 'Assumptions!' + ref;
+    sl.setAttribute('aria-label', label + (unit ? ' in ' + unit : ''));
+    sl.addEventListener('input', () => { overrides['Assumptions!' + ref] = parseFloat(sl.value); recalc(); });
+    f.appendChild(sl);
+    inp.appendChild(f);
+  });
+
+  /* outputs */
+  const out = $('div', 'outputs');
+  const ot = $('div', 'otiles');
+  [['Project NPV', 'C25', 'num1', 'Unlevered, 25-year life', '$', 'M'],
+   ['Project IRR', 'C27', 'pct1', 'Unlevered', '', ''],
+   ['Minimum DSCR', 'C28', 'x2', 'Years 1–10', '', ''],
+   ['Simple payback', 'C29', 'num1', 'Years', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
+    const t = $('div', 'otile');
+    t.appendChild($('span', 'k', k));
+    const v = $('span', 'v'); v.dataset.tile = ref;
+    if (pre) v.append(pre);
+    v.appendChild(cell('Model', ref, { f }));
+    if (suf) v.append(suf);
+    t.appendChild(v);
+    t.appendChild($('span', 'n', n));
+    ot.appendChild(t);
+  });
+  out.appendChild(ot);
+
+  /* cash flow chart */
+  const v1 = $('div', 'viz');
+  v1.appendChild($('h4', null, 'Cash flow cover, years 1–10'));
+  v1.appendChild($('p', 'cap', 'EBITDA against annual debt service, both shown as magnitudes in $M. The gap between them is the cushion a lender underwrites.'));
+  const lr = $('div', 'legend-row');
+  [['EBITDA', 'var(--series-1)'], ['Debt service', 'var(--series-2)']].forEach(([t, c]) => {
+    const sp = $('span');
+    const sw = $('span', 'swatch'); sw.style.background = c;
+    sp.append(sw, t); lr.appendChild(sp);
+  });
+  v1.appendChild(lr);
+  const cb = $('div', 'chartbox'); cb.id = 'cashflow';
+  v1.appendChild(cb);
+  out.appendChild(v1);
+
+  /* sensitivity */
+  const v2 = $('div', 'viz');
+  v2.appendChild($('h4', null, 'Sensitivity — project NPV ($M)'));
+  v2.appendChild($('p', 'cap', 'PPA price down the side, capex per kW across. Both axes flex ±20% off the inputs, so the outlined cell is always the base case.'));
+  const hw = $('div', 'heatwrap'); hw.id = 'heat';
+  v2.appendChild(hw);
+  out.appendChild(v2);
+
+  const tie = $('div', 'tie');
+  tie.append('Tie-out: the schedule builds ten explicit years plus a terminal value; the check values the same cash flows as a single 25-year growing annuity. ');
+  const badge = $('b'); badge.id = 'tie'; tie.appendChild(badge);
+  out.appendChild(tie);
+
+  box.append(inp, out);
+  w.appendChild(box);
+})();
+
+/* ── background ──────────────────────────────────────────────────── */
+(function background(){
+  const w = section('background', 'A6', 'Background');
+  const cols = $('div', 'cols');
+  const a = $('div', 'blk');
+  a.appendChild($('h3', null, 'Education'));
+  const e = $('dl', 'deflist');
+  SITE.education.forEach(([k, v]) => { const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); e.appendChild(d); });
+  a.appendChild(e);
+  a.appendChild($('h3', null, 'Recognition')).style.marginTop = '22px';
+  const r = $('dl', 'deflist');
+  SITE.awards.forEach(([k, v]) => { const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); r.appendChild(d); });
+  a.appendChild(r);
+  a.appendChild($('h3', null, 'Board')).style.marginTop = '22px';
+  const bd = $('div', 'paper');
+  bd.appendChild($('h3', null, SITE.board.role));
+  bd.appendChild($('p', 'cap', SITE.board.org + ' · ' + SITE.board.span));
+  bd.appendChild($('p', null, SITE.board.note));
+  a.appendChild(bd);
+
+  const b = $('div', 'blk');
+  b.appendChild($('h3', null, 'Technical skills'));
+  const s = $('dl', 'deflist');
+  SITE.skills.forEach(([k, v]) => { const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); s.appendChild(d); });
+  b.appendChild(s);
+
+  cols.append(a, b);
+  w.appendChild(cols);
+})();
+
+/* ── contact ─────────────────────────────────────────────────────── */
+(function contact(){
+  const w = section('contact', 'A7', 'Contact');
+  const c = $('div', 'contact');
+  const a = $('div', 'blk');
+  const dl = $('dl', 'deflist');
+  const link = (href, text) => { const x = $('a', 'mail', text); x.href = href; if (/^https/.test(href)) { x.target = '_blank'; x.rel = 'noopener'; } return x; };
+  [['Email', link('mailto:' + SITE.email, SITE.email)],
+   ['LinkedIn', link(SITE.linkedin, 'linkedin.com/in/andrewthomasgibson')],
+   ['Website', link(SITE.site, 'andrewtgibson.com')],
+   ['Location', document.createTextNode(SITE.location + ' — national mandates')]].forEach(([k, v]) => {
+    const d = $('div'); d.appendChild($('dt', null, k));
+    const dd = $('dd'); dd.appendChild(v); d.appendChild(dd); dl.appendChild(d);
+  });
+  a.appendChild(dl);
+
+  const b = $('div', 'blk');
+  const dl2 = $('dl', 'deflist');
+  [['Sectors', 'Biopower, solar, storage, energy and infrastructure assets'],
+   ['Focus', 'Origination, structuring, underwriting, deal execution'],
+   ['Transaction range', '$50M – $1.2B'],
+   ['Status', '[Set availability]']].forEach(([k, v]) => {
+    const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); dl2.appendChild(d);
+  });
+  b.appendChild(dl2);
+  c.append(a, b);
+  w.appendChild(c);
+})();
+
+/* ── footer ──────────────────────────────────────────────────────── */
+(function footer(){
+  const f = $('footer');
+  const w = $('div', 'wrap');
+  w.appendChild($('p', null, 'The deal model on this page is generic and illustrative. It describes no client, counterparty or live transaction, and contains no confidential terms. Figures elsewhere are as disclosed on the CV.'));
+  const p = $('p');
+  p.append('Built as one static HTML file — a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Source at ');
+  const a = $('a', 'mail', 'github.com/Tobombadil/Tobombadil'); a.href = SITE.repo; a.target = '_blank'; a.rel = 'noopener';
+  p.append(a, '.');
+  w.appendChild(p);
+  f.appendChild(w);
+  main.appendChild(f);
+})();
+
+/* ── nav ─────────────────────────────────────────────────────────── */
+(function nav(){
+  const n = document.getElementById('nav');
+  SECTIONS.forEach(([id, label]) => {
+    const a = $('a', null, label); a.href = '#' + id; a.dataset.sec = id;
+    n.appendChild(a);
+  });
+  const links = [...n.querySelectorAll('a')];
+  const obs = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(l => l.classList.toggle('on', l.dataset.sec === e.target.id));
+    });
+  }, { rootMargin:'-40% 0px -55% 0px' });
+  SECTIONS.forEach(([id]) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════
+   5. CHARTS
+   Palette validated with the data-viz validator against a white surface:
+   #2a78d6 / #eb6834 — CVD ΔE 24.7, normal-vision ΔE 33.6, both above floor.
+   The page commits to one theme, so the charts do too.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+const YC = ['D','E','F','G','H','I','J','K','L','M'];
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+/* round axis steps — 18/14/9/5/0 reads as an accident, 20/15/10/5/0 reads as a scale */
+function niceScale(max, count) {
+  const raw = max / count;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const n = raw / mag;
+  const step = (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * mag;
+  const top = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let v = 0; v <= top + step * 1e-9; v += step) ticks.push(v);
+  return { top, ticks, step };
+}
+const svgEl = (t, attrs) => { const e = document.createElementNS(SVGNS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+function drawCashflow() {
+  const host = document.getElementById('cashflow');
+  host.textContent = '';
+  const W = 620, H = 232, ml = 40, mr = 10, mt = 12, mb = 26;
+  const iw = W - ml - mr, ih = H - mt - mb;
+
+  const data = YC.map((c, i) => ({
+    year:i + 1,
+    ebitda:val('Model', c + '12'),
+    ds:Math.abs(val('Model', c + '14')),
+    dscr:val('Model', c + '16'),
+  }));
+  const peak = Math.max(...data.map(d => Math.max(d.ebitda, d.ds)), 1);
+  const { top, ticks, step } = niceScale(peak * 1.08, 4);
+  const y = v => mt + ih - (v / top) * ih;
+
+  const svg = svgEl('svg', { class:'chart', viewBox:`0 0 ${W} ${H}`, role:'img',
+    'aria-label':`EBITDA against debt service, years 1 to 10. Year 1 EBITDA ${txt('Model','D12','num1')} million dollars against debt service ${formatValue(Math.abs(val('Model','D14')),'num1')} million.` });
+
+  /* recessive grid + axis, on round steps */
+  const dp = step < 1 ? 1 : 0;
+  ticks.forEach(v => {
+    const yy = y(v);
+    svg.appendChild(svgEl('line', { class:'gridline', x1:ml, x2:W - mr, y1:yy, y2:yy }));
+    const t = svgEl('text', { class:'tick ytick', x:ml - 7, y:yy + 3.5, 'text-anchor':'end' });
+    t.textContent = v.toFixed(dp);
+    svg.appendChild(t);
+  });
+  svg.appendChild(svgEl('line', { class:'axis', x1:ml, x2:W - mr, y1:y(0), y2:y(0) }));
+
+  const band = iw / data.length;
+  const bw = 11, gap = 2;                     /* 2px surface gap between adjacent fills */
+  data.forEach((d, i) => {
+    const cx = ml + band * i + band / 2;
+    const x1 = cx - bw - gap / 2, x2 = cx + gap / 2;
+    [[x1, d.ebitda, 'var(--series-1)', 'EBITDA'], [x2, d.ds, 'var(--series-2)', 'Debt service']]
+      .forEach(([x, v, fill, name]) => {
+        const h = Math.max(1, y(0) - y(v));
+        const r = svgEl('rect', { x, y:y(v), width:bw, height:h, fill, rx:4, ry:4 });
+        /* square off the baseline end: rounding belongs to the data end only */
+        const cover = svgEl('rect', { x, y:y(0) - Math.min(4, h), width:bw, height:Math.min(4, h), fill });
+        r.style.cursor = 'default';
+        const enter = ev => showTip(
+          `<b>Year ${d.year}</b>EBITDA <i>${formatValue(d.ebitda, 'num1')}</i> · Debt service <i>${formatValue(d.ds, 'num1')}</i><br>DSCR <i>${formatValue(d.dscr, 'x2')}</i>`,
+          ev.clientX, ev.clientY);
+        [r, cover].forEach(el => { el.addEventListener('pointerenter', enter); el.addEventListener('pointermove', enter); el.addEventListener('pointerleave', hideTip); });
+        svg.append(r, cover);
+      });
+    const lbl = svgEl('text', { class:'tick', x:cx, y:H - 9, 'text-anchor':'middle' });
+    lbl.textContent = d.year;
+    svg.appendChild(lbl);
+  });
+
+  /* selective direct labels: first and last EBITDA only */
+  [[0, data[0]], [data.length - 1, data[data.length - 1]]].forEach(([i, d]) => {
+    const cx = ml + band * i + band / 2 - bw / 2 - 1;
+    const t = svgEl('text', { class:'tick', x:cx, y:y(d.ebitda) - 6, 'text-anchor':'middle' });
+    t.setAttribute('fill', 'var(--ink-2)');
+    t.setAttribute('font-weight', '700');
+    t.textContent = formatValue(d.ebitda, 'num1');
+    svg.appendChild(t);
+  });
+
+  host.appendChild(svg);
 }
 
-function resetAssumptions() {
-  for (const k in overrides) delete overrides[k];
-  paint();
-  select(state.sheet, state.ref, false);
+/* diverging ramp, blue ↔ red with a neutral grey midpoint at NPV = 0 */
+const RAMP_NEG = ['#f6c9c7', '#e07470', '#a93230'];
+const RAMP_POS = ['#b7d3f6', '#5598e7', '#1c5cab'];
+const MID = '#f0efec';
+
+function heatColor(v, scale) {
+  if (!isFinite(v)) return MID;
+  const t = Math.min(1, Math.abs(v) / scale);
+  if (t < 0.06) return MID;
+  const arm = v < 0 ? RAMP_NEG : RAMP_POS;
+  const i = t < 0.4 ? 0 : t < 0.75 ? 1 : 2;
+  return { c:arm[i], dark:i === 2 };
 }
 
-/* ---- events ---- */
-viewport.addEventListener('mousedown', e => {
-  const td = e.target.closest('td.cell');
-  if (!td) return;
-  if (e.target.tagName === 'A') return;
-  if (td.dataset.action === 'reset') { e.preventDefault(); resetAssumptions(); return; }
-  if (td.dataset.editing === '1') return;
-  select(td.dataset.sheet, td.dataset.ref);
-});
+function drawHeat() {
+  const host = document.getElementById('heat');
+  host.textContent = '';
+  const cols = ['C','D','E','F','G'];
+  const cells = [];
+  let scale = 0;
+  for (let r = 0; r < 5; r++)
+    for (let c = 0; c < 5; c++) {
+      const v = val('Model', cols[c] + (42 + r));
+      cells.push(v);
+      scale = Math.max(scale, Math.abs(v));
+    }
+  scale = scale || 1;
 
-viewport.addEventListener('dblclick', e => {
-  const td = e.target.closest('td.cell');
-  if (td && td.classList.contains('in')) { select(td.dataset.sheet, td.dataset.ref); beginEdit(); }
-});
+  const t = $('table', 'heat');
+  const cap = $('caption');
+  cap.className = 'sr';
+  cap.textContent = 'Project NPV in millions of dollars by PPA price and capex per kW';
+  t.appendChild(cap);
+  const thead = $('thead'), htr = $('tr');
+  const corner = $('th', 'corner', 'PPA ↓ / capex →'); htr.appendChild(corner);
+  cols.forEach(c => htr.appendChild($('th', null, '$' + txt('Model', c + '41'))));
+  thead.appendChild(htr); t.appendChild(thead);
 
-document.addEventListener('keydown', e => {
-  if (state.editing) return;
-  if (e.target.closest && e.target.closest('.tabbar')) return;   /* keep tabs keyboard-reachable */
-  const jump = e.ctrlKey || e.metaKey;
-  switch (e.key) {
-    case 'ArrowUp':    e.preventDefault(); move(-1, 0, jump); return;
-    case 'ArrowDown':  e.preventDefault(); move(1, 0, jump);  return;
-    case 'ArrowLeft':  e.preventDefault(); move(0, -1, jump); return;
-    case 'ArrowRight': e.preventDefault(); move(0, 1, jump);  return;
-    case 'Tab':        e.preventDefault(); move(0, e.shiftKey ? -1 : 1, false); return;
-    case 'Enter':      e.preventDefault(); beginEdit(); return;
-    case 'F2':         e.preventDefault(); beginEdit(); return;
-    case 'PageDown':   e.preventDefault(); move(15, 0, false); return;
-    case 'PageUp':     e.preventDefault(); move(-15, 0, false); return;
+  const tb = $('tbody');
+  for (let r = 0; r < 5; r++) {
+    const tr = $('tr');
+    tr.appendChild($('th', null, '$' + txt('Model', 'B' + (42 + r))));
+    cols.forEach((c, ci) => {
+      const v = cells[r * 5 + ci];
+      const td = $('td', (r === 2 && ci === 2) ? 'base' : null, formatValue(v, 'num0'));
+      const col = heatColor(v, scale);
+      if (typeof col === 'string') { td.style.background = col; }
+      else { td.style.background = col.c; if (col.dark) td.style.color = '#fff'; }
+      const enter = ev => showTip(
+        `<b>NPV ${formatValue(v, 'num1')} $M</b>PPA <i>$${txt('Model', 'B' + (42 + r))}/MWh</i> · Capex <i>$${txt('Model', c + '41')}/kW</i>`,
+        ev.clientX, ev.clientY);
+      td.addEventListener('pointerenter', enter);
+      td.addEventListener('pointermove', enter);
+      td.addEventListener('pointerleave', hideTip);
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
   }
-  if (e.key === 'Home') { e.preventDefault(); select(state.sheet, firstContentRef(state.sheet)); return; }
-  /* typing a digit over a blue cell starts an edit, like a real spreadsheet */
-  if (!jump && /^[0-9.\-]$/.test(e.key)) { e.preventDefault(); beginEdit(e.key); }
-});
+  t.appendChild(tb);
+  host.appendChild(t);
+}
 
-/* ---- boot ---- */
-SHEETS.forEach(sh => viewport.appendChild(buildSheet(sh)));
-SHEETS.forEach(buildMobileSheet);
-document.querySelector('.app').insertBefore(mobileRoot, tabbar);
-const hint = document.createElement('div');
-hint.className = 'scrollhint'; hint.id = 'scrollhint';
-viewport.appendChild(hint);
-buildTabs();
-applyWidths();
-paint();
-showSheet(SHEETS[0].name);
+/* ═══════════════════════════════════════════════════════════════════════
+   6. RECALC
+   ═══════════════════════════════════════════════════════════════════════ */
 
-viewport.addEventListener('scroll', updateScrollHint, { passive: true });
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => { applyWidths(); updateScrollHint(); }, 120);
-});
+function recalc() {
+  cache = new Map();
+  paintCells();
+
+  /* slider read-outs */
+  document.querySelectorAll('[data-out]').forEach(o => {
+    const [s, r] = o.dataset.out.split('!');
+    o.textContent = txt(s, r);
+    if (o.dataset.unit) { const u = $('span', 'u', o.dataset.unit); o.appendChild(u); }
+  });
+  const ao = document.getElementById('alpha-out');
+  if (ao) ao.textContent = '$' + txt('Research', 'C10') + ' /MWh/GW';
+
+  /* tenure bars */
+  const maxT = Math.max(...SITE.jobs.map(j => val('Career', 'F' + j.row)));
+  document.querySelectorAll('[data-tbar]').forEach(b => {
+    b.style.width = (val('Career', 'F' + b.dataset.tbar) / maxT * 100).toFixed(1) + '%';
+  });
+
+  /* negative NPV reads red */
+  const npvTile = document.querySelector('[data-tile="C25"]');
+  if (npvTile) npvTile.classList.toggle('neg', val('Model', 'C25') < 0);
+
+  /* tie-out badge */
+  const badge = document.getElementById('tie');
+  if (badge) {
+    const ok = val('Model', 'C35') === 'OK';
+    badge.textContent = ok ? '✓ OK — difference 0.00' : '✗ CHECK';
+    badge.classList.toggle('bad', !ok);
+  }
+
+  drawCashflow();
+  drawHeat();
+}
+
+recalc();
+clearFormula();
 </script>
 </body>
 </html>
