@@ -47,11 +47,28 @@ The colours are the standard modelling convention, and they are load-bearing:
 
 ### On a phone
 
-The grid keeps its real column widths and scrolls horizontally rather than compressing.
-The label column is frozen against the row gutter, so row labels stay on screen while the
-numbers scroll past — the one thing that makes a wide schedule readable on a small screen.
-Prose that spans the grid scrolls away normally rather than freezing. Rows are taller for
-touch, and cell inputs are 16px so iOS does not zoom the page when you edit an assumption.
+A faithful grid cannot fit a 390px screen without endless sideways scrolling, so below 720px
+the grid is replaced rather than squeezed. The same sheet data renders as stacked, collapsible
+groups — every sheet fits the width, and nothing scrolls sideways. The spreadsheet identity
+carries through the chrome, the blue/black/green font convention and the subtotal rules rather
+than through gridlines.
+
+Four layout hints, set per sheet, drive it:
+
+| Hint | Effect |
+| --- | --- |
+| `mrecords` | Renders a row range as cards instead of table rows — used for the employment and transaction schedules |
+| `mseries` | Steps through wide time-series columns one period at a time, with a ‹ Year n of 10 › control — used for the cash flow |
+| `mtables` | Keeps a small grid as a grid, sized to fit — used for the NPV sensitivity |
+| `mpairs` | Turns a header row plus a value row into label/value pairs — used for the ERCOT basis row |
+| `mskip` | Drops columns that earn nothing on a phone, such as the tenure bars |
+
+Groups collapse on tap; blocks that are mostly prose start folded with a line count. Tapping a
+row still shows its formula in the formula bar, and blue inputs are still editable — cell inputs
+render at 16px so iOS does not zoom the page on edit.
+
+Between 720px and full width the grid still renders and can scroll sideways, so there the label
+column freezes against the row gutter, with a shadow once scrolled and a fade at the right edge.
 
 ### Keyboard
 

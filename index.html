@@ -122,7 +122,74 @@
        box-shadow:inset 0 2px 0 var(--link)}
   .status{margin-left:auto;font-size:10px;color:var(--muted);padding:0 6px;white-space:nowrap}
 
+  /* ═══ mobile layout ═══
+     A faithful grid cannot fit a phone, so below 720px the same sheet data is
+     rendered as stacked groups instead. The spreadsheet identity carries through
+     the chrome, the font convention and the total rules — not through gridlines. */
+  .mobile{display:none}
+  .msheet{display:none;flex-direction:column;gap:13px;padding:12px 12px 20px}
+  .msheet.on{display:flex}
+  .mhead{display:flex;flex-direction:column;gap:4px}
+  .mtitle{font:700 17px/1.22 Georgia,"Times New Roman",serif;text-wrap:balance}
+  .msub{font-size:11px;font-style:italic;color:var(--muted);line-height:1.4}
+
+  .mgrp{border:1px solid var(--chrome-line);background:var(--paper)}
+  .mgh{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+       background:var(--chrome);border:0;border-bottom:1px solid var(--chrome-line);
+       padding:10px 11px;cursor:pointer;text-align:left;color:var(--ink);
+       font:700 10px/1.25 Arial,sans-serif;letter-spacing:.11em;text-transform:uppercase}
+  .mgh .cnt{font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);font-size:10px}
+  .mgh .chev{flex:0 0 auto;transition:transform .16s;font-size:9px;color:var(--muted)}
+  .mgrp[data-open="0"] .chev{transform:rotate(-90deg)}
+  .mgrp[data-open="0"] .mgb{display:none}
+
+  .mrow{display:flex;align-items:baseline;gap:12px;padding:8px 11px;
+        border-bottom:1px solid var(--rule)}
+  .mrow:last-child{border-bottom:0}
+  .mrow .ml{flex:1 1 auto;font-size:12px;line-height:1.3}
+  .mrow .mv{flex:0 0 auto;text-align:right;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .mrow .mu{display:block;font-size:9px;font-style:italic;color:var(--muted);
+            letter-spacing:.01em;margin-top:1px}
+  .mrow.msubt{border-top:1px solid #16181a}
+  .mrow.msubt .ml,.mrow.msubt .mv{font-weight:600}
+  .mrow.mtot{border-top:1px solid #16181a;border-bottom:3px double #16181a;background:#fcfcfa}
+  .mrow.mtot .ml,.mrow.mtot .mv{font-weight:700}
+  .mrow.editable .mv{color:var(--hard);background:#eef2ff;box-shadow:inset 0 -1px 0 #b9c6f2;
+                     padding:2px 6px;min-width:64px}
+  .mrow input{width:82px;border:0;background:transparent;font:inherit;font-size:16px;
+              color:var(--hard);text-align:right;outline:none}
+  .msub2{padding:9px 11px 3px;font:700 11px/1.3 Arial,sans-serif;border-bottom:1px solid var(--rule)}
+  .mprose{padding:6px 11px;font-size:11.5px;line-height:1.5;color:#33383d}
+  .mnote{padding:6px 11px;font-size:10px;font-style:italic;line-height:1.45;color:var(--muted)}
+
+  .mcard{padding:10px 11px;border-bottom:1px solid var(--rule)}
+  .mcard:last-child{border-bottom:0}
+  .mcard .t{font-weight:700;font-size:12.5px;line-height:1.3}
+  .mcard .s{font-size:11.5px;color:#33383d;line-height:1.4;margin-top:2px}
+  .mcard .m{display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:5px;
+            font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .mcard .m b{font-weight:700;color:#33383d}
+
+  .mstep{display:flex;align-items:center;justify-content:space-between;gap:8px;
+         padding:8px 11px;border-bottom:1px solid var(--rule);background:#fbfbf8}
+  .mstep button{appearance:none;border:1px solid var(--chrome-line);background:var(--paper);
+                color:var(--ink);width:40px;height:32px;font-size:15px;cursor:pointer;line-height:1}
+  .mstep button:disabled{opacity:.32;cursor:default}
+  .mstep .lab{flex:1 1 auto;text-align:center;font:700 11px Arial,sans-serif;letter-spacing:.05em}
+
+  .mgridwrap{padding:8px 6px 10px;overflow-x:auto}
+  .mgcap{padding:0 5px 7px;font-size:10px;font-style:italic;color:var(--muted);line-height:1.4}
+  table.mgrid{width:100%;border-collapse:collapse;font-size:10.5px;
+              font-variant-numeric:tabular-nums;table-layout:fixed}
+  table.mgrid th,table.mgrid td{padding:6px 3px;text-align:right;border-bottom:1px solid var(--rule)}
+  table.mgrid thead th{font-weight:700;border-bottom:1px solid #9a9ea2}
+  table.mgrid tbody th{font-weight:700;text-align:right}
+  table.mgrid td.shade{background:var(--shade)}
+
   @media (max-width:720px){
+    .viewport{display:none}
+    .mobile{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;
+            -webkit-overflow-scrolling:touch;background:var(--paper)}
     .filemeta{display:none}
     .namebox{flex-basis:60px;font-size:10px}
     .title{font-size:14px}
@@ -174,6 +241,9 @@ const SHEETS = [
 {
   name:'Summary', rows:52,
   cols:[26, 336, 100, 104, 24, 120, 220, 96],   /* A B C D E F G H */
+  /* the legend box sits alongside the metadata rows; on mobile it gets its own block */
+  mskip:['E','F','G','H'],
+  mlegend:{ title:'Font convention', rows:[['F3','G3'],['F4','G4'],['F5','G5']] },
   cells:{
     B2:{v:'ANDREW T. GIBSON — ENERGY PROJECT FINANCE', c:'title', span:3},
     B3:{v:'Origination, structuring and underwriting · Biopower, solar and storage · Denver, CO', c:'sub', span:4},
@@ -252,6 +322,9 @@ const SHEETS = [
 {
   name:'Experience', rows:40,
   cols:[26, 232, 234, 88, 88, 82, 76, 124, 120],   /* A B C D E F G H I */
+  /* on a phone the schedule reads better as cards than as a wide table */
+  mskip:['H'],
+  mrecords:[{ r0:7, r1:10, title:'B', sub:'C', meta:['D','E','F','G'], foot:'I' }],
   cells:{
     B2:{v:'EXPERIENCE — HISTORICAL BUILD', c:'title', span:4},
     B3:{v:'Tenure on an actual/365 basis. The current role is marked to today, so it accrues live.', c:'sub', span:5},
@@ -359,6 +432,7 @@ const SHEETS = [
 {
   name:'Transactions', rows:32,
   cols:[26, 250, 372, 108, 84, 88, 104],   /* A B C D E F G */
+  mrecords:[{ r0:7, r1:19, title:'B', sub:'C', meta:['D','E','F','G'] }],
   cells:{
     B2:{v:'SELECTED TRANSACTIONS & MANDATES', c:'title', span:4},
     B3:{v:'Sizes as disclosed. Counterparties and commercial terms omitted where confidential.', c:'sub', span:5},
@@ -412,6 +486,8 @@ const SHEETS = [
 {
   name:'Research', rows:34,
   cols:[26, 320, 104, 116, 92, 92, 92, 92, 92],   /* A B C D E F G H I */
+  mpairs:[{ labelRow:16, valueRow:17, cols:['C','D','E','F','G','H','I'],
+            lsuffix:' GW', vprefix:'$', vsuffix:'/MWh' }],
   cells:{
     B2:{v:'SELECTED INDEPENDENT WORK', c:'title', span:4},
     B3:{v:'Original research and systems built outside mandate work.', c:'sub', span:4},
@@ -531,6 +607,9 @@ const SHEETS = [
 {
   name:'Model', rows:48,
   cols:[26, 244, 86, 74, 74, 74, 74, 74, 74, 74, 74, 74, 74],   /* A B C(yr0) D..M(yrs 1-10) */
+  /* ten year columns cannot fit a phone, so mobile steps through them one at a time */
+  mseries:{ cols:['D','E','F','G','H','I','J','K','L','M'], yearRow:6, label:'Year' },
+  mtables:[{ r0:41, r1:46, cols:['B','C','D','E','F','G'], caption:'Project NPV ($M) — PPA price down the side, capex per kW across' }],
   cells:{
     B2:{v:'ILLUSTRATIVE CASH FLOW — YEARS 1 TO 10', c:'title', span:5},
     B3:{v:'Driven entirely off the Assumptions sheet. Generic project; no live transaction, no confidential terms.', c:'sub', span:7},
@@ -1038,6 +1117,7 @@ function paint() {
       }
     }
   }
+  paintMobile();
 }
 
 function buildTabs() {
@@ -1060,16 +1140,390 @@ function buildTabs() {
 function showSheet(name) {
   state.sheet = name;
   for (const sh of SHEETS) grids[sh.name].el.style.display = (sh.name === name ? '' : 'none');
-  tabbar.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.sheet === name)));
+  mobileRoot.querySelectorAll('.msheet').forEach(m =>
+    m.classList.toggle('on', m.dataset.sheet === name));
+  tabbar.querySelectorAll('.tab').forEach(t => {
+    const sel = t.dataset.sheet === name;
+    t.setAttribute('aria-selected', String(sel));
+    if (sel) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  });
   select(name, firstContentRef(name), false);
   viewport.scrollTop = 0;
   viewport.scrollLeft = 0;
+  mobileRoot.scrollTop = 0;
+  namebox.textContent = name;
+  formula.textContent = matchMedia('(max-width:720px)').matches ? 'Tap a row to read its formula' : '';
+  formula.classList.remove('is-formula');
   updateScrollHint();
 }
 
 function firstContentRef(name) {
   const refs = Object.keys(SHEET_BY_NAME[name].cells);
   return refs.length ? refs[0] : 'A1';
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   4b. MOBILE VIEW
+   The same sheet data, rendered as stacked collapsible groups. A phone cannot
+   show a 1,100px grid without endless sideways scrolling, so below 720px the
+   grid is replaced rather than squeezed. Values stay live — everything reads
+   through the same engine.
+   ════════════════════════════════════════════════════════════════════════ */
+
+const mobileRoot = document.createElement('div');
+mobileRoot.className = 'mobile';
+mobileRoot.id = 'mobile';
+
+const mstate = { year: 0 };   /* index into a sheet's mseries.cols */
+
+const hasClass = (def, k) => !!(def && def.c && def.c.split(/\s+/).includes(k));
+const cellStr  = (sheet, ref) => {
+  const sh = SHEET_BY_NAME[sheet], def = sh.cells[ref];
+  if (!def) return '';
+  const raw = rawOf(sheet, ref);
+  if (raw === '' || raw === null || raw === undefined) return '';
+  return formatValue(readCell(sheet, ref), def.f);
+};
+
+function mkValue(sheet, ref) {
+  const def = SHEET_BY_NAME[sheet].cells[ref];
+  const el = document.createElement('span');
+  el.className = 'mv' + (hasClass(def, 'link') ? ' link' : '') + (hasClass(def, 'hard') ? ' hard' : '');
+  el.dataset.ms = sheet; el.dataset.mr = ref;
+  return el;
+}
+
+function buildMobileSheet(sh) {
+  const wrap = document.createElement('div');
+  wrap.className = 'msheet';
+  wrap.dataset.sheet = sh.name;
+
+  const skip = new Set(sh.mskip || []);
+  const consumed = new Set();
+  (sh.mrecords || []).forEach(r => { for (let i = r.r0; i <= r.r1; i++) consumed.add(i); });
+  (sh.mtables  || []).forEach(t => { for (let i = t.r0; i <= t.r1; i++) consumed.add(i); });
+  (sh.mpairs   || []).forEach(p => { consumed.add(p.labelRow); consumed.add(p.valueRow); });
+  if (sh.mseries) consumed.add(sh.mseries.yearRow);
+
+  const head = document.createElement('div'); head.className = 'mhead';
+  wrap.appendChild(head);
+
+  let group = null, body = null, count = 0;
+  const closeGroup = () => {
+    if (!group) return;
+    const prose = body.querySelectorAll('.mprose').length;
+    const rows  = body.children.length;
+    if (prose > 4 && prose >= rows - 1) {                 /* long prose blocks start folded */
+      group.dataset.open = '0';
+      group.querySelector('.cnt').textContent = prose + ' lines';
+    }
+    if (!rows) group.remove();
+    group = null; body = null;
+  };
+  const openGroup = title => {
+    closeGroup();
+    group = document.createElement('section');
+    group.className = 'mgrp'; group.dataset.open = '1';
+    const btn = document.createElement('button');
+    btn.className = 'mgh'; btn.type = 'button';
+    btn.setAttribute('aria-expanded', 'true');
+    btn.innerHTML = '<span class="ttl"></span><span class="cnt"></span><span class="chev">▼</span>';
+    btn.querySelector('.ttl').textContent = title;
+    btn.addEventListener('click', () => {
+      const open = group2 => group2.dataset.open === '1';
+      const g = btn.parentElement;
+      g.dataset.open = open(g) ? '0' : '1';
+      btn.setAttribute('aria-expanded', String(g.dataset.open === '1'));
+    });
+    body = document.createElement('div'); body.className = 'mgb';
+    group.appendChild(btn); group.appendChild(body);
+    wrap.appendChild(group);
+    count++;
+  };
+  const put = el => (body || head).appendChild(el);
+
+  /* ---- the row-by-row walk ---- */
+  for (let r = 1; r <= sh.rows; r++) {
+    if (consumed.has(r)) { renderBlocks(r); continue; }
+
+    const cells = [];
+    for (let c = 0; c < sh.cols.length; c++) {
+      const L = colLetter(c);
+      if (skip.has(L)) continue;
+      const ref = L + r;
+      if (sh.cells[ref]) cells.push({ L, c, ref, def: sh.cells[ref] });
+    }
+    if (!cells.length) continue;
+
+    const first = cells[0], d = first.def;
+    const txt = cellStr(sh.name, first.ref);
+
+    if (hasClass(d, 'title')) {
+      const e = document.createElement('div'); e.className = 'mtitle'; e.textContent = txt; head.appendChild(e); continue;
+    }
+    if (hasClass(d, 'sub')) {
+      const e = document.createElement('div'); e.className = 'msub'; e.textContent = txt; head.appendChild(e); continue;
+    }
+    if (hasClass(d, 'sec')) { openGroup(txt); continue; }
+    if (d.action === 'reset') {
+      const b = document.createElement('button');
+      b.className = 'mgh'; b.type = 'button'; b.style.borderBottom = '0';
+      b.innerHTML = '<span class="ttl"></span><span class="chev">↺</span>';
+      b.querySelector('.ttl').textContent = txt;
+      b.addEventListener('click', () => { resetAssumptions(); });
+      put(b); continue;
+    }
+
+    /* a spanning cell is prose, not a data row */
+    if (d.span && d.span > 1) {
+      const e = document.createElement('div');
+      e.className = hasClass(d, 'note') ? 'mnote' : (hasClass(d, 'hdr') ? 'msub2' : 'mprose');
+      e.textContent = txt;
+      put(e); continue;
+    }
+    /* a row of column headers carries no meaning once the grid is gone */
+    if (cells.every(x => hasClass(x.def, 'hdr'))) continue;
+
+    /* Spacer cells carry styling but no value; skipping them keeps a total row's
+       real figure (often several columns right) from being lost to an empty one. */
+    const filled = x => cellStr(sh.name, x.ref) !== '';
+    const vals  = cells.slice(1).filter(x => !hasClass(x.def, 'note')).filter(filled);
+    const units = cells.slice(1).filter(x =>  hasClass(x.def, 'note')).filter(filled);
+
+    const row = document.createElement('div');
+    row.className = 'mrow'
+      + (hasClass(d, 'tot') ? ' mtot' : '')
+      + (hasClass(d, 'subtot') ? ' msubt' : '');
+    const lab = document.createElement('div'); lab.className = 'ml'; lab.textContent = txt;
+    row.appendChild(lab);
+
+    const series = sh.mseries && vals.some(x => sh.mseries.cols.includes(x.L));
+    if (series) {
+      const el = document.createElement('span');
+      el.className = 'mv'; el.dataset.ms = sh.name; el.dataset.mseriesRow = r;
+      row.appendChild(el);
+    } else if (vals.length) {
+      const holder = document.createElement('span');
+      holder.style.textAlign = 'right';
+      const v = mkValue(sh.name, vals[0].ref);
+      holder.appendChild(v);
+      if (vals.length > 1) {
+        vals.slice(1, 3).forEach(x => {
+          const extra = mkValue(sh.name, x.ref);
+          extra.className += ' mu'; extra.style.fontStyle = 'normal';
+          holder.appendChild(extra);
+        });
+      }
+      if (units.length) {
+        const u = document.createElement('span'); u.className = 'mu';
+        u.textContent = units.map(x => cellStr(sh.name, x.ref)).join(' · ');
+        holder.appendChild(u);
+      }
+      row.appendChild(holder);
+      if (vals[0].def.input) {
+        row.classList.add('editable');
+        row.dataset.editRef = vals[0].ref;
+        row.dataset.editSheet = sh.name;
+      }
+    }
+    put(row);
+  }
+  closeGroup();
+
+  /* ---- record cards, data tables and label/value pairs ---- */
+  function renderBlocks(r) {
+    (sh.mrecords || []).forEach(cfg => {
+      if (r !== cfg.r0) return;
+      for (let i = cfg.r0; i <= cfg.r1; i++) {
+        const t = cellStr(sh.name, cfg.title + i);
+        if (!t) continue;
+        const card = document.createElement('div'); card.className = 'mcard';
+        const th = document.createElement('div'); th.className = 't'; th.textContent = t; card.appendChild(th);
+        const sv = cfg.sub ? cellStr(sh.name, cfg.sub + i) : '';
+        if (sv) { const e = document.createElement('div'); e.className = 's'; e.textContent = sv; card.appendChild(e); }
+        const meta = document.createElement('div'); meta.className = 'm';
+        (cfg.meta || []).forEach(L => {
+          const ref = L + i;
+          if (!sh.cells[ref]) return;
+          const val = cellStr(sh.name, ref);
+          if (!val) return;
+          const chip = document.createElement('span');
+          chip.dataset.ms = sh.name; chip.dataset.mr = ref;
+          chip.innerHTML = '<b></b>';
+          chip.querySelector('b').textContent = val;
+          meta.appendChild(chip);
+        });
+        const f = cfg.foot ? cellStr(sh.name, cfg.foot + i) : '';
+        if (f) { const e = document.createElement('span'); e.textContent = f; meta.appendChild(e); }
+        if (meta.children.length) card.appendChild(meta);
+        put(card);
+      }
+    });
+
+    (sh.mpairs || []).forEach(cfg => {
+      if (r !== cfg.labelRow) return;
+      cfg.cols.forEach(L => {
+        const row = document.createElement('div'); row.className = 'mrow';
+        const lab = document.createElement('div'); lab.className = 'ml';
+        lab.dataset.ms = sh.name; lab.dataset.mr = L + cfg.labelRow; lab.dataset.msuffix = cfg.lsuffix || '';
+        row.appendChild(lab);
+        const v = mkValue(sh.name, L + cfg.valueRow);
+        v.dataset.mprefix = cfg.vprefix || ''; v.dataset.msuffix = cfg.vsuffix || '';
+        row.appendChild(v);
+        put(row);
+      });
+    });
+
+    (sh.mtables || []).forEach(cfg => {
+      if (r !== cfg.r0) return;
+      const box = document.createElement('div'); box.className = 'mgridwrap';
+      if (cfg.caption) {
+        const cap = document.createElement('div'); cap.className = 'mgcap'; cap.textContent = cfg.caption;
+        box.appendChild(cap);
+      }
+      const tbl = document.createElement('table'); tbl.className = 'mgrid';
+      const thead = document.createElement('thead'); const htr = document.createElement('tr');
+      cfg.cols.forEach((L, i) => {
+        const th = document.createElement('th');
+        if (i > 0) { th.dataset.ms = sh.name; th.dataset.mr = L + cfg.r0; }
+        htr.appendChild(th);
+      });
+      thead.appendChild(htr); tbl.appendChild(thead);
+      const tb = document.createElement('tbody');
+      for (let i = cfg.r0 + 1; i <= cfg.r1; i++) {
+        const tr = document.createElement('tr');
+        cfg.cols.forEach((L, ci) => {
+          const ref = L + i;
+          const cell = document.createElement(ci === 0 ? 'th' : 'td');
+          cell.dataset.ms = sh.name; cell.dataset.mr = ref;
+          if (hasClass(sh.cells[ref], 'shade')) cell.className = 'shade';
+          tr.appendChild(cell);
+        });
+        tb.appendChild(tr);
+      }
+      tbl.appendChild(tb); box.appendChild(tbl); put(box);
+    });
+  }
+
+  /* ---- font-convention legend, rendered as its own block ---- */
+  if (sh.mlegend) {
+    closeGroup();
+    openGroup(sh.mlegend.title);
+    sh.mlegend.rows.forEach(([termRef, meaningRef]) => {
+      const row = document.createElement('div'); row.className = 'mrow';
+      const term = document.createElement('div'); term.className = 'ml';
+      const def = sh.cells[termRef];
+      term.textContent = cellStr(sh.name, termRef);
+      if (hasClass(def, 'hard')) term.classList.add('hard');
+      if (hasClass(def, 'link')) term.classList.add('link');
+      term.style.fontWeight = '700';
+      const mean = document.createElement('span'); mean.className = 'mv';
+      mean.style.fontSize = '11px'; mean.style.color = 'var(--muted)';
+      mean.textContent = cellStr(sh.name, meaningRef);
+      row.appendChild(term); row.appendChild(mean);
+      put(row);
+    });
+    closeGroup();
+  }
+
+  /* ---- year stepper for a sheet with a time series ---- */
+  if (sh.mseries) {
+    const target = wrap.querySelector('.mgrp .mgb');
+    if (target) {
+      const bar = document.createElement('div'); bar.className = 'mstep';
+      const prev = document.createElement('button'); prev.type = 'button'; prev.textContent = '‹';
+      prev.setAttribute('aria-label', 'Previous year');
+      const lab = document.createElement('div'); lab.className = 'lab'; lab.id = 'mstep-label';
+      const next = document.createElement('button'); next.type = 'button'; next.textContent = '›';
+      next.setAttribute('aria-label', 'Next year');
+      prev.addEventListener('click', () => { mstate.year = Math.max(0, mstate.year - 1); paintMobile(); });
+      next.addEventListener('click', () => { mstate.year = Math.min(sh.mseries.cols.length - 1, mstate.year + 1); paintMobile(); });
+      bar.appendChild(prev); bar.appendChild(lab); bar.appendChild(next);
+      target.insertBefore(bar, target.firstChild);
+      wrap._step = { bar, prev, next, lab, sh };
+    }
+  }
+
+  mobileRoot.appendChild(wrap);
+  return wrap;
+}
+
+function paintMobile() {
+  /* plain value cells */
+  mobileRoot.querySelectorAll('[data-mr]').forEach(el => {
+    const sheet = el.dataset.ms, ref = el.dataset.mr;
+    const txt = cellStr(sheet, ref);
+    const pre = el.dataset.mprefix || '', suf = el.dataset.msuffix || '';
+    const t = txt === '' ? '' : pre + txt + suf;
+    if (el.tagName === 'SPAN' && el.firstElementChild && el.firstElementChild.tagName === 'B')
+      el.firstElementChild.textContent = t;
+    else el.textContent = t;
+  });
+  /* series cells follow the stepper */
+  for (const sh of SHEETS) {
+    if (!sh.mseries) continue;
+    const wrap = mobileRoot.querySelector(`.msheet[data-sheet="${sh.name}"]`);
+    if (!wrap) continue;
+    const col = sh.mseries.cols[mstate.year];
+    wrap.querySelectorAll('[data-mseries-row]').forEach(el => {
+      const ref = col + el.dataset.mseriesRow;
+      el.textContent = cellStr(sh.name, ref);
+      el.dataset.mr2 = ref;
+    });
+    if (wrap._step) {
+      const yr = cellStr(sh.name, col + sh.mseries.yearRow);
+      wrap._step.lab.textContent = (sh.mseries.label || 'Step') + ' ' + yr + ' of ' + sh.mseries.cols.length;
+      wrap._step.prev.disabled = mstate.year === 0;
+      wrap._step.next.disabled = mstate.year === sh.mseries.cols.length - 1;
+    }
+  }
+}
+
+/* tapping a mobile row shows its formula, exactly like selecting a cell */
+mobileRoot.addEventListener('click', e => {
+  if (e.target.closest('.mgh') || e.target.closest('.mstep') || e.target.tagName === 'INPUT') return;
+  const row = e.target.closest('.mrow');
+  if (!row) return;
+  if (row.dataset.editRef) { beginMobileEdit(row); return; }
+  const v = row.querySelector('[data-mr],[data-mseries-row]');
+  if (!v) return;
+  const ref = v.dataset.mr2 || v.dataset.mr;
+  if (ref) showFormulaFor(v.dataset.ms, ref);
+});
+
+function showFormulaFor(sheet, ref) {
+  namebox.textContent = ref;
+  const raw = rawOf(sheet, ref);
+  formula.textContent = raw === '' ? '' : String(raw);
+  formula.classList.toggle('is-formula', typeof raw === 'string' && raw[0] === '=');
+}
+
+function beginMobileEdit(row) {
+  if (row.querySelector('input')) return;
+  const sheet = row.dataset.editSheet, ref = row.dataset.editRef;
+  const holder = row.querySelector('.mv');
+  const key = sheet + '!' + ref;
+  const def = SHEET_BY_NAME[sheet].cells[ref];
+  const current = (key in overrides) ? overrides[key] : def.v;
+  showFormulaFor(sheet, ref);
+
+  const input = document.createElement('input');
+  input.type = 'text'; input.inputMode = 'decimal'; input.value = String(current);
+  holder.textContent = ''; holder.appendChild(input);
+  input.focus(); input.select();
+
+  let done = false;
+  const finish = commit => {
+    if (done) return; done = true;
+    if (commit) {
+      const n = parseFloat(String(input.value).replace(/[, %]/g, ''));
+      if (isFinite(n)) overrides[key] = n;
+    }
+    input.remove();
+    paint();
+  };
+  input.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') finish(true); else if (e.key === 'Escape') finish(false); });
+  input.addEventListener('blur', () => finish(true));
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -1212,6 +1666,8 @@ document.addEventListener('keydown', e => {
 
 /* ---- boot ---- */
 SHEETS.forEach(sh => viewport.appendChild(buildSheet(sh)));
+SHEETS.forEach(buildMobileSheet);
+document.querySelector('.app').insertBefore(mobileRoot, tabbar);
 const hint = document.createElement('div');
 hint.className = 'scrollhint'; hint.id = 'scrollhint';
 viewport.appendChild(hint);
