@@ -12,7 +12,7 @@
 
    The page commits to a single visual world on purpose: a banker's working
    paper is white paper, and inverting it would break the conceit. Every
-   colour is an explicit token and the body paints its own ground, so the
+   color is an explicit token and the body paints its own ground, so the
    page holds whatever theme the host is in.
    ═══════════════════════════════════════════════════════════════════════ */
 :root{
@@ -414,7 +414,7 @@ const SHEETS = [
     C31:{v:0.02,  f:'pct1'},
     C32:{v:0.10,  f:'pct0'},
     C33:{v:0.30,  f:'pct0'},
-    C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetisation', u:'\u00a76418 transfer', grp:'Tax & incentives'},
+    C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetization', u:'\u00a76418 transfer', grp:'Tax & incentives'},
     C35:{v:0.21,  f:'pct0'},
     C36:{v:0.05,  f:'pct0'},
     C37:{v:1,     f:'num0'},
@@ -768,7 +768,7 @@ const SITE = {
 
   deals:[
     ['Red Sands','Two-unit biomass relocation, Michigan to Arizona; FEL-2 feasibility lead','2024–','40 MW','In progress',1],
-    ['Biopower development programme','Commercial strategy across five developments; lender-ready packages from capital stack to IRR','2024–','$30–100M each','Ongoing',1],
+    ['Biopower development program','Commercial strategy across five developments; lender-ready packages from capital stack to IRR','2024–','$30–100M each','Ongoing',1],
     ['Offtake agreements','Bioenergy offtake structured','2024–','$800M','Structured',0],
     ['Feedstock agreements','Supply agreements structured','2024–','$500M','Structured',0],
     ['Feedstock & offtake rights','Exclusive rights negotiated at zero-cost supply','2024','3.0m tons','Closed',0],
@@ -814,7 +814,7 @@ const main = document.getElementById('main');
 const fref = document.getElementById('fref'), ftext = document.getElementById('ftext');
 
 /* A figure wired to the workbook. It knows its own cell, so it can show its formula. */
-/* A figure's colour is not a styling choice — it reports what the cell actually
+/* A figure's color is not a styling choice — it reports what the cell actually
    holds, which is the whole point of the convention. Classified at paint time so
    an overridden input correctly turns blue. */
 function cellKind(sheet, ref) {
@@ -1370,7 +1370,7 @@ function syncControls() {
   out.appendChild(v3);
 
   const tie = $('div', 'tie');
-  tie.append('Sources equal uses · debt amortises to zero · loss carryforwards never go negative — ');
+  tie.append('Sources equal uses · debt amortizes to zero · loss carryforwards never go negative — ');
   const badge = $('b'); badge.id = 'tie'; tie.appendChild(badge);
   out.appendChild(tie);
 
