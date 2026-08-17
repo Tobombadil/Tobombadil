@@ -228,7 +228,40 @@ footer{margin-top:56px;border-top:1px solid var(--rule);background:var(--paper-2
 footer .wrap{padding-top:20px;padding-bottom:26px}
 footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:86ch}
 
-/* values wired to the workbook get a quiet affordance */
+/* input groups, elections and the held-constant list */
+  .igrp{border-bottom:1px solid var(--rule)}
+  .igh{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
+       background:none;border:0;padding:9px 14px;cursor:pointer;text-align:left;color:var(--ink-2);
+       font:700 9.5px var(--sans);letter-spacing:.11em;text-transform:uppercase}
+  .igh:hover{color:var(--ink)}
+  .igh .chev{font-size:9px;color:var(--ink-3);transition:transform .16s}
+  .igrp[data-open="0"] .chev{transform:rotate(-90deg)}
+  .igrp[data-open="0"] .igb{display:none}
+  .igb{padding-bottom:4px}
+  .fld select{width:100%;font:12px var(--sans);padding:5px 6px;border:1px solid var(--rule);
+              background:var(--paper);color:var(--input);font-weight:700}
+  .held{padding:12px 14px;border-top:1px solid var(--rule);background:var(--paper)}
+  .held p{margin:0 0 6px;font:700 9.5px var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+  .held ul{margin:0;padding:0;list-style:none}
+  .held li{font-size:11px;color:var(--ink-2);line-height:1.75}
+
+  /* capital stack strip */
+  .stack{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rule)}
+  .sitem{padding:10px 14px;border-right:1px solid var(--rule)}
+  .sitem:last-child{border-right:0}
+  .sitem .k{display:block;font:700 9px var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+  .sitem .v{display:block;font:400 16px var(--serif);margin-top:3px}
+
+  /* stress table */
+  table.stress{font-size:12.5px;min-width:430px}
+  table.stress td{padding:7px 10px 7px 0}
+  table.stress tr.key{background:var(--paper-2)}
+  table.stress tr.key td{font-weight:700}
+  table.stress td.muted{color:var(--ink-3)}
+  table.stress td.bad{color:#b3312f}
+  #stress{overflow-x:auto;padding-bottom:4px}
+
+  /* values wired to the workbook get a quiet affordance */
 [data-cell]{cursor:help;text-decoration:underline;text-decoration-style:dotted;
             text-decoration-color:var(--rule);text-underline-offset:3px}
 [data-cell]:hover,[data-cell]:focus-visible{text-decoration-color:var(--ink-3)}
@@ -344,94 +377,122 @@ const SHEETS = [
   }
 },
 
-/* Illustrative project inputs. Generic; no live transaction. */
+/* Illustrative project inputs. A generic single-unit biomass relocation —
+   deliberately unlike any live mandate. Statutory tax parameters are public
+   (IRC 45Y / 48E / 172 / 6418); every project figure is invented. */
 {
-  name:'Assumptions', rows:44, cols:[], cells:{
-    C9: {v:40,    f:'num0', input:true, min:5,    max:120,  step:1},     /* nameplate MW */
-    C10:{v:0.85,  f:'pct0', input:true, min:0.4,  max:0.95, step:0.01},  /* capacity factor */
-    C11:{v:0.92,  f:'pct0', input:true, min:0.7,  max:0.99, step:0.01},  /* availability */
-    C12:{v:3500,  f:'num0', input:true, min:1500, max:6000, step:50},    /* capex $/kW */
-    C13:{v:25,    f:'num0', input:true, min:10,   max:35,   step:1},     /* project life */
-    C17:{v:95,    f:'num0', input:true, min:40,   max:180,  step:1},     /* PPA $/MWh */
-    C18:{v:0.02,  f:'pct1', input:true, min:0,    max:0.05, step:0.005}, /* escalation */
-    C19:{v:120,   f:'num0', input:true, min:40,   max:250,  step:5},     /* fixed O&M $/kW-yr */
-    C20:{v:28,    f:'num0', input:true, min:5,    max:70,   step:1},     /* variable O&M $/MWh */
-    C24:{v:0.65,  f:'pct0', input:true, min:0,    max:0.85, step:0.01},  /* debt share */
-    C25:{v:0.075, f:'pct1', input:true, min:0.03, max:0.14, step:0.005}, /* interest */
-    C26:{v:18,    f:'num0', input:true, min:5,    max:25,   step:1},     /* tenor */
-    C27:{v:0.09,  f:'pct1', input:true, min:0.05, max:0.16, step:0.005}, /* WACC */
+  name:'Assumptions', rows:60, cols:[], cells:{
+    C9: {v:25,    f:'num0', input:true, min:10,   max:60,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant'},
+    C10:{v:0.94,  f:'pct0'},
+    C11:{v:0.91,  f:'pct0', input:true, min:0.75, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant'},
+    C12:{v:0.82,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant'},
 
-    C31:{v:'=C9*1000', f:'num0'},
-    C32:{v:'=C9*8760*C10*C11', f:'num0'},
-    C33:{v:'=C32/1000', f:'num1'},
-    C34:{v:'=C31*C12/1000000', f:'num1'},
-    C35:{v:'=C34*C24', f:'num1'},
-    C36:{v:'=C34-C35', f:'num1'},
-    C37:{v:'=PMT(C25,C26,C35)', f:'num1'},
-    C38:{v:'=C31*C19/1000000', f:'num1'},
-    C39:{v:'=C32*C20/1000000', f:'num1'},
+    C13:{v:88,    f:'num0', input:true, min:40,   max:160,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel'},
+    C14:{v:0.02,  f:'pct1', input:true, min:0,    max:0.04, step:0.005,lbl:'PPA escalator', u:'p.a.', grp:'Offtake & fuel'},
+    C15:{v:1.35,  f:'num2'},
+    C16:{v:14,    f:'num0', input:true, min:0,    max:40,   step:1,    lbl:'Delivered fuel cost today', u:'$/green ton', grp:'Offtake & fuel'},
+    C17:{v:26,    f:'num0', input:true, min:10,   max:60,   step:1,    lbl:'Fuel contract ceiling', u:'$/green ton', grp:'Offtake & fuel'},
+    C18:{v:10,    f:'num0', input:true, min:0,    max:20,   step:1,    lbl:'Years to reach the ceiling', u:'yrs', grp:'Offtake & fuel'},
+
+    C19:{v:5.2,   f:'num1', input:true, min:2,    max:12,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital'},
+    C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital'},
+    C21:{v:25,    f:'num0'},
+    C22:{v:2600,  f:'num0', input:true, min:1200, max:4200, step:50,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital'},
+    C23:{v:0.25,  f:'pct0', input:true, min:0,    max:0.5,  step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital'},
+
+    C24:{v:1.40,  f:'x2',   input:true, min:1.1,  max:2.0,  step:0.05, lbl:'Target minimum DSCR', u:'sizes the debt', grp:'Financing'},
+    C25:{v:0.065, f:'pct1', input:true, min:0.03, max:0.12, step:0.005,lbl:'Interest rate', u:'p.a.', grp:'Financing'},
+    C26:{v:18,    f:'num0', input:true, min:5,    max:20,   step:1,    lbl:'Debt tenor', u:'yrs', grp:'Financing'},
+    C27:{v:0.75,  f:'pct0', input:true, min:0,    max:0.9,  step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing'},
+    C28:{v:0.11,  f:'pct1', input:true, min:0.06, max:0.20, step:0.005,lbl:'Equity discount rate', u:'p.a.', grp:'Financing'},
+
+    C29:{v:1,     f:'num0'},
+    C30:{v:27.5,  f:'num1'},
+    C31:{v:0.02,  f:'pct1'},
+    C32:{v:0.10,  f:'pct0'},
+    C33:{v:0.30,  f:'pct0'},
+    C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetisation', u:'\u00a76418 transfer', grp:'Tax & incentives'},
+    C35:{v:0.21,  f:'pct0'},
+    C36:{v:0.05,  f:'pct0'},
+    C37:{v:1,     f:'num0'},
+    C38:{v:20,    f:'num0'},
+    C39:{v:0.80,  f:'pct0'},
+    C40:{v:25,    f:'num0'},
+
+    C45:{v:'=C9*1000*C10', f:'num0'},
+    C46:{v:'=C9*1000*C22*(1+C23)/1000000', f:'num1'},
+    C47:{v:'=C35+C36*(1-C35)', f:'pct1'},
+    C50:{v:'=C45*C21/1000000', f:'num2'},
+    C51:{v:'=C46-IF(C29=2,C46*C33*0.5,0)', f:'num1'},
   }
 },
 
-/* Ten-year schedule, valuation, and the tie-out. */
+/* Twenty-year schedule: operations, debt sized to a covenant, tax, credits
+   and equity cash flow. Sizing runs off year-1 EBITDA pre-tax, which keeps it
+   non-circular. */
 {
-  name:'Model', rows:48, cols:[], cells:{
-    C21:{v:'=-Assumptions!C34', f:'num1'},
-    C22:{v:'=SUM(D18:M18)', f:'num1'},
-    C23:{v:'=M12*(1+Assumptions!C18)*(1-((1+Assumptions!C18)/(1+Assumptions!C27))^(Assumptions!C13-10))/(Assumptions!C27-Assumptions!C18)', f:'num1'},
-    C24:{v:'=C23*M17', f:'num1'},
-    C25:{v:'=C21+C22+C24', f:'num1'},
-    C27:{v:'=IRR(C26:M26)', f:'pct1'},
-    C28:{v:'=MIN(D16:M16)', f:'x2'},
-    C29:{v:'=Assumptions!C34/D12', f:'num1'},
-    C32:{v:'=D12*(1-((1+Assumptions!C18)/(1+Assumptions!C27))^Assumptions!C13)/(Assumptions!C27-Assumptions!C18)-Assumptions!C34', f:'num1'},
-    C33:{v:'=C25', f:'num1'},
-    C34:{v:'=C33-C32', f:'num2'},
-    C35:{v:'=IF(ABS(C34)<0.01,"OK","CHECK")'},
+  name:'Model', rows:60, cols:[], cells:{
+    C41:{v:'=Assumptions!C46', f:'num1'},
+    C42:{v:'=MIN(D34:W34)', f:'num2'},
+    C43:{v:'=MIN((C42/Assumptions!C24)*(1-(1+Assumptions!C25)^(-Assumptions!C26))/Assumptions!C25,C41*Assumptions!C27)', f:'num1'},
+    C44:{v:'=PMT(Assumptions!C25,Assumptions!C26,C43)', f:'num2'},
+    C45:{v:'=C41-C43', f:'num1'},
+    C46:{v:'=SUM(D32:W32)', f:'num1'},
+    C47:{v:'=W15*(1+Assumptions!C14)*(1-((1+Assumptions!C14)/(1+Assumptions!C28))^(Assumptions!C40-20))/(Assumptions!C28-Assumptions!C14)', f:'num1'},
+    C48:{v:'=C47*W31', f:'num1'},
+    C49:{v:'=0-C45+C46+C48', f:'num1'},
+    C50:{v:'=IRR(C33:W33)', f:'pct1'},
+    C51:{v:'=MIN(D21:W21)', f:'x2'},
+    C52:{v:'=C43+C45-C41', f:'num2'},
+    C53:{v:'=W20', f:'num2'},
+    C54:{v:'=MIN(D28:W28)', f:'num2'},
+    C55:{v:'=IF(ABS(C52)<0.005,IF(ABS(C53)<0.005,IF(C54>-0.005,"OK","CHECK"),"CHECK"),"CHECK")'},
+    C33:{v:'=0-C45', f:'num1'},
   }
 },
 ];
 
-/* ---- the ten year columns, built in a loop ---- */
+/* ---- the twenty year columns, built in a loop ---- */
+const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W'];
+
 (function buildModel(){
   const s = SHEETS.find(x => x.name === 'Model');
-  const YC = ['D','E','F','G','H','I','J','K','L','M'];
-  const esc = 'Assumptions!C18';
-  s.cells['C26'] = { v:'=-Assumptions!C34', f:'num1' };
-  YC.forEach((cl, i) => {
-    const p = i ? YC[i - 1] : null;
-    s.cells[cl+'6']  = { v:i + 1, f:'num0' };
-    s.cells[cl+'7']  = { v:'=Assumptions!C33', f:'num1' };
-    s.cells[cl+'8']  = p ? { v:`=${p}8*(1+${esc})`, f:'num2' } : { v:'=Assumptions!C17', f:'num2' };
-    s.cells[cl+'9']  = { v:`=${cl}7*1000*${cl}8/1000000`, f:'num1' };
-    s.cells[cl+'10'] = p ? { v:`=${p}10*(1+${esc})`, f:'num1' } : { v:'=-Assumptions!C38', f:'num1' };
-    s.cells[cl+'11'] = p ? { v:`=${p}11*(1+${esc})`, f:'num1' } : { v:'=-Assumptions!C39', f:'num1' };
-    s.cells[cl+'12'] = { v:`=SUM(${cl}9:${cl}11)`, f:'num1' };
-    s.cells[cl+'13'] = { v:`=${cl}12/${cl}9`, f:'pct0' };
-    s.cells[cl+'14'] = { v:'=-Assumptions!C37', f:'num1' };
-    s.cells[cl+'15'] = { v:`=${cl}12+${cl}14`, f:'num1' };
-    s.cells[cl+'16'] = { v:`=-${cl}12/${cl}14`, f:'x2' };
-    s.cells[cl+'17'] = { v:`=1/(1+Assumptions!C27)^${cl}6`, f:'num3' };
-    s.cells[cl+'18'] = { v:`=${cl}12*${cl}17`, f:'num1' };
-    s.cells[cl+'26'] = (i === YC.length - 1) ? { v:`=${cl}12+C23`, f:'num1' } : { v:`=${cl}12`, f:'num1' };
-  });
-})();
-
-/* ---- 5x5 NPV sensitivity: PPA price down the side, capex per kW across ---- */
-(function buildSensitivity(){
-  const s = SHEETS.find(x => x.name === 'Model');
-  const cols = ['C','D','E','F','G'], flex = [0.8, 0.9, 1, 1.1, 1.2];
   const A = n => 'Assumptions!' + n;
-  cols.forEach((cl, i) => { s.cells[cl+'41'] = { v:`=${A('C12')}*${flex[i]}`, f:'num0' }; });
-  for (let r = 0; r < 5; r++) {
-    const rn = 42 + r;
-    s.cells['B'+rn] = { v:`=${A('C17')}*${flex[r]}`, f:'num0' };
-    cols.forEach(cl => {
-      const ebitda = `(${A('C32')}*$B${rn}/1000000-${A('C31')}*${A('C19')}/1000000-${A('C32')}*${A('C20')}/1000000)`;
-      const ann = `(1-((1+${A('C18')})/(1+${A('C27')}))^${A('C13')})/(${A('C27')}-${A('C18')})`;
-      s.cells[cl+rn] = { v:`=${ebitda}*${ann}-${A('C31')}*${cl}$41/1000000`, f:'num0' };
-    });
-  }
+  YCOLS.forEach((c, i) => {
+    const p = i ? YCOLS[i - 1] : null;
+    s.cells[c+'6']  = { v:i + 1, f:'num0' };
+    s.cells[c+'7']  = { v:p ? `=${A('C11')}` : `=${A('C12')}`, f:'pct0' };
+    s.cells[c+'8']  = { v:`=${A('C45')}/1000*8760*${c}7`, f:'num0' };
+    s.cells[c+'9']  = { v:p ? `=${p}9*(1+${A('C14')})` : `=${A('C13')}`, f:'num2' };
+    s.cells[c+'10'] = { v:`=${c}8*${c}9/1000000`, f:'num1' };
+    s.cells[c+'11'] = { v:`=IF(${A('C18')}<=0,${A('C17')},${A('C16')}+(${A('C17')}-${A('C16')})*MIN(1,${c}6/${A('C18')}))`, f:'num1' };
+    s.cells[c+'12'] = { v:`=${c}8*${A('C15')}*${c}11/1000000`, f:'num1' };
+    s.cells[c+'13'] = { v:p ? `=${p}13*(1+${A('C20')})` : `=${A('C19')}`, f:'num1' };
+    s.cells[c+'14'] = { v:`=${A('C50')}`, f:'num2' };
+    s.cells[c+'15'] = { v:`=${c}10-${c}12-${c}13-${c}14`, f:'num1' };
+    s.cells[c+'16'] = { v:`=IF(${c}6<=${A('C26')},C$44,0)`, f:'num2' };
+    s.cells[c+'17'] = { v:p ? `=${p}20` : '=C$43', f:'num1' };
+    s.cells[c+'18'] = { v:`=IF(${c}16>0,${c}17*${A('C25')},0)`, f:'num2' };
+    s.cells[c+'19'] = { v:`=${c}16-${c}18`, f:'num2' };
+    s.cells[c+'20'] = { v:`=${c}17-${c}19`, f:'num1' };
+    s.cells[c+'21'] = { v:`=IF(${c}16>0,${c}15/${c}16,999)`, f:'x2' };
+    s.cells[c+'22'] = { v:`=IF(${A('C37')}=1,IF(${c}6=1,${A('C51')},0),IF(${c}6<=${A('C38')},${A('C51')}/${A('C38')},0))`, f:'num1' };
+    s.cells[c+'23'] = { v:`=${c}15-${c}18-${c}22`, f:'num1' };
+    s.cells[c+'24'] = { v:p ? `=${p}28` : '=0', f:'num1' };
+    s.cells[c+'25'] = { v:`=IF(${c}23>0,MIN(${c}24,${c}23*${A('C39')}),0)`, f:'num1' };
+    s.cells[c+'26'] = { v:`=${c}23-${c}25`, f:'num1' };
+    s.cells[c+'27'] = { v:`=IF(${c}26>0,${c}26*${A('C47')},0)`, f:'num2' };
+    s.cells[c+'28'] = { v:`=${c}24-${c}25+IF(${c}23<0,0-${c}23,0)`, f:'num1' };
+    const ptc = `${c}8*${A('C30')}*(1+${A('C32')})*(1+${A('C31')})^(${c}6-1)/1000000*${A('C34')}`;
+    const itc = `${A('C46')}*${A('C33')}*(1+${A('C32')})*${A('C34')}`;
+    s.cells[c+'29'] = { v:`=IF(${A('C29')}=1,IF(${c}6<=10,${ptc},0),IF(${A('C29')}=2,IF(${c}6=1,${itc},0),0))`, f:'num2' };
+    s.cells[c+'30'] = { v:`=${c}15-${c}16-${c}27+${c}29`, f:'num1' };
+    s.cells[c+'31'] = { v:`=1/(1+${A('C28')})^${c}6`, f:'num3' };
+    s.cells[c+'32'] = { v:`=${c}30*${c}31`, f:'num1' };
+    s.cells[c+'33'] = { v:(i === YCOLS.length - 1) ? `=${c}30+C$47` : `=${c}30`, f:'num1' };
+    /* EBITDA inside the tenor only — the sizing binds on the worst of these */
+    s.cells[c+'34'] = { v:`=IF(${c}6<=${A('C26')},${c}15,9999)`, f:'num1' };
+  });
 })();
 
 /* ---- the ERCOT basis row ---- */
@@ -740,7 +801,8 @@ const SITE = {
 
 const SECTIONS = [
   ['track','Track record'], ['experience','Experience'], ['transactions','Transactions'],
-  ['research','Research'], ['model','Live model'], ['background','Background'], ['contact','Contact'],
+  ['research','Research'], ['method','Method'], ['model','Live model'],
+  ['background','Background'], ['contact','Contact'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1049,87 +1111,237 @@ function section(id, idx, title, right) {
 })();
 
 /* ── the live model ──────────────────────────────────────────────── */
-const INPUTS = [
-  ['C9',  'Nameplate capacity', 'MW'],
-  ['C10', 'Capacity factor', ''],
-  ['C11', 'Availability', ''],
-  ['C12', 'Capex', '$/kW'],
-  ['C17', 'PPA price, year 1', '$/MWh'],
-  ['C18', 'Escalation', 'p.a.'],
-  ['C19', 'Fixed O&M', '$/kW-yr'],
-  ['C20', 'Variable O&M & fuel', '$/MWh'],
-  ['C24', 'Debt share of capex', ''],
-  ['C25', 'Interest rate', ''],
-  ['C26', 'Debt tenor', 'yrs'],
-  ['C27', 'Discount rate (WACC)', ''],
-  ['C13', 'Project life', 'yrs'],
+/* ── method ──────────────────────────────────────────────────────── */
+const METHOD = [
+  ['Dials, not hardcodes',
+   'Every assumption is an input with a stated range and a scenario behind it. Nothing that matters is buried inside a formula, so a reviewer can find the number they want to argue with.'],
+  ['Sized to a covenant, not a ratio',
+   'Debt is sized to a target minimum DSCR on year-one cash flow and capped by a leverage limit, so the structure answers to what a lender will actually lend against rather than to a round percentage of capex.'],
+  ['Stress one at a time, then all at once',
+   'Each risk moves to the worst realistic end of its own range in isolation, so you can see which one actually breaks the deal. Then they are stacked, because they do not politely arrive one at a time.'],
+  ['Solve for the number that matters',
+   'Base-case outputs are the least interesting result. The useful figure is the offtake price at which equity returns nothing — at base, and again with every stress stacked. That is the number the PPA negotiation is really about.'],
+  ['Checks that fail loudly',
+   'Sources equal uses, debt amortises to zero by the end of its tenor, loss carryforwards never go negative. Each is a cell, and if one breaks the model says CHECK rather than quietly producing a plausible answer.'],
+  ['Every assumption carries its source',
+   'A notes schedule sits beside the model naming where each figure came from — a general ledger, a broker indication, a published benchmark — and flagging what is still a placeholder pending a real quote.'],
 ];
 
-(function model(){
-  const w = section('model', 'A5', 'Live deal model',
-                    'Illustrative 40 MW biomass project — not a live transaction');
+(function methodSection(){
+  const w = section('method', 'A5', 'How I underwrite', 'The discipline behind the model below');
+  const g = $('div', 'cols');
+  const a = $('div', 'blk'), b2 = $('div', 'blk');
+  METHOD.forEach(([h, p], i) => {
+    const d = $('div', 'paper');
+    d.style.marginBottom = '14px';
+    d.appendChild($('h3', null, h));
+    d.appendChild($('p', null, p));
+    (i % 2 ? b2 : a).appendChild(d);
+  });
+  g.append(a, b2);
+  w.appendChild(g);
+})();
+
+/* ── the live deal model ─────────────────────────────────────────── */
+
+/* the adjustable inputs, grouped, read straight off the workbook */
+const INPUT_GROUPS = (() => {
+  const g = new Map();
+  const cells = SHEET_BY_NAME['Assumptions'].cells;
+  for (const ref in cells) {
+    const d = cells[ref];
+    if (!d.input) continue;
+    if (!g.has(d.grp)) g.set(d.grp, []);
+    g.get(d.grp).push([ref, d]);
+  }
+  return [...g.entries()];
+})();
+
+/* Run the model under a temporary set of inputs, then put everything back.
+   This is what lets the stress tests, the breakeven solve and the sensitivity
+   grid each be real model runs rather than a second, simplified formula. */
+function underScenario(temp, read) {
+  const savedOv = Object.assign(Object.create(null), overrides);
+  const savedCache = cache;
+  Object.assign(overrides, temp);
+  cache = new Map();
+  try { return read(); }
+  finally {
+    for (const k in overrides) delete overrides[k];
+    Object.assign(overrides, savedOv);
+    cache = savedCache;
+  }
+}
+
+const RESULT = () => ({
+  npv:val('Model', 'C49'), irr:val('Model', 'C50'),
+  dscr:val('Model', 'C51'), debt:val('Model', 'C43'), equity:val('Model', 'C45'),
+});
+
+/* Debt is sized at base case and pinned through every stress: at financial close
+   the loan is already struck, so a stress hits equity, not the lender. */
+const pinDebt = () => ({ 'Model!C43':val('Model', 'C43') });
+
+const STRESSES = [
+  ['Fuel at the contract ceiling from day one', () => ({ 'Assumptions!C18':0 })],
+  ['Capex +25%',             () => ({ 'Assumptions!C22':val('Assumptions', 'C22') * 1.25 })],
+  ['PPA price −15%',         () => ({ 'Assumptions!C13':val('Assumptions', 'C13') * 0.85 })],
+  ['Availability −8 points', () => ({ 'Assumptions!C11':val('Assumptions', 'C11') - 0.08,
+                                      'Assumptions!C12':val('Assumptions', 'C12') - 0.08 })],
+  ['Non-fuel opex +20%',     () => ({ 'Assumptions!C19':val('Assumptions', 'C19') * 1.20 })],
+  ['Interest +200 bps',      () => ({ 'Assumptions!C25':val('Assumptions', 'C25') + 0.02 })],
+  ['No tax credits',         () => ({ 'Assumptions!C29':0 })],
+];
+const stackAll = () => Object.assign({}, ...STRESSES.map(([, f]) => f()));
+
+/* the PPA price at which equity NPV is zero */
+function breakeven(extra) {
+  const f = p => underScenario(Object.assign({}, extra, { 'Assumptions!C13':p }), () => val('Model', 'C49'));
+  /* note: the breakeven re-sizes debt, since a different price is a different deal */
+  let lo = 5, hi = 500, flo = f(lo), fhi = f(hi);
+  if (!isFinite(flo) || !isFinite(fhi) || flo * fhi > 0) return NaN;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2, fm = f(mid);
+    if (!isFinite(fm)) break;
+    if (flo * fm <= 0) { hi = mid; fhi = fm; } else { lo = mid; flo = fm; }
+  }
+  return (lo + hi) / 2;
+}
+
+function picker(ref, label, opts) {
+  const f = $('div', 'fld');
+  const h = $('div', 'fld-h');
+  const l = $('label', null, label); l.htmlFor = 'sel-' + ref;
+  h.appendChild(l); f.appendChild(h);
+  const sel = $('select'); sel.id = 'sel-' + ref; sel.dataset.bind = 'Assumptions!' + ref;
+  opts.forEach(([v, t]) => { const o = $('option', null, t); o.value = v; sel.appendChild(o); });
+  sel.value = SHEET_BY_NAME['Assumptions'].cells[ref].v;
+  sel.addEventListener('change', () => { overrides['Assumptions!' + ref] = parseFloat(sel.value); recalc(); });
+  f.appendChild(sel);
+  return f;
+}
+
+function syncControls() {
+  document.querySelectorAll('input[type=range][data-bind],select[data-bind]').forEach(el => {
+    const [sh, ref] = el.dataset.bind.split('!');
+    el.value = SHEET_BY_NAME[sh].cells[ref].v;
+  });
+}
+
+(function modelSection(){
+  const w = section('model', 'A6', 'Live deal model',
+                    'Illustrative single-unit biomass relocation — not a live transaction');
   const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:76ch;line-height:1.6';
-  intro.textContent = 'A generic project, sized to be recognisable rather than accurate. It describes no live transaction and contains no confidential terms. Move any input and the schedule, the returns, the chart and the sensitivity all recalculate.';
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
+  intro.textContent = 'A generic 25 MW biomass relocation, invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms. The statutory tax parameters are public law; every project figure is made up. Move any input and the twenty-year schedule, the debt sizing, the tax, the stress tests and the breakeven all recalculate.';
   w.appendChild(intro);
 
   const box = $('div', 'model');
-
-  /* inputs */
   const inp = $('div', 'inputs');
-  const ih = $('h3'); ih.append('Assumptions');
-  const rb = $('button', 'reset', 'Reset to base case'); rb.type = 'button';
+  const ih = $('h3');
+  ih.append('Assumptions');
+  const rb = $('button', 'reset', 'Reset'); rb.type = 'button';
   rb.addEventListener('click', () => {
     Object.keys(overrides).forEach(k => delete overrides[k]);
-    document.querySelectorAll('input[type=range]').forEach(sl => {
-      const [s, r] = (sl.dataset.cell || 'Research!C10').split('!');
-      sl.value = SHEET_BY_NAME[s].cells[r].v;
-    });
+    syncControls();
     recalc();
   });
   ih.appendChild(rb);
   inp.appendChild(ih);
 
-  INPUTS.forEach(([ref, label, unit]) => {
-    const def = SHEET_BY_NAME['Assumptions'].cells[ref];
-    const f = $('div', 'fld');
-    const h = $('div', 'fld-h');
-    const l = $('label', null, label); l.htmlFor = 'in-' + ref;
-    const o = $('output'); o.id = 'out-' + ref; o.dataset.out = 'Assumptions!' + ref;
-    if (unit) { const u = $('span', 'u', unit); o.dataset.unit = unit; }
-    h.append(l, o); f.appendChild(h);
-    const sl = $('input'); sl.type = 'range'; sl.id = 'in-' + ref;
-    sl.min = def.min; sl.max = def.max; sl.step = def.step; sl.value = def.v;
-    sl.dataset.cell = 'Assumptions!' + ref;
-    sl.setAttribute('aria-label', label + (unit ? ' in ' + unit : ''));
-    sl.addEventListener('input', () => { overrides['Assumptions!' + ref] = parseFloat(sl.value); recalc(); });
-    f.appendChild(sl);
-    inp.appendChild(f);
+  INPUT_GROUPS.forEach(([grp, list]) => {
+    const sec = $('div', 'igrp');
+    sec.dataset.open = '1';
+    const hd = $('button', 'igh'); hd.type = 'button';
+    hd.setAttribute('aria-expanded', 'true');
+    const ttl = $('span', null, grp), chev = $('span', 'chev', '▾');
+    hd.append(ttl, chev);
+    hd.addEventListener('click', () => {
+      const open = sec.dataset.open !== '0';
+      sec.dataset.open = open ? '0' : '1';
+      hd.setAttribute('aria-expanded', String(!open));
+    });
+    sec.appendChild(hd);
+    const body = $('div', 'igb');
+
+    list.forEach(([ref, def]) => {
+      const f = $('div', 'fld');
+      const h = $('div', 'fld-h');
+      const l = $('label', null, def.lbl); l.htmlFor = 'in-' + ref;
+      const o = $('output'); o.id = 'out-' + ref; o.dataset.out = 'Assumptions!' + ref;
+      if (def.u) o.dataset.unit = def.u;
+      h.append(l, o); f.appendChild(h);
+      const sl = $('input'); sl.type = 'range'; sl.id = 'in-' + ref;
+      sl.min = def.min; sl.max = def.max; sl.step = def.step; sl.value = def.v;
+      sl.dataset.bind = 'Assumptions!' + ref;
+      sl.setAttribute('aria-label', def.lbl + (def.u ? ', ' + def.u : ''));
+      sl.addEventListener('input', () => { overrides['Assumptions!' + ref] = parseFloat(sl.value); recalc(); });
+      f.appendChild(sl);
+      body.appendChild(f);
+    });
+
+    if (grp === 'Tax & incentives') {
+      body.appendChild(picker('C29', 'Credit election',
+        [[1, 'Production credit (§45Y)'], [2, 'Investment credit (§48E)'], [0, 'None']]));
+      body.appendChild(picker('C37', 'Depreciation',
+        [[1, 'Bonus, 100% in year 1'], [0, 'Straight line, 20 years']]));
+    }
+    sec.appendChild(body);
+    inp.appendChild(sec);
   });
 
-  /* outputs */
+  const held = $('div', 'held');
+  held.appendChild($('p', null, 'Held constant'));
+  const ul = $('ul');
+  [['Derate', 'C10', ''], ['Fuel use', 'C15', ' GT/MWh'], ['Maintenance reserve', 'C21', ' $/kW-yr'],
+   ['PTC base rate (§45Y)', 'C30', ' $/MWh'], ['Energy-community adder', 'C32', ''],
+   ['ITC base rate (§48E)', 'C33', ''], ['Blended tax rate', 'C47', ''],
+   ['NOL usage cap (§172)', 'C39', ''], ['Project life', 'C40', ' yrs']].forEach(([k, ref, suf]) => {
+    const li = $('li');
+    li.append(k + ' ');
+    li.appendChild(cell('Assumptions', ref));
+    if (suf) li.append(suf);
+    ul.appendChild(li);
+  });
+  held.appendChild(ul);
+  inp.appendChild(held);
+
   const out = $('div', 'outputs');
   const ot = $('div', 'otiles');
-  [['Project NPV', 'C25', 'num1', 'Unlevered, 25-year life', '$', 'M'],
-   ['Project IRR', 'C27', 'pct1', 'Unlevered', '', ''],
-   ['Minimum DSCR', 'C28', 'x2', 'Years 1–10', '', ''],
-   ['Simple payback', 'C29', 'num1', 'Years', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
+  [['Equity NPV', 'C49', 'num1', 'At the equity discount rate', '$', 'M'],
+   ['Equity IRR', 'C50', 'pct1', 'Levered, after tax', '', ''],
+   ['Minimum DSCR', 'C51', 'x2', 'Over the debt tenor', '', ''],
+   ['Breakeven PPA', null, null, 'Where equity NPV is zero', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
-    const v = $('span', 'v'); v.dataset.tile = ref;
-    if (pre) v.append(pre);
-    v.appendChild(cell('Model', ref, { f }));
-    if (suf) v.append(suf);
+    const v = $('span', 'v');
+    if (ref) {
+      v.dataset.tile = ref;
+      if (pre) v.append(pre);
+      v.appendChild(cell('Model', ref, { f }));
+      if (suf) v.append(suf);
+    } else v.id = 'breakeven';
     t.appendChild(v);
     t.appendChild($('span', 'n', n));
     ot.appendChild(t);
   });
   out.appendChild(ot);
 
-  /* cash flow chart */
+  const cs = $('div', 'stack');
+  [['All-in capex', 'C41'], ['Senior debt', 'C43'], ['Equity', 'C45'], ['Leverage', null]].forEach(([k, ref]) => {
+    const d = $('div', 'sitem');
+    d.appendChild($('span', 'k', k));
+    const v = $('span', 'v');
+    if (ref) { v.append('$'); v.appendChild(cell('Model', ref, { f:'num1' })); v.append('M'); }
+    else v.id = 'leverage';
+    d.appendChild(v);
+    cs.appendChild(d);
+  });
+  out.appendChild(cs);
+
   const v1 = $('div', 'viz');
-  v1.appendChild($('h4', null, 'Cash flow cover, years 1–10'));
-  v1.appendChild($('p', 'cap', 'EBITDA against annual debt service, both shown as magnitudes in $M. The gap between them is the cushion a lender underwrites.'));
+  v1.appendChild($('h4', null, 'Cash flow cover, years 1–20'));
+  v1.appendChild($('p', 'cap', 'EBITDA against the level debt service the sizing produces, both as magnitudes in $M. Debt service stops at the end of the tenor. Sizing binds on the lowest EBITDA inside the tenor — either the commissioning year or, once fuel has ramped to its contract ceiling, a later one.'));
   const lr = $('div', 'legend-row');
   [['EBITDA', 'var(--series-1)'], ['Debt service', 'var(--series-2)']].forEach(([t, c]) => {
     const sp = $('span');
@@ -1141,16 +1353,22 @@ const INPUTS = [
   v1.appendChild(cb);
   out.appendChild(v1);
 
-  /* sensitivity */
   const v2 = $('div', 'viz');
-  v2.appendChild($('h4', null, 'Sensitivity — project NPV ($M)'));
-  v2.appendChild($('p', 'cap', 'PPA price down the side, capex per kW across. Both axes flex ±20% off the inputs, so the outlined cell is always the base case.'));
-  const hw = $('div', 'heatwrap'); hw.id = 'heat';
-  v2.appendChild(hw);
+  v2.appendChild($('h4', null, 'Stress tests'));
+  v2.appendChild($('p', 'cap', 'Each risk moved to the worst realistic end of its own range, one at a time, then all of them together. Debt is sized once at base case and held fixed, because at financial close the loan is already struck — a stress hits equity and the cover ratio, not the lender. The point is to find which single assumption the deal actually turns on.'));
+  const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
+  v2.appendChild(sw2);
   out.appendChild(v2);
 
+  const v3 = $('div', 'viz');
+  v3.appendChild($('h4', null, 'Sensitivity — equity NPV ($M)'));
+  v3.appendChild($('p', 'cap', 'PPA price down the side, capex per kW across, each cell a full model run. Both axes flex ±20% off the inputs, so the outlined cell is always the base case.'));
+  const hw = $('div', 'heatwrap'); hw.id = 'heat';
+  v3.appendChild(hw);
+  out.appendChild(v3);
+
   const tie = $('div', 'tie');
-  tie.append('Tie-out: the schedule builds ten explicit years plus a terminal value; the check values the same cash flows as a single 25-year growing annuity. ');
+  tie.append('Checks: sources equal uses, debt amortises to zero by the end of its tenor, loss carryforwards never go negative. ');
   const badge = $('b'); badge.id = 'tie'; tie.appendChild(badge);
   out.appendChild(tie);
 
@@ -1158,9 +1376,8 @@ const INPUTS = [
   w.appendChild(box);
 })();
 
-/* ── background ──────────────────────────────────────────────────── */
 (function background(){
-  const w = section('background', 'A6', 'Background');
+  const w = section('background', 'A7', 'Background');
   const cols = $('div', 'cols');
   const a = $('div', 'blk');
   a.appendChild($('h3', null, 'Education'));
@@ -1190,7 +1407,7 @@ const INPUTS = [
 
 /* ── contact ─────────────────────────────────────────────────────── */
 (function contact(){
-  const w = section('contact', 'A7', 'Contact');
+  const w = section('contact', 'A8', 'Contact');
   const c = $('div', 'contact');
   const a = $('div', 'blk');
   const dl = $('dl', 'deflist');
@@ -1255,8 +1472,8 @@ const INPUTS = [
    The page commits to one theme, so the charts do too.
    ═══════════════════════════════════════════════════════════════════════ */
 
-const YC = ['D','E','F','G','H','I','J','K','L','M'];
 const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (t, attrs) => { const e = document.createElementNS(SVGNS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 
 /* round axis steps — 18/14/9/5/0 reads as an accident, 20/15/10/5/0 reads as a scale */
 function niceScale(max, count) {
@@ -1269,29 +1486,29 @@ function niceScale(max, count) {
   for (let v = 0; v <= top + step * 1e-9; v += step) ticks.push(v);
   return { top, ticks, step };
 }
-const svgEl = (t, attrs) => { const e = document.createElementNS(SVGNS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 
 function drawCashflow() {
   const host = document.getElementById('cashflow');
   host.textContent = '';
-  const W = 620, H = 232, ml = 40, mr = 10, mt = 12, mb = 26;
+  const W = 760, H = 236, ml = 42, mr = 8, mt = 14, mb = 26;
   const iw = W - ml - mr, ih = H - mt - mb;
 
-  const data = YC.map((c, i) => ({
+  const data = YCOLS.map((c, i) => ({
     year:i + 1,
-    ebitda:val('Model', c + '12'),
-    ds:Math.abs(val('Model', c + '14')),
-    dscr:val('Model', c + '16'),
+    ebitda:val('Model', c + '15'),
+    ds:Math.abs(val('Model', c + '16')),
+    dscr:val('Model', c + '21'),
   }));
   const peak = Math.max(...data.map(d => Math.max(d.ebitda, d.ds)), 1);
   const { top, ticks, step } = niceScale(peak * 1.08, 4);
   const y = v => mt + ih - (v / top) * ih;
 
-  const svg = svgEl('svg', { class:'chart', viewBox:`0 0 ${W} ${H}`, role:'img',
-    'aria-label':`EBITDA against debt service, years 1 to 10. Year 1 EBITDA ${txt('Model','D12','num1')} million dollars against debt service ${formatValue(Math.abs(val('Model','D14')),'num1')} million.` });
+  const svg = svgEl('svg', { class:'chart', viewBox:'0 0 ' + W + ' ' + H, role:'img',
+    'aria-label':'EBITDA against debt service over twenty years. Year one EBITDA ' +
+      formatValue(data[0].ebitda, 'num1') + ' million dollars against debt service ' +
+      formatValue(data[0].ds, 'num1') + ' million, a cover ratio of ' + formatValue(data[0].dscr, 'x2') + '.' });
 
-  /* recessive grid + axis, on round steps */
-  const dp = step < 1 ? 1 : 0;
+  const dp = step < 1 ? 2 : (Math.abs(step % 1) > 1e-9 ? 1 : 0);
   ticks.forEach(v => {
     const yy = y(v);
     svg.appendChild(svgEl('line', { class:'gridline', x1:ml, x2:W - mr, y1:yy, y2:yy }));
@@ -1302,26 +1519,33 @@ function drawCashflow() {
   svg.appendChild(svgEl('line', { class:'axis', x1:ml, x2:W - mr, y1:y(0), y2:y(0) }));
 
   const band = iw / data.length;
-  const bw = 11, gap = 2;                     /* 2px surface gap between adjacent fills */
+  const bw = Math.max(5, Math.min(11, band / 2 - 2)), gap = 2;
   data.forEach((d, i) => {
     const cx = ml + band * i + band / 2;
-    const x1 = cx - bw - gap / 2, x2 = cx + gap / 2;
-    [[x1, d.ebitda, 'var(--series-1)', 'EBITDA'], [x2, d.ds, 'var(--series-2)', 'Debt service']]
-      .forEach(([x, v, fill, name]) => {
-        const h = Math.max(1, y(0) - y(v));
-        const r = svgEl('rect', { x, y:y(v), width:bw, height:h, fill, rx:4, ry:4 });
-        /* square off the baseline end: rounding belongs to the data end only */
-        const cover = svgEl('rect', { x, y:y(0) - Math.min(4, h), width:bw, height:Math.min(4, h), fill });
-        r.style.cursor = 'default';
-        const enter = ev => showTip(
-          `<b>Year ${d.year}</b>EBITDA <i>${formatValue(d.ebitda, 'num1')}</i> · Debt service <i>${formatValue(d.ds, 'num1')}</i><br>DSCR <i>${formatValue(d.dscr, 'x2')}</i>`,
-          ev.clientX, ev.clientY);
-        [r, cover].forEach(el => { el.addEventListener('pointerenter', enter); el.addEventListener('pointermove', enter); el.addEventListener('pointerleave', hideTip); });
-        svg.append(r, cover);
+    const pairs = [[cx - bw - gap / 2, d.ebitda, 'var(--series-1)']];
+    if (d.ds > 0) pairs.push([cx + gap / 2, d.ds, 'var(--series-2)']);
+    pairs.forEach(([x, v, fill]) => {
+      const h = Math.max(1, y(0) - y(v));
+      const r = svgEl('rect', { x, y:y(v), width:bw, height:h, fill, rx:4, ry:4 });
+      /* square off the baseline end: rounding belongs to the data end only */
+      const cover = svgEl('rect', { x, y:y(0) - Math.min(4, h), width:bw, height:Math.min(4, h), fill });
+      const enter = ev => showTip(
+        '<b>Year ' + d.year + '</b>EBITDA <i>' + formatValue(d.ebitda, 'num1') + '</i>' +
+        (d.ds > 0 ? ' · Debt service <i>' + formatValue(d.ds, 'num1') + '</i><br>DSCR <i>' + formatValue(d.dscr, 'x2') + '</i>'
+                  : '<br><i>debt repaid</i>'),
+        ev.clientX, ev.clientY);
+      [r, cover].forEach(el => {
+        el.addEventListener('pointerenter', enter);
+        el.addEventListener('pointermove', enter);
+        el.addEventListener('pointerleave', hideTip);
       });
-    const lbl = svgEl('text', { class:'tick', x:cx, y:H - 9, 'text-anchor':'middle' });
-    lbl.textContent = d.year;
-    svg.appendChild(lbl);
+      svg.append(r, cover);
+    });
+    if (d.year === 1 || d.year % 5 === 0) {
+      const lbl = svgEl('text', { class:'tick', x:cx, y:H - 9, 'text-anchor':'middle' });
+      lbl.textContent = d.year;
+      svg.appendChild(lbl);
+    }
   });
 
   /* selective direct labels: first and last EBITDA only */
@@ -1333,7 +1557,6 @@ function drawCashflow() {
     t.textContent = formatValue(d.ebitda, 'num1');
     svg.appendChild(t);
   });
-
   host.appendChild(svg);
 }
 
@@ -1341,11 +1564,10 @@ function drawCashflow() {
 const RAMP_NEG = ['#f6c9c7', '#e07470', '#a93230'];
 const RAMP_POS = ['#b7d3f6', '#5598e7', '#1c5cab'];
 const MID = '#f0efec';
-
 function heatColor(v, scale) {
-  if (!isFinite(v)) return MID;
+  if (!isFinite(v)) return { c:MID, dark:false };
   const t = Math.min(1, Math.abs(v) / scale);
-  if (t < 0.06) return MID;
+  if (t < 0.06) return { c:MID, dark:false };
   const arm = v < 0 ? RAMP_NEG : RAMP_POS;
   const i = t < 0.4 ? 0 : t < 0.75 ? 1 : 2;
   return { c:arm[i], dark:i === 2 };
@@ -1354,39 +1576,33 @@ function heatColor(v, scale) {
 function drawHeat() {
   const host = document.getElementById('heat');
   host.textContent = '';
-  const cols = ['C','D','E','F','G'];
-  const cells = [];
-  let scale = 0;
-  for (let r = 0; r < 5; r++)
-    for (let c = 0; c < 5; c++) {
-      const v = val('Model', cols[c] + (42 + r));
-      cells.push(v);
-      scale = Math.max(scale, Math.abs(v));
-    }
-  scale = scale || 1;
+  const flex = [0.8, 0.9, 1, 1.1, 1.2];
+  const basePPA = val('Assumptions', 'C13'), baseCapex = val('Assumptions', 'C22');
+  const rows = flex.map(f => basePPA * f), cols = flex.map(f => baseCapex * f);
+
+  const grid = rows.map(p => cols.map(cx =>
+    underScenario({ 'Assumptions!C13':p, 'Assumptions!C22':cx }, () => val('Model', 'C49'))));
+  const scale = Math.max(...grid.flat().map(Math.abs), 1);
 
   const t = $('table', 'heat');
-  const cap = $('caption');
-  cap.className = 'sr';
-  cap.textContent = 'Project NPV in millions of dollars by PPA price and capex per kW';
-  t.appendChild(cap);
+  t.appendChild($('caption', 'sr', 'Equity NPV in millions of dollars by PPA price and capex per kW'));
   const thead = $('thead'), htr = $('tr');
-  const corner = $('th', 'corner', 'PPA ↓ / capex →'); htr.appendChild(corner);
-  cols.forEach(c => htr.appendChild($('th', null, '$' + txt('Model', c + '41'))));
+  htr.appendChild($('th', 'corner', 'PPA ↓ / capex →'));
+  cols.forEach(c => htr.appendChild($('th', null, '$' + formatValue(c, 'num0'))));
   thead.appendChild(htr); t.appendChild(thead);
-
   const tb = $('tbody');
-  for (let r = 0; r < 5; r++) {
+  rows.forEach((p, r) => {
     const tr = $('tr');
-    tr.appendChild($('th', null, '$' + txt('Model', 'B' + (42 + r))));
-    cols.forEach((c, ci) => {
-      const v = cells[r * 5 + ci];
+    tr.appendChild($('th', null, '$' + formatValue(p, 'num0')));
+    cols.forEach((cx, ci) => {
+      const v = grid[r][ci];
       const td = $('td', (r === 2 && ci === 2) ? 'base' : null, formatValue(v, 'num0'));
       const col = heatColor(v, scale);
-      if (typeof col === 'string') { td.style.background = col; }
-      else { td.style.background = col.c; if (col.dark) td.style.color = '#fff'; }
+      td.style.background = col.c;
+      if (col.dark) td.style.color = '#fff';
       const enter = ev => showTip(
-        `<b>NPV ${formatValue(v, 'num1')} $M</b>PPA <i>$${txt('Model', 'B' + (42 + r))}/MWh</i> · Capex <i>$${txt('Model', c + '41')}/kW</i>`,
+        '<b>Equity NPV ' + formatValue(v, 'num1') + ' $M</b>PPA <i>$' + formatValue(p, 'num0') +
+        '/MWh</i> · Capex <i>$' + formatValue(cx, 'num0') + '/kW</i>',
         ev.clientX, ev.clientY);
       td.addEventListener('pointerenter', enter);
       td.addEventListener('pointermove', enter);
@@ -1394,50 +1610,107 @@ function drawHeat() {
       tr.appendChild(td);
     });
     tb.appendChild(tr);
-  }
+  });
+  t.appendChild(tb);
+  host.appendChild(t);
+}
+
+function drawStress() {
+  const host = document.getElementById('stress');
+  host.textContent = '';
+  const base = RESULT();
+  const rows = [['Base case', base, true]];
+  const pin = pinDebt();
+  STRESSES.forEach(([name, f]) => rows.push([name, underScenario(Object.assign({}, f(), pin), RESULT), false]));
+  rows.push(['All stresses stacked', underScenario(Object.assign({}, stackAll(), pin), RESULT), true]);
+
+  const t = $('table', 'sched stress');
+  const thead = $('thead'), htr = $('tr');
+  ['Case', 'Equity NPV', 'Δ NPV', 'Equity IRR', 'Min DSCR'].forEach((h, i) =>
+    htr.appendChild($('th', i ? 'n' : null, h)));
+  thead.appendChild(htr); t.appendChild(thead);
+  const tb = $('tbody');
+  rows.forEach(([name, r, strong]) => {
+    const tr = $('tr');
+    if (strong) tr.className = 'key';
+    tr.appendChild($('td', null, name));
+    const npv = $('td', 'n', formatValue(r.npv, 'num1'));
+    if (r.npv < 0) npv.classList.add('bad');
+    tr.appendChild(npv);
+    const d = r.npv - base.npv;
+    tr.appendChild($('td', 'n muted', name === 'Base case' ? '—' : (d >= 0 ? '+' : '') + formatValue(d, 'num1')));
+    tr.appendChild($('td', 'n', isFinite(r.irr) ? formatValue(r.irr, 'pct1') : '—'));
+    const ds = $('td', 'n', r.dscr >= 900 ? '—' : formatValue(r.dscr, 'x2'));
+    if (r.dscr < 1) ds.classList.add('bad');
+    tr.appendChild(ds);
+    tb.appendChild(tr);
+  });
   t.appendChild(tb);
   host.appendChild(t);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
    6. RECALC
+   Headline figures update on every slider tick. The stress table, the
+   sensitivity grid and the breakeven solve are debounced, since each of
+   those is dozens of complete model evaluations.
    ═══════════════════════════════════════════════════════════════════════ */
+
+let heavyTimer;
 
 function recalc() {
   cache = new Map();
   paintCells();
 
-  /* slider read-outs */
   document.querySelectorAll('[data-out]').forEach(o => {
     const [s, r] = o.dataset.out.split('!');
     o.textContent = txt(s, r);
-    if (o.dataset.unit) { const u = $('span', 'u', o.dataset.unit); o.appendChild(u); }
+    if (o.dataset.unit) o.appendChild($('span', 'u', o.dataset.unit));
   });
   const ao = document.getElementById('alpha-out');
   if (ao) ao.textContent = '$' + txt('Research', 'C10') + ' /MWh/GW';
 
-  /* tenure bars */
   const maxT = Math.max(...SITE.jobs.map(j => val('Career', 'F' + j.row)));
   document.querySelectorAll('[data-tbar]').forEach(b => {
     b.style.width = (val('Career', 'F' + b.dataset.tbar) / maxT * 100).toFixed(1) + '%';
   });
 
-  /* negative NPV reads red */
-  const npvTile = document.querySelector('[data-tile="C25"]');
-  if (npvTile) npvTile.classList.toggle('neg', val('Model', 'C25') < 0);
+  const npvTile = document.querySelector('[data-tile="C49"]');
+  if (npvTile) npvTile.classList.toggle('neg', val('Model', 'C49') < 0);
 
-  /* tie-out badge */
+  const lev = document.getElementById('leverage');
+  if (lev) lev.textContent = formatValue(val('Model', 'C43') / val('Model', 'C41'), 'pct0');
+
   const badge = document.getElementById('tie');
   if (badge) {
-    const ok = val('Model', 'C35') === 'OK';
-    badge.textContent = ok ? '✓ OK — difference 0.00' : '✗ CHECK';
+    const ok = val('Model', 'C55') === 'OK';
+    badge.textContent = ok ? '✓ all three pass' : '✗ CHECK';
     badge.classList.toggle('bad', !ok);
   }
 
   drawCashflow();
+
+  clearTimeout(heavyTimer);
+  heavyTimer = setTimeout(heavy, 130);
+}
+
+function heavy() {
+  const be = document.getElementById('breakeven');
+  if (be) {
+    const b0 = breakeven({}), b1 = breakeven(stackAll());
+    be.textContent = '$' + (isFinite(b0) ? formatValue(b0, 'num0') : '—');
+    const s = $('span');
+    s.style.cssText = 'font-size:12px;color:var(--ink-3);margin-left:7px';
+    s.textContent = isFinite(b1) ? '· $' + formatValue(b1, 'num0') + ' stacked' : '';
+    be.appendChild(s);
+  }
+  drawStress();
   drawHeat();
 }
 
+syncControls();
+recalc();
+clearFormula();
 recalc();
 clearFormula();
 </script>

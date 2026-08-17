@@ -45,22 +45,42 @@ Plus `+ - * / ^ &`, comparisons, parentheses, ranges (`D18:M18`) and cross-sheet
 
 ## The live deal model
 
-The centrepiece is a working project finance model behind thirteen sliders: a generic 40 MW
-biomass project, sized to be recognisable rather than accurate. **It describes no live
-transaction and contains no confidential terms.**
+The centrepiece is a working project finance model behind eighteen sliders and two
+elections: a generic **25 MW single-unit biomass relocation**, invented end to end. **It
+describes no client, counterparty or live transaction and contains no confidential terms.**
+Statutory tax parameters are public law (IRC §45Y, §48E, §172, §6418); every project figure is
+made up.
 
-Move any input and everything recalculates — a ten-year cash flow schedule, NPV, unlevered IRR,
-minimum DSCR, simple payback, the cash-flow chart and the sensitivity heatmap.
+What it actually does, over a twenty-year schedule:
 
-It also ties out. The schedule builds ten explicit years plus a terminal value; the check values
-the same cash flows as a single 25-year growing annuity. The difference is zero at every set of
-assumptions, and the badge says so — or says `CHECK` if you break it.
+- **Debt sized to a covenant, not a ratio.** Senior debt is sized to a target minimum DSCR on
+  the lowest EBITDA inside the tenor, capped by a leverage limit. Sizing runs pre-tax, which
+  keeps it non-circular. At base case the covenant binds at 51% leverage, well inside the 75% cap.
+- **A tax layer.** Bonus depreciation or 20-year straight line, loss carryforwards with the §172
+  80% usage cap, a blended federal-and-state rate with state deductible federally, and an
+  election between the production credit (§45Y, ten years, energy-community adder, monetised
+  under §6418) and the investment credit (§48E, once at COD, halving the depreciable basis by
+  50% of the credit).
+- **Fuel that ramps.** Delivered cost climbs in a straight line to a contract ceiling over a set
+  number of years, which is often what moves the binding year for the debt sizing off
+  commissioning and out into the schedule.
+- **Stress tests.** Seven risks each moved to the worst realistic end of their own range, one at
+  a time, then stacked. Debt is sized once at base case and pinned through the stresses, because
+  at financial close the loan is already struck — a stress hits equity and the cover ratio, not
+  the lender. At base case a price or fuel stress breaks the covenant while a capex stress does
+  not, which is the whole point of running them separately.
+- **A breakeven solve.** Bisection on the PPA price at which equity NPV is zero, reported at
+  base and again with every stress stacked.
+- **Checks that fail loudly.** Sources equal uses, debt amortises to zero by the end of its
+  tenor, loss carryforwards never go negative. If one breaks, the badge says CHECK.
+
+Each stress row, each heatmap cell and every step of the breakeven bisection is a **complete
+model run** — `underScenario()` applies a temporary set of inputs, evaluates, and restores — not
+a second, simplified formula that could drift from the first.
 
 ### Charts
 
-Two, both hand-drawn (inline SVG and a styled table; no chart library):
-
-- **Cash flow cover** — grouped bars, EBITDA against debt service across ten years, with a
+- **Cash flow cover** — grouped bars, EBITDA against debt service across twenty years, with a
   legend, round axis steps, selective direct labels and a per-bar hover tooltip.
 - **NPV sensitivity** — a 5×5 heatmap on a blue↔red diverging ramp with a neutral grey midpoint
   at NPV = 0, base case outlined, hover tooltip per cell.
@@ -74,8 +94,14 @@ Prose, roles, deals, education and links live in the `SITE` object. Numbers live
 Slider ranges are declared on the input cells themselves:
 
 ```js
-C17:{ v:95, f:'num0', input:true, min:40, max:180, step:1 },   // PPA price, $/MWh
+C13:{ v:88, f:'num0', input:true, min:40, max:160, step:1,
+      lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel' },
 ```
+
+Anything with `input:true` becomes a slider automatically, filed under its `grp`. Two attributes
+are deliberately distinct: **`data-cell`** marks a displayed figure, and `paintCells()` rewrites
+its `textContent` on every recalc; **`data-bind`** marks a control. Putting a `<select>` on
+`data-cell` wipes its options.
 
 ## Design notes
 
