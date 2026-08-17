@@ -80,7 +80,16 @@ Twenty operating years behind a two-year construction period:
   before taking the operating hits.
 - **A breakeven solve.** Bisection on the PPA price at which equity NPV is zero.
 - **Three checks.** Sources equal uses, debt amortizes to zero, loss carryforwards never go
-  negative.
+  negative. A fourth gate sits in front of them: a stream whose EBITDA turns negative inside the
+  tenor is not financeable at all, so debt is zero and the badge says so rather than reporting a
+  structure no lender would fund.
+- **Outputs that decline to mislead.** An equity return computed on a sliver of equity is
+  arithmetic, not information, so below a 12% equity share it reads `n.m.`; above 100% it reads
+  `over 100%` rather than three digits of false precision; and with no debt the cover ratio reads
+  `no debt` rather than leaking a sentinel.
+
+Input ranges are set to bands a lender would recognize. A model that can be driven to a
+$1,200/kW relocation at 90% leverage will be, and the number it produces is worthless.
 
 Every stress row, every heatmap cell and every step of the bisection is a **complete model run**
 via `underScenario()`, not a simplified second formula that could drift.
@@ -101,6 +110,27 @@ sculpting.
 
 Series colours `#2a78d6` / `#eb6834` were validated against the white surface: CVD ΔE 24.7,
 normal-vision ΔE 33.6 — both clear of the floors.
+
+## Verification
+
+Three suites, run against a headless browser:
+
+- **`site.js`** — behavior, content and style: values against hand calculations, the stress and
+  breakeven logic, the font convention, the confidentiality sweep, and guards on em dashes,
+  contractions and American spelling.
+- **`crosscheck.js`** — an **independent implementation** of the whole project model, written
+  from the stated mechanics rather than from the workbook, compared against the page across 250
+  random input vectors and 14 fields including IRR. It also asserts that the headline tiles agree
+  with the stress table's base case, which are computed by different paths, and that structural
+  invariants hold on every vector: no negative debt or equity, leverage inside its cap, sources
+  equal uses, debt amortized.
+- **`mobile.js`** — responsive layout at 390px and 768px.
+
+The tile-versus-table check exists because it caught a real defect: after the model's cells were
+renumbered, the three headline tiles still pointed at the old addresses, so the equity IRR tile
+was reading equity in millions and formatting it as a percentage. It displayed 3,768%. Every
+other test passed, because they each read the model directly and never checked what the page had
+actually bound to.
 
 ## Editing the content
 

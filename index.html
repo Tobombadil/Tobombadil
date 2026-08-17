@@ -390,7 +390,7 @@ const SHEETS = [
     C11:{v:0.91,  f:'pct0', input:true, min:0.75, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant'},
     C12:{v:0.82,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant'},
 
-    C13:{v:88,    f:'num0', input:true, min:40,   max:160,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel'},
+    C13:{v:88,    f:'num0', input:true, min:55,   max:140,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel'},
     C14:{v:0.02,  f:'pct1', input:true, min:0,    max:0.04, step:0.005,lbl:'PPA escalator', u:'p.a.', grp:'Offtake & fuel'},
     C15:{v:1.35,  f:'num2'},
     C16:{v:14,    f:'num0', input:true, min:0,    max:40,   step:1,    lbl:'Delivered fuel cost today', u:'$/green ton', grp:'Offtake & fuel'},
@@ -400,13 +400,13 @@ const SHEETS = [
     C19:{v:5.2,   f:'num1', input:true, min:2,    max:12,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital'},
     C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital'},
     C21:{v:25,    f:'num0'},
-    C22:{v:2600,  f:'num0', input:true, min:1200, max:4200, step:50,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital'},
-    C23:{v:0.25,  f:'pct0', input:true, min:0,    max:0.5,  step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital'},
+    C22:{v:2600,  f:'num0', input:true, min:1800, max:4200, step:50,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital'},
+    C23:{v:0.25,  f:'pct0', input:true, min:0.10, max:0.45, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital'},
 
-    C24:{v:1.40,  f:'x2',   input:true, min:1.1,  max:2.0,  step:0.05, lbl:'Target minimum DSCR', u:'sizes the debt', grp:'Financing'},
+    C24:{v:1.40,  f:'x2',   input:true, min:1.20, max:2.00, step:0.05, lbl:'Target minimum DSCR', u:'sizes the debt', grp:'Financing'},
     C25:{v:0.065, f:'pct1', input:true, min:0.03, max:0.12, step:0.005,lbl:'Interest rate', u:'p.a.', grp:'Financing'},
     C26:{v:18,    f:'num0', input:true, min:5,    max:20,   step:1,    lbl:'Debt tenor', u:'yrs', grp:'Financing'},
-    C27:{v:0.75,  f:'pct0', input:true, min:0,    max:0.9,  step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing'},
+    C27:{v:0.75,  f:'pct0', input:true, min:0.30, max:0.80, step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing'},
     C28:{v:0.11,  f:'pct1', input:true, min:0.06, max:0.20, step:0.005,lbl:'Equity discount rate', u:'p.a.', grp:'Financing'},
 
     C29:{v:1,     f:'num0'},
@@ -443,11 +443,13 @@ const SHEETS = [
 {
   name:'Model', rows:64, cols:[], cells:{
     C41:{v:'=Assumptions!C46', f:'num1'},                       /* construction cost */
-    C42:{v:'=SUM(D18:W18)', f:'num1'},                          /* debt the sculpt supports */
-    C43:{v:'=Assumptions!C25*Assumptions!C52/2+(Assumptions!C53/12)*(D16/C42)', f:'num3'},
+    C39:{v:'=MIN(D38:W38)', f:'num1'},                          /* worst EBITDA inside the tenor */
+    C40:{v:'=IF(C39>0,1,0)', f:'num0'},                         /* is the stream financeable at all */
+    C42:{v:'=C40*SUM(D18:W18)', f:'num1'},                      /* debt the sculpt supports */
+    C43:{v:'=Assumptions!C25*Assumptions!C52/2+(Assumptions!C53/12)*IF(C42>0,D16/C42,0)', f:'num3'},
     C44:{v:'=Assumptions!C27*C41/(1-Assumptions!C27*C43)', f:'num1'},   /* leverage-capped debt */
-    C45:{v:'=MIN(C42,C44)', f:'num1'},                          /* senior debt */
-    C46:{v:'=C45/C42', f:'num3'},                               /* sculpt scaling factor */
+    C45:{v:'=MAX(0,MIN(C42,C44))', f:'num1'},                   /* senior debt, never negative */
+    C46:{v:'=IF(C42>0,C45/C42,0)', f:'num3'},                   /* sculpt scaling factor */
     C47:{v:'=C45*Assumptions!C25*Assumptions!C52/2', f:'num2'}, /* interest during construction */
     C48:{v:'=(Assumptions!C53/12)*D19', f:'num2'},              /* debt service reserve */
     C49:{v:'=C41+C47+C48', f:'num1'},                           /* total funding requirement */
@@ -465,7 +467,7 @@ const SHEETS = [
     C58:{v:'=C45+C50-C49', f:'num2'},                           /* check: sources = uses */
     C59:{v:'=W23', f:'num2'},                                   /* check: debt amortized */
     C60:{v:'=MIN(D31:W31)', f:'num2'},                          /* check: NOL never negative */
-    C61:{v:'=IF(ABS(C58)<0.005,IF(ABS(C59)<0.005,IF(C60>-0.005,"OK","CHECK"),"CHECK"),"CHECK")'},
+    C61:{v:'=IF(C40=0,"NOT FINANCEABLE",IF(ABS(C58)<0.005,IF(ABS(C59)<0.005,IF(C60>-0.005,"OK","CHECK"),"CHECK"),"CHECK"))'},
 
     B37:{v:'=0-C50/2', f:'num1'},
     C37:{v:'=0-C50/2', f:'num1'},
@@ -494,7 +496,7 @@ const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','
 
     /* sculpt: debt service is whatever holds the cover ratio at its target,
        and the loan is the present value of that stream at the debt rate */
-    s.cells[c+'16'] = { v:`=IF(${c}6<=${A('C26')},${c}15/${A('C24')},0)`, f:'num2' };
+    s.cells[c+'16'] = { v:`=IF(${c}6<=${A('C26')},MAX(0,${c}15)/${A('C24')},0)`, f:'num2' };
     s.cells[c+'17'] = { v:`=1/(1+${A('C25')})^${c}6`, f:'num3' };
     s.cells[c+'18'] = { v:`=${c}16*${c}17`, f:'num2' };
     s.cells[c+'19'] = { v:`=${c}16*C$46`, f:'num2' };
@@ -525,6 +527,8 @@ const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','
     s.cells[c+'35'] = { v:`=1/(1+${A('C28')})^(${c}6+1)`, f:'num3' };
     s.cells[c+'36'] = { v:`=${c}34*${c}35`, f:'num1' };
     s.cells[c+'37'] = { v:(i === YCOLS.length - 1) ? `=${c}34+C$53` : `=${c}34`, f:'num1' };
+    /* EBITDA inside the tenor, for the financeability test */
+    s.cells[c+'38'] = { v:`=IF(${c}6<=${A('C26')},${c}15,9999)`, f:'num1' };
   });
 })();
 
@@ -864,7 +868,9 @@ function paintCells(root = document) {
   root.querySelectorAll('[data-cell]').forEach(e => {
     const [sheet, ref] = e.dataset.cell.split('!');
     const v = readCell(sheet, ref);
-    e.textContent = formatValue(v, e.dataset.f || (SHEET_BY_NAME[sheet].cells[ref] || {}).f);
+    e.textContent = e.dataset.override
+      ? e.dataset.override
+      : formatValue(v, e.dataset.f || (SHEET_BY_NAME[sheet].cells[ref] || {}).f);
     const kind = cellKind(sheet, ref);
     e.classList.remove('hard', 'calc', 'link');
     e.classList.add(kind);
@@ -1319,9 +1325,9 @@ function syncControls() {
 
   const out = $('div', 'outputs');
   const ot = $('div', 'otiles');
-  [['Equity NPV', 'C49', 'num1', 'At the equity discount rate', '$', 'M'],
-   ['Equity IRR', 'C50', 'pct1', 'Levered, after tax', '', ''],
-   ['Minimum DSCR', 'C51', 'x2', 'Equals the target while the covenant binds', '', ''],
+  [['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M'],
+   ['Equity IRR', 'C56', 'pct1', 'Levered, after tax. Not meaningful on a thin equity cheque', '', ''],
+   ['Minimum DSCR', 'C57', 'x2', 'Sculpted, so it holds at the target', '', ''],
    ['Breakeven PPA', null, null, 'Where equity NPV is zero', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
@@ -1664,7 +1670,7 @@ function drawStress() {
     const d = r.npv - base.npv;
     tr.appendChild($('td', 'n muted', name === 'Base case' ? '·' : (d >= 0 ? '+' : '') + formatValue(d, 'num1')));
     tr.appendChild($('td', 'n', isFinite(r.irr) ? formatValue(r.irr, 'pct1') : '—'));
-    const ds = $('td', 'n', r.dscr >= 900 ? '—' : formatValue(r.dscr, 'x2'));
+    const ds = $('td', 'n', r.dscr >= 900 ? 'no debt' : formatValue(r.dscr, 'x2'));
     if (r.dscr < 1) ds.classList.add('bad');
     tr.appendChild(ds);
     tb.appendChild(tr);
@@ -1682,8 +1688,23 @@ function drawStress() {
 
 let heavyTimer;
 
+/* Some outputs are arithmetic rather than information at the edges of the input
+   space, and printing them anyway is how a model tells a lie with a straight
+   face. These say what is actually going on instead. */
+function setDisplayOverrides() {
+  const irrCell = document.querySelector('[data-cell="Model!C56"]');
+  if (irrCell) {
+    const irr = val('Model', 'C56'), eq = val('Model', 'C50'), fund = val('Model', 'C49');
+    const thin = fund > 0 && eq / fund < 0.12;
+    irrCell.dataset.override = (!isFinite(irr) || thin) ? 'n.m.' : irr > 1 ? 'over 100%' : '';
+  }
+  const dscrCell = document.querySelector('[data-cell="Model!C57"]');
+  if (dscrCell) dscrCell.dataset.override = val('Model', 'C45') > 0 ? '' : 'no debt';
+}
+
 function recalc() {
   cache = new Map();
+  setDisplayOverrides();
   paintCells();
 
   document.querySelectorAll('[data-out]').forEach(o => {
@@ -1704,9 +1725,11 @@ function recalc() {
 
   const badge = document.getElementById('tie');
   if (badge) {
-    const ok = val('Model', 'C61') === 'OK';
-    badge.textContent = ok ? '✓ all three pass' : '✗ CHECK';
-    badge.classList.toggle('bad', !ok);
+    const flag = val('Model', 'C61');
+    badge.textContent = flag === 'OK' ? '✓ all three pass'
+      : flag === 'NOT FINANCEABLE' ? '✗ not financeable: EBITDA turns negative inside the tenor'
+      : '✗ CHECK';
+    badge.classList.toggle('bad', flag !== 'OK');
   }
 
   drawCashflow();
