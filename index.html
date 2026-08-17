@@ -427,35 +427,53 @@ const SHEETS = [
     C47:{v:'=C35+C36*(1-C35)', f:'pct1'},
     C50:{v:'=C45*C21/1000000', f:'num2'},
     C51:{v:'=C46-IF(C29=2,C46*C33*0.5,0)', f:'num1'},
+    C52:{v:2, f:'num0'},            /* construction period, years */
+    C53:{v:6, f:'num0'},            /* debt service reserve, months */
   }
 },
 
-/* Twenty-year schedule: operations, debt sized to a covenant, tax, credits
-   and equity cash flow. Sizing runs off year-1 EBITDA pre-tax, which keeps it
-   non-circular. */
+/* Twenty operating years behind a construction period. Debt service is sculpted
+   to a constant target DSCR, the loan is sized as the present value of that
+   stream, and the funding requirement carries interest during construction and
+   a six-month debt service reserve.
+
+   The circularity a real model iterates on is closed in form here: IDC and the
+   reserve are both linear in the debt amount, so the leverage cap solves to
+   D = L·capex / (1 − L·k) rather than needing an iteration switch. */
 {
-  name:'Model', rows:60, cols:[], cells:{
-    C41:{v:'=Assumptions!C46', f:'num1'},
-    C42:{v:'=MIN(D34:W34)', f:'num2'},
-    C43:{v:'=MIN((C42/Assumptions!C24)*(1-(1+Assumptions!C25)^(-Assumptions!C26))/Assumptions!C25,C41*Assumptions!C27)', f:'num1'},
-    C44:{v:'=PMT(Assumptions!C25,Assumptions!C26,C43)', f:'num2'},
-    C45:{v:'=C41-C43', f:'num1'},
-    C46:{v:'=SUM(D32:W32)', f:'num1'},
-    C47:{v:'=W15*(1+Assumptions!C14)*(1-((1+Assumptions!C14)/(1+Assumptions!C28))^(Assumptions!C40-20))/(Assumptions!C28-Assumptions!C14)', f:'num1'},
-    C48:{v:'=C47*W31', f:'num1'},
-    C49:{v:'=0-C45+C46+C48', f:'num1'},
-    C50:{v:'=IRR(C33:W33)', f:'pct1'},
-    C51:{v:'=MIN(D21:W21)', f:'x2'},
-    C52:{v:'=C43+C45-C41', f:'num2'},
-    C53:{v:'=W20', f:'num2'},
-    C54:{v:'=MIN(D28:W28)', f:'num2'},
-    C55:{v:'=IF(ABS(C52)<0.005,IF(ABS(C53)<0.005,IF(C54>-0.005,"OK","CHECK"),"CHECK"),"CHECK")'},
-    C33:{v:'=0-C45', f:'num1'},
+  name:'Model', rows:64, cols:[], cells:{
+    C41:{v:'=Assumptions!C46', f:'num1'},                       /* construction cost */
+    C42:{v:'=SUM(D18:W18)', f:'num1'},                          /* debt the sculpt supports */
+    C43:{v:'=Assumptions!C25*Assumptions!C52/2+(Assumptions!C53/12)*(D16/C42)', f:'num3'},
+    C44:{v:'=Assumptions!C27*C41/(1-Assumptions!C27*C43)', f:'num1'},   /* leverage-capped debt */
+    C45:{v:'=MIN(C42,C44)', f:'num1'},                          /* senior debt */
+    C46:{v:'=C45/C42', f:'num3'},                               /* sculpt scaling factor */
+    C47:{v:'=C45*Assumptions!C25*Assumptions!C52/2', f:'num2'}, /* interest during construction */
+    C48:{v:'=(Assumptions!C53/12)*D19', f:'num2'},              /* debt service reserve */
+    C49:{v:'=C41+C47+C48', f:'num1'},                           /* total funding requirement */
+    C50:{v:'=C49-C45', f:'num1'},                               /* equity */
+    C51:{v:'=C45/C49', f:'pct0'},                               /* leverage on funded cost */
+
+    C52:{v:'=SUM(D36:W36)', f:'num1'},                          /* PV of operating equity cash flow */
+    C53:{v:'=W15*(1+Assumptions!C14)*(1-((1+Assumptions!C14)/(1+Assumptions!C28))^(Assumptions!C40-20))/(Assumptions!C28-Assumptions!C14)', f:'num1'},
+    C54:{v:'=C53*W35', f:'num1'},                               /* PV of terminal value */
+    /* equity is drawn across construction, so it is discounted from t=0 and t=1 */
+    C55:{v:'=0-C50/2-(C50/2)/(1+Assumptions!C28)+C52+C54', f:'num1'},
+    C56:{v:'=IRR(B37:W37)', f:'pct1'},
+    C57:{v:'=MIN(D24:W24)', f:'x2'},
+
+    C58:{v:'=C45+C50-C49', f:'num2'},                           /* check: sources = uses */
+    C59:{v:'=W23', f:'num2'},                                   /* check: debt amortized */
+    C60:{v:'=MIN(D31:W31)', f:'num2'},                          /* check: NOL never negative */
+    C61:{v:'=IF(ABS(C58)<0.005,IF(ABS(C59)<0.005,IF(C60>-0.005,"OK","CHECK"),"CHECK"),"CHECK")'},
+
+    B37:{v:'=0-C50/2', f:'num1'},
+    C37:{v:'=0-C50/2', f:'num1'},
   }
 },
 ];
 
-/* ---- the twenty year columns, built in a loop ---- */
+/* ---- the twenty operating years, built in a loop ---- */
 const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W'];
 
 (function buildModel(){
@@ -473,28 +491,40 @@ const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','
     s.cells[c+'13'] = { v:p ? `=${p}13*(1+${A('C20')})` : `=${A('C19')}`, f:'num1' };
     s.cells[c+'14'] = { v:`=${A('C50')}`, f:'num2' };
     s.cells[c+'15'] = { v:`=${c}10-${c}12-${c}13-${c}14`, f:'num1' };
-    s.cells[c+'16'] = { v:`=IF(${c}6<=${A('C26')},C$44,0)`, f:'num2' };
-    s.cells[c+'17'] = { v:p ? `=${p}20` : '=C$43', f:'num1' };
-    s.cells[c+'18'] = { v:`=IF(${c}16>0,${c}17*${A('C25')},0)`, f:'num2' };
-    s.cells[c+'19'] = { v:`=${c}16-${c}18`, f:'num2' };
-    s.cells[c+'20'] = { v:`=${c}17-${c}19`, f:'num1' };
-    s.cells[c+'21'] = { v:`=IF(${c}16>0,${c}15/${c}16,999)`, f:'x2' };
-    s.cells[c+'22'] = { v:`=IF(${A('C37')}=1,IF(${c}6=1,${A('C51')},0),IF(${c}6<=${A('C38')},${A('C51')}/${A('C38')},0))`, f:'num1' };
-    s.cells[c+'23'] = { v:`=${c}15-${c}18-${c}22`, f:'num1' };
-    s.cells[c+'24'] = { v:p ? `=${p}28` : '=0', f:'num1' };
-    s.cells[c+'25'] = { v:`=IF(${c}23>0,MIN(${c}24,${c}23*${A('C39')}),0)`, f:'num1' };
-    s.cells[c+'26'] = { v:`=${c}23-${c}25`, f:'num1' };
-    s.cells[c+'27'] = { v:`=IF(${c}26>0,${c}26*${A('C47')},0)`, f:'num2' };
-    s.cells[c+'28'] = { v:`=${c}24-${c}25+IF(${c}23<0,0-${c}23,0)`, f:'num1' };
+
+    /* sculpt: debt service is whatever holds the cover ratio at its target,
+       and the loan is the present value of that stream at the debt rate */
+    s.cells[c+'16'] = { v:`=IF(${c}6<=${A('C26')},${c}15/${A('C24')},0)`, f:'num2' };
+    s.cells[c+'17'] = { v:`=1/(1+${A('C25')})^${c}6`, f:'num3' };
+    s.cells[c+'18'] = { v:`=${c}16*${c}17`, f:'num2' };
+    s.cells[c+'19'] = { v:`=${c}16*C$46`, f:'num2' };
+    s.cells[c+'20'] = { v:p ? `=${p}23` : '=C$45', f:'num1' };
+    s.cells[c+'21'] = { v:`=IF(${c}19>0,${c}20*${A('C25')},0)`, f:'num2' };
+    s.cells[c+'22'] = { v:`=${c}19-${c}21`, f:'num2' };
+    s.cells[c+'23'] = { v:`=${c}20-${c}22`, f:'num1' };
+    s.cells[c+'24'] = { v:`=IF(${c}19>0,${c}15/${c}19,999)`, f:'x2' };
+
+    /* tax */
+    s.cells[c+'25'] = { v:`=IF(${A('C37')}=1,IF(${c}6=1,${A('C51')},0),IF(${c}6<=${A('C38')},${A('C51')}/${A('C38')},0))`, f:'num1' };
+    s.cells[c+'26'] = { v:`=${c}15-${c}21-${c}25`, f:'num1' };
+    s.cells[c+'27'] = { v:p ? `=${p}31` : '=0', f:'num1' };
+    s.cells[c+'28'] = { v:`=IF(${c}26>0,MIN(${c}27,${c}26*${A('C39')}),0)`, f:'num1' };
+    s.cells[c+'29'] = { v:`=${c}26-${c}28`, f:'num1' };
+    s.cells[c+'30'] = { v:`=IF(${c}29>0,${c}29*${A('C47')},0)`, f:'num2' };
+    s.cells[c+'31'] = { v:`=${c}27-${c}28+IF(${c}26<0,0-${c}26,0)`, f:'num1' };
+
+    /* credits: the production credit runs ten years, the investment credit lands once */
     const ptc = `${c}8*${A('C30')}*(1+${A('C32')})*(1+${A('C31')})^(${c}6-1)/1000000*${A('C34')}`;
     const itc = `${A('C46')}*${A('C33')}*(1+${A('C32')})*${A('C34')}`;
-    s.cells[c+'29'] = { v:`=IF(${A('C29')}=1,IF(${c}6<=10,${ptc},0),IF(${A('C29')}=2,IF(${c}6=1,${itc},0),0))`, f:'num2' };
-    s.cells[c+'30'] = { v:`=${c}15-${c}16-${c}27+${c}29`, f:'num1' };
-    s.cells[c+'31'] = { v:`=1/(1+${A('C28')})^${c}6`, f:'num3' };
-    s.cells[c+'32'] = { v:`=${c}30*${c}31`, f:'num1' };
-    s.cells[c+'33'] = { v:(i === YCOLS.length - 1) ? `=${c}30+C$47` : `=${c}30`, f:'num1' };
-    /* EBITDA inside the tenor only — the sizing binds on the worst of these */
-    s.cells[c+'34'] = { v:`=IF(${c}6<=${A('C26')},${c}15,9999)`, f:'num1' };
+    s.cells[c+'32'] = { v:`=IF(${A('C29')}=1,IF(${c}6<=10,${ptc},0),IF(${A('C29')}=2,IF(${c}6=1,${itc},0),0))`, f:'num2' };
+
+    /* the reserve is released to equity once the loan is repaid */
+    s.cells[c+'33'] = { v:`=IF(${c}6=${A('C26')},C$48,0)`, f:'num2' };
+    s.cells[c+'34'] = { v:`=${c}15-${c}19-${c}30+${c}32+${c}33`, f:'num1' };
+    /* operating year n is received at t = n+1, construction having run t=0 to t=2 */
+    s.cells[c+'35'] = { v:`=1/(1+${A('C28')})^(${c}6+1)`, f:'num3' };
+    s.cells[c+'36'] = { v:`=${c}34*${c}35`, f:'num1' };
+    s.cells[c+'37'] = { v:(i === YCOLS.length - 1) ? `=${c}34+C$53` : `=${c}34`, f:'num1' };
   });
 })();
 
@@ -729,7 +759,7 @@ const SITE = {
   linkedin:'https://linkedin.com/in/andrewthomasgibson',
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
-  lede:'Project finance professional with a decade across energy infrastructure, physical commodity markets and quantitative analytics. Originates, structures and underwrites energy transactions from development through close — project economics, capital structure, offtake pricing and return sensitivities — then runs the diligence, independent engineering, data rooms and lender materials that carry a project to financing. Morgan Stanley trained; negotiates commercial terms as well as models them.',
+  lede:"I've spent a decade in energy infrastructure, physical commodity markets and quantitative analytics. I originate, structure and underwrite energy transactions from development through close: project economics, capital structure, offtake pricing, return sensitivities. Then I run the diligence, the independent engineering, the data rooms and the lender materials that carry a project to financing. Morgan Stanley taught me to model. Everything since taught me to negotiate.",
 
   jobs:[
     { row:7, title:'Principal', co:'Compass International Trading Group', where:'Denver, CO', span:'March 2024 – present',
@@ -780,7 +810,7 @@ const SITE = {
   ],
 
   education:[
-    ['University of New Hampshire','B.S. Finance, Quantitative Finance & Business Analytics — GPA 3.8'],
+    ['University of New Hampshire','B.S. Finance, Quantitative Finance & Business Analytics · GPA 3.8'],
     ['MIT','AI Venture Studio · Startup Sandbox · Venture Mentoring Services'],
     ['MassChallenge','Accelerator, two cohorts'],
   ],
@@ -801,7 +831,7 @@ const SITE = {
 
 const SECTIONS = [
   ['track','Track record'], ['experience','Experience'], ['transactions','Transactions'],
-  ['research','Research'], ['method','Method'], ['model','Live model'],
+  ['research','Research'], ['model','Live model'],
   ['background','Background'], ['contact','Contact'],
 ];
 
@@ -906,7 +936,7 @@ function section(id, idx, title, right) {
   const L = $('div');
   L.appendChild($('div', 'eyebrow', SITE.role.split(' · ')[0] + ' · ' + SITE.location));
   L.appendChild($('h1', null, SITE.name));
-  L.appendChild($('p', 'role', 'I originate, structure and underwrite energy transactions — and build the models they close on.'));
+  L.appendChild($('p', 'role', 'I move power plants to where power is worth more.'));
   L.appendChild($('p', 'lede', SITE.lede));
   const cta = $('div', 'cta');
   const a1 = $('a', 'btn primary', 'Email me'); a1.href = 'mailto:' + SITE.email;
@@ -969,7 +999,7 @@ function section(id, idx, title, right) {
   };
   w.appendChild(mk([
     ['Years in finance', 'Career', 'F13', 'num1', 'Since May 2015, accruing'],
-    ['Agreements structured', 'Facts', 'C7', 'num0', 'Feedstock $500M + offtake $800M', '$', 'M'],
+    ['Agreements structured', 'Facts', 'C7', 'num0', 'Feedstock $500M + offtake $800M · structured, not yet closed', '$', 'M'],
     ['Underwriting range', 'Facts', 'C15', null, 'Per asset, development through sale'],
     ['Developments directed', 'Facts', 'C8', 'num0', 'Biopower, $30–100M each'],
   ]));
@@ -978,7 +1008,7 @@ function section(id, idx, title, right) {
   why.textContent = 'Why relocation works';
   w.appendChild(why);
   w.appendChild(mk([
-    ['Capex reduction', 'Facts', 'C9', 'pct0', 'Against a greenfield build'],
+    ['Capex reduction', 'Facts', 'C9', 'pct0', 'Against an NREL ATB greenfield comparable'],
     ['Revenue uplift', 'Facts', 'C10', 'pct0', 'Moving output to a better market'],
     ['Feedstock secured', 'Facts', 'C11', 'num1', 'Million tons, zero-cost supply'],
   ], 'sub'));
@@ -1025,7 +1055,7 @@ function section(id, idx, title, right) {
   note.appendChild(cell('Career', 'F12', { f:'num1' }));
   note.append(' yrs) exceeds the career span (');
   note.appendChild(cell('Career', 'F13', { f:'num1' }));
-  note.append(' yrs) owing to a two-month overlap between Morgan Stanley and Forest City in 2017. Left unreconciled on purpose: it is what actually happened.');
+  note.append(" yrs) because Morgan Stanley and Forest City overlapped by two months in 2017. I've left it unreconciled on purpose. It's what happened.");
   w.appendChild(note);
 })();
 
@@ -1056,7 +1086,7 @@ function section(id, idx, title, right) {
   w.appendChild(t);
   const n = $('p');
   n.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3)';
-  n.textContent = 'Sizes are denominated in different units and are deliberately not summed into a single total. Counterparties and commercial terms omitted where confidential.';
+  n.textContent = "The sizes are in different units, so don't try to add the column. Counterparties and commercial terms are omitted where they're confidential.";
   w.appendChild(n);
 })();
 
@@ -1068,11 +1098,10 @@ function section(id, idx, title, right) {
   const a = $('div', 'paper');
   a.appendChild($('h3', null, 'ERCOT crowding coefficient model'));
   a.appendChild($('p', 'cap', 'Original quantitative framework · supported by an agent-based market simulation in Python'));
-  a.appendChild($('p', null, 'Explains day-ahead to real-time price basis variance in ERCOT as a function of generator zone crowding. The coefficient below is the published result; the table applies it directly.'));
+  a.appendChild($('p', null, "It explains day-ahead to real-time price basis in ERCOT as a function of generator zone crowding, and it holds up well over the sample I ran. The coefficient is the fitted result; the table below just applies it. Ask me for the working paper and you'll get the period, the sample and the specification, which is what you should want before believing a number like this."));
 
   const stat = $('div', 'tiles'); stat.style.marginBottom = '14px';
-  [['Coefficient (α)', 'Research', 'C10', 'num2', '$/MWh per GW of crowding'],
-   ['Variance explained', 'Research', 'C11', 'pct0', 'R², observed day-ahead to real-time basis']].forEach(([k, s, r, f, u]) => {
+  [['Coefficient (α)', 'Research', 'C10', 'num2', '$/MWh per GW of zone crowding']].forEach(([k, s, r, f, u]) => {
     const t = $('div', 'tile');
     t.appendChild($('span', 'k', k));
     const v = $('span', 'v'); v.appendChild(cell(s, r, { f })); t.appendChild(v);
@@ -1113,37 +1142,6 @@ function section(id, idx, title, right) {
 })();
 
 /* ── the live model ──────────────────────────────────────────────── */
-/* ── method ──────────────────────────────────────────────────────── */
-const METHOD = [
-  ['Nothing important is buried',
-   'Every assumption is a dial with a stated range, so a reviewer can find the number they want to argue with instead of hunting for it inside a formula.'],
-  ['The structure answers to a lender',
-   'Debt is sized to a covenant rather than to a round percentage of capex, and it is struck once. A stress then lands on equity and the cover ratio, which is where it would land in practice.'],
-  ['One risk at a time is the useful test',
-   'Stacking everything tells you the deal can break. Moving one assumption at a time tells you which one breaks it, and that is the conversation worth having.'],
-  ['Solve, do not just report',
-   'The base case is the least interesting output. The offtake price at which equity returns nothing is the number the PPA negotiation is actually about.'],
-  ['Checks fail loudly',
-   'Structural identities are cells like any other, and when one breaks the model says so rather than quietly producing a plausible answer.'],
-  ['Every figure carries its source',
-   'A notes schedule names where each number came from — a general ledger, a broker indication, a published benchmark — and flags what is still a placeholder pending a real quote.'],
-];
-
-(function methodSection(){
-  const w = section('method', 'A5', 'How I underwrite', 'The discipline behind the model below');
-  const g = $('div', 'cols');
-  const a = $('div', 'blk'), b2 = $('div', 'blk');
-  METHOD.forEach(([h, p], i) => {
-    const d = $('div', 'paper');
-    d.style.marginBottom = '14px';
-    d.appendChild($('h3', null, h));
-    d.appendChild($('p', null, p));
-    (i % 2 ? b2 : a).appendChild(d);
-  });
-  g.append(a, b2);
-  w.appendChild(g);
-})();
-
 /* ── the live deal model ─────────────────────────────────────────── */
 
 /* the adjustable inputs, grouped, read straight off the workbook */
@@ -1176,29 +1174,40 @@ function underScenario(temp, read) {
 }
 
 const RESULT = () => ({
-  npv:val('Model', 'C49'), irr:val('Model', 'C50'),
-  dscr:val('Model', 'C51'), debt:val('Model', 'C43'), equity:val('Model', 'C45'),
+  npv:val('Model', 'C55'), irr:val('Model', 'C56'),
+  dscr:val('Model', 'C57'), debt:val('Model', 'C43'), equity:val('Model', 'C45'),
 });
 
 /* Debt is sized at base case and pinned through every stress: at financial close
    the loan is already struck, so a stress hits equity, not the lender. */
-const pinDebt = () => ({ 'Model!C43':val('Model', 'C43') });
+const pinDebt = () => {
+  const pin = {};
+  /* pin the debt side only. A capex overrun is funded by equity, so the funding
+     requirement and the equity cheque must still move with the stress. */
+  ['C45','C46','C47','C48'].forEach(r => pin['Model!' + r] = val('Model', r));
+  YCOLS.forEach(c => pin['Model!' + c + '19'] = val('Model', c + '19'));
+  return pin;
+};
 
+/* Timing matters. A rate move happens before you sign, so it re-sizes the loan.
+   Everything operating happens after, when the facility is already struck and the
+   hit lands on equity and the cover ratio instead. A capex overrun sits in
+   between: the loan is fixed, so equity funds the excess. */
 const STRESSES = [
-  ['Fuel at the contract ceiling from day one', () => ({ 'Assumptions!C18':0 })],
-  ['Capex +25%',             () => ({ 'Assumptions!C22':val('Assumptions', 'C22') * 1.25 })],
-  ['PPA price −15%',         () => ({ 'Assumptions!C13':val('Assumptions', 'C13') * 0.85 })],
-  ['Availability −8 points', () => ({ 'Assumptions!C11':val('Assumptions', 'C11') - 0.08,
-                                      'Assumptions!C12':val('Assumptions', 'C12') - 0.08 })],
-  ['Non-fuel opex +20%',     () => ({ 'Assumptions!C19':val('Assumptions', 'C19') * 1.20 })],
-  ['Interest +200 bps',      () => ({ 'Assumptions!C25':val('Assumptions', 'C25') + 0.02 })],
-  ['No tax credits',         () => ({ 'Assumptions!C29':0 })],
+  ['Fuel at the contract ceiling from day one', 'after',  () => ({ 'Assumptions!C18':0 })],
+  ['Capex +25%',             'after',  () => ({ 'Assumptions!C22':val('Assumptions', 'C22') * 1.25 })],
+  ['PPA price −15%',         'after',  () => ({ 'Assumptions!C13':val('Assumptions', 'C13') * 0.85 })],
+  ['Availability −8 points', 'after',  () => ({ 'Assumptions!C11':val('Assumptions', 'C11') - 0.08,
+                                                'Assumptions!C12':val('Assumptions', 'C12') - 0.08 })],
+  ['Non-fuel opex +20%',     'after',  () => ({ 'Assumptions!C19':val('Assumptions', 'C19') * 1.20 })],
+  ['Interest +200 bps',      'before', () => ({ 'Assumptions!C25':val('Assumptions', 'C25') + 0.02 })],
+  ['No tax credits',         'after',  () => ({ 'Assumptions!C29':0 })],
 ];
-const stackAll = () => Object.assign({}, ...STRESSES.map(([, f]) => f()));
+const merge = list => Object.assign({}, ...list.map(([, , f]) => f()));
 
 /* the PPA price at which equity NPV is zero */
 function breakeven(extra) {
-  const f = p => underScenario(Object.assign({}, extra, { 'Assumptions!C13':p }), () => val('Model', 'C49'));
+  const f = p => underScenario(Object.assign({}, extra, { 'Assumptions!C13':p }), () => val('Model', 'C55'));
   /* note: the breakeven re-sizes debt, since a different price is a different deal */
   let lo = 5, hi = 500, flo = f(lo), fhi = f(hi);
   if (!isFinite(flo) || !isFinite(fhi) || flo * fhi > 0) return NaN;
@@ -1231,11 +1240,11 @@ function syncControls() {
 }
 
 (function modelSection(){
-  const w = section('model', 'A6', 'Live deal model',
-                    'Illustrative single-unit biomass relocation — not a live transaction');
+  const w = section('model', 'A5', 'Live deal model',
+                    'Illustrative, not a live transaction');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
-  intro.textContent = 'A generic 25 MW biomass relocation, invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms — the statutory tax parameters are public law, every project figure is made up. Move any dial and the twenty-year schedule, the debt sizing, the tax, the stress tests and the breakeven all recalculate.';
+  intro.textContent = "This is a generic 25 MW biomass relocation I invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms. The statutory tax parameters are public law; every project figure is made up. Debt is sculpted to a constant cover ratio, the funding requirement carries construction interest and a six-month reserve, and equity is drawn across the build. Move any dial and all of it recalculates.";
   w.appendChild(intro);
 
   const box = $('div', 'model');
@@ -1330,7 +1339,7 @@ function syncControls() {
   out.appendChild(ot);
 
   const cs = $('div', 'stack');
-  [['All-in capex', 'C41'], ['Senior debt', 'C43'], ['Equity', 'C45'], ['Leverage', null]].forEach(([k, ref]) => {
+  [['Funding requirement', 'C49'], ['Senior debt', 'C45'], ['Equity', 'C50'], ['Leverage', null]].forEach(([k, ref]) => {
     const d = $('div', 'sitem');
     d.appendChild($('span', 'k', k));
     const v = $('span', 'v');
@@ -1343,7 +1352,7 @@ function syncControls() {
 
   const v1 = $('div', 'viz');
   v1.appendChild($('h4', null, 'Cash flow cover, years 1–20'));
-  v1.appendChild($('p', 'cap', 'Magnitudes in $M. Debt service stops at the end of the tenor. Sizing binds on the lowest EBITDA inside it — the commissioning year, or a later one once fuel reaches its contract ceiling.'));
+  v1.appendChild($('p', 'cap', "Magnitudes in $M. Debt service is sculpted to hold the cover ratio at its target, so it tracks EBITDA year by year instead of sitting flat, and it stops once the loan is repaid. The gap between the bars is what's left for equity before tax."));
   const lr = $('div', 'legend-row');
   [['EBITDA', 'var(--series-1)'], ['Debt service', 'var(--series-2)']].forEach(([t, c]) => {
     const sp = $('span');
@@ -1357,20 +1366,28 @@ function syncControls() {
 
   const v2 = $('div', 'viz');
   v2.appendChild($('h4', null, 'Stress tests'));
-  v2.appendChild($('p', 'cap', 'Each risk at the worst realistic end of its own range, alone and then together. Debt is held at its base-case sizing throughout.'));
+  v2.appendChild($('p', 'cap', "Each risk at the worst realistic end of its own range, alone and then together. When the hit lands matters: a rate move happens before you sign, so it re-sizes the loan, while an operating stress lands on a facility that's already struck and is absorbed by equity and the cover ratio."));
   const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
   v2.appendChild(sw2);
   out.appendChild(v2);
 
   const v3 = $('div', 'viz');
   v3.appendChild($('h4', null, 'Sensitivity — equity NPV ($M)'));
-  v3.appendChild($('p', 'cap', 'PPA price down the side, capex per kW across, each cell a full model run. Both axes flex ±20%, so the outlined cell is always the base case.'));
+  v3.appendChild($('p', 'cap', "PPA price down the side, capex per kW across. Every cell is a full model run, not an interpolation. Both axes flex ±20%, so the outlined cell is always where you've set the dials."));
   const hw = $('div', 'heatwrap'); hw.id = 'heat';
   v3.appendChild(hw);
   out.appendChild(v3);
 
+  const gaps = $('div', 'viz');
+  gaps.appendChild($('h4', null, 'What this leaves out'));
+  const gp = $('p');
+  gp.style.cssText = 'margin:0;font-size:12.5px;line-height:1.6;color:#2c3034;max-width:74ch';
+  gp.textContent = "A financing model would add a real construction drawdown schedule instead of a closed-form interest charge, a cash sweep and covenant lockup, sculpting on post-tax cash flow rather than EBITDA (which needs an iteration), a tax equity partnership flip as the alternative to a §6418 transfer, working capital, a merchant tail after the PPA expires, and availability-linked sculpting. None of that is here. I left it out to keep this readable in a browser, not because it doesn't matter, and the first thing I'd ask about someone else's model is which of them they skipped.";
+  gaps.appendChild(gp);
+  out.appendChild(gaps);
+
   const tie = $('div', 'tie');
-  tie.append('Sources equal uses · debt amortizes to zero · loss carryforwards never go negative — ');
+  tie.append('Sources equal uses · debt amortizes to zero · loss carryforwards never go negative. ');
   const badge = $('b'); badge.id = 'tie'; tie.appendChild(badge);
   out.appendChild(tie);
 
@@ -1379,7 +1396,7 @@ function syncControls() {
 })();
 
 (function background(){
-  const w = section('background', 'A7', 'Background');
+  const w = section('background', 'A6', 'Background');
   const cols = $('div', 'cols');
   const a = $('div', 'blk');
   a.appendChild($('h3', null, 'Education'));
@@ -1409,7 +1426,7 @@ function syncControls() {
 
 /* ── contact ─────────────────────────────────────────────────────── */
 (function contact(){
-  const w = section('contact', 'A8', 'Contact');
+  const w = section('contact', 'A7', 'Contact');
   const c = $('div', 'contact');
   const a = $('div', 'blk');
   const dl = $('dl', 'deflist');
@@ -1417,7 +1434,7 @@ function syncControls() {
   [['Email', link('mailto:' + SITE.email, SITE.email)],
    ['LinkedIn', link(SITE.linkedin, 'linkedin.com/in/andrewthomasgibson')],
    ['Website', link(SITE.site, 'andrewtgibson.com')],
-   ['Location', document.createTextNode(SITE.location + ' — national mandates')]].forEach(([k, v]) => {
+   ['Location', document.createTextNode(SITE.location + ' · national mandates')]].forEach(([k, v]) => {
     const d = $('div'); d.appendChild($('dt', null, k));
     const dd = $('dd'); dd.appendChild(v); d.appendChild(dd); dl.appendChild(d);
   });
@@ -1496,8 +1513,8 @@ function drawCashflow() {
   const data = YCOLS.map((c, i) => ({
     year:i + 1,
     ebitda:val('Model', c + '15'),
-    ds:Math.abs(val('Model', c + '16')),
-    dscr:val('Model', c + '21'),
+    ds:Math.abs(val('Model', c + '19')),
+    dscr:val('Model', c + '24'),
   }));
   const peak = Math.max(...data.map(d => Math.max(d.ebitda, d.ds)), 1);
   const { top, ticks, step } = niceScale(peak * 1.08, 4);
@@ -1581,7 +1598,7 @@ function drawHeat() {
   const rows = flex.map(f => basePPA * f), cols = flex.map(f => baseCapex * f);
 
   const grid = rows.map(p => cols.map(cx =>
-    underScenario({ 'Assumptions!C13':p, 'Assumptions!C22':cx }, () => val('Model', 'C49'))));
+    underScenario({ 'Assumptions!C13':p, 'Assumptions!C22':cx }, () => val('Model', 'C55'))));
   const scale = Math.max(...grid.flat().map(Math.abs), 1);
 
   const t = $('table', 'heat');
@@ -1619,26 +1636,33 @@ function drawStress() {
   const host = document.getElementById('stress');
   host.textContent = '';
   const base = RESULT();
-  const rows = [['Base case', base, true]];
+  const rows = [['Base case', '', base, true]];
   const pin = pinDebt();
-  STRESSES.forEach(([name, f]) => rows.push([name, underScenario(Object.assign({}, f(), pin), RESULT), false]));
-  rows.push(['All stresses stacked', underScenario(Object.assign({}, stackAll(), pin), RESULT), true]);
+  STRESSES.forEach(([name, when, f]) => rows.push([name, when,
+    underScenario(when === 'before' ? f() : Object.assign({}, f(), pin), RESULT), false]));
+  /* the stack sizes the loan under the pre-close moves, then takes the operating hits on top */
+  const pre = merge(STRESSES.filter(x => x[1] === 'before'));
+  const stackPin = underScenario(pre, pinDebt);
+  const post = merge(STRESSES.filter(x => x[1] === 'after'));
+  rows.push(['All stresses stacked', 'both',
+    underScenario(Object.assign({}, pre, post, stackPin), RESULT), true]);
 
   const t = $('table', 'sched stress');
   const thead = $('thead'), htr = $('tr');
-  ['Case', 'Equity NPV', 'Δ NPV', 'Equity IRR', 'Min DSCR'].forEach((h, i) =>
-    htr.appendChild($('th', i ? 'n' : null, h)));
+  ['Case', 'Hits', 'Equity NPV', 'Δ NPV', 'Equity IRR', 'Min DSCR'].forEach((h, i) =>
+    htr.appendChild($('th', i > 1 ? 'n' : null, h)));
   thead.appendChild(htr); t.appendChild(thead);
   const tb = $('tbody');
-  rows.forEach(([name, r, strong]) => {
+  rows.forEach(([name, when, r, strong]) => {
     const tr = $('tr');
     if (strong) tr.className = 'key';
     tr.appendChild($('td', null, name));
+    tr.appendChild($('td', 'muted', when === 'before' ? 'before close' : when === 'after' ? 'after close' : when === 'both' ? 'both' : ''));
     const npv = $('td', 'n', formatValue(r.npv, 'num1'));
     if (r.npv < 0) npv.classList.add('bad');
     tr.appendChild(npv);
     const d = r.npv - base.npv;
-    tr.appendChild($('td', 'n muted', name === 'Base case' ? '—' : (d >= 0 ? '+' : '') + formatValue(d, 'num1')));
+    tr.appendChild($('td', 'n muted', name === 'Base case' ? '·' : (d >= 0 ? '+' : '') + formatValue(d, 'num1')));
     tr.appendChild($('td', 'n', isFinite(r.irr) ? formatValue(r.irr, 'pct1') : '—'));
     const ds = $('td', 'n', r.dscr >= 900 ? '—' : formatValue(r.dscr, 'x2'));
     if (r.dscr < 1) ds.classList.add('bad');
@@ -1672,15 +1696,15 @@ function recalc() {
     b.style.width = (val('Career', 'F' + b.dataset.tbar) / maxT * 100).toFixed(1) + '%';
   });
 
-  const npvTile = document.querySelector('[data-tile="C49"]');
-  if (npvTile) npvTile.classList.toggle('neg', val('Model', 'C49') < 0);
+  const npvTile = document.querySelector('[data-tile="C55"]');
+  if (npvTile) npvTile.classList.toggle('neg', val('Model', 'C55') < 0);
 
   const lev = document.getElementById('leverage');
-  if (lev) lev.textContent = formatValue(val('Model', 'C43') / val('Model', 'C41'), 'pct0');
+  if (lev) lev.textContent = formatValue(val('Model', 'C51'), 'pct0');
 
   const badge = document.getElementById('tie');
   if (badge) {
-    const ok = val('Model', 'C55') === 'OK';
+    const ok = val('Model', 'C61') === 'OK';
     badge.textContent = ok ? '✓ all three pass' : '✗ CHECK';
     badge.classList.toggle('bad', !ok);
   }
@@ -1694,7 +1718,7 @@ function recalc() {
 function heavy() {
   const be = document.getElementById('breakeven');
   if (be) {
-    const b0 = breakeven({}), b1 = breakeven(stackAll());
+    const b0 = breakeven({}), b1 = breakeven(merge(STRESSES));
     be.textContent = '$' + (isFinite(b0) ? formatValue(b0, 'num0') : '—');
     const s = $('span');
     s.style.cssText = 'font-size:12px;color:var(--ink-3);margin-left:7px';

@@ -53,38 +53,44 @@ Plus `+ - * / ^ &`, comparisons, parentheses, ranges (`D18:M18`) and cross-sheet
 
 ## The live deal model
 
-The centrepiece is a working project finance model behind eighteen sliders and two
-elections: a generic **25 MW single-unit biomass relocation**, invented end to end. **It
-describes no client, counterparty or live transaction and contains no confidential terms.**
-Statutory tax parameters are public law (IRC §45Y, §48E, §172, §6418); every project figure is
-made up.
+The centerpiece is a working project finance model: a generic **25 MW single-unit biomass
+relocation**, invented end to end. **It describes no client, counterparty or live transaction and
+contains no confidential terms.** Statutory tax parameters are public law (IRC §45Y, §48E, §172,
+§6418); every project figure is made up.
 
-What it actually does, over a twenty-year schedule:
+Twenty operating years behind a two-year construction period:
 
-- **Debt sized to a covenant, not a ratio.** Senior debt is sized to a target minimum DSCR on
-  the lowest EBITDA inside the tenor, capped by a leverage limit. Sizing runs pre-tax, which
-  keeps it non-circular. At base case the covenant binds at 51% leverage, well inside the 75% cap.
-- **A tax layer.** Bonus depreciation or 20-year straight line, loss carryforwards with the §172
-  80% usage cap, a blended federal-and-state rate with state deductible federally, and an
-  election between the production credit (§45Y, ten years, energy-community adder, monetised
-  under §6418) and the investment credit (§48E, once at COD, halving the depreciable basis by
-  50% of the credit).
-- **Fuel that ramps.** Delivered cost climbs in a straight line to a contract ceiling over a set
-  number of years, which is often what moves the binding year for the debt sizing off
-  commissioning and out into the schedule.
-- **Stress tests.** Seven risks each moved to the worst realistic end of their own range, one at
-  a time, then stacked. Debt is sized once at base case and pinned through the stresses, because
-  at financial close the loan is already struck — a stress hits equity and the cover ratio, not
-  the lender. At base case a price or fuel stress breaks the covenant while a capex stress does
-  not, which is the whole point of running them separately.
-- **A breakeven solve.** Bisection on the PPA price at which equity NPV is zero, reported at
-  base and again with every stress stacked.
-- **Checks that fail loudly.** Sources equal uses, debt amortises to zero by the end of its
-  tenor, loss carryforwards never go negative. If one breaks, the badge says CHECK.
+- **Sculpted amortization.** Debt service holds the cover ratio at a constant target, and the loan
+  is sized as the present value of that stream at the debt rate. Coverage therefore holds at the
+  target in every year of the tenor and the balance amortizes to exactly zero.
+- **Construction interest and a reserve.** The funding requirement is capex plus IDC plus a
+  six-month debt service reserve, which releases to equity when the loan is repaid. Leverage is
+  measured on funded cost, not on capex.
+- **No iteration switch.** IDC and the reserve are both linear in the debt amount, so the leverage
+  cap solves in closed form as `D = L·capex / (1 − L·k)` rather than needing a circular reference.
+- **Equity drawn across the build.** Draws sit at t=0 and t=1, so operating year *n* discounts at
+  *n+1* and the IRR carries the construction drag.
+- **A tax layer.** Bonus depreciation or straight line, loss carryforwards under the §172 cap, a
+  blended rate with state deductible federally, and an election between the production credit
+  (ten years, energy-community adder, monetized under §6418) and the investment credit (once at
+  COD, halving the depreciable basis by half the credit).
+- **Stress tests that respect timing.** A rate move happens before you sign, so it re-sizes the
+  loan. Operating stresses land on a facility already struck and are absorbed by equity and the
+  cover ratio. The table says which is which, and the stacked case sizes under the pre-close move
+  before taking the operating hits.
+- **A breakeven solve.** Bisection on the PPA price at which equity NPV is zero.
+- **Three checks.** Sources equal uses, debt amortizes to zero, loss carryforwards never go
+  negative.
 
-Each stress row, each heatmap cell and every step of the breakeven bisection is a **complete
-model run** — `underScenario()` applies a temporary set of inputs, evaluates, and restores — not
-a second, simplified formula that could drift from the first.
+Every stress row, every heatmap cell and every step of the bisection is a **complete model run**
+via `underScenario()`, not a simplified second formula that could drift.
+
+### What it deliberately leaves out
+
+Stated on the page, because knowing the omissions is the point: a real construction drawdown
+schedule, a cash sweep and covenant lockup, sculpting on post-tax cash flow (which needs an
+iteration), a tax equity partnership flip, working capital, a merchant tail, and availability-linked
+sculpting.
 
 ### Charts
 
