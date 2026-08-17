@@ -78,7 +78,11 @@ Twenty operating years behind a two-year construction period:
   loan. Operating stresses land on a facility already struck and are absorbed by equity and the
   cover ratio. The table says which is which, and the stacked case sizes under the pre-close move
   before taking the operating hits.
-- **A breakeven solve.** Bisection on the PPA price at which equity NPV is zero.
+- **Both returns.** A project IRR on the unlevered stream, where tax carries no interest shield
+  and the whole build is funded up front, alongside the levered equity IRR. The spread between
+  them is what the financing is actually contributing.
+- **A breakeven solve.** Bisection on the PPA price at which equity NPV is zero, stated above the
+  stress table at base and with every stress stacked.
 - **Three checks.** Sources equal uses, debt amortizes to zero, loss carryforwards never go
   negative. A fourth gate sits in front of them: a stream whose EBITDA turns negative inside the
   tenor is not financeable at all, so debt is zero and the badge says so rather than reporting a
@@ -106,7 +110,9 @@ sculpting.
 - **Cash flow cover** — grouped bars, EBITDA against debt service across twenty years, with a
   legend, round axis steps, selective direct labels and a per-bar hover tooltip.
 - **NPV sensitivity** — a 5×5 heatmap on a blue↔red diverging ramp with a neutral grey midpoint
-  at NPV = 0, base case outlined, hover tooltip per cell.
+  at NPV = 0, base case outlined, hover tooltip per cell. The capex axis is labelled in **total
+  build cost ($M)** rather than per kW, since that is the number a reader holds in their head;
+  the dial behind it is still $/kW and the tooltip gives both.
 
 Series colours `#2a78d6` / `#eb6834` were validated against the white surface: CVD ΔE 24.7,
 normal-vision ΔE 33.6 — both clear of the floors.

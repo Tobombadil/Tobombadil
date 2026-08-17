@@ -471,6 +471,10 @@ const SHEETS = [
 
     B37:{v:'=0-C50/2', f:'num1'},
     C37:{v:'=0-C50/2', f:'num1'},
+    /* unlevered: the whole build is funded up front, with no IDC and no reserve */
+    B62:{v:'=0-C41/2', f:'num1'},
+    C62:{v:'=0-C41/2', f:'num1'},
+    C63:{v:'=IRR(B62:W62)', f:'pct1'},
   }
 },
 ];
@@ -529,6 +533,17 @@ const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','
     s.cells[c+'37'] = { v:(i === YCOLS.length - 1) ? `=${c}34+C$53` : `=${c}34`, f:'num1' };
     /* EBITDA inside the tenor, for the financeability test */
     s.cells[c+'38'] = { v:`=IF(${c}6<=${A('C26')},${c}15,9999)`, f:'num1' };
+
+    /* the same project with no debt: tax without an interest deduction, so the
+       unlevered return shows what the asset earns before financing helps it */
+    s.cells[c+'39'] = { v:`=${c}15-${c}25`, f:'num1' };
+    s.cells[c+'40'] = { v:p ? `=${p}42` : '=0', f:'num1' };
+    s.cells[c+'41'] = { v:`=IF(${c}39>0,MIN(${c}40,${c}39*${A('C39')}),0)`, f:'num1' };
+    s.cells[c+'42'] = { v:`=${c}40-${c}41+IF(${c}39<0,0-${c}39,0)`, f:'num1' };
+    s.cells[c+'43'] = { v:`=${c}39-${c}41`, f:'num1' };
+    s.cells[c+'44'] = { v:`=IF(${c}43>0,${c}43*${A('C47')},0)`, f:'num2' };
+    s.cells[c+'45'] = { v:`=${c}15-${c}44+${c}32`, f:'num1' };
+    s.cells[c+'62'] = { v:(i === YCOLS.length - 1) ? `=${c}45+C$53` : `=${c}45`, f:'num1' };
   });
 })();
 
@@ -1325,19 +1340,17 @@ function syncControls() {
 
   const out = $('div', 'outputs');
   const ot = $('div', 'otiles');
-  [['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M'],
-   ['Equity IRR', 'C56', 'pct1', 'Levered, after tax. Not meaningful on a thin equity cheque', '', ''],
-   ['Minimum DSCR', 'C57', 'x2', 'Sculpted, so it holds at the target', '', ''],
-   ['Breakeven PPA', null, null, 'Where equity NPV is zero', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
+  [['Project IRR', 'C63', 'pct1', 'Unlevered, after tax. What the asset earns on its own', '', ''],
+   ['Levered equity IRR', 'C56', 'pct1', 'After debt. Not meaningful on a thin equity cheque', '', ''],
+   ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M'],
+   ['Minimum DSCR', 'C57', 'x2', 'Sculpted, so it holds at the target', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
     const v = $('span', 'v');
-    if (ref) {
-      v.dataset.tile = ref;
-      if (pre) v.append(pre);
-      v.appendChild(cell('Model', ref, { f }));
-      if (suf) v.append(suf);
-    } else v.id = 'breakeven';
+    v.dataset.tile = ref;
+    if (pre) v.append(pre);
+    v.appendChild(cell('Model', ref, { f }));
+    if (suf) v.append(suf);
     t.appendChild(v);
     t.appendChild($('span', 'n', n));
     ot.appendChild(t);
@@ -1372,6 +1385,9 @@ function syncControls() {
 
   const v2 = $('div', 'viz');
   v2.appendChild($('h4', null, 'Stress tests'));
+  const be = $('p', 'breakeven-line');
+  be.id = 'breakeven';
+  v2.appendChild(be);
   v2.appendChild($('p', 'cap', "Each risk at the worst realistic end of its own range, alone and then together. When the hit lands matters: a rate move happens before you sign, so it re-sizes the loan, while an operating stress lands on a facility that's already struck and is absorbed by equity and the cover ratio."));
   const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
   v2.appendChild(sw2);
@@ -1379,7 +1395,7 @@ function syncControls() {
 
   const v3 = $('div', 'viz');
   v3.appendChild($('h4', null, 'Sensitivity — equity NPV ($M)'));
-  v3.appendChild($('p', 'cap', "PPA price down the side, capex per kW across. Every cell is a full model run, not an interpolation. Both axes flex ±20%, so the outlined cell is always where you've set the dials."));
+  v3.appendChild($('p', 'cap', "PPA price down the side, total build cost across. Every cell is a full model run, not an interpolation. Both axes flex ±20%, so the outlined cell is always where you've set the dials."));
   const hw = $('div', 'heatwrap'); hw.id = 'heat';
   v3.appendChild(hw);
   out.appendChild(v3);
@@ -1602,6 +1618,8 @@ function drawHeat() {
   const flex = [0.8, 0.9, 1, 1.1, 1.2];
   const basePPA = val('Assumptions', 'C13'), baseCapex = val('Assumptions', 'C22');
   const rows = flex.map(f => basePPA * f), cols = flex.map(f => baseCapex * f);
+  /* the dial is per kW, but a reader thinks in the size of the build */
+  const totals = flex.map(f => val('Assumptions', 'C46') * f);
 
   const grid = rows.map(p => cols.map(cx =>
     underScenario({ 'Assumptions!C13':p, 'Assumptions!C22':cx }, () => val('Model', 'C55'))));
@@ -1611,7 +1629,7 @@ function drawHeat() {
   t.appendChild($('caption', 'sr', 'Equity NPV in millions of dollars by PPA price and capex per kW'));
   const thead = $('thead'), htr = $('tr');
   htr.appendChild($('th', 'corner', 'PPA ↓ / capex →'));
-  cols.forEach(c => htr.appendChild($('th', null, '$' + formatValue(c, 'num0'))));
+  totals.forEach(c => htr.appendChild($('th', null, '$' + formatValue(c, 'num0') + 'M')));
   thead.appendChild(htr); t.appendChild(thead);
   const tb = $('tbody');
   rows.forEach((p, r) => {
@@ -1625,7 +1643,8 @@ function drawHeat() {
       if (col.dark) td.style.color = '#fff';
       const enter = ev => showTip(
         '<b>Equity NPV ' + formatValue(v, 'num1') + ' $M</b>PPA <i>$' + formatValue(p, 'num0') +
-        '/MWh</i> · Capex <i>$' + formatValue(cx, 'num0') + '/kW</i>',
+        '/MWh</i> · Capex <i>$' + formatValue(totals[ci], 'num0') + 'M</i> (' +
+        formatValue(cx, 'num0') + ' $/kW)',
         ev.clientX, ev.clientY);
       td.addEventListener('pointerenter', enter);
       td.addEventListener('pointermove', enter);
@@ -1655,7 +1674,7 @@ function drawStress() {
 
   const t = $('table', 'sched stress');
   const thead = $('thead'), htr = $('tr');
-  ['Case', 'Hits', 'Equity NPV', 'Δ NPV', 'Equity IRR', 'Min DSCR'].forEach((h, i) =>
+  ['Case', 'Hits', 'Equity NPV', 'Δ NPV', 'Levered IRR', 'Min DSCR'].forEach((h, i) =>
     htr.appendChild($('th', i > 1 ? 'n' : null, h)));
   thead.appendChild(htr); t.appendChild(thead);
   const tb = $('tbody');
@@ -1700,6 +1719,11 @@ function setDisplayOverrides() {
   }
   const dscrCell = document.querySelector('[data-cell="Model!C57"]');
   if (dscrCell) dscrCell.dataset.override = val('Model', 'C45') > 0 ? '' : 'no debt';
+  const projCell = document.querySelector('[data-cell="Model!C63"]');
+  if (projCell) {
+    const pi = val('Model', 'C63');
+    projCell.dataset.override = !isFinite(pi) ? 'n.m.' : pi > 1 ? 'over 100%' : '';
+  }
 }
 
 function recalc() {
@@ -1742,11 +1766,13 @@ function heavy() {
   const be = document.getElementById('breakeven');
   if (be) {
     const b0 = breakeven({}), b1 = breakeven(merge(STRESSES));
-    be.textContent = '$' + (isFinite(b0) ? formatValue(b0, 'num0') : '—');
-    const s = $('span');
-    s.style.cssText = 'font-size:12px;color:var(--ink-3);margin-left:7px';
-    s.textContent = isFinite(b1) ? '· $' + formatValue(b1, 'num0') + ' stacked' : '';
-    be.appendChild(s);
+    be.textContent = 'Breakeven PPA price, where equity NPV is zero: ';
+    const a = $('b', null, isFinite(b0) ? '$' + formatValue(b0, 'num0') + '/MWh' : 'n.m.');
+    be.appendChild(a);
+    be.append(' at base, ');
+    const c = $('b', null, isFinite(b1) ? '$' + formatValue(b1, 'num0') + '/MWh' : 'n.m.');
+    be.appendChild(c);
+    be.append(' with every stress stacked.');
   }
   drawStress();
   drawHeat();
