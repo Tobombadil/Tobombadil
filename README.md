@@ -32,8 +32,16 @@ what lets the formula bar work and what keeps the two layers honest: if a number
 it came from the model.
 
 ```js
-cell('Model', 'C25', { f:'num1' })   // → a live <span data-cell="Model!C25">16.8</span>
+cell('Model', 'C49', { f:'num1' })   // → a live <span data-cell="Model!C49">16.6</span>
 ```
+
+### The font convention is enforced, not decorative
+
+`cellKind()` classifies every figure at paint time by what its cell actually holds — a literal is
+blue, a formula is black, a formula reaching another sheet is green. Only formulas get the dotted
+underline and keyboard focus, because only a formula has something to reveal; hovering a hardcode
+says so in as many words. This is checked in the test suite, so the legend cannot drift from the
+truth: a figure that stops being calculated stops being black.
 
 ### Supported functions
 

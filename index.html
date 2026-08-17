@@ -116,6 +116,7 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
          display:block;margin-bottom:7px}
 .tile .v{font:400 27px/1 var(--serif);letter-spacing:-.01em;display:block}
 .tile .u{font-size:11px;color:var(--ink-2);margin-top:5px;display:block}
+.tiles.sub{grid-template-columns:repeat(3,1fr)}
 .tiles.sub .tile .v{font-size:21px}
 
 /* ── ruled data rows ───────────────────────────────────────────────── */
@@ -262,9 +263,10 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   #stress{overflow-x:auto;padding-bottom:4px}
 
   /* values wired to the workbook get a quiet affordance */
-[data-cell]{cursor:help;text-decoration:underline;text-decoration-style:dotted;
-            text-decoration-color:var(--rule);text-underline-offset:3px}
-[data-cell]:hover,[data-cell]:focus-visible{text-decoration-color:var(--ink-3)}
+[data-cell].calc,[data-cell].link{cursor:help;text-decoration:underline;
+            text-decoration-style:dotted;text-decoration-color:var(--rule);text-underline-offset:3px}
+[data-cell].calc:hover,[data-cell].link:hover,
+[data-cell].calc:focus-visible,[data-cell].link:focus-visible{text-decoration-color:var(--ink-3)}
 .calc{color:var(--ink)}
 .link{color:var(--linkc)}
 .hard{color:var(--input)}
@@ -274,7 +276,7 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .hero{grid-template-columns:1fr;gap:30px}
   .model{grid-template-columns:1fr}
   .inputs{border-right:0;border-bottom:1px solid var(--rule)}
-  .tiles{grid-template-columns:repeat(2,1fr)}
+  .tiles,.tiles.sub{grid-template-columns:repeat(2,1fr)}
   .tile:nth-child(2){border-right:0}
   .tile:nth-child(1),.tile:nth-child(2){border-bottom:1px solid var(--rule)}
   .cols,.contact{grid-template-columns:1fr;gap:26px}
@@ -317,7 +319,7 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   <div class="fbar-in">
     <div class="fref" id="fref">—</div>
     <div class="ffx" aria-hidden="true">fx</div>
-    <div class="ftext" id="ftext">Hover any calculated figure to read the formula behind it</div>
+    <div class="ftext" id="ftext">Hover any underlined figure to read the formula behind it</div>
   </div>
 </div>
 
@@ -351,6 +353,7 @@ const SHEETS = [
     C12:{v:1.0, f:'num1'},          /* venture capital raised ($M) */
     C13:{v:6000,f:'num0'},          /* commodity flows supported ($M) */
     C14:{v:'=C13/1000', f:'num0'},  /* the same, in $B, for display */
+    C15:{v:'="$"&C3&"M – $"&C4/1000&"B"'},   /* the underwriting range, written out */
   }
 },
 
@@ -371,7 +374,7 @@ const SHEETS = [
 /* ERCOT crowding coefficient — the author's own published result. */
 {
   name:'Research', rows:20, cols:[], cells:{
-    C10:{v:3.17, f:'num2', input:true, min:1, max:6, step:0.01},
+    C10:{v:3.17, f:'num2'},
     C11:{v:0.92, f:'pct0'},
     C12:{v:'=1-C11', f:'pct0'},
   }
@@ -764,16 +767,13 @@ const SITE = {
   ],
 
   deals:[
-    ['Red Sands','Two-unit, 40 MW biomass power relocation, Michigan to Arizona; FEL-2 feasibility lead','2024–','40 MW','In progress',1],
+    ['Red Sands','Two-unit biomass relocation, Michigan to Arizona; FEL-2 feasibility lead','2024–','40 MW','In progress',1],
     ['Biopower development programme','Commercial strategy across five developments; lender-ready packages from capital stack to IRR','2024–','$30–100M each','Ongoing',1],
     ['Offtake agreements','Bioenergy offtake structured','2024–','$800M','Structured',0],
     ['Feedstock agreements','Supply agreements structured','2024–','$500M','Structured',0],
     ['Feedstock & offtake rights','Exclusive rights negotiated at zero-cost supply','2024','3.0m tons','Closed',0],
-    ['Energy & infrastructure book','Development-through-sale underwriting: technology, capex, interconnection, offtake','2024–','$50M–$1.2B','Ongoing',1],
-    ['Engineering procurement','Three firms: condition assessment, electrical and interconnection design, permitting, Class-3 estimate, IE report','2024','$0.4M','Closed',0],
-    ['Pakira venture raise','Raised at a $12M valuation; led the company through to exit','2018–2024','$1.0M','Exited',0],
-    ['Pakira client base','1,000+ paying enterprise clients at 30%+ month-over-month growth','2018–2024','1,000+ clients','Exited',0],
-    ['Pakira data platform','155k companies, 300k products, 160k contacts; 1m+ records merged from 300 sources','2018–2024','1m+ records','Delivered',0],
+    ['Engineering procurement','Three firms, condition assessment through a lender-grade IE report','2024','$0.4M','Closed',0],
+    ['Pakira, Inc.','Raised $1M at a $12M valuation, scaled to 1,000+ enterprise clients, exited','2018–2024','$1.0M','Exited',0],
     ['Trading & analytics systems','Deployment supporting 300+ traders managing $6bn in commodity flows','2017–2018','$6B flows','Delivered',0],
     ['Commodity book','Physical spreads and real-time pricing; top of analyst cohort','2017–2018','$1M volume','Closed',0],
     ['Morgan Stanley analytics','Institutional and UHNW portfolio analysis; 18,000+ client records consolidated','2015–2017','18,000+ records','Delivered',0],
@@ -814,11 +814,19 @@ const main = document.getElementById('main');
 const fref = document.getElementById('fref'), ftext = document.getElementById('ftext');
 
 /* A figure wired to the workbook. It knows its own cell, so it can show its formula. */
+/* A figure's colour is not a styling choice — it reports what the cell actually
+   holds, which is the whole point of the convention. Classified at paint time so
+   an overridden input correctly turns blue. */
+function cellKind(sheet, ref) {
+  const raw = rawOf(sheet, ref);
+  if (typeof raw !== 'string' || raw[0] !== '=') return 'hard';
+  return /[A-Za-z][A-Za-z0-9_]*!/.test(raw) ? 'link' : 'calc';
+}
+
 function cell(sheet, ref, opts = {}) {
-  const e = $(opts.tag || 'span', (opts.cls || '') + ' ' + (opts.kind || 'calc'));
+  const e = $(opts.tag || 'span', opts.cls || '');
   e.dataset.cell = sheet + '!' + ref;
   if (opts.f) e.dataset.f = opts.f;
-  e.tabIndex = 0;
   return e;
 }
 
@@ -827,6 +835,11 @@ function paintCells(root = document) {
     const [sheet, ref] = e.dataset.cell.split('!');
     const v = readCell(sheet, ref);
     e.textContent = formatValue(v, e.dataset.f || (SHEET_BY_NAME[sheet].cells[ref] || {}).f);
+    const kind = cellKind(sheet, ref);
+    e.classList.remove('hard', 'calc', 'link');
+    e.classList.add(kind);
+    /* only a formula has something to reveal, so only a formula is offered */
+    if (kind === 'hard') e.removeAttribute('tabindex'); else e.tabIndex = 0;
   });
 }
 
@@ -835,12 +848,14 @@ function showFormula(sheet, ref) {
   const raw = rawOf(sheet, ref);
   fref.textContent = sheet + '!' + ref;
   const isF = typeof raw === 'string' && raw[0] === '=';
-  ftext.textContent = isF ? raw : String(raw);
+  const def = SHEET_BY_NAME[sheet].cells[ref] || {};
+  ftext.textContent = isF ? raw
+    : formatValue(readCell(sheet, ref), def.f) + '   — hardcoded input, no formula behind it';
   ftext.classList.toggle('live', isF);
 }
 const HINT = matchMedia('(hover: none)').matches
-  ? 'Tap any calculated figure for its formula'
-  : 'Hover any calculated figure to read the formula behind it';
+  ? 'Tap any underlined figure for its formula'
+  : 'Hover any underlined figure to read the formula behind it';
 function clearFormula() {
   fref.textContent = '—';
   ftext.textContent = HINT;
@@ -891,7 +906,7 @@ function section(id, idx, title, right) {
   const L = $('div');
   L.appendChild($('div', 'eyebrow', SITE.role.split(' · ')[0] + ' · ' + SITE.location));
   L.appendChild($('h1', null, SITE.name));
-  L.appendChild($('p', 'role', 'Transaction structuring, underwriting and origination — renewables and energy infrastructure'));
+  L.appendChild($('p', 'role', 'I originate, structure and underwrite energy transactions — and build the models they close on.'));
   L.appendChild($('p', 'lede', SITE.lede));
   const cta = $('div', 'cta');
   const a1 = $('a', 'btn primary', 'Email me'); a1.href = 'mailto:' + SITE.email;
@@ -905,7 +920,6 @@ function section(id, idx, title, right) {
   const rows = [
     ['Prepared by', SITE.name, null],
     ['Last updated', null, ['Career', 'E7', 'date']],
-    ['Sector coverage', 'Biopower, solar, storage, infrastructure', null],
     ['Years in finance', null, ['Career', 'F13', 'num1', ' yrs']],
     ['Basis of preparation', 'Actuals; illustrative deal model below', null],
   ];
@@ -921,7 +935,7 @@ function section(id, idx, title, right) {
   const lg = $('div', 'legend');
   lg.appendChild($('p', null, 'Font convention'));
   const ul = $('ul');
-  [['hard', 'Blue', 'an input you can change'], ['calc', 'Black', 'a calculation'], ['link', 'Green', 'a link out']]
+  [['hard', 'Blue', 'a hardcoded input'], ['calc', 'Black', 'a calculation'], ['link', 'Green', 'pulls from another schedule']]
     .forEach(([c, term, mean]) => {
       const li = $('li');
       const b = $('b', c, term); li.append(b, ' — ' + mean);
@@ -955,18 +969,19 @@ function section(id, idx, title, right) {
   };
   w.appendChild(mk([
     ['Years in finance', 'Career', 'F13', 'num1', 'Since May 2015, accruing'],
-    ['Agreements structured', 'Facts', 'C7', 'num0', 'Feedstock $500M + offtake $800M', '$'],
-    ['Largest mandate', 'Facts', 'C4', 'num0', 'Per asset, up to ($M)', '$'],
+    ['Agreements structured', 'Facts', 'C7', 'num0', 'Feedstock $500M + offtake $800M', '$', 'M'],
+    ['Underwriting range', 'Facts', 'C15', null, 'Per asset, development through sale'],
     ['Developments directed', 'Facts', 'C8', 'num0', 'Biopower, $30–100M each'],
   ]));
-  const g2 = mk([
-    ['Capex reduction', 'Facts', 'C9', 'pct0', 'Relocation structure'],
-    ['Revenue uplift', 'Facts', 'C10', 'pct0', 'Relocation structure'],
-    ['Feedstock rights', 'Facts', 'C11', 'num1', 'Million tons, zero-cost supply'],
-    ['Commodity flows', 'Facts', 'C14', 'num0', 'Supported by systems deployed', '$', 'B'],
-  ], 'sub');
-  g2.style.marginTop = '-1px';
-  w.appendChild(g2);
+  const why = $('p');
+  why.style.cssText = 'margin:22px 0 8px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)';
+  why.textContent = 'Why relocation works';
+  w.appendChild(why);
+  w.appendChild(mk([
+    ['Capex reduction', 'Facts', 'C9', 'pct0', 'Against a greenfield build'],
+    ['Revenue uplift', 'Facts', 'C10', 'pct0', 'Moving output to a better market'],
+    ['Feedstock secured', 'Facts', 'C11', 'num1', 'Million tons, zero-cost supply'],
+  ], 'sub'));
 })();
 
 /* ── experience ──────────────────────────────────────────────────── */
@@ -1057,27 +1072,14 @@ function section(id, idx, title, right) {
 
   const stat = $('div', 'tiles'); stat.style.marginBottom = '14px';
   [['Coefficient (α)', 'Research', 'C10', 'num2', '$/MWh per GW of crowding'],
-   ['Variance explained', 'Research', 'C11', 'pct0', 'R², observed basis variance'],
-   ['Unexplained', 'Research', 'C12', 'pct0', 'Residual']].forEach(([k, s, r, f, u]) => {
+   ['Variance explained', 'Research', 'C11', 'pct0', 'R², observed day-ahead to real-time basis']].forEach(([k, s, r, f, u]) => {
     const t = $('div', 'tile');
     t.appendChild($('span', 'k', k));
-    const v = $('span', 'v'); v.appendChild(cell(s, r, { f, kind:r === 'C10' ? 'hard' : 'calc' })); t.appendChild(v);
+    const v = $('span', 'v'); v.appendChild(cell(s, r, { f })); t.appendChild(v);
     t.appendChild($('span', 'u', u));
     stat.appendChild(t);
   });
   a.appendChild(stat);
-
-  const fld = $('div', 'fld'); fld.style.cssText = 'padding:0;border:0;margin-bottom:14px';
-  const fh = $('div', 'fld-h');
-  const lab = $('label', null, 'Flex the coefficient'); lab.htmlFor = 'alpha';
-  const out = $('output'); out.id = 'alpha-out';
-  fh.append(lab, out); fld.appendChild(fh);
-  const sl = $('input'); sl.type = 'range'; sl.id = 'alpha';
-  sl.min = 1; sl.max = 6; sl.step = 0.01; sl.value = 3.17;
-  sl.setAttribute('aria-label', 'Crowding coefficient, dollars per MWh per GW');
-  sl.addEventListener('input', () => { overrides['Research!C10'] = parseFloat(sl.value); recalc(); });
-  fld.appendChild(sl);
-  a.appendChild(fld);
 
   const bt = $('table', 'sched'); bt.style.fontSize = '12px';
   const bh = $('tr');
@@ -1113,18 +1115,18 @@ function section(id, idx, title, right) {
 /* ── the live model ──────────────────────────────────────────────── */
 /* ── method ──────────────────────────────────────────────────────── */
 const METHOD = [
-  ['Dials, not hardcodes',
-   'Every assumption is an input with a stated range and a scenario behind it. Nothing that matters is buried inside a formula, so a reviewer can find the number they want to argue with.'],
-  ['Sized to a covenant, not a ratio',
-   'Debt is sized to a target minimum DSCR on year-one cash flow and capped by a leverage limit, so the structure answers to what a lender will actually lend against rather than to a round percentage of capex.'],
-  ['Stress one at a time, then all at once',
-   'Each risk moves to the worst realistic end of its own range in isolation, so you can see which one actually breaks the deal. Then they are stacked, because they do not politely arrive one at a time.'],
-  ['Solve for the number that matters',
-   'Base-case outputs are the least interesting result. The useful figure is the offtake price at which equity returns nothing — at base, and again with every stress stacked. That is the number the PPA negotiation is really about.'],
-  ['Checks that fail loudly',
-   'Sources equal uses, debt amortises to zero by the end of its tenor, loss carryforwards never go negative. Each is a cell, and if one breaks the model says CHECK rather than quietly producing a plausible answer.'],
-  ['Every assumption carries its source',
-   'A notes schedule sits beside the model naming where each figure came from — a general ledger, a broker indication, a published benchmark — and flagging what is still a placeholder pending a real quote.'],
+  ['Nothing important is buried',
+   'Every assumption is a dial with a stated range, so a reviewer can find the number they want to argue with instead of hunting for it inside a formula.'],
+  ['The structure answers to a lender',
+   'Debt is sized to a covenant rather than to a round percentage of capex, and it is struck once. A stress then lands on equity and the cover ratio, which is where it would land in practice.'],
+  ['One risk at a time is the useful test',
+   'Stacking everything tells you the deal can break. Moving one assumption at a time tells you which one breaks it, and that is the conversation worth having.'],
+  ['Solve, do not just report',
+   'The base case is the least interesting output. The offtake price at which equity returns nothing is the number the PPA negotiation is actually about.'],
+  ['Checks fail loudly',
+   'Structural identities are cells like any other, and when one breaks the model says so rather than quietly producing a plausible answer.'],
+  ['Every figure carries its source',
+   'A notes schedule names where each number came from — a general ledger, a broker indication, a published benchmark — and flags what is still a placeholder pending a real quote.'],
 ];
 
 (function methodSection(){
@@ -1233,7 +1235,7 @@ function syncControls() {
                     'Illustrative single-unit biomass relocation — not a live transaction');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
-  intro.textContent = 'A generic 25 MW biomass relocation, invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms. The statutory tax parameters are public law; every project figure is made up. Move any input and the twenty-year schedule, the debt sizing, the tax, the stress tests and the breakeven all recalculate.';
+  intro.textContent = 'A generic 25 MW biomass relocation, invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms — the statutory tax parameters are public law, every project figure is made up. Move any dial and the twenty-year schedule, the debt sizing, the tax, the stress tests and the breakeven all recalculate.';
   w.appendChild(intro);
 
   const box = $('div', 'model');
@@ -1310,7 +1312,7 @@ function syncControls() {
   const ot = $('div', 'otiles');
   [['Equity NPV', 'C49', 'num1', 'At the equity discount rate', '$', 'M'],
    ['Equity IRR', 'C50', 'pct1', 'Levered, after tax', '', ''],
-   ['Minimum DSCR', 'C51', 'x2', 'Over the debt tenor', '', ''],
+   ['Minimum DSCR', 'C51', 'x2', 'Equals the target while the covenant binds', '', ''],
    ['Breakeven PPA', null, null, 'Where equity NPV is zero', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
@@ -1341,7 +1343,7 @@ function syncControls() {
 
   const v1 = $('div', 'viz');
   v1.appendChild($('h4', null, 'Cash flow cover, years 1–20'));
-  v1.appendChild($('p', 'cap', 'EBITDA against the level debt service the sizing produces, both as magnitudes in $M. Debt service stops at the end of the tenor. Sizing binds on the lowest EBITDA inside the tenor — either the commissioning year or, once fuel has ramped to its contract ceiling, a later one.'));
+  v1.appendChild($('p', 'cap', 'Magnitudes in $M. Debt service stops at the end of the tenor. Sizing binds on the lowest EBITDA inside it — the commissioning year, or a later one once fuel reaches its contract ceiling.'));
   const lr = $('div', 'legend-row');
   [['EBITDA', 'var(--series-1)'], ['Debt service', 'var(--series-2)']].forEach(([t, c]) => {
     const sp = $('span');
@@ -1355,20 +1357,20 @@ function syncControls() {
 
   const v2 = $('div', 'viz');
   v2.appendChild($('h4', null, 'Stress tests'));
-  v2.appendChild($('p', 'cap', 'Each risk moved to the worst realistic end of its own range, one at a time, then all of them together. Debt is sized once at base case and held fixed, because at financial close the loan is already struck — a stress hits equity and the cover ratio, not the lender. The point is to find which single assumption the deal actually turns on.'));
+  v2.appendChild($('p', 'cap', 'Each risk at the worst realistic end of its own range, alone and then together. Debt is held at its base-case sizing throughout.'));
   const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
   v2.appendChild(sw2);
   out.appendChild(v2);
 
   const v3 = $('div', 'viz');
   v3.appendChild($('h4', null, 'Sensitivity — equity NPV ($M)'));
-  v3.appendChild($('p', 'cap', 'PPA price down the side, capex per kW across, each cell a full model run. Both axes flex ±20% off the inputs, so the outlined cell is always the base case.'));
+  v3.appendChild($('p', 'cap', 'PPA price down the side, capex per kW across, each cell a full model run. Both axes flex ±20%, so the outlined cell is always the base case.'));
   const hw = $('div', 'heatwrap'); hw.id = 'heat';
   v3.appendChild(hw);
   out.appendChild(v3);
 
   const tie = $('div', 'tie');
-  tie.append('Checks: sources equal uses, debt amortises to zero by the end of its tenor, loss carryforwards never go negative. ');
+  tie.append('Sources equal uses · debt amortises to zero · loss carryforwards never go negative — ');
   const badge = $('b'); badge.id = 'tie'; tie.appendChild(badge);
   out.appendChild(tie);
 
@@ -1425,7 +1427,6 @@ function syncControls() {
   const dl2 = $('dl', 'deflist');
   [['Sectors', 'Biopower, solar, storage, energy and infrastructure assets'],
    ['Focus', 'Origination, structuring, underwriting, deal execution'],
-   ['Transaction range', '$50M – $1.2B'],
    ['Status', '[Set availability]']].forEach(([k, v]) => {
     const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); dl2.appendChild(d);
   });
@@ -1438,9 +1439,8 @@ function syncControls() {
 (function footer(){
   const f = $('footer');
   const w = $('div', 'wrap');
-  w.appendChild($('p', null, 'The deal model on this page is generic and illustrative. It describes no client, counterparty or live transaction, and contains no confidential terms. Figures elsewhere are as disclosed on the CV.'));
   const p = $('p');
-  p.append('Built as one static HTML file — a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Source at ');
+  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV. Source at ');
   const a = $('a', 'mail', 'github.com/Tobombadil/Tobombadil'); a.href = SITE.repo; a.target = '_blank'; a.rel = 'noopener';
   p.append(a, '.');
   w.appendChild(p);
@@ -1667,9 +1667,6 @@ function recalc() {
     o.textContent = txt(s, r);
     if (o.dataset.unit) o.appendChild($('span', 'u', o.dataset.unit));
   });
-  const ao = document.getElementById('alpha-out');
-  if (ao) ao.textContent = '$' + txt('Research', 'C10') + ' /MWh/GW';
-
   const maxT = Math.max(...SITE.jobs.map(j => val('Career', 'F' + j.row)));
   document.querySelectorAll('[data-tbar]').forEach(b => {
     b.style.width = (val('Career', 'F' + b.dataset.tbar) / maxT * 100).toFixed(1) + '%';
