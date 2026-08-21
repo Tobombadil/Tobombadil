@@ -38,7 +38,9 @@
   --series-2:#eb6834;
   --good:#0ca30c;
   --shade:#f6f1dd;
+  --ground:#e7ebf1;      /* the desk the sheet sits on */
   --maxw:1120px;
+  --sheet:1240px;
   --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --serif:"Newsreader",Georgia,"Times New Roman",Times,serif;
   --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
@@ -47,20 +49,27 @@
 html{scroll-behavior:smooth;scroll-padding-top:104px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 body{
-  margin:0;background:var(--paper);color:var(--ink);
+  margin:0;background:var(--ground);color:var(--ink);
   font:15px/1.55 var(--sans);
   font-variant-numeric:tabular-nums;
   -webkit-text-size-adjust:100%;
-  /* faint worksheet ruling: the page reads as squared paper, not as a grid */
-  background-image:linear-gradient(var(--rule-2) 1px,transparent 1px),
-                   linear-gradient(90deg,var(--rule-2) 1px,transparent 1px);
-  background-size:100% 28px,28px 100%;
-  background-position:-1px -1px;
 }
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
 
+/* The document is a sheet on a desk: the cover bleeds past it, everything
+   below sits on white with the ground showing at the margins. Squared paper
+   belonged to the version of this page that was a worksheet; behind running
+   prose it is a repeating pattern with nothing to line up against. */
+.toc,main > section,footer{
+  max-width:var(--sheet);margin-left:auto;margin-right:auto;
+  background:var(--paper);
+  border-left:1px solid var(--rule);border-right:1px solid var(--rule);
+}
+
 /* ── toolbar + formula bar ─────────────────────────────────────────── */
-.bar{position:sticky;top:0;z-index:40;background:var(--chrome);border-bottom:1px solid var(--rule)}
+.bar{position:sticky;top:0;z-index:40;background:var(--chrome);border-bottom:1px solid var(--rule);
+     max-width:var(--sheet);margin-left:auto;margin-right:auto;
+     border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
 .bar-in{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:center;gap:18px;height:38px}
 .fname{font:700 11px var(--sans);letter-spacing:.045em;white-space:nowrap}
 .fname span{color:var(--ink-3);font-weight:400}
@@ -73,7 +82,9 @@ nav a:hover{color:var(--ink);background:var(--paper)}
 nav a.on{color:var(--ink);font-weight:700;background:var(--paper);box-shadow:inset 0 -2px 0 var(--linkc)}
 nav a:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--input);outline-offset:2px}
 
-.fbar{position:sticky;top:38px;z-index:39;background:var(--paper);border-bottom:1px solid var(--rule)}
+.fbar{position:sticky;top:38px;z-index:39;background:var(--paper);border-bottom:1px solid var(--rule);
+      max-width:var(--sheet);margin-left:auto;margin-right:auto;
+      border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
 .fbar-in{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:stretch;height:30px}
 .fref{flex:0 0 auto;min-width:96px;max-width:210px;display:flex;align-items:center;gap:6px;
       font:600 11px var(--sans);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -230,7 +241,8 @@ svg.chart{display:block;min-width:440px;width:100%;height:auto}
 
 /* the chrome gets out of the way over the cover */
 .bar,.fbar{transition:background .3s ease,border-color .3s ease,color .3s ease}
-body.at-cover .bar,body.at-cover .fbar{background:transparent;border-bottom-color:rgba(255,255,255,.15)}
+body.at-cover .bar,body.at-cover .fbar{background:transparent;border-bottom-color:rgba(255,255,255,.15);
+  border-left-color:transparent;border-right-color:transparent}
 body.at-cover .fname{color:#dde7f1}
 body.at-cover .fname span{color:#8fa8c0}
 body.at-cover nav a{color:#a8bed2;border-left-color:rgba(255,255,255,.15)}
@@ -386,8 +398,8 @@ section > .wrap.body{padding-bottom:44px}
 /* ── contact + footer ──────────────────────────────────────────────── */
 .contact{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:start}
 a.mail{color:var(--linkc);text-decoration:underline;text-underline-offset:2px}
-footer{margin-top:56px;border-top:1px solid var(--rule);background:var(--paper-2)}
-footer .wrap{padding-top:20px;padding-bottom:26px}
+footer{margin-top:0;border-top:1px solid var(--rule);background:var(--paper-2)}
+footer .wrap{padding-top:30px;padding-bottom:34px}
 footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:86ch}
 
 /* input groups, elections and the held-constant list */

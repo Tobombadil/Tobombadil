@@ -37,6 +37,13 @@ machinery kept and pointed at interrogation instead.
   the curve. It is the one graphic everyone in this industry reads without a legend, and it points
   at the storage simulator in 5.0 rather than decorating. It is captioned as illustrative and
   nothing on the page depends on it.
+- **The ground.** The document is a sheet on a desk: a cool grey ground, a centred white sheet at
+  1240px carrying the contents, the sections and the footer, and the running header sized to
+  match. The cover bleeds past the sheet on purpose, so the document begins when the sheet does.
+  This replaced a squared-paper background left over from the version of this page that was a
+  worksheet — behind running prose a repeating grid has nothing to line up against, and reads as
+  interference rather than texture. Below 1240px the ground never shows, so the phone simply gets
+  clean white.
 - **One theme, deliberately.** A proposal is printed on white paper, so the document body commits
   to light and does not invert. Every color is a token and `body` paints its own ground, so the
   page holds whatever theme the host is in.
@@ -192,9 +199,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 118 checks.
+Three suites, run against a headless browser. 122 checks.
 
-- **`site.js`** (94) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (98) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
