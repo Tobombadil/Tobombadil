@@ -482,6 +482,48 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .torn td.n{width:15%}
   .torn{font-size:11.5px}
 }
+/* ══ phone ════════════════════════════════════════════════════════════
+   Audited at 390x844. The nav could show one of eight links, the source
+   bar truncated every sentence it was given, and the assumption panel
+   pushed the model's own outputs below the fold. */
+nav a .n,nav a .s{display:none}
+nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
+@media (max-width:680px){
+  html{scroll-padding-top:56px}
+  .bar-in{height:46px}
+  .fname{display:none}
+  nav{margin-left:0;width:100%}
+  nav a{display:flex;align-items:center;height:46px;padding:0 7px;font-size:11px}
+  nav a .n{display:inline}
+  nav a .t{display:none}
+  nav a.on .n{color:var(--copper)}
+  nav a.on .s{display:inline;margin-left:6px;font-size:11.5px;font-weight:600}
+  /* the bar cannot hold a sentence at this width; the tooltip can */
+  .fbar{display:none}
+  .cover{margin-top:-47px;padding-top:47px}
+  .tip{max-width:290px;font-size:12px;padding:9px 11px}
+  .tip b{font-size:12px;margin-bottom:4px}
+
+  /* thumbs need 44px; these were 36 and 38 */
+  .cover-cta a{padding:14px 20px;font-size:13px}
+  .igh{padding:13px 14px}
+  .reset{padding:6px 0}
+
+  /* labels that had dropped under 12px */
+  .cover-eyebrow{font-size:12px}
+  .cover-cap{font-size:11px}
+  .toc .tnum{font-size:12px}
+  .sched.pairs .owd{font-size:12.5px}
+  .torn{font-size:12px}
+  .viz .cap{font-size:12px}
+  .held li,.legend li{font-size:12px}
+  .tile .u,.otile .n{font-size:11.5px}
+
+  /* a box that scrolls sideways should say so */
+  .viz.wide > h4::after{content:' ·  scrolls sideways';font:italic 10.5px var(--sans);
+                        color:var(--ink-3);letter-spacing:0;text-transform:none}
+}
+
 </style>
 </head>
 <body>
@@ -1095,15 +1137,17 @@ const SITE = {
           note:'Nine years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
 };
 
+/* id, number, name, thesis, and the short label the phone nav uses in place
+   of the name, which needs 849px in a 390px bar */
 const SECTIONS = [
-  ['summary',    '1.0', 'Summary',               'What I am proposing, and on what terms'],
-  ['mandate',    '2.0', 'The mandate',           'The five things the second seat owns, and where I map to each'],
-  ['experience', '3.0', 'Experience',            'Ten years, and what each seat actually taught'],
-  ['precedent',  '4.0', 'Selected transactions', 'What has been sourced, structured, negotiated and signed'],
-  ['market',     '5.0', 'Market view',           'A view I built on my own time, and can defend in a room'],
-  ['analysis',   '6.0', 'Supporting analysis',   'A working model, and the teardown that matters more than it does'],
-  ['risk',       '7.0', 'Risks and mitigants',   'The case against hiring me, written by me'],
-  ['terms',      '8.0', 'Terms and next steps',  'What I am asking for'],
+  ['summary',    '1.0', 'Summary',               'What I am proposing, and on what terms', 'Summary'],
+  ['mandate',    '2.0', 'The mandate',           'The five things the second seat owns, and where I map to each', 'Mandate'],
+  ['experience', '3.0', 'Experience',            'Ten years, and what each seat actually taught', 'Experience'],
+  ['precedent',  '4.0', 'Selected transactions', 'What has been sourced, structured, negotiated and signed', 'Precedent'],
+  ['market',     '5.0', 'Market view',           'A view I built on my own time, and can defend in a room', 'Market'],
+  ['analysis',   '6.0', 'Supporting analysis',   'A working model, and the teardown that matters more than it does', 'Analysis'],
+  ['risk',       '7.0', 'Risks and mitigants',   'The case against hiring me, written by me', 'Risk'],
+  ['terms',      '8.0', 'Terms and next steps',  'What I am asking for', 'Terms'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1227,19 +1271,41 @@ function clearFormula() {
   ftext.textContent = '';
   ftext.appendChild($('span', 'p', HINT));
 }
+/* The bar has 210px on a phone for a sentence that needs 297, so it truncates
+   every source line. Below 680px the bar is hidden and the same content goes
+   to the tooltip, which wraps. */
+const narrow = () => matchMedia('(max-width:680px)').matches;
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]));
+
+function reveal(el) {
+  const [sheet, ref] = el.dataset.cell.split('!');
+  if (!narrow()) { showFormula(sheet, ref, el); return; }
+  const meta = SRC[sheet + '!' + ref];
+  const over = el.dataset.override;
+  const raw = over || txt(sheet, ref, el.dataset.f);
+  const shown = (over || !meta) ? raw : (meta[2] || '') + raw + (meta[3] || '');
+  const prose = meta ? expandSrc(sheet, meta[1])
+    : cellKind(sheet, ref) === 'hard' ? 'A stated figure.' : 'Worked out on this page.';
+  const b = el.getBoundingClientRect();
+  showTip('<b>' + esc((meta ? meta[0] : ref) + '  ' + shown) + '</b>' + esc(prose),
+          b.left + b.width / 2, b.top);
+}
+
 document.addEventListener('pointerover', e => {
   const t = e.target.closest('[data-cell]');
-  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r, t); }
+  if (t) reveal(t);
 });
 document.addEventListener('focusin', e => {
   const t = e.target.closest && e.target.closest('[data-cell]');
-  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r, t); }
+  if (t) reveal(t);
 });
 document.addEventListener('pointerout', e => {
-  if (e.target.closest && e.target.closest('[data-cell]') && !e.relatedTarget?.closest?.('[data-cell]')) clearFormula();
+  if (e.target.closest && e.target.closest('[data-cell]') && !e.relatedTarget?.closest?.('[data-cell]')) {
+    clearFormula(); hideTip();
+  }
 });
 document.addEventListener('click', e => {
-  if (!e.target.closest('[data-cell]')) clearFormula();
+  if (!e.target.closest('[data-cell]')) { clearFormula(); hideTip(); }
 });
 
 /* tooltip */
@@ -1771,9 +1837,12 @@ function secAnalysis(){
      outputs column, which left a large empty rectangle inside the box. The two
      groups worth reaching for first stay open; the rest are one click away. */
   const OPEN_BY_DEFAULT = ['Offtake & fuel', 'Costs & capital', 'Financing'];
+  /* on a phone the columns stack, so eighteen open dials push the outputs a
+     screen and a half below the fold. Start closed and let them be opened. */
+  const startClosed = matchMedia('(max-width:680px)').matches;
   INPUT_GROUPS.forEach(([grp, list]) => {
     const sec = $('div', 'igrp');
-    const open = OPEN_BY_DEFAULT.includes(grp);
+    const open = !startClosed && OPEN_BY_DEFAULT.includes(grp);
     sec.dataset.open = open ? '1' : '0';
     const hd = $('button', 'igh'); hd.type = 'button';
     hd.setAttribute('aria-expanded', String(open));
@@ -1854,6 +1923,7 @@ function secAnalysis(){
     sp.append(sw, t); lr.appendChild(sp);
   });
   v1.appendChild(lr);
+  v1.classList.add('wide');
   const cb = $('div', 'chartbox'); cb.id = 'cashflow';
   v1.appendChild(cb);
   out.appendChild(v1);
@@ -1864,6 +1934,7 @@ function secAnalysis(){
   be.id = 'breakeven';
   v2.appendChild(be);
   v2.appendChild($('p', 'cap', "Each risk at the worst realistic end of its range, alone and then together. When the hit lands matters: a rate move happens before you sign and re-sizes the loan; an operating stress lands after, and equity absorbs it."));
+  v2.classList.add('wide');
   const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
   v2.appendChild(sw2);
   out.appendChild(v2);
@@ -2048,9 +2119,13 @@ function secTerms(){
 /* ── nav ─────────────────────────────────────────────────────────── */
 (function nav(){
   const n = document.getElementById('nav');
-  SECTIONS.forEach(([id, num, title]) => {
-    const a = $('a', null, title); a.href = '#' + id; a.dataset.sec = id;
+  SECTIONS.forEach(([id, num, title, thesis, short]) => {
+    const a = $('a'); a.href = '#' + id; a.dataset.sec = id;
+    /* the names need 849px and the bar has 390, so the phone gets the numbers
+       and the section it is currently in gets a short label back */
+    a.append($('b', 'n', num), $('span', 't', title), $('span', 's', short));
     a.title = num + ' ' + title;
+    a.setAttribute('aria-label', num + ' ' + title);
     n.appendChild(a);
   });
   const links = [...n.querySelectorAll('a')];

@@ -192,7 +192,7 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 112 checks.
+Three suites, run against a headless browser. 118 checks.
 
 - **`site.js`** (94) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
@@ -204,7 +204,11 @@ Three suites, run against a headless browser. 112 checks.
   with the stress table's base case, which are computed by different paths, and that structural
   invariants hold on every vector: no negative debt or equity, leverage inside its cap, sources
   equal uses, debt amortized.
-- **`mobile.js`** (10) — responsive layout at 390px and 768px.
+- **`mobile.js`** (16) — responsive layout at 390px and 768px, plus the phone audit: every
+  section reachable in the nav whichever one is active, the source bar hidden where it would
+  truncate, tapping a figure revealing its full source inside the viewport, the assumption
+  panel starting closed, the model's outputs within one screen of its heading, and sticky
+  chrome under 8% of the viewport.
 
 The tile-versus-table check exists because it caught a real defect: after the model's cells were
 renumbered, the three headline tiles still pointed at the old addresses, so the equity IRR tile
@@ -258,7 +262,23 @@ and inverting it into a dark theme would break the conceit. Every colour is an e
 Responsive throughout — the hero, the model and the two-column blocks collapse to one column, and
 the transaction schedule, the mandate map and the risk register restack into records on a phone.
 Wide content (the cash-flow chart) scrolls inside its own container so the page body never
-scrolls sideways.
+scrolls sideways, and says that it scrolls.
+
+### The phone is a different document
+
+Not fitting is the floor, not the goal. An audit at 390×844 found three things no overflow test
+could catch, and each got a different treatment rather than a smaller font:
+
+- **The nav could reach one section of eight.** The names need 849px in a 390px bar. Below 680px
+  the links become their section numbers, and whichever section you are in gets a short label
+  back: `1.0  2.0  3.0  4.0  5.0  6.0 Analysis  7.0  8.0`. `SECTIONS` carries that short label as
+  a fifth field. A test drives every section active in turn and fails if the last link clips.
+- **The provenance bar had 210px for a 297px sentence**, so it truncated every source it was
+  given, on a device that cannot hover anyway. The bar is hidden below 680px and the same content
+  goes to the tooltip, which wraps, positions itself in the viewport, and is dismissed by tapping
+  elsewhere. That also gives back a third of the sticky chrome: 70px to 47px.
+- **Eighteen open dials pushed the model's own outputs a screen and a half below its heading.**
+  The assumption panel starts closed on a phone. The outputs now sit 536px from the divider.
 
 ## Still to decide
 
