@@ -192,9 +192,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 111 checks.
+Three suites, run against a headless browser. 112 checks.
 
-- **`site.js`** (93) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (94) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
@@ -212,6 +212,15 @@ was reading equity in millions and formatting it as a percentage. It displayed 3
 other test passed, because they each read the model directly and never checked what the page had
 actually bound to. The tornado is verified the same way, by recomputing every bar from the stated
 mechanic and comparing against what the renderer actually drew.
+
+## Length
+
+The document runs about 2,800 words. It ran 3,900 before an edit pass that removed duplication
+rather than detail: the thesis line for each section was printed twice, once on the contents page
+and again on the divider a screen later; the technical-skills block restated 2.0 as a list of
+nouns; the market cards carried definition lists repeating the paragraph above them; and the
+mandate and risk cells ran four sentences where two land harder. 2.0 and 7.0 each fit on one
+screen now, which is the actual test.
 
 ## Editing the content
 
