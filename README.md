@@ -30,8 +30,8 @@ machinery kept and pointed at interrogation instead.
   `#a8571c` is the single accent and is spent only on the cover rule, section numerals and the
   primary action. Neutrals are biased toward the navy (`#f5f7f9`, `#10151c`) so they read as
   chosen rather than inherited. Chart series keep the separately validated `#2a78d6` / `#eb6834`.
-- **Type.** Newsreader for display, IBM Plex Sans for body and UI, IBM Plex Mono for cell
-  references, the source bar and the contents leaders. Institutional-technical, with real
+- **Type.** Newsreader for display, IBM Plex Sans for body, UI and the provenance bar, IBM Plex
+  Mono for the document reference and the contents leaders. Institutional-technical, with real
   fallback stacks behind each, which the test suite asserts.
 - **The cover.** A 24-hour summer load shape with the charge and discharge windows tinted under
   the curve. It is the one graphic everyone in this industry reads without a legend, and it points
