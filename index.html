@@ -75,13 +75,15 @@ nav a:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible{out
 
 .fbar{position:sticky;top:38px;z-index:39;background:var(--paper);border-bottom:1px solid var(--rule)}
 .fbar-in{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:stretch;height:30px}
-.fref{flex:0 0 96px;display:flex;align-items:center;font:700 11px var(--sans);color:var(--ink-2);
+.fref{flex:0 0 auto;min-width:96px;max-width:210px;display:flex;align-items:center;gap:6px;
+      font:600 11px var(--sans);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
       border-right:1px solid var(--rule)}
 .ffx{flex:0 0 30px;display:flex;align-items:center;justify-content:center;
      font:italic 700 12px var(--serif);color:var(--ink-3);border-right:1px solid var(--rule)}
-.ftext{flex:1 1 auto;display:flex;align-items:center;padding:0 11px;min-width:0;
-       font:11px/1 var(--mono);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ftext.live{color:#7a2f8a}
+.ftext{flex:1 1 auto;display:flex;align-items:baseline;gap:9px;padding:0 12px;min-width:0;
+       font:12.5px/30px var(--sans);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ftext .v{font-weight:600;font-variant-numeric:tabular-nums;flex:0 0 auto}
+.ftext .p{min-width:0;overflow:hidden;text-overflow:ellipsis}
 
 /* ── section furniture ─────────────────────────────────────────────── */
 section{padding:52px 0 4px}
@@ -141,7 +143,7 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 
 /* ── experience ────────────────────────────────────────────────────── */
 .roles{display:flex;flex-direction:column;gap:0}
-.job{padding:20px 0;border-bottom:1px solid var(--rule-2)}
+.job{padding:17px 0;border-bottom:1px solid var(--rule-2)}
 .job:last-child{border-bottom:0}
 .job-h{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:baseline}
 .job h3{margin:0;font:700 16px var(--sans)}
@@ -200,16 +202,6 @@ svg.chart{display:block;min-width:440px;width:100%;height:auto}
 .tie b{color:var(--good);font-weight:700;display:inline-flex;align-items:center;gap:5px}
 .tie b.bad{color:#b3312f}
 
-/* sensitivity heatmap */
-table.heat{border-collapse:separate;border-spacing:2px;font-size:11.5px;margin:0 auto}
-table.heat th{font:700 10px var(--sans);color:var(--ink-2);padding:3px 5px;white-space:nowrap}
-table.heat th.corner{font:italic 9.5px var(--sans);color:var(--ink-3);text-align:right}
-table.heat td{padding:9px 6px;text-align:right;min-width:56px;cursor:default;
-              font-variant-numeric:tabular-nums;border-radius:2px}
-table.heat td.base{outline:2px solid var(--ink);outline-offset:-2px}
-.heatwrap{overflow-x:auto;padding-bottom:4px}
-
-/* tooltip */
 .tip{position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .1s;
      background:#1c1e20;color:#fff;padding:7px 9px;font:11px/1.5 var(--sans);max-width:230px;
      box-shadow:0 3px 12px rgba(0,0,0,.24)}
@@ -296,7 +288,7 @@ body.at-cover .ftext{color:#8195a9}
 
 /* contents, set the way a filing sets one */
 .toc{background:var(--paper-2);border-bottom:1px solid var(--rule)}
-.toc .wrap{padding-top:46px;padding-bottom:46px}
+.toc .wrap{padding-top:40px;padding-bottom:40px}
 .toc h2{margin:0 0 22px;font:500 10.5px var(--sans);letter-spacing:.2em;
         text-transform:uppercase;color:var(--ink-3)}
 .toc ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;
@@ -313,14 +305,14 @@ body.at-cover .ftext{color:#8195a9}
 
 /* section dividers */
 section{padding:0 0 4px}
-.divider{background:var(--deep);color:#fff;margin-bottom:34px}
-.divider .wrap{padding-top:30px;padding-bottom:30px;display:grid;
+.divider{background:var(--deep);color:#fff;margin-bottom:28px}
+.divider .wrap{padding-top:26px;padding-bottom:26px;display:grid;
                grid-template-columns:auto 1fr;gap:4px 22px;align-items:baseline}
 .divider .num{grid-row:1/3;font:300 clamp(34px,5vw,58px)/.9 var(--serif);
               color:var(--copper-2);letter-spacing:-.02em}
 .divider h2{margin:0;font:500 15px var(--sans);letter-spacing:.19em;text-transform:uppercase}
 .divider .thesis{margin:0;font:italic 15px/1.45 var(--serif);color:#a9c0d6;max-width:62ch}
-section > .wrap.body{padding-bottom:52px}
+section > .wrap.body{padding-bottom:44px}
 
 /* a wider, calmer type scale for the document body */
 .lede{font-size:15.5px;line-height:1.68}
@@ -382,8 +374,8 @@ section > .wrap.body{padding-bottom:52px}
 .torn th.c{text-align:center}
 .torn td{padding:6px 10px 6px 0;border-bottom:1px solid var(--rule-2);white-space:nowrap}
 .torn td.lbl{white-space:normal;width:32%;padding-right:16px}
-.torn td.bar{width:42%;padding-right:16px}
-.torn td.n{text-align:right;width:13%;color:var(--ink-2)}
+.torn td.bar{width:36%;padding-right:20px}
+.torn td.n{text-align:right;width:11%;color:var(--ink-2)}
 .torn td.n.bad{color:#b3312f}
 .tb{position:relative;height:13px;background:var(--rule-2)}
 .tb i{position:absolute;top:0;bottom:0;display:block}
@@ -405,15 +397,19 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
        font:700 9.5px var(--sans);letter-spacing:.11em;text-transform:uppercase}
   .igh:hover{color:var(--ink)}
   .igh .chev{font-size:9px;color:var(--ink-3);transition:transform .16s}
+  .igh:hover .chev{color:var(--copper)}
+  .igrp[data-open="0"] .igh{color:var(--ink-3)}
   .igrp[data-open="0"] .chev{transform:rotate(-90deg)}
   .igrp[data-open="0"] .igb{display:none}
   .igb{padding-bottom:4px}
   .fld select{width:100%;font:12px var(--sans);padding:5px 6px;border:1px solid var(--rule);
               background:var(--paper);color:var(--input);font-weight:700}
-  .held{padding:12px 14px;border-top:1px solid var(--rule);background:var(--paper)}
-  .held p{margin:0 0 6px;font:700 9.5px var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
-  .held ul{margin:0;padding:0;list-style:none}
-  .held li{font-size:11px;color:var(--ink-2);line-height:1.75}
+  .held{margin-top:-1px;padding:12px 16px;border:1px solid var(--rule);border-top:0;background:var(--paper-2)}
+  .held p{margin:0 0 7px;font:600 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+  .held ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:2px 26px}
+  .held li{font-size:11.5px;color:var(--ink-2);line-height:1.7}
+  @media (max-width:820px){.held ul{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){.held ul{grid-template-columns:1fr}}
 
   /* capital stack strip */
   .stack{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rule)}
@@ -432,10 +428,9 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   #stress{overflow-x:auto;padding-bottom:4px}
 
   /* values wired to the workbook get a quiet affordance */
-[data-cell].calc,[data-cell].link{cursor:help;text-decoration:underline;
+[data-cell]{cursor:help;text-decoration:underline;
             text-decoration-style:dotted;text-decoration-color:var(--rule);text-underline-offset:3px}
-[data-cell].calc:hover,[data-cell].link:hover,
-[data-cell].calc:focus-visible,[data-cell].link:focus-visible{text-decoration-color:var(--ink-3)}
+[data-cell]:hover,[data-cell]:focus-visible{text-decoration-color:var(--ink-3)}
 .calc{color:var(--ink)}
 .link{color:var(--linkc)}
 .hard{color:var(--input)}
@@ -1154,36 +1149,96 @@ function paintCells(root = document) {
     const kind = cellKind(sheet, ref);
     e.classList.remove('hard', 'calc', 'link');
     e.classList.add(kind);
-    /* only a formula has something to reveal, so only a formula is offered */
-    if (kind === 'hard') e.removeAttribute('tabindex'); else e.tabIndex = 0;
+    /* every figure can now say where it came from, including the stated ones,
+       so every figure is reachable. Color still carries the convention. */
+    e.tabIndex = 0;
   });
 }
 
-/* the formula bar */
-function showFormula(sheet, ref) {
-  const raw = rawOf(sheet, ref);
-  fref.textContent = sheet + '!' + ref;
-  const isF = typeof raw === 'string' && raw[0] === '=';
-  const def = SHEET_BY_NAME[sheet].cells[ref] || {};
-  ftext.textContent = isF ? raw
-    : formatValue(readCell(sheet, ref), def.f) + '   — stated, not derived. Nothing behind it but a source.';
-  ftext.classList.toggle('live', isF);
+/* ── where every figure comes from ───────────────────────────────────
+   The page used to reveal the raw formula behind a cell. That worked when
+   this was a grid you could read the references against; it is now a
+   proposal, and "=C5+C6" names two cells nobody can see. Each displayed
+   figure carries a name and a sentence instead, with {REF} substituted
+   live so the sentence cannot drift from the arithmetic. */
+const SRC = {
+  'Career!E7':  ['Document date', 'Today. The page re-dates itself on every visit, so this is never a stale draft.'],
+  'Career!F13': ['Years in finance', 'From the Morgan Stanley start in May 2015 to today, on an actual/365 basis.', '', ' yrs'],
+  'Career!F12': ['Recorded tenure', 'The four roles added together. It runs ahead of the career span because Morgan Stanley and Forest City overlapped by two months in 2017.', '', ' yrs'],
+  'Career!F16': ['Board tenure', 'January 2017 to January 2026, on an actual/365 basis.', '', ' yrs'],
+
+  'Facts!C7':   ['Rights negotiated', 'Intake of ${C5}M plus offtake of ${C6}M, as exclusive agreements on energy products.', '$', 'M'],
+  'Facts!C16':  ['Clients originated', 'The commercial function at Pakira, built from zero. As disclosed on the CV.'],
+
+  'Research!C10': ['Crowding coefficient', 'The fitted result of my own ERCOT study. Ask for the working paper and you get the period, the sample and the specification.', '', ' $/MWh per GW'],
+
+  'Assumptions!C10': ['Derate', 'Auxiliary load and losses. Net output as a share of nameplate.'],
+  'Assumptions!C15': ['Fuel use', 'Green tons burned per MWh generated.', '', ' GT/MWh'],
+  'Assumptions!C21': ['Maintenance reserve', 'Annual major-maintenance accrual, per kW of net capacity.', '', ' $/kW-yr'],
+  'Assumptions!C30': ['PTC base rate', 'The §45Y production credit, inflation-adjusted. Public law, not my assumption.', '', ' $/MWh'],
+  'Assumptions!C32': ['Energy-community adder', 'The uplift under §45Y and §48E for a qualifying site. Public law.'],
+  'Assumptions!C33': ['ITC base rate', 'The §48E investment credit before adders. Public law.'],
+  'Assumptions!C39': ['NOL usage cap', 'The §172 limit on how much taxable income a loss carryforward can offset. Public law.'],
+  'Assumptions!C40': ['Project life', 'The economic life used to value the years after the PPA expires.', '', ' yrs'],
+  'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
+
+  'Model!C49': ['Funding requirement', 'Construction cost of ${C41}M, plus ${C47}M of interest during construction, plus a ${C48}M debt service reserve.', '$', 'M'],
+  'Model!C45': ['Senior debt', 'The lower of what the cover ratio will support and what the leverage cap allows. Here the covenant binds, not the cap.', '$', 'M'],
+  'Model!C50': ['Equity', 'The funding requirement less the loan. Equity takes whatever is left, which is why a cost overrun lands on it.', '$', 'M'],
+  'Model!C55': ['Equity NPV', 'Discounted equity cash flow plus the terminal value, less the equity drawn across the two-year build.', '$', 'M'],
+  'Model!C56': ['Levered equity IRR', 'The return on the equity alone, after debt service and tax, with the construction draw counted at the front.'],
+  'Model!C63': ['Project IRR', 'The unlevered return: the whole build funded up front, and tax carrying no interest shield. The spread against the levered return is what the financing contributes.'],
+  'Model!C57': ['Minimum DSCR', 'The lowest cover ratio inside the tenor. Debt service is sculpted to hold the ratio at its target, so it lands there in every year rather than sagging in one.'],
+};
+['C','D','E','F','G','H','I'].forEach(c => {
+  SRC['Research!' + c + '17'] = ['Implied basis',
+    'Zone crowding of {' + c + '16} GW times the fitted coefficient of {C10}.', '', '\u2009$/MWh'];
+});
+[[7,'Compass International'],[8,'Pakira'],[9,'Forest City'],[10,'Morgan Stanley']].forEach(([r, co]) => {
+  SRC['Career!F' + r] = ['Tenure, ' + co,
+    'From {D' + r + ':date} to {E' + r + ':date}, on an actual/365 basis.', '', '\u2009yrs'];
+});
+
+/* {C5} and {D7:date} become the live formatted value of that cell */
+function expandSrc(sheet, s) {
+  return s.replace(/\{([A-Za-z][A-Za-z0-9_]*!)?([A-Z]{1,2}\d{1,4})(?::(\w+))?\}/g,
+    (m, sh, ref, fmt) => txt(sh ? sh.slice(0, -1) : sheet, ref, fmt));
+}
+
+/* the provenance bar */
+function showFormula(sheet, ref, el) {
+  const key = sheet + '!' + ref;
+  const meta = SRC[key];
+  const kind = cellKind(sheet, ref);
+  /* an output the page deliberately overrides (n.m., over 100%) must read
+     the same in the bar as it does on the page */
+  const over = el && el.dataset.override;
+  const raw = over || txt(sheet, ref, el && el.dataset.f);
+  /* the page wraps most figures in a unit the cell itself does not carry, so
+     the bar has to put it back or it prints a bare 1,300 for $1,300M */
+  const shown = (over || !meta) ? raw : (meta[2] || '') + raw + (meta[3] || '');
+  fref.textContent = meta ? meta[0] : ref;
+  ftext.textContent = '';
+  const v = $('b', 'v ' + kind, shown);
+  const prose = $('span', 'p', meta ? expandSrc(sheet, meta[1])
+    : kind === 'hard' ? 'A stated figure.' : 'Worked out on this page.');
+  ftext.append(v, prose);
 }
 const HINT = matchMedia('(hover: none)').matches
   ? 'Tap any underlined figure to see where it comes from'
   : 'Hover any underlined figure to see where the number comes from';
 function clearFormula() {
   fref.textContent = '—';
-  ftext.textContent = HINT;
-  ftext.classList.remove('live');
+  ftext.textContent = '';
+  ftext.appendChild($('span', 'p', HINT));
 }
 document.addEventListener('pointerover', e => {
   const t = e.target.closest('[data-cell]');
-  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r); }
+  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r, t); }
 });
 document.addEventListener('focusin', e => {
   const t = e.target.closest && e.target.closest('[data-cell]');
-  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r); }
+  if (t) { const [s, r] = t.dataset.cell.split('!'); showFormula(s, r, t); }
 });
 document.addEventListener('pointerout', e => {
   if (e.target.closest && e.target.closest('[data-cell]') && !e.relatedTarget?.closest?.('[data-cell]')) clearFormula();
@@ -1400,8 +1455,9 @@ function secSummary(){
   const lg = $('div', 'legend');
   lg.appendChild($('p', null, 'Where the numbers come from'));
   const ul = $('ul');
-  [['hard', 'Blue', 'stated, not derived'], ['calc', 'Black', 'calculated on this page'],
-   ['link', 'Green', 'pulled from another schedule']]
+  [['hard', 'Blue', 'a given: disclosed, statutory, or a dial you can move'],
+   ['calc', 'Black', 'worked out on this page'],
+   ['link', 'Green', 'carried in from another schedule']]
     .forEach(([c, term, mean]) => {
       const li = $('li');
       const b = $('b', c, term); li.append(b, ' — ' + mean);
@@ -1655,7 +1711,7 @@ const RESULT = () => ({
 const pinDebt = () => {
   const pin = {};
   /* pin the debt side only. A capex overrun is funded by equity, so the funding
-     requirement and the equity cheque must still move with the stress. */
+     requirement and the equity contribution must still move with the stress. */
   ['C45','C46','C47','C48'].forEach(r => pin['Model!' + r] = val('Model', r));
   YCOLS.forEach(c => pin['Model!' + c + '19'] = val('Model', c + '19'));
   return pin;
@@ -1715,12 +1771,8 @@ function secAnalysis(){
   const w = section('analysis');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
-  intro.textContent = "This section answers one question: can I take a model apart. Origination does not build them, it assembles the inputs and interrogates what comes back, so what follows is a working project finance model and then the part that actually matters, which is the list of things I would refuse to take on faith in someone else's.";
+  intro.textContent = "This section answers one question: can I take a model apart. Origination does not build them, so below the model is the part that matters more, which is what I would refuse to take on faith in someone else's. The deal is a generic 25 MW biomass relocation I invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms; the tax parameters are public law and every project figure is made up. Move any dial and all of it recalculates.";
   w.appendChild(intro);
-  const intro2 = $('p');
-  intro2.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
-  intro2.textContent = "The deal is a generic 25 MW biomass relocation I invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms. The statutory tax parameters are public law; every project figure is made up. Debt is sculpted to a constant cover ratio, the funding requirement carries construction interest and a six-month reserve, and equity is drawn across the build. Move any dial and all of it recalculates.";
-  w.appendChild(intro2);
 
   const box = $('div', 'model');
   const inp = $('div', 'inputs');
@@ -1735,11 +1787,16 @@ function secAnalysis(){
   ih.appendChild(rb);
   inp.appendChild(ih);
 
+  /* Eighteen dials open at once made the inputs column twice the height of the
+     outputs column, which left a large empty rectangle inside the box. The two
+     groups worth reaching for first stay open; the rest are one click away. */
+  const OPEN_BY_DEFAULT = ['Offtake & fuel', 'Costs & capital', 'Financing'];
   INPUT_GROUPS.forEach(([grp, list]) => {
     const sec = $('div', 'igrp');
-    sec.dataset.open = '1';
+    const open = OPEN_BY_DEFAULT.includes(grp);
+    sec.dataset.open = open ? '1' : '0';
     const hd = $('button', 'igh'); hd.type = 'button';
-    hd.setAttribute('aria-expanded', 'true');
+    hd.setAttribute('aria-expanded', String(open));
     const ttl = $('span', null, grp), chev = $('span', 'chev', '▾');
     hd.append(ttl, chev);
     hd.addEventListener('click', () => {
@@ -1776,26 +1833,10 @@ function secAnalysis(){
     inp.appendChild(sec);
   });
 
-  const held = $('div', 'held');
-  held.appendChild($('p', null, 'Held constant'));
-  const ul = $('ul');
-  [['Derate', 'C10', ''], ['Fuel use', 'C15', ' GT/MWh'], ['Maintenance reserve', 'C21', ' $/kW-yr'],
-   ['PTC base rate (§45Y)', 'C30', ' $/MWh'], ['Energy-community adder', 'C32', ''],
-   ['ITC base rate (§48E)', 'C33', ''], ['Blended tax rate', 'C47', ''],
-   ['NOL usage cap (§172)', 'C39', ''], ['Project life', 'C40', ' yrs']].forEach(([k, ref, suf]) => {
-    const li = $('li');
-    li.append(k + ' ');
-    li.appendChild(cell('Assumptions', ref));
-    if (suf) li.append(suf);
-    ul.appendChild(li);
-  });
-  held.appendChild(ul);
-  inp.appendChild(held);
-
   const out = $('div', 'outputs');
   const ot = $('div', 'otiles');
   [['Project IRR', 'C63', 'pct1', 'Unlevered, after tax. What the asset earns on its own', '', ''],
-   ['Levered equity IRR', 'C56', 'pct1', 'After debt. Not meaningful on a thin equity cheque', '', ''],
+   ['Levered equity IRR', 'C56', 'pct1', 'After debt. Not meaningful on a sliver of equity', '', ''],
    ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M'],
    ['Minimum DSCR', 'C57', 'x2', 'Sculpted, so it holds at the target', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
     const t = $('div', 'otile');
@@ -1847,13 +1888,6 @@ function secAnalysis(){
   v2.appendChild(sw2);
   out.appendChild(v2);
 
-  const v3 = $('div', 'viz');
-  v3.appendChild($('h4', null, 'Sensitivity — equity NPV ($M)'));
-  v3.appendChild($('p', 'cap', "PPA price down the side, total build cost across. Every cell is a full model run, not an interpolation. Both axes flex ±20%, so the outlined cell is always where you've set the dials."));
-  const hw = $('div', 'heatwrap'); hw.id = 'heat';
-  v3.appendChild(hw);
-  out.appendChild(v3);
-
   const gaps = $('div', 'viz');
   gaps.appendChild($('h4', null, 'What this leaves out'));
   const gp = $('p');
@@ -1870,23 +1904,41 @@ function secAnalysis(){
   box.append(inp, out);
   w.appendChild(box);
 
+  /* the dials above are the ones worth moving; these sit underneath the box so
+     they do not stretch the inputs column past the bottom of the outputs one */
+  const held = $('div', 'held');
+  held.appendChild($('p', null, 'Held constant'));
+  const hl = $('ul');
+  [['Derate', 'C10', ''], ['Fuel use', 'C15', ' GT/MWh'], ['Maintenance reserve', 'C21', ' $/kW-yr'],
+   ['PTC base rate (§45Y)', 'C30', ' $/MWh'], ['Energy-community adder', 'C32', ''],
+   ['ITC base rate (§48E)', 'C33', ''], ['Blended tax rate', 'C47', ''],
+   ['NOL usage cap (§172)', 'C39', ''], ['Project life', 'C40', ' yrs']].forEach(([k, ref, suf]) => {
+    const li = $('li');
+    li.append(k + ' ');
+    li.appendChild(cell('Assumptions', ref));
+    if (suf) li.append(suf);
+    hl.appendChild(li);
+  });
+  held.appendChild(hl);
+  w.appendChild(held);
+
   /* ---- the interrogation: which assumptions actually move the answer ---- */
   const q = $('div', 'quiz');
   q.appendChild($('h3', null, 'What moves the answer'));
   const qp = $('p');
   qp.style.cssText = 'margin:0 0 14px;font-size:13px;line-height:1.6;color:#2c3034;max-width:80ch';
-  qp.textContent = "Each input taken ten percent either way before close, everything else held, ranked by how far equity NPV travels. That is a different question from the stress table above, which asks what happens after you have signed and the loan is already struck. This one re-sizes the financing around the change, because a different assumption at screening is a different deal.";
+  qp.textContent = "Each input taken ten percent either way before close, ranked by how far equity NPV travels. The stress table above asks what the structure survives after you have signed; this asks what you should have checked before. It re-sizes the financing around each change, because a different assumption at screening is a different deal.";
   q.appendChild(qp);
   const th = $('div'); th.id = 'tornado';
   q.appendChild(th);
   const qn = $('p');
   qn.style.cssText = 'margin:12px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:80ch;line-height:1.6';
-  qn.textContent = "The ranking is the useful part, not the magnitudes. It says where the diligence budget goes, and it reorders itself as you move the dials, which is the argument for computing it rather than asserting it.";
+  qn.textContent = "The ranking is the useful part, not the magnitudes, and it reorders itself as you move the dials. Which is the argument for computing it rather than asserting it. The top of that list is where the diligence budget goes:";
   q.appendChild(qn);
 
   const dh = $('p');
   dh.style.cssText = 'margin:26px 0 10px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)';
-  dh.textContent = "What I'd validate, and who I'd ask";
+  dh.textContent = "How I'd test the top of it";
   q.appendChild(dh);
   const dt = $('table', 'sched pairs');
   const dthead = $('thead'), dhtr = $('tr');
@@ -2127,60 +2179,6 @@ function drawCashflow() {
 const RAMP_NEG = ['#f6c9c7', '#e07470', '#a93230'];
 const RAMP_POS = ['#b7d3f6', '#5598e7', '#1c5cab'];
 const MID = '#f0efec';
-function heatColor(v, scale) {
-  if (!isFinite(v)) return { c:MID, dark:false };
-  const t = Math.min(1, Math.abs(v) / scale);
-  if (t < 0.06) return { c:MID, dark:false };
-  const arm = v < 0 ? RAMP_NEG : RAMP_POS;
-  const i = t < 0.4 ? 0 : t < 0.75 ? 1 : 2;
-  return { c:arm[i], dark:i === 2 };
-}
-
-function drawHeat() {
-  const host = document.getElementById('heat');
-  host.textContent = '';
-  const flex = [0.8, 0.9, 1, 1.1, 1.2];
-  const basePPA = val('Assumptions', 'C13'), baseCapex = val('Assumptions', 'C22');
-  const rows = flex.map(f => basePPA * f), cols = flex.map(f => baseCapex * f);
-  /* the dial is per kW, but a reader thinks in the size of the build */
-  const totals = flex.map(f => val('Assumptions', 'C46') * f);
-
-  const grid = rows.map(p => cols.map(cx =>
-    underScenario({ 'Assumptions!C13':p, 'Assumptions!C22':cx }, () => val('Model', 'C55'))));
-  const scale = Math.max(...grid.flat().map(Math.abs), 1);
-
-  const t = $('table', 'heat');
-  t.appendChild($('caption', 'sr', 'Equity NPV in millions of dollars by PPA price and capex per kW'));
-  const thead = $('thead'), htr = $('tr');
-  htr.appendChild($('th', 'corner', 'PPA ↓ / capex →'));
-  totals.forEach(c => htr.appendChild($('th', null, '$' + formatValue(c, 'num0') + 'M')));
-  thead.appendChild(htr); t.appendChild(thead);
-  const tb = $('tbody');
-  rows.forEach((p, r) => {
-    const tr = $('tr');
-    tr.appendChild($('th', null, '$' + formatValue(p, 'num0')));
-    cols.forEach((cx, ci) => {
-      const v = grid[r][ci];
-      const td = $('td', (r === 2 && ci === 2) ? 'base' : null, formatValue(v, 'num0'));
-      const col = heatColor(v, scale);
-      td.style.background = col.c;
-      if (col.dark) td.style.color = '#fff';
-      const enter = ev => showTip(
-        '<b>Equity NPV ' + formatValue(v, 'num1') + ' $M</b>PPA <i>$' + formatValue(p, 'num0') +
-        '/MWh</i> · Capex <i>$' + formatValue(totals[ci], 'num0') + 'M</i> (' +
-        formatValue(cx, 'num0') + ' $/kW)',
-        ev.clientX, ev.clientY);
-      td.addEventListener('pointerenter', enter);
-      td.addEventListener('pointermove', enter);
-      td.addEventListener('pointerleave', hideTip);
-      tr.appendChild(td);
-    });
-    tb.appendChild(tr);
-  });
-  t.appendChild(tb);
-  host.appendChild(t);
-}
-
 /* ── ranked sensitivity ──────────────────────────────────────────────
    A tornado laid out as a schedule. Every bar is a complete model run
    through underScenario(), not a derivative, so a clamped input or an
@@ -2380,7 +2378,6 @@ function heavy() {
     be.append(' with every stress stacked.');
   }
   drawStress();
-  drawHeat();
   drawTornado();
 }
 

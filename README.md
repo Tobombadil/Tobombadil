@@ -71,13 +71,31 @@ Section order is explicit rather than implied by where a function happens to sit
 page, the divider bands and the nav all read it, so they cannot drift apart; a test asserts they
 agree.
 
+### The provenance bar
+
+Hovering any figure names it and says, in a sentence, where the number came from, with live
+operands substituted:
+
+> **Equity NPV**  ·  **$11.0M**  Discounted equity cash flow plus the terminal value, less the
+> equity drawn across the two-year build.
+
+This replaced a bar that printed the raw formula. `=C5+C6` was legible when the page was a
+spreadsheet with a visible grid; on a proposal it names two cells the reader cannot see. The
+hardcode message was worse: *"stated, not derived. Nothing behind it but a source"* read as an
+admission that the figure was unsupported, when those are the disclosed and statutory numbers.
+
+Sources live in one `SRC` table keyed by cell, with `{C5}` and `{D7:date}` expanded at hover time
+so a sentence cannot drift from the arithmetic it describes. Two tests hold the line: every
+displayed figure must have an authored source, and no figure may print anything that looks like a
+cell reference.
+
 ### The font convention is enforced, not decorative
 
 `cellKind()` classifies every figure at paint time by what its cell actually holds — a literal is
-blue, a formula is black, a formula reaching another sheet is green. Only formulas get the dotted
-underline and keyboard focus, because only a formula has something to reveal; hovering a hardcode
-says so in as many words. This is checked in the test suite, so the legend cannot drift from the
-truth: a figure that stops being calculated stops being black.
+blue, a formula is black, a formula reaching another sheet is green. Every figure is underlined
+and keyboard-reachable, because every figure can now say where it came from; colour alone carries
+the convention, and the value in the bar takes the same colour. This is checked in the test suite,
+so the legend cannot drift from the truth: a figure that stops being calculated stops being black.
 
 ### Supported functions
 
@@ -131,8 +149,12 @@ Twenty operating years behind a two-year construction period:
 Input ranges are set to bands a lender would recognize. A model that can be driven to a
 $1,200/kW relocation at 90% leverage will be, and the number it produces is worthless.
 
-Every stress row, every heatmap cell, every tornado bar and every step of the bisection is a
-**complete model run** via `underScenario()`, not a simplified second formula that could drift.
+Every stress row, every tornado bar and every step of the bisection is a **complete model run**
+via `underScenario()`, not a simplified second formula that could drift.
+
+The assumption panel opens on the three groups worth reaching for first and leaves Plant and Tax
+collapsed. Eighteen dials open at once made the inputs column nearly twice the height of the
+outputs column, which left a large empty rectangle inside the bordered box.
 
 ### The interrogation
 
@@ -158,21 +180,21 @@ sculpting.
 
 - **Cash flow cover** — grouped bars, EBITDA against debt service across twenty years, with a
   legend, round axis steps, selective direct labels and a per-bar hover tooltip.
-- **NPV sensitivity** — a 5×5 heatmap on a blue↔red diverging ramp with a neutral grey midpoint
-  at NPV = 0, base case outlined, hover tooltip per cell. The capex axis is labelled in **total
-  build cost ($M)** rather than per kW, since that is the number a reader holds in their head;
-  the dial behind it is still $/kW and the tooltip gives both.
-- **Ranked sensitivity** — a tornado laid out as a schedule rather than a chart, since the memo
+- **Ranked sensitivity** — a tornado laid out as a schedule rather than a chart, since the filing
   is the idiom and the ranking is the message.
+
+A 5×5 NPV heatmap used to sit alongside the tornado. It answered the same question over two
+drivers that the tornado answers over ten, so 6.0 carried three overlapping sensitivity displays.
+It was cut.
 
 Series colours `#2a78d6` / `#eb6834` were validated against the white surface: CVD ΔE 24.7,
 normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 110 checks.
+Three suites, run against a headless browser. 111 checks.
 
-- **`site.js`** (92) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (93) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
