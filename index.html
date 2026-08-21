@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Andrew T. Gibson — Origination</title>
+<title>Andrew T. Gibson — Origination Proposal</title>
 <meta name="description" content="Andrew T. Gibson — origination, structuring and underwriting in wholesale power and energy infrastructure. Denver, CO. A proposal for an origination seat, laid out the way a deal memo is, with a live model you can take apart.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&amp;display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23fbfbf9'/%3E%3Cpath d='M2 4h12M2 8h12M2 12h12M6 2v12M10 2v12' stroke='%23d8d8d2' stroke-width='1'/%3E%3Crect x='6' y='4' width='4' height='4' fill='%231a3fcf' opacity='.8'/%3E%3C/svg%3E">
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
@@ -17,13 +20,18 @@
    ═══════════════════════════════════════════════════════════════════════ */
 :root{
   --paper:#ffffff;
-  --paper-2:#faf9f6;      /* warm-biased neutral: printed stock, not screen grey */
-  --chrome:#f4f4f1;
-  --rule:#dcdcd6;
-  --rule-2:#eceae4;
-  --ink:#16181a;
-  --ink-2:#55595e;
-  --ink-3:#83878c;
+  --paper-2:#f5f7f9;      /* neutrals biased toward the navy, so they read as chosen */
+  --chrome:#eef1f5;
+  --rule:#d3dae1;
+  --rule-2:#e7ebf0;
+  --ink:#10151c;          /* blue-black, not neutral black */
+  --ink-2:#4c5661;
+  --ink-3:#7d8791;
+  --deep:#16324f;         /* slate navy: the document's structural voice */
+  --deep-2:#0b1f33;
+  --deep-3:#26496d;
+  --copper:#a8571c;       /* the one accent, spent sparingly */
+  --copper-2:#c9762f;
   --input:#1a3fcf;        /* modelling convention: hardcoded input */
   --linkc:#0a7040;        /* modelling convention: link to another schedule */
   --series-1:#2a78d6;
@@ -31,9 +39,9 @@
   --good:#0ca30c;
   --shade:#f6f1dd;
   --maxw:1120px;
-  --sans:Arial,"Helvetica Neue",Helvetica,sans-serif;
-  --serif:Georgia,"Times New Roman",Times,serif;
-  --mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --serif:"Newsreader",Georgia,"Times New Roman",Times,serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:104px}
@@ -95,9 +103,9 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .btn.primary{background:var(--input);border-color:var(--input);color:#fff}
 .btn.primary:hover{background:#1535ad;border-color:#1535ad}
 
-.cover{border:1px solid var(--rule);background:var(--paper)}
-.cover h3{margin:0;padding:9px 13px;background:var(--chrome);border-bottom:1px solid var(--rule);
-          font:700 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-2)}
+.covercard{border:1px solid var(--rule);background:var(--paper)}
+.covercard h3{margin:0;padding:10px 14px;background:var(--chrome);border-bottom:1px solid var(--rule);
+          font:600 9.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
 .crow{display:flex;gap:14px;padding:8px 13px;border-bottom:1px solid var(--rule-2);font-size:12.5px}
 .crow:last-child{border-bottom:0}
 .crow dt{flex:1 1 auto;margin:0;color:var(--ink-2)}
@@ -222,8 +230,120 @@ table.heat td.base{outline:2px solid var(--ink);outline-offset:-2px}
 .paper p{margin:0 0 10px;font-size:13.5px;line-height:1.6;color:#2c3034;max-width:72ch}
 .paper p:last-child{margin-bottom:0}
 
+/* ══ presentation layer ═══════════════════════════════════════════════
+   A power-sector proposal rendered as a scrolling presentation: a navy
+   cover carrying a load shape, a contents page with dot leaders, and each
+   section opening on a full-width divider band.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* the chrome gets out of the way over the cover */
+.bar,.fbar{transition:background .3s ease,border-color .3s ease,color .3s ease}
+body.at-cover .bar,body.at-cover .fbar{background:transparent;border-bottom-color:rgba(255,255,255,.15)}
+body.at-cover .fname{color:#dde7f1}
+body.at-cover .fname span{color:#8fa8c0}
+body.at-cover nav a{color:#a8bed2;border-left-color:rgba(255,255,255,.15)}
+body.at-cover nav a:last-child{border-right-color:rgba(255,255,255,.15)}
+body.at-cover nav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+body.at-cover nav a.on{color:#fff;background:rgba(255,255,255,.11);box-shadow:inset 0 -2px 0 var(--copper-2)}
+body.at-cover .fref,body.at-cover .ffx{color:#8fa8c0;border-right-color:rgba(255,255,255,.15)}
+body.at-cover .ftext{color:#8195a9}
+@media (prefers-reduced-motion:reduce){.bar,.fbar{transition:none}}
+
+.cover{position:relative;background:var(--deep-2);color:#eef2f6;overflow:hidden;
+       margin-top:-68px;padding-top:68px;
+       min-height:100vh;min-height:100svh;
+       display:flex;flex-direction:column;
+       background-image:radial-gradient(120% 90% at 12% 0%,#1d4166 0%,var(--deep-2) 62%)}
+.cover .wrap{position:relative;z-index:2;width:100%}
+.cover [data-cell]{color:#dde7f1}
+.cover [data-cell].calc,.cover [data-cell].link{text-decoration-color:rgba(255,255,255,.4)}
+.cover [data-cell].calc:hover,.cover [data-cell].link:hover{text-decoration-color:#fff}
+.cover-top{padding-top:30px}
+.cover-ref{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+           font:400 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;
+           color:#8fa8c0;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.16)}
+.cover-ref .dot{color:var(--copper-2)}
+.cover-ref .rt{margin-left:auto}
+.cover-mid{flex:1 1 auto;display:flex;align-items:center;padding:44px 0 34px}
+.cover-eyebrow{font:500 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;
+               color:var(--copper-2);margin:0 0 20px}
+.cover h1{margin:0;font:300 clamp(46px,8.2vw,104px)/1.02 var(--serif);
+          letter-spacing:-.022em;color:#fff;text-wrap:balance}
+.cover-rule{width:78px;height:2px;background:var(--copper);margin:28px 0 22px}
+.cover-sub{margin:0;max-width:34ch;font:400 clamp(17px,2.1vw,23px)/1.42 var(--serif);
+           font-style:italic;color:#c3d2e0;text-wrap:balance}
+.cover-meta{display:flex;gap:34px;flex-wrap:wrap;margin-top:30px;
+            font:400 12.5px var(--sans);color:#9db2c6}
+.cover-meta b{display:block;font:500 10px var(--sans);letter-spacing:.15em;
+              text-transform:uppercase;color:#6f89a2;margin-bottom:4px}
+.cover-meta span{color:#dde6ee}
+.cover-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:32px}
+.cover-cta a{display:inline-flex;align-items:center;padding:10px 18px;
+             font:500 12.5px var(--sans);text-decoration:none;border:1px solid rgba(255,255,255,.3);
+             color:#eef2f6}
+.cover-cta a:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.55)}
+.cover-cta a.solid{background:var(--copper);border-color:var(--copper);color:#fff}
+.cover-cta a.solid:hover{background:var(--copper-2);border-color:var(--copper-2)}
+
+/* the load shape sits on the cover's floor */
+.cover-load{position:relative;z-index:1;margin-top:auto}
+.cover-load svg{display:block;width:100%;height:clamp(120px,20vh,210px)}
+.cover-cap{padding-bottom:20px;font:400 10.5px var(--sans);color:#7f96ac;
+           display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.cover-cap i{font-style:normal;color:#5f7a94}
+.cover-cap .key{display:inline-flex;align-items:center;gap:6px;color:#9db2c6}
+.cover-cap .sw{width:9px;height:9px;display:inline-block;border-radius:1px}
+
+/* contents, set the way a filing sets one */
+.toc{background:var(--paper-2);border-bottom:1px solid var(--rule)}
+.toc .wrap{padding-top:46px;padding-bottom:46px}
+.toc h2{margin:0 0 22px;font:500 10.5px var(--sans);letter-spacing:.2em;
+        text-transform:uppercase;color:var(--ink-3)}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;
+        gap:0 46px}
+.toc li{border-top:1px solid var(--rule)}
+.toc li:nth-child(-n+2){border-top:0}
+.toc a{display:flex;align-items:baseline;gap:12px;padding:13px 0;text-decoration:none;color:inherit}
+.toc a:hover .tname{color:var(--copper)}
+.toc .tnum{flex:0 0 34px;font:500 11.5px var(--mono);color:var(--copper);letter-spacing:.02em}
+.toc .tname{font:500 15px var(--sans);color:var(--ink);white-space:nowrap}
+.toc .lead{flex:1 1 auto;border-bottom:1.5px dotted #b4bfca;transform:translateY(-4px)}
+.toc .tthesis{display:block;grid-column:auto;margin:-8px 0 0 46px;padding-bottom:13px;
+              font:italic 12.5px/1.5 var(--serif);color:var(--ink-3);max-width:44ch}
+
+/* section dividers */
+section{padding:0 0 4px}
+.divider{background:var(--deep);color:#fff;margin-bottom:34px}
+.divider .wrap{padding-top:30px;padding-bottom:30px;display:grid;
+               grid-template-columns:auto 1fr;gap:4px 22px;align-items:baseline}
+.divider .num{grid-row:1/3;font:300 clamp(34px,5vw,58px)/.9 var(--serif);
+              color:var(--copper-2);letter-spacing:-.02em}
+.divider h2{margin:0;font:500 15px var(--sans);letter-spacing:.19em;text-transform:uppercase}
+.divider .thesis{margin:0;font:italic 15px/1.45 var(--serif);color:#a9c0d6;max-width:62ch}
+section > .wrap.body{padding-bottom:52px}
+
+/* a wider, calmer type scale for the document body */
+.lede{font-size:15.5px;line-height:1.68}
+.sched td{line-height:1.55}
+.sched.pairs td:last-child,.sched.risk td{font-size:13px;line-height:1.65}
+
+@media (max-width:820px){
+  .toc ol{grid-template-columns:1fr}
+  .toc li:nth-child(2){border-top:1px solid var(--rule)}
+  .cover-meta{gap:22px}
+}
+@media (max-width:680px){
+  .cover-top{padding-top:22px}
+  .cover-mid{padding:32px 0 26px}
+  .cover-sub{font-size:16px}
+  .divider .wrap{grid-template-columns:1fr;gap:6px}
+  .divider .num{grid-row:auto}
+  .divider .thesis{font-size:14px}
+  .toc .tthesis{margin-left:0}
+}
+
 /* ── memo furniture ────────────────────────────────────────────────── */
-.letter{border:1px solid var(--rule);background:var(--paper);margin-top:30px}
+.letter{display:none}
 .letter-h{display:flex;align-items:baseline;gap:12px;padding:8px 14px;background:var(--chrome);
           border-bottom:1px solid var(--rule);font:700 9.5px var(--sans);
           letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
@@ -373,7 +493,7 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
 
 <div class="bar">
   <div class="bar-in">
-    <span class="fname">GIBSON_ORIGINATION_PROPOSAL <span>· rev 3</span></span>
+    <span class="fname">GIBSON · ORIGINATION <span>· proposal rev 4</span></span>
     <nav id="nav" aria-label="Sections"></nav>
   </div>
 </div>
@@ -417,6 +537,7 @@ const SHEETS = [
     C13:{v:6000,f:'num0'},          /* commodity flows supported ($M) */
     C14:{v:'=C13/1000', f:'num0'},  /* the same, in $B, for display */
     C15:{v:'="$"&C3&"M – $"&C4/1000&"B"'},   /* the underwriting range, written out */
+    C16:{v:1000, f:'num0'},         /* enterprise clients originated, Pakira */
   }
 },
 
@@ -429,6 +550,7 @@ const SHEETS = [
     D10:{v:'=DATE(2015,5,1)'}, E10:{v:'=DATE(2017,5,1)'},F10:{v:'=YEARFRAC(D10,E10)',f:'num1'},G10:{v:'=F10/F13',f:'pct0'},
     F12:{v:'=SUM(F7:F10)', f:'num1'},        /* total recorded tenure */
     F13:{v:'=YEARFRAC(D10,TODAY())', f:'num1'}, /* career span, first start to date */
+    D16:{v:'=DATE(2017,1,1)'}, E16:{v:'=DATE(2026,1,1)'}, F16:{v:'=YEARFRAC(D16,E16)', f:'num0'},
     F14:{v:'=MAX(F7:F10)', f:'num1'},
     F15:{v:'=AVERAGE(F7:F10)', f:'num1'},
   }
@@ -835,29 +957,30 @@ const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_
 
 const SITE = {
   name:'Andrew T. Gibson',
-  role:'Origination · Transaction Structuring & Underwriting · Energy',
+  role:'Commercial & Origination · Wholesale Power · Sourcing, Structuring & Negotiation',
   location:'Denver, CO',
   email:'hello@andrewtgibson.com',
+  phone:'+1 (978) 500-9301',
   linkedin:'https://linkedin.com/in/andrewthomasgibson',
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
 
-  rev:3,
+  rev:4,
   to:'Commercial leadership, wholesale power and energy origination',
   target:'Manager or Analyst, Origination',
-  basis:'Career figures as disclosed on the CV. The deal in §6 is invented.',
-  headline:'A decade in energy finance and physical commodity markets. What I want next is the sell side.',
+  basis:'Career figures as disclosed on the CV. The deal in 6.0 is invented.',
+  headline:'Ten years sourcing, structuring and negotiating energy and commodity contracts. Looking for a bigger platform.',
   rec:[
-    "I originate, structure and underwrite energy transactions, mostly from the build side: project economics, capital structure, offtake pricing, return sensitivities, then the diligence and the lender materials that carry a deal to financing. I know what an asset costs, what a lender will fund, and what an offtake has to look like before either of those works.",
-    "The part I've enjoyed most has never been the model. It's been the negotiation the model exists to support, and the months before that where you work out who is actually going to buy and why. Origination is the sell side of the same trade, and it's the seat I'd rather hold. Morgan Stanley taught me to model. Everything since taught me to negotiate.",
-    "This page is laid out the way I'd lay out a deal memo, because the memo is the deliverable in this job and you may as well see one. The mandate first, the evidence second, and the risks in section 7 rather than buried where you'd have to find them.",
+    "I'm a commercial operator. For a decade I've originated, structured and negotiated energy and commodity contracts: sourcing the counterparties, building the commercial case, and coordinating the legal, technical and market inputs that carry a deal into a model and then through a committee.",
+    "I'm fluent enough in financial modeling to build one, take it apart, and test the assumptions and the risks. Section 6.0 is that in both directions. I've worked with landowners, utilities, power plants, manufacturers, developers, engineers, executives, governments and tribes, cooperatives, consultants, students and PhDs, which is most of the table a power deal gets decided at. Nine years on a governed, member-accountable board through four mergers taught me the rest. Morgan Stanley trained me.",
+    "What I want next is a larger platform: more experienced people executing real projects, who I can learn from, support and grow with. This page is laid out the way I'd lay out a proposal, because the proposal is the deliverable in this job and you may as well see one. The mandate first, the evidence second, and the risks in 7.0 rather than buried where you'd have to find them.",
   ],
   terms:[
     ['Role', 'Manager or Analyst, Origination', null],
     ['Based', 'Denver, Colorado', null],
     ['Travel', 'To 50%', null],
     ['Markets', 'ERCOT and SPP today; WECC on a curve', null],
-    ['Products', 'Offtake, PPAs, feedstock and supply, structured power', null],
+    ['Products', 'Wholesale power, PPAs and offtake, feedstock and supply', null],
     ['In finance', null, ['Career', 'F13', 'num1', ' yrs, accruing']],
     ['Status', '[Set availability]', null],
   ],
@@ -865,40 +988,40 @@ const SITE = {
   mandate:[
     ['The pipeline',
      'Deal status, counterparty contacts, timelines, and the research behind who belongs on it.',
-     "I keep the deal register on a live portfolio of energy transactions: status, owner, next action, and the date it was last true. The discipline isn't the tool, it's refusing to let the record go stale while you're busy. The research half of it I've also done at scale, on a platform covering 155,000 companies and 300,000 products reconciled from 300 sources. Working out who belongs on a list is a problem I've solved before."],
+     "This is the job I hold now. I build and advance pipelines by analyzing market opportunities, building relationships and tracking RFPs in a CRM, and I've qualified and moved deals through pipeline stages end to end on partial power projects. The discipline isn't the tool, it's refusing to let a record go stale while you're busy."],
     ['The calendar',
      'RFP postings, board agendas, filings, and the internal deadlines behind every response.',
-     "Reading filings for what hasn't been announced yet was most of the job as a trader and all of it as a founder. By the time an RFP is public the relationship that wins it is usually already in place, so the work is watching the agenda that precedes the posting, not the posting."],
+     "Reading filings for what hasn't been announced yet was most of the job as a trader and all of it building a commercial function from zero. By the time an RFP is public the relationship that wins it is usually already in place, so the work is watching the agenda that precedes the posting, not the posting."],
     ['Pricing inputs',
      'Load and interval data, rate structures and requirements, validated before they reach modeling.',
-     "This is the part I've done most. Every model I've built failed first on a bad input, never on bad math, and enough time on the receiving end tells you exactly what modeling needs and in what shape. Handing over a clean, complete, sourced input set on the first pass is a specific skill and an underrated one."],
+     "Every model I've built failed first on a bad input, never on bad math, and enough time on both ends of that tells you exactly what modeling needs and in what shape. I've also had to benchmark figures to the market before a committee would look at them, which is the same discipline pointed at a different reader."],
     ['Investment committee papers',
      'The memo behind each deal, with the legal, risk and credit inputs to support it.',
-     "A lender package is an IC memo with a harder audience and no relationship to fall back on. I've written them across a portfolio of energy transactions and coordinated the legal, engineering and credit work behind them, including $400,000 of independent engineering across three firms for a single asset. This page is the same exercise with a different reader."],
+     "I won a proposal by working out what the investment committee actually needed to see, then benchmarking every figure in it to the market. I build a data room for each project so every assumption across markets, engineering and risk is supported, using independent research plus third-party commercial, legal and technical work. This page is the same exercise with a different reader."],
     ['The record',
      'Deal files, document versions and redlines, accurate through execution.',
-     "I run investor data rooms and diligence trackers on live transactions. The version that matters is the one in the room, and keeping that true through a close is unglamorous constant work that nobody notices until it's wrong."],
+     "I carry contracts through execution and keep the room current while it happens. The version that matters is the one the counterparty is reading, and holding that true through a close is unglamorous constant work that nobody notices until it's wrong."],
   ],
 
   risks:[
-    ["I haven't sold wholesale power",
-     "My energy work is build-side: development, project finance, offtake structuring. I've never priced a full-requirements contract or run a term sheet against a utility's load shape.",
-     "The products would be new. The conversation wouldn't. I've negotiated exclusive feedstock and offtake rights covering 3 million tons and structured $500M of feedstock and $800M of offtake agreements, which is the same job with a different commodity on the other side of the table. Energy finance is one of the backgrounds that gives you a head start here, and it's the one I have."],
-    ['No cooperative or municipal experience',
-     "I have not sat through a co-op board meeting, and governance-driven procurement is genuinely different from selling to a company that can just decide.",
-     "The closest thing I can honestly claim is seven years selling into forest products and building materials, which is conservative, relationship-led and slow to move, and nine on a non-profit board through four mergers as VP and stewardship chair. It isn't the same. It also isn't nothing, and it's the part I'd expect to learn by sitting in the room rather than by reading about it."],
+    ["I haven't sold full-requirements wholesale supply",
+     "My origination is on partial power projects and energy products, not a utility's full load. I've never priced a full-requirements contract or run a term sheet against a distribution utility's load shape.",
+     "The product would be new. The motion wouldn't. I source counterparties, structure the commercial terms, negotiate and carry contracts through execution today, and I've negotiated exclusive agreements for $500M of intake and $800M of offtake rights on energy products. Energy finance and wholesale fundamentals are two of the backgrounds that give you a head start here, and I have both."],
+    ['I have not sat on the co-op side of a procurement',
+     "I've worked with cooperatives, tribes and governments, but as a counterparty rather than from inside their procurement. Governance-driven buying is genuinely different from selling to a company that can just decide.",
+     "Nine years on a governed, member-accountable board through four mergers is the closest structural analogue I have: competing constituencies, a board that has to be brought along, and no authority to simply decide. Add seven years selling into forest products and building materials, which is conservative and relationship-led. It isn't the same. It also isn't nothing."],
     ['My market is ERCOT, not WECC',
-     "The crowding research is ERCOT because that's where the data was. Price formation in the West is a different animal and I would be starting from public filings.",
-     "Method travels, price formation doesn't, and I'd rather say that than claim otherwise. I'd expect the first quarter to be spent learning a market properly instead of pretending I already had. I've done that once already, moving from forest products into power."],
+     "The crowding research is ERCOT because that's where the data was. Price formation in the West is a different animal and I'd be starting from public filings.",
+     "Method travels, price formation doesn't, and I'd rather say that than claim otherwise. I'd expect the first quarter to go on learning a market properly instead of pretending I already had. I've done that once, moving from forest products into power."],
     ['I build models, and this is not a modeling seat',
-     "Section 6 is a working project finance model, and a fair reading is that I want the modeling chair and would be restless without it.",
-     "Knowing how a model is built is what makes you useful when you interrogate one, and section 6 is written as a teardown rather than a display: what moves the answer, what I'd validate, what I left out. The honest version is that I'd need to be disciplined about staying out of modeling's lane, and I'd rather you held me to that than discovered it."],
+     "Section 6.0 is a working project finance model, and a fair reading is that I want the modeling chair and would be restless without it.",
+     "Knowing how one is built is what makes you useful when you interrogate one, and 6.0 is written as a teardown rather than a display: what moves the answer, what I'd validate, what I left out. The honest version is that I'd need to be disciplined about staying out of modeling's lane, and I'd rather you held me to that than discovered it."],
     ['No relationship book',
-     "I would arrive with no customers, and in a relationship business that is a real cost in year one.",
-     "It's also not what these seats are hired for at this level, and I'd rather build a book in a market I intend to stay in than import one that leaves when I do. What I can bring on day one is the part that precedes a relationship: knowing which counterparties are worth the call."],
-    ['A varied CV',
-     "Trading, a venture-backed startup, then energy finance. It can read as someone still deciding.",
-     "The through line is commodity markets and the commercial side of them, and each move was toward more ownership of the deal rather than away from it. I also built and ran one company for five and a half years and sat on one board for nine, so the record on staying is better than the shape suggests."],
+     "I'd arrive with no customers, and in a relationship business that's a real cost in year one.",
+     "It's also not what these seats are hired for at this level, and I'd rather build a book in a market I intend to stay in than import one that leaves when I do. What I can bring on day one is the part that precedes a relationship: working out which counterparties are worth the call, which is what I did to get to a thousand of them once already."],
+    ['My power experience is one company deep',
+     "Two and a half years at one firm is where all of my energy origination has happened. I haven't seen how a second organization runs the same process.",
+     "That's exactly why I'm writing to you rather than staying put. I'm looking for a larger platform with more experienced people executing real projects, and I'd rather be the least experienced person in a strong commercial team than the most experienced one in a small one."],
   ],
 
   diligence:[
@@ -907,7 +1030,7 @@ const SITE = {
     ['Availability',
      "The OEM, the operator's historical fleet data on the same equipment, and the independent engineer. Developer availability assumptions are the single most reliably optimistic number in a model."],
     ['Capex',
-     "A Class-3 estimate with a real basis, not a developer budget, and contingency priced as its own line rather than folded in. I've scoped and procured that work; I know what a $400,000 engineering package buys and what it doesn't."],
+     "A Class-3 estimate with a real basis, not a developer budget, and contingency priced as its own line rather than folded in. I've scoped and procured that work, so I know what an engineering package buys and what it doesn't."],
     ['Fuel',
      "The supply agreements themselves: term, ceiling, indexation, and what happens the year the ceiling binds. In this model that one assumption is worth more than the interest rate."],
     ['Financing cost',
@@ -918,61 +1041,51 @@ const SITE = {
 
   next:[
     "Thirty minutes, no deck. I'd rather hear which market you're short of coverage in than talk about myself.",
-    "Send me a model and ask me to take it apart. Or use section 6, which is already open.",
+    "Send me a model and ask me to take it apart. Or use 6.0, which is already open.",
     "References who'll speak to the writing and to nine years of board work, on request.",
   ],
 
-
   jobs:[
-    { row:7, title:'Principal', co:'Compass International Trading Group', where:'Denver, CO', span:'March 2024 – present',
-      note:'Energy and infrastructure deal origination, structuring and underwriting.',
+    { row:7, title:'Origination Manager', co:'Compass International', where:'Denver, CO', span:'March 2024 to present',
+      note:'Energy origination: sourcing, structuring, negotiation and execution.',
       bullets:[
-        'Build and own transaction models across dozens of energy and infrastructure projects ($50M–$1.2B), underwriting assets from development through sale across technology, capex, interconnection and offtake structure.',
-        'Lead the FEL-2 feasibility study for the Red Sands project, a two-unit, 40 MW biomass power relocation from Michigan to Arizona; own the financial model and update it with study inputs for independent engineering validation.',
-        'Scoped and procured $400,000 of engineering across three firms covering equipment condition assessment, electrical and interconnection design, site permitting, a Class-3 cost estimate and a lender-grade Independent Engineer report.',
-        'Negotiated exclusive feedstock and offtake rights covering 3 million tons of bioenergy products at zero-cost supply; structured $500M in feedstock agreements and $800M in offtake agreements.',
-        'Directed commercial strategy across five biopower developments ($30–100M each), delivering lender-ready packages covering capital stack, PPA offtake, CAPEX/OPEX, debt service coverage and IRR analysis; the relocation structure yielded a 70% capex reduction and a 140% revenue uplift.',
-        'Manage investor data rooms, diligence trackers and third-party engineering reports across live transactions.',
-        'Invented a patent-pending knowledge graph processor for financial document analysis and institutional lender package preparation.',
+        'Built and advanced pipelines by analyzing and exploring market opportunities, building relationships, and tracking RFPs in CRM.',
+        'Originated proposals and contracts end to end on partial power projects: sourced counterparties, qualified and advanced pipeline stages, structured commercial contracts, negotiated agreements, and carried contracts through execution.',
+        'Negotiated exclusive agreements for $500M of intake and $800M of offtake rights on energy products.',
+        'Created a data room for each project to support every assumption across markets, engineering and risk, through independent research and third-party commercial, legal and technical support.',
+        'Arranged and won a proposal by working out what the investment committee required, then benchmarking every figure to the market.',
       ] },
-    { row:8, title:'Co-Founder & President', co:'Pakira, Inc.', where:'Cambridge, MA', span:'August 2018 – March 2024',
-      note:'Venture-backed B2B commodity market analytics platform. MIT FinTech Grand Prize.',
+    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', where:'Cambridge, MA', span:'August 2018 to March 2024',
+      note:'Market intelligence platform for the building materials and forest products industries.',
       bullets:[
-        'Raised over $1M in venture capital at a $12M valuation and led the company through to a successful exit.',
-        'Scaled to 1,000+ paying enterprise clients at 30%+ month-over-month growth; led a 60-person team across product, engineering and data.',
-        'Built quantitative pricing tools, geospatial supply chain modeling and market intelligence infrastructure for the building materials and forest products industries.',
-        'Built and managed a data platform covering 155,000 companies, 300,000 products and 160,000 contacts; reconciled over 1 million records from 300 external sources with standardized quality controls and audit tracking.',
-        'Designed the weekly, monthly and annual reporting infrastructure leadership and investors used to track performance against plan.',
+        'Built the commercial function from zero to 1,000+ enterprise clients at 30%+ month-over-month growth across industries.',
+        'Raised $1 million; worked with a 10-person team and 40 interns across product, engineering, data, marketing and sales.',
       ] },
-    { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'March 2017 – August 2018',
+    { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'March 2017 to August 2018',
       bullets:[
-        'Finished top of analyst cohort; grew commodity book of business to over $1M in volume.',
-        'Analyzed physical spreads and real-time pricing to support trade execution, inventory management and position reporting.',
-        'Led deployment of trading and analytics systems supporting 300+ traders managing $6B in commodity flows.',
+        'Top trader of cohort; grew book of business past $1 million by building relationships, offering solutions and negotiating deals.',
+        'Priced and executed against customer requirements using physical spreads and real-time data; led deployment of trading systems for 300+ traders managing $6B in flows.',
       ] },
-    { row:10, title:'Financial Analyst', co:'Morgan Stanley', where:'Portsmouth, NH', span:'May 2015 – May 2017',
+    { row:10, title:'Financial Analyst', co:'Morgan Stanley', where:'Portsmouth, NH', span:'May 2015 to May 2017',
       bullets:[
-        'Conducted financial statement analysis, account reconciliation and investment assessments for institutional and ultra-high-net-worth portfolios.',
-        'Built analytical systems consolidating 18,000+ client records using database and querying tools to identify opportunities.',
-        'Developed standardized weekly and monthly reporting workflows across the team.',
+        'Financial statement analysis and investment assessment for institutional and ultra-high-net-worth portfolios; built analytical systems consolidating 18,000 client records.',
       ] },
   ],
 
   deals:[
-    ['Red Sands','Two-unit biomass relocation, Michigan to Arizona; FEL-2 feasibility lead','2024–','40 MW','In progress',1],
-    ['Biopower development program','Commercial strategy across five developments; lender-ready packages from capital stack to IRR','2024–','$30–100M each','Ongoing',1],
-    ['Offtake agreements','Bioenergy offtake structured','2024–','$800M','Structured',0],
-    ['Feedstock agreements','Supply agreements structured','2024–','$500M','Structured',0],
-    ['Feedstock & offtake rights','Exclusive rights negotiated at zero-cost supply','2024','3.0m tons','Closed',0],
-    ['Engineering procurement','Three firms, condition assessment through a lender-grade IE report','2024','$0.4M','Closed',0],
-    ['Pakira, Inc.','Raised $1M at a $12M valuation, scaled to 1,000+ enterprise clients, exited','2018–2024','$1.0M','Exited',0],
-    ['Trading & analytics systems','Deployment supporting 300+ traders managing $6bn in commodity flows','2017–2018','$6B flows','Delivered',0],
-    ['Commodity book','Physical spreads and real-time pricing; top of analyst cohort','2017–2018','$1M volume','Closed',0],
-    ['Morgan Stanley analytics','Institutional and UHNW portfolio analysis; 18,000+ client records consolidated','2015–2017','18,000+ records','Delivered',0],
+    ['Intake & offtake rights','Exclusive agreements negotiated on energy products; $500M intake, $800M offtake','2024–','$1.3B','Executed',1],
+    ['Partial power origination','Proposals and contracts end to end: sourcing, structuring, negotiation, execution','2024–','Multiple','Ongoing',1],
+    ['Investment committee proposal','Won by establishing committee requirements, then benchmarking every figure to the market','2024','Awarded','Won',0],
+    ['Project data rooms','Every assumption supported across markets, engineering and risk, with third-party validation','2024–','Per project','Ongoing',1],
+    ['Pakira commercial function','Zero to 1,000+ enterprise clients at 30%+ month-over-month growth','2018–2024','1,000+ clients','Built',0],
+    ['Venture raise','Capital raised to build the platform and the team behind it','2018','$1.0M','Closed',0],
+    ['Trading systems deployment','Rollout supporting 300+ traders managing $6B in commodity flows','2017–2018','$6B flows','Delivered',0],
+    ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017–2018','$1M volume','Closed',0],
+    ['Morgan Stanley analytics','Institutional and UHNW portfolio analysis; 18,000 client records consolidated','2015–2017','18,000 records','Delivered',0],
   ],
 
   education:[
-    ['University of New Hampshire','B.S. Finance, Quantitative Finance & Business Analytics · GPA 3.8'],
+    ['University of New Hampshire','B.S. Finance, Quantitative Finance and Business Analytics'],
     ['MIT','AI Venture Studio · Startup Sandbox · Venture Mentoring Services'],
     ['MassChallenge','Accelerator, two cohorts'],
   ],
@@ -982,24 +1095,32 @@ const SITE = {
     ['FinTech Connect Award','Pakira, Inc.'],
   ],
   skills:[
-    ['Transaction & structuring','Project finance modeling, underwriting, capital structure analysis, debt sizing and DSCR, waterfall modeling, PPA and offtake analysis, valuation, DCF, IRR and equity returns, scenario and sensitivity analysis, Monte Carlo simulation'],
-    ['Deal execution','Diligence coordination, independent engineering management, data room management, lender and investor materials, term negotiation, milestone and capital budget tracking'],
-    ['Energy','Dispatch economics, grid interconnection, PPA and ESA structures, feedstock and supply agreements, ERCOT wholesale market mechanics, biopower, solar, storage'],
-    ['Technical','Advanced Excel, Python (pandas, NumPy), SQL, VBA, knowledge graph construction, AI tooling for financial analysis'],
+    ['Origination','Pipeline development, counterparty sourcing, commercial structuring, contract negotiation, RFP and proposal coordination, investment committee materials, deal execution and documentation'],
+    ['Wholesale power','Wholesale power fundamentals, PPA and offtake structures, supply and feedstock agreements, load and interval data, dispatch economics'],
+    ['Analysis','Financial model interrogation and stress testing, pricing validation, market benchmarking, scenario and sensitivity analysis'],
+    ['Technical','Advanced Excel, SQL, Python'],
   ],
-  board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire & Vermont', span:'2017 – 2026',
-          note:'Advised leadership on a data-driven strategic plan; navigated four mergers; youngest board member ever elected.' },
+  board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire and Vermont', span:'2017 to 2026',
+          note:'Nine years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
 };
 
 const SECTIONS = [
-  ['record','Track record'], ['mandate','Mandate'], ['background','Background'],
-  ['precedent','Precedent'], ['market','Market view'], ['analysis','Analysis'],
-  ['risk','Risk'], ['terms','Terms'],
+  ['summary',    '1.0', 'Summary',               'What I am proposing, and on what terms'],
+  ['mandate',    '2.0', 'The mandate',           'The five things an origination seat owns, and where I map to each'],
+  ['experience', '3.0', 'Experience',            'Ten years, and what each seat actually taught'],
+  ['precedent',  '4.0', 'Selected transactions', 'What has been sourced, structured, negotiated and signed'],
+  ['market',     '5.0', 'Market view',           'A view I built on my own time, and can defend in a room'],
+  ['analysis',   '6.0', 'Supporting analysis',   'A working model, and the teardown that matters more than it does'],
+  ['risk',       '7.0', 'Risks and mitigants',   'The case against hiring me, written by me'],
+  ['terms',      '8.0', 'Terms and next steps',  'What I am asking for'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
    4. VIEW
    ═══════════════════════════════════════════════════════════════════════ */
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (t, attrs) => { const e = document.createElementNS(SVGNS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 
 const $ = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 const main = document.getElementById('main');
@@ -1081,56 +1202,190 @@ function showTip(html, x, y) {
 const hideTip = () => tip.classList.remove('on');
 
 /* ── section helpers ─────────────────────────────────────────────── */
-function section(id, idx, title, right) {
+const SEC_BY_ID = Object.fromEntries(SECTIONS.map(s => [s[0], s]));
+
+/* Each section opens on a full-width band carrying its number, its name and
+   the one line that says why it is in the document. The number and thesis
+   come from SECTIONS, so the contents page and the divider cannot disagree. */
+function section(id) {
+  const meta = SEC_BY_ID[id];
+  if (!meta) throw new Error('no such section: ' + id);
+  const [, num, title, thesis] = meta;
   const s = $('section'); s.id = id;
-  const w = $('div', 'wrap');
-  const h = $('div', 'shead');
-  h.appendChild($('span', 'idx', idx));
-  h.appendChild($('h2', null, title));
-  if (right) h.appendChild($('span', 'rt', right));
-  w.appendChild(h);
+  const d = $('div', 'divider');
+  const dw = $('div', 'wrap');
+  dw.appendChild($('span', 'num', num));
+  dw.appendChild($('h2', null, title));
+  dw.appendChild($('p', 'thesis', thesis));
+  d.appendChild(dw);
+  s.appendChild(d);
+  const w = $('div', 'wrap body');
   s.appendChild(w);
   main.appendChild(s);
   return w;
 }
 
-/* ── front matter: the letterhead and the recommendation ─────────── */
-function secSummary(){
-  const fm = $('div', 'wrap');
-  const box = $('div', 'letter');
-  const hd = $('div', 'letter-h');
-  hd.appendChild($('span', null, 'Proposal'));
-  const rev = $('span', 'rev');
-  rev.append('Rev ' + SITE.rev + ' · ');
-  rev.appendChild(cell('Career', 'E7', { f:'date' }));
-  hd.appendChild(rev);
-  box.appendChild(hd);
-  const rows = $('div', 'mrows');
-  [['To', SITE.to], ['From', SITE.name + ' · ' + SITE.location],
-   ['Re', SITE.target], ['Basis', SITE.basis]].forEach(([k, v]) => {
-    const dl = $('dl', 'mline');
-    dl.appendChild($('dt', null, k));
-    dl.appendChild($('dd', null, v));
-    rows.appendChild(dl);
+/* ── the cover ───────────────────────────────────────────────────── */
+/* A summer weekday load shape with a storage dispatch overlay. It is on the
+   cover because it is the one graphic everyone in this industry reads without
+   a legend, and because the simulator behind it is his own work (5.0). The
+   shape is illustrative and says so; nothing on the page depends on it. */
+const LOAD = [42,39,37,36,36,38,43,50,57,63,68,73,79,85,91,96,100,97,88,78,69,60,52,46];
+const DISPATCH = ['c','c','c','c','c','c','','','','','','','','','d','d','d','d','d','','','','',''];
+
+function drawCover(host){
+  const W = 1200, H = 220, pad = 8;
+  const svg = svgEl('svg', { viewBox:`0 0 ${W} ${H}`, preserveAspectRatio:'none',
+                             'aria-hidden':'true', focusable:'false' });
+  const n = LOAD.length;
+  const x = i => (i / (n - 1)) * W;
+  const lo = Math.min(...LOAD), hi = Math.max(...LOAD);
+  const y = v => H - pad - ((v - lo) / (hi - lo)) * (H - pad * 2 - 26);
+
+  const pts = LOAD.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  svg.appendChild(svgEl('polygon', {
+    points:`0,${H} ` + pts.join(' ') + ` ${W},${H}`, fill:'rgba(255,255,255,.05)' }));
+
+  /* the dispatch windows are tinted area under the curve, not bands over it:
+     charging in the trough, discharging into the peak */
+  const runs = kind => {
+    const out = []; let s = null;
+    DISPATCH.forEach((d, i) => {
+      if (d === kind) { if (s === null) s = i; }
+      else if (s !== null) { out.push([s, i - 1]); s = null; }
+    });
+    if (s !== null) out.push([s, DISPATCH.length - 1]);
+    return out;
+  };
+  /* the fill is a tint; the signal is the curve segment sitting on top of it,
+     so a tall peak does not turn into a slab of color */
+  [['c', 'rgba(84,158,232,.11)', '#63a8ee'], ['d', 'rgba(232,140,60,.13)', '#ef9a52']]
+    .forEach(([k, fill, stroke]) => {
+    runs(k).forEach(([a, b]) => {
+      const seg = [];
+      for (let i = a; i <= b; i++) seg.push(pts[i]);
+      svg.appendChild(svgEl('polygon', {
+        points:`${x(a).toFixed(1)},${H} ` + seg.join(' ') + ` ${x(b).toFixed(1)},${H}`, fill }));
+      svg.appendChild(svgEl('polyline', { points:seg.join(' '), fill:'none',
+        stroke, 'stroke-width':'3.5', 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+    });
   });
-  box.appendChild(rows);
-  fm.appendChild(box);
-  main.appendChild(fm);
 
-  const s = $('div', 'wrap hero');
-  const L = $('div');
-  L.appendChild($('div', 'eyebrow', 'Origination · ' + SITE.location));
-  L.appendChild($('h1', null, SITE.name));
-  L.appendChild($('p', 'role', SITE.headline));
-  SITE.rec.forEach(t => L.appendChild($('p', 'lede', t)));
-  const cta = $('div', 'cta');
-  const a1 = $('a', 'btn primary', 'Email me'); a1.href = 'mailto:' + SITE.email;
-  const a2 = $('a', 'btn', 'LinkedIn'); a2.href = SITE.linkedin; a2.target = '_blank'; a2.rel = 'noopener';
-  const a3 = $('a', 'btn', 'Where I map to the seat ↓'); a3.href = '#mandate';
+  const line = svgEl('polyline', { points:pts.join(' '), fill:'none',
+    stroke:'#cfe0f0', 'stroke-width':'2', 'stroke-linejoin':'round', 'stroke-linecap':'round' });
+  svg.appendChild(line);
+
+  /* the peak needs no marker: the copper segment already sits on it */
+  host.appendChild(svg);
+
+  /* one orchestrated moment: the curve draws itself in on load */
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    try {
+      const len = line.getTotalLength();
+      line.style.strokeDasharray = len;
+      line.style.strokeDashoffset = len;
+      line.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)';
+      requestAnimationFrame(() => { line.style.strokeDashoffset = '0'; });
+    } catch (e) { /* getTotalLength is unsupported somewhere: leave it drawn */ }
+  }
+}
+
+function cover(){
+  const c = $('div', 'cover');
+
+  const top = $('div', 'wrap cover-top');
+  const ref = $('div', 'cover-ref');
+  ref.appendChild($('span', null, 'Proposal'));
+  ref.appendChild($('span', 'dot', '·'));
+  ref.appendChild($('span', null, 'Origination'));
+  const rt = $('span', 'rt');
+  rt.append('Rev ' + SITE.rev + ' · ');
+  rt.appendChild(cell('Career', 'E7', { f:'date' }));
+  ref.appendChild(rt);
+  top.appendChild(ref);
+  c.appendChild(top);
+
+  const mid = $('div', 'wrap cover-mid');
+  const inner = $('div');
+  inner.appendChild($('p', 'cover-eyebrow', SITE.target));
+  inner.appendChild($('h1', null, SITE.name));
+  inner.appendChild($('div', 'cover-rule'));
+  inner.appendChild($('p', 'cover-sub', SITE.headline));
+
+  const meta = $('div', 'cover-meta');
+  [['From', SITE.location], ['To', 'Commercial leadership, wholesale power'],
+   ['Basis', 'Actuals as disclosed; 6.0 is invented']].forEach(([k, v]) => {
+    const d = $('div');
+    d.appendChild($('b', null, k));
+    d.appendChild($('span', null, v));
+    meta.appendChild(d);
+  });
+  inner.appendChild(meta);
+
+  const cta = $('div', 'cover-cta');
+  const a1 = $('a', 'solid', 'Read the proposal'); a1.href = '#summary';
+  const a2 = $('a', null, 'Email me'); a2.href = 'mailto:' + SITE.email;
+  const a3 = $('a', null, 'LinkedIn'); a3.href = SITE.linkedin; a3.target = '_blank'; a3.rel = 'noopener';
   cta.append(a1, a2, a3);
-  L.appendChild(cta);
+  inner.appendChild(cta);
+  mid.appendChild(inner);
+  c.appendChild(mid);
 
-  const R = $('aside', 'cover');
+  const load = $('div', 'cover-load');
+  drawCover(load);
+  c.appendChild(load);
+  const cap = $('div', 'wrap cover-cap');
+  cap.appendChild($('span', null, 'Summer weekday load shape.'));
+  [['#549ee8', 'charge'], ['#e88c3c', 'discharge']].forEach(([col, lbl]) => {
+    const s = $('span', 'key');
+    const sw = $('i', 'sw'); sw.style.background = col;
+    s.append(sw, lbl);
+    cap.appendChild(s);
+  });
+  cap.appendChild($('i', null, 'Illustrative, on a two-hour battery. The simulator behind it is in 5.0.'));
+  c.appendChild(cap);
+
+  main.appendChild(c);
+
+  /* the toolbar and source bar stay out of the way until the cover is behind you */
+  const obs = new IntersectionObserver(
+    es => es.forEach(e => document.body.classList.toggle('at-cover', e.intersectionRatio > 0.35)),
+    { threshold:[0, 0.35, 1] });
+  obs.observe(c);
+}
+
+/* ── contents ────────────────────────────────────────────────────── */
+/* Set the way a resource filing sets one, because that is the document this
+   is pretending to be, and because eight sections is enough to need a map. */
+function contents(){
+  const t = $('div', 'toc');
+  const w = $('div', 'wrap');
+  w.appendChild($('h2', null, 'Contents'));
+  const ol = $('ol');
+  SECTIONS.forEach(([id, num, title, thesis]) => {
+    const li = $('li');
+    const a = $('a');
+    a.href = '#' + id;
+    a.appendChild($('span', 'tnum', num));
+    a.appendChild($('span', 'tname', title));
+    a.appendChild($('span', 'lead'));
+    li.appendChild(a);
+    li.appendChild($('span', 'tthesis', thesis));
+    ol.appendChild(li);
+  });
+  w.appendChild(ol);
+  t.appendChild(w);
+  main.appendChild(t);
+}
+
+/* ── 1.0 summary ─────────────────────────────────────────────────── */
+function secSummary(){
+  const w = section('summary');
+  const grid = $('div', 'hero');
+  const L = $('div');
+  SITE.rec.forEach(t => L.appendChild($('p', 'lede', t)));
+
+  const R = $('aside', 'covercard');
   R.appendChild($('h3', null, 'Terms at a glance'));
   SITE.terms.forEach(([k, plain, c]) => {
     const d = $('div', 'crow');
@@ -1154,48 +1409,32 @@ function secSummary(){
   lg.appendChild(ul);
   R.appendChild(lg);
 
-  s.append(L, R);
-  main.appendChild(s);
+  grid.append(L, R);
+  w.appendChild(grid);
+
+  const g = $('div', 'tiles');
+  [['Years in finance', 'Career', 'F13', 'num1', 'Since May 2015, accruing', '', ''],
+   ['Rights negotiated', 'Facts', 'C7', 'num0', 'Intake $500M + offtake $800M, exclusive', '$', 'M'],
+   ['Clients originated', 'Facts', 'C16', 'num0', 'Zero to 1,000+ enterprise, 30%+ month over month', '', '+'],
+   ['On a governed board', 'Career', 'F16', 'num0', 'Four mergers; youngest ever elected', '', ' yrs'],
+  ].forEach(([k, sheet, ref, f, unit, prefix, suffix]) => {
+    const t = $('div', 'tile');
+    t.appendChild($('span', 'k', k));
+    const v = $('span', 'v');
+    if (prefix) v.append(prefix);
+    v.appendChild(cell(sheet, ref, { f }));
+    if (suffix) v.append(suffix);
+    t.appendChild(v);
+    t.appendChild($('span', 'u', unit));
+    g.appendChild(t);
+  });
+  g.style.marginTop = '30px';
+  w.appendChild(g);
 }
 
-/* ── §1 track record ─────────────────────────────────────────────── */
-function secRecord(){
-  const w = section('record', '§1', 'Track record', 'Figures as disclosed');
-  const mk = (tiles, cls) => {
-    const g = $('div', 'tiles' + (cls ? ' ' + cls : ''));
-    tiles.forEach(([k, sheet, ref, f, unit, prefix, suffix]) => {
-      const t = $('div', 'tile');
-      t.appendChild($('span', 'k', k));
-      const v = $('span', 'v');
-      if (prefix) v.append(prefix);
-      v.appendChild(cell(sheet, ref, { f }));
-      if (suffix) v.append(suffix);
-      t.appendChild(v);
-      t.appendChild($('span', 'u', unit));
-      g.appendChild(t);
-    });
-    return g;
-  };
-  w.appendChild(mk([
-    ['Years in finance', 'Career', 'F13', 'num1', 'Since May 2015, accruing'],
-    ['Agreements structured', 'Facts', 'C7', 'num0', 'Feedstock $500M + offtake $800M · structured, not yet closed', '$', 'M'],
-    ['Underwriting range', 'Facts', 'C15', null, 'Per asset, development through sale'],
-    ['Developments directed', 'Facts', 'C8', 'num0', 'Biopower, $30–100M each'],
-  ]));
-  const why = $('p');
-  why.style.cssText = 'margin:22px 0 8px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)';
-  why.textContent = 'The commercial argument behind the mandate';
-  w.appendChild(why);
-  w.appendChild(mk([
-    ['Capex reduction', 'Facts', 'C9', 'pct0', 'Against an NREL ATB greenfield comparable'],
-    ['Revenue uplift', 'Facts', 'C10', 'pct0', 'Moving output to a better market'],
-    ['Feedstock secured', 'Facts', 'C11', 'num1', 'Million tons, zero-cost supply'],
-  ], 'sub'));
-}
-
-/* ── §2 the mandate ──────────────────────────────────────────────── */
+/* ── 2.0 the mandate ─────────────────────────────────────────────── */
 function secMandate(){
-  const w = section('mandate', '§2', 'The mandate', 'What the seat owns, and where I map to it');
+  const w = section('mandate');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
   intro.textContent = "Origination seats vary in title and hardly at all in content. Five things sit with whoever holds the chair, whether it's called analyst or manager. Here they are, and here's what I'd bring to each. Where I'd be learning rather than arriving, section 7 says so plainly.";
@@ -1226,8 +1465,8 @@ function secMandate(){
 }
 
 /* ── §3 background ───────────────────────────────────────────────── */
-function secBackground(){
-  const w = section('background', '§3', 'Background', 'Tenure on an actual/365 basis');
+function secExperience(){
+  const w = section('experience');
   const roles = $('div', 'roles');
   const maxT = Math.max(...SITE.jobs.map(j => val('Career', 'F' + j.row)));
   SITE.jobs.forEach(j => {
@@ -1275,8 +1514,7 @@ function secBackground(){
 /* ── §4 precedent transactions ───────────────────────────────────── */
 function secPrecedent(){
   const live = SITE.deals.filter(d => d[5]).length;
-  const w = section('precedent', '§4', 'Precedent transactions',
-                    SITE.deals.length + ' mandates · ' + live + ' live');
+  const w = section('precedent');
   const t = $('table', 'sched');
   const thead = $('thead'), htr = $('tr');
   ['Mandate','Description','Period','Size','Status'].forEach((h, i) => {
@@ -1305,7 +1543,7 @@ function secPrecedent(){
 
 /* ── §5 market view ──────────────────────────────────────────────── */
 function secMarket(){
-  const w = section('market', '§5', 'Market view', 'Built outside mandate work');
+  const w = section('market');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
   intro.textContent = "An originator is expected to hold a market view and defend it in a room. These are mine. Both were built on my own time because I wanted the answer, which is the only reason I'd trust anyone else's.";
@@ -1365,7 +1603,7 @@ function secMarket(){
   c.appendChild($('p', null, "It exists because assembling a package by hand is where deals quietly lose weeks, and because the gap you miss is never the one you were looking for."));
   const dl = $('dl', 'deflist');
   [['Application', 'Project finance document analysis and lender package preparation'],
-   ['Built at', 'Compass International Trading Group'],
+   ['Built at', 'Compass International'],
    ['Status', 'Patent pending; deployed']].forEach(([k, v]) => {
     const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); dl.appendChild(d);
   });
@@ -1473,8 +1711,7 @@ function syncControls() {
 }
 
 function secAnalysis(){
-  const w = section('analysis', '\u00a76', 'Supporting analysis',
-                    'Illustrative; not a live transaction');
+  const w = section('analysis');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
   intro.textContent = "This section answers one question: can I take a model apart. Origination does not build them, it assembles the inputs and interrogates what comes back, so what follows is a working project finance model and then the part that actually matters, which is the list of things I would refuse to take on faith in someone else's.";
@@ -1704,7 +1941,7 @@ function credBlock(w){
 
 /* ── §7 risks and mitigants ──────────────────────────────────────── */
 function secRisk(){
-  const w = section('risk', '§7', 'Risks and mitigants', 'Stated, rather than left to be found');
+  const w = section('risk');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
   intro.textContent = "Every memo I've written has this section, and the ones without it are the ones nobody believes. Here is the case against hiring me, written by me, because you're going to arrive at most of it anyway and I'd rather we started from the same list.";
@@ -1733,13 +1970,14 @@ function secRisk(){
 
 /* ── §8 terms and next steps ─────────────────────────────────────── */
 function secTerms(){
-  const w = section('terms', '§8', 'Terms and next steps');
+  const w = section('terms');
   const c = $('div', 'contact');
   const a = $('div', 'blk');
   a.appendChild($('h3', null, 'Contact'));
   const dl = $('dl', 'deflist');
   const link = (href, text) => { const x = $('a', 'mail', text); x.href = href; if (/^https/.test(href)) { x.target = '_blank'; x.rel = 'noopener'; } return x; };
   [['Email', link('mailto:' + SITE.email, SITE.email)],
+   ['Phone', link('tel:' + SITE.phone.replace(/[^+\d]/g, ''), SITE.phone)],
    ['LinkedIn', link(SITE.linkedin, 'linkedin.com/in/andrewthomasgibson')],
    ['Website', link(SITE.site, 'andrewtgibson.com')],
    ['Based', document.createTextNode(SITE.location + ' · travel to 50%')]].forEach(([k, v]) => {
@@ -1758,7 +1996,7 @@ function secTerms(){
 }
 
 /* ── the document, in order ──────────────────────────────────────── */
-[secSummary, secRecord, secMandate, secBackground, secPrecedent,
+[cover, contents, secSummary, secMandate, secExperience, secPrecedent,
  secMarket, secAnalysis, secRisk, secTerms].forEach(f => f());
 
 /* ── footer ──────────────────────────────────────────────────────── */
@@ -1777,8 +2015,9 @@ function secTerms(){
 /* ── nav ─────────────────────────────────────────────────────────── */
 (function nav(){
   const n = document.getElementById('nav');
-  SECTIONS.forEach(([id, label]) => {
-    const a = $('a', null, label); a.href = '#' + id; a.dataset.sec = id;
+  SECTIONS.forEach(([id, num, title]) => {
+    const a = $('a', null, title); a.href = '#' + id; a.dataset.sec = id;
+    a.title = num + ' ' + title;
     n.appendChild(a);
   });
   const links = [...n.querySelectorAll('a')];
@@ -1797,9 +2036,6 @@ function secTerms(){
    #2a78d6 / #eb6834 — CVD ΔE 24.7, normal-vision ΔE 33.6, both above floor.
    The page commits to one theme, so the charts do too.
    ═══════════════════════════════════════════════════════════════════════ */
-
-const SVGNS = 'http://www.w3.org/2000/svg';
-const svgEl = (t, attrs) => { const e = document.createElementNS(SVGNS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 
 /* round axis steps — 18/14/9/5/0 reads as an accident, 20/15/10/5/0 reads as a scale */
 function niceScale(max, count) {

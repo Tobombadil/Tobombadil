@@ -1,40 +1,45 @@
 # Andrew T. Gibson — andrewtgibson.com
 
-A personal website for an energy commercial professional, built as a **deal memo**. One static
+A personal website for an energy commercial professional, built as an **origination proposal**. One static
 HTML file: no framework, no build step, no server, no analytics.
 
 Open `index.html` in a browser. That's the whole toolchain.
 
 ## The idea
 
-It is a **proposal, laid out the way an investment committee memo is laid out**, because the memo
-is the deliverable in an origination seat and you may as well see one. A letterhead block with
-to / from / re / basis, eight numbered sections, terms at a glance, a mandate map, a risk
-register, and an appendix of supporting analysis.
+It is a **proposal, laid out the way a power-sector filing is laid out**, because the proposal is
+the deliverable in an origination seat and you may as well see one. A full-bleed cover, a contents
+page with decimal numbering and dot leaders, eight numbered sections each opening on a divider
+band, a mandate map, a risk register, and an appendix of supporting analysis.
 
-What it borrows from the workbook is the *typography* and the *discipline*: ruled section
-headers, the blue/black/green font convention, tabular numerals, subtotal rules, a faint
-squared-paper ground, and a source bar that reveals where any figure on the page comes from.
+The idiom comes from the real documents: co-op long-term RFPs and integrated resource plans, which
+number sections `1.0 / 2.1 / 3.3.1`, lead with a contents page, and carry a section called
+*Demonstration of Need*. What the page borrows from the workbook underneath is the *discipline*:
+the blue/black/green font convention, tabular numerals, and a source bar that reveals where any
+figure on the page came from.
 
-Two earlier versions are worth naming, because the direction has moved twice. The first was a
-literal spreadsheet, a cell grid with sheet tabs. It was a good joke and a bad website. The
-second was a website that wore a model as its design language, which was much better but aimed
-at the wrong target: it proved model *construction*, and origination roles explicitly do not
-build models. This one keeps the machinery and points it at interrogation instead.
+The direction has moved three times, which is worth recording. First a literal spreadsheet with a
+cell grid and sheet tabs: a good joke and a bad website. Then a website wearing a model as its
+design language, which was better but aimed at the wrong target, because it proved model
+*construction* and origination roles explicitly do not build models. Now a proposal, with the
+machinery kept and pointed at interrogation instead.
 
-## The sections
+### Design
 
-| | | |
-|---|---|---|
-| | Front matter | Letterhead, the recommendation, terms at a glance |
-| §1 | Track record | The headline figures, live off the workbook |
-| §2 | The mandate | The five things an origination seat owns, and what he brings to each |
-| §3 | Background | Roles with live tenure, then credentials |
-| §4 | Precedent transactions | The deal schedule |
-| §5 | Market view | ERCOT crowding research, the SmartBidder simulator, the patent |
-| §6 | Supporting analysis | A working project finance model, then the teardown |
-| §7 | Risks and mitigants | The case against hiring him, written by him |
-| §8 | Terms and next steps | Contact, and what he's asking for |
+- **Color.** Slate navy `#16324f` carries the structure (cover, dividers, numerals); copper
+  `#a8571c` is the single accent and is spent only on the cover rule, section numerals and the
+  primary action. Neutrals are biased toward the navy (`#f5f7f9`, `#10151c`) so they read as
+  chosen rather than inherited. Chart series keep the separately validated `#2a78d6` / `#eb6834`.
+- **Type.** Newsreader for display, IBM Plex Sans for body and UI, IBM Plex Mono for cell
+  references, the source bar and the contents leaders. Institutional-technical, with real
+  fallback stacks behind each, which the test suite asserts.
+- **The cover.** A 24-hour summer load shape with the charge and discharge windows tinted under
+  the curve. It is the one graphic everyone in this industry reads without a legend, and it points
+  at the storage simulator in 5.0 rather than decorating. It is captioned as illustrative and
+  nothing on the page depends on it.
+- **One theme, deliberately.** A proposal is printed on white paper, so the document body commits
+  to light and does not invert. Every color is a token and `body` paints its own ground, so the
+  page holds whatever theme the host is in.
 
 ## Architecture
 
@@ -46,7 +51,7 @@ formula, exactly as it would in a real model — five sheets: `Facts`, `Career`,
 evaluated lazily with memoisation and circular-reference detection. Dates are Excel serial
 numbers on the 1899-12-30 epoch, so tenure accrues against `=TODAY()` on every visit.
 
-**The site** (`SITE` plus the `sec*` view functions) is the presentation layer — prose,
+**The site** (`SITE` plus the `cover`, `contents` and `sec*` view functions) is the presentation layer — prose,
 structure and layout. Every figure it renders carries a `data-cell` attribute naming its source
 cell, which is what lets the source bar work and what keeps the two layers honest: if a number
 is on the page, it came from the model.
@@ -58,9 +63,13 @@ cell('Model', 'C49', { f:'num1' })   // → a live <span data-cell="Model!C49">1
 Section order is explicit rather than implied by where a function happens to sit in the file:
 
 ```js
-[secSummary, secRecord, secMandate, secBackground, secPrecedent,
+[cover, contents, secSummary, secMandate, secExperience, secPrecedent,
  secMarket, secAnalysis, secRisk, secTerms].forEach(f => f());
 ```
+
+`SECTIONS` is the single source for each section's id, number, name and thesis line. The contents
+page, the divider bands and the nav all read it, so they cannot drift apart; a test asserts they
+agree.
 
 ### The font convention is enforced, not decorative
 
@@ -78,7 +87,7 @@ truth: a figure that stops being calculated stops being black.
 Plus `+ - * / ^ &`, comparisons, parentheses, ranges (`D18:M18`) and cross-sheet references
 (`Assumptions!C34`). `IRR` solves by bisection.
 
-## §6, the supporting analysis
+## 6.0, the supporting analysis
 
 The appendix is a working project finance model: a generic **25 MW single-unit biomass
 relocation**, invented end to end. **It describes no client, counterparty or live transaction and
@@ -161,11 +170,12 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 104 checks.
+Three suites, run against a headless browser. 110 checks.
 
-- **`site.js`** (86) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (92) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
-  sweep, and guards on em dashes, contractions and American spelling.
+  sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
+  guards on em dashes, contractions and American spelling.
 - **`crosscheck.js`** (8) — an **independent implementation** of the whole project model, written
   from the stated mechanics rather than from the workbook, compared against the page across 250
   random input vectors and 14 fields including IRR. It also asserts that the headline tiles agree
@@ -203,6 +213,11 @@ recalc; **`data-bind`** marks a control. Putting a `<select>` on `data-cell` wip
 74 columns and once as a JS banner padded to 72. Anchoring on the prefix once deleted about a
 thousand lines. Match whole lines, and assert the match count before you write.
 
+One call site carries a literal `\u00a76` escape rather than the character, so a script that
+normalises section signs will miss it. And `svgEl` is declared in the charts section, which sits
+*after* the point where the sections are built — the cover draws an SVG, so that declaration has
+to stay hoisted above the view layer or the cover dies in the temporal dead zone.
+
 ## Design notes
 
 The page commits to a single visual world on purpose: a banker's working paper is white paper,
@@ -219,7 +234,7 @@ scrolls sideways.
 - **Availability status**, on the terms block, currently *"[Set availability]"*. The phone number
   from the CV is deliberately not published — a public web page is a different exposure to a
   targeted PDF.
-- **The SmartBidder link.** §5 describes the ERCOT storage dispatch simulator but does not link
+- **The SmartBidder link.** 5.0 describes the ERCOT storage dispatch simulator but does not link
   it, because the current host (`ascendthecrowd.andrew-generalemail.workers.dev`) puts an
   email-derived handle in the URL. Move it to a subdomain and add an `href`.
 
