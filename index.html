@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Andrew T. Gibson — Energy Project Finance</title>
-<meta name="description" content="Andrew T. Gibson — energy project finance, transaction structuring and underwriting. Denver, CO. A personal site built in the language of a financial model, with a live illustrative deal.">
+<title>Andrew T. Gibson — Origination</title>
+<meta name="description" content="Andrew T. Gibson — origination, structuring and underwriting in wholesale power and energy infrastructure. Denver, CO. A proposal for an origination seat, laid out the way a deal memo is, with a live model you can take apart.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23fbfbf9'/%3E%3Cpath d='M2 4h12M2 8h12M2 12h12M6 2v12M10 2v12' stroke='%23d8d8d2' stroke-width='1'/%3E%3Crect x='6' y='4' width='4' height='4' fill='%231a3fcf' opacity='.8'/%3E%3C/svg%3E">
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
@@ -222,6 +222,55 @@ table.heat td.base{outline:2px solid var(--ink);outline-offset:-2px}
 .paper p{margin:0 0 10px;font-size:13.5px;line-height:1.6;color:#2c3034;max-width:72ch}
 .paper p:last-child{margin-bottom:0}
 
+/* ── memo furniture ────────────────────────────────────────────────── */
+.letter{border:1px solid var(--rule);background:var(--paper);margin-top:30px}
+.letter-h{display:flex;align-items:baseline;gap:12px;padding:8px 14px;background:var(--chrome);
+          border-bottom:1px solid var(--rule);font:700 9.5px var(--sans);
+          letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.letter-h .rev{margin-left:auto;font-weight:400;letter-spacing:.08em;color:var(--ink-3)}
+.mrows{padding:5px 0}
+.mline{display:flex;gap:16px;margin:0;padding:5px 14px;font-size:12.5px;line-height:1.5}
+.mline dt{flex:0 0 58px;margin:0;padding-top:3px;font:700 9.5px var(--sans);
+          letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.mline dd{flex:1 1 auto;margin:0}
+.hero{padding-top:26px}
+/* the terms rows carry long values now, so the value wraps and the label holds */
+.crow dt{flex:0 0 auto}
+.crow dd{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+
+/* the mandate map and the risk register both ride on .sched */
+.sched.pairs td{padding:12px 16px 12px 0;font-size:13px;vertical-align:top}
+.sched.pairs td:first-child{width:37%}
+.sched.pairs td:last-child{color:#2c3034;line-height:1.6}
+.sched.pairs .own{display:block;font-weight:700}
+.sched.pairs .owd{display:block;margin-top:3px;color:var(--ink-3);font-size:11.5px;line-height:1.5}
+.sched.risk td{vertical-align:top;line-height:1.6;font-size:12.5px;color:#2c3034}
+.sched.risk td:first-child{width:24%;font-weight:700;color:var(--ink)}
+.sched.risk td:nth-child(2){width:33%;color:var(--ink-2)}
+
+.steps{margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:#2c3034}
+.steps li{margin-bottom:9px}
+
+/* ── ranked sensitivity ────────────────────────────────────────────── */
+.quiz{margin-top:30px;border-top:1px solid var(--rule);padding-top:22px}
+.quiz h3{margin:0 0 8px;font:700 12px var(--sans)}
+.quiz .none{margin:0;font:italic 12px var(--sans);color:var(--ink-3)}
+.torn{width:100%;border-collapse:collapse;font-size:12.5px}
+.torn th{font:700 10.5px var(--sans);letter-spacing:.05em;text-align:left;color:var(--ink-2);
+         border-bottom:1px solid var(--ink-3);padding:0 10px 6px 0;white-space:nowrap}
+.torn th.n{text-align:right}
+.torn th.c{text-align:center}
+.torn td{padding:6px 10px 6px 0;border-bottom:1px solid var(--rule-2);white-space:nowrap}
+.torn td.lbl{white-space:normal;width:32%;padding-right:16px}
+.torn td.bar{width:42%;padding-right:16px}
+.torn td.n{text-align:right;width:13%;color:var(--ink-2)}
+.torn td.n.bad{color:#b3312f}
+.tb{position:relative;height:13px;background:var(--rule-2)}
+.tb i{position:absolute;top:0;bottom:0;display:block}
+.tb i.up{background:var(--series-1)}
+.tb i.dn{background:var(--series-2)}
+.tb u{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--ink-3)}
+
 /* ── contact + footer ──────────────────────────────────────────────── */
 .contact{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:start}
 a.mail{color:var(--linkc);text-decoration:underline;text-underline-offset:2px}
@@ -303,6 +352,20 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .sched td{display:block;border:0;padding:1px 0}
   .sched td.n{text-align:left}
   .sched td[data-l]::before{content:attr(data-l) " ";color:var(--ink-3);font-size:11px}
+  .sched.pairs td:first-child,.sched.risk td:first-child,
+  .sched.risk td:nth-child(2){width:auto}
+  .sched.pairs td,.sched.risk td{padding:2px 0}
+  .sched.pairs tr,.sched.risk tr{padding:14px 0}
+  .sched.pairs .owd{margin-bottom:7px}
+  .sched.risk td:nth-child(2),.sched.risk td:nth-child(3){margin-top:6px;display:block}
+  .mline{flex-direction:column;gap:1px;padding:6px 12px}
+  .mline dt{flex-basis:auto;padding-top:0}
+  .crow{flex-direction:column;gap:2px}
+  .crow dd{text-align:left}
+  .torn td.lbl{width:auto;white-space:normal}
+  .torn td.bar{width:38%}
+  .torn td.n{width:15%}
+  .torn{font-size:11.5px}
 }
 </style>
 </head>
@@ -310,7 +373,7 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
 
 <div class="bar">
   <div class="bar-in">
-    <span class="fname">ATG_OPERATING_MODEL_v1.0 <span>· base case</span></span>
+    <span class="fname">GIBSON_ORIGINATION_PROPOSAL <span>· rev 3</span></span>
     <nav id="nav" aria-label="Sections"></nav>
   </div>
 </div>
@@ -318,8 +381,8 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
 <div class="fbar">
   <div class="fbar-in">
     <div class="fref" id="fref">—</div>
-    <div class="ffx" aria-hidden="true">fx</div>
-    <div class="ftext" id="ftext">Hover any underlined figure to read the formula behind it</div>
+    <div class="ffx" aria-hidden="true">src</div>
+    <div class="ftext" id="ftext">Hover any underlined figure to see where the number comes from</div>
   </div>
 </div>
 
@@ -772,13 +835,93 @@ const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_
 
 const SITE = {
   name:'Andrew T. Gibson',
-  role:'Energy Project Finance · Transaction Structuring & Underwriting · Origination',
+  role:'Origination · Transaction Structuring & Underwriting · Energy',
   location:'Denver, CO',
   email:'hello@andrewtgibson.com',
   linkedin:'https://linkedin.com/in/andrewthomasgibson',
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
-  lede:"I've spent a decade in energy infrastructure, physical commodity markets and quantitative analytics. I originate, structure and underwrite energy transactions from development through close: project economics, capital structure, offtake pricing, return sensitivities. Then I run the diligence, the independent engineering, the data rooms and the lender materials that carry a project to financing. Morgan Stanley taught me to model. Everything since taught me to negotiate.",
+
+  rev:3,
+  to:'Commercial leadership, wholesale power and energy origination',
+  target:'Manager or Analyst, Origination',
+  basis:'Career figures as disclosed on the CV. The deal in §6 is invented.',
+  headline:'A decade in energy finance and physical commodity markets. What I want next is the sell side.',
+  rec:[
+    "I originate, structure and underwrite energy transactions, mostly from the build side: project economics, capital structure, offtake pricing, return sensitivities, then the diligence and the lender materials that carry a deal to financing. I know what an asset costs, what a lender will fund, and what an offtake has to look like before either of those works.",
+    "The part I've enjoyed most has never been the model. It's been the negotiation the model exists to support, and the months before that where you work out who is actually going to buy and why. Origination is the sell side of the same trade, and it's the seat I'd rather hold. Morgan Stanley taught me to model. Everything since taught me to negotiate.",
+    "This page is laid out the way I'd lay out a deal memo, because the memo is the deliverable in this job and you may as well see one. The mandate first, the evidence second, and the risks in section 7 rather than buried where you'd have to find them.",
+  ],
+  terms:[
+    ['Role', 'Manager or Analyst, Origination', null],
+    ['Based', 'Denver, Colorado', null],
+    ['Travel', 'To 50%', null],
+    ['Markets', 'ERCOT and SPP today; WECC on a curve', null],
+    ['Products', 'Offtake, PPAs, feedstock and supply, structured power', null],
+    ['In finance', null, ['Career', 'F13', 'num1', ' yrs, accruing']],
+    ['Status', '[Set availability]', null],
+  ],
+
+  mandate:[
+    ['The pipeline',
+     'Deal status, counterparty contacts, timelines, and the research behind who belongs on it.',
+     "I keep the deal register on a live portfolio of energy transactions: status, owner, next action, and the date it was last true. The discipline isn't the tool, it's refusing to let the record go stale while you're busy. The research half of it I've also done at scale, on a platform covering 155,000 companies and 300,000 products reconciled from 300 sources. Working out who belongs on a list is a problem I've solved before."],
+    ['The calendar',
+     'RFP postings, board agendas, filings, and the internal deadlines behind every response.',
+     "Reading filings for what hasn't been announced yet was most of the job as a trader and all of it as a founder. By the time an RFP is public the relationship that wins it is usually already in place, so the work is watching the agenda that precedes the posting, not the posting."],
+    ['Pricing inputs',
+     'Load and interval data, rate structures and requirements, validated before they reach modeling.',
+     "This is the part I've done most. Every model I've built failed first on a bad input, never on bad math, and enough time on the receiving end tells you exactly what modeling needs and in what shape. Handing over a clean, complete, sourced input set on the first pass is a specific skill and an underrated one."],
+    ['Investment committee papers',
+     'The memo behind each deal, with the legal, risk and credit inputs to support it.',
+     "A lender package is an IC memo with a harder audience and no relationship to fall back on. I've written them across a portfolio of energy transactions and coordinated the legal, engineering and credit work behind them, including $400,000 of independent engineering across three firms for a single asset. This page is the same exercise with a different reader."],
+    ['The record',
+     'Deal files, document versions and redlines, accurate through execution.',
+     "I run investor data rooms and diligence trackers on live transactions. The version that matters is the one in the room, and keeping that true through a close is unglamorous constant work that nobody notices until it's wrong."],
+  ],
+
+  risks:[
+    ["I haven't sold wholesale power",
+     "My energy work is build-side: development, project finance, offtake structuring. I've never priced a full-requirements contract or run a term sheet against a utility's load shape.",
+     "The products would be new. The conversation wouldn't. I've negotiated exclusive feedstock and offtake rights covering 3 million tons and structured $500M of feedstock and $800M of offtake agreements, which is the same job with a different commodity on the other side of the table. Energy finance is one of the backgrounds that gives you a head start here, and it's the one I have."],
+    ['No cooperative or municipal experience',
+     "I have not sat through a co-op board meeting, and governance-driven procurement is genuinely different from selling to a company that can just decide.",
+     "The closest thing I can honestly claim is seven years selling into forest products and building materials, which is conservative, relationship-led and slow to move, and nine on a non-profit board through four mergers as VP and stewardship chair. It isn't the same. It also isn't nothing, and it's the part I'd expect to learn by sitting in the room rather than by reading about it."],
+    ['My market is ERCOT, not WECC',
+     "The crowding research is ERCOT because that's where the data was. Price formation in the West is a different animal and I would be starting from public filings.",
+     "Method travels, price formation doesn't, and I'd rather say that than claim otherwise. I'd expect the first quarter to be spent learning a market properly instead of pretending I already had. I've done that once already, moving from forest products into power."],
+    ['I build models, and this is not a modeling seat',
+     "Section 6 is a working project finance model, and a fair reading is that I want the modeling chair and would be restless without it.",
+     "Knowing how a model is built is what makes you useful when you interrogate one, and section 6 is written as a teardown rather than a display: what moves the answer, what I'd validate, what I left out. The honest version is that I'd need to be disciplined about staying out of modeling's lane, and I'd rather you held me to that than discovered it."],
+    ['No relationship book',
+     "I would arrive with no customers, and in a relationship business that is a real cost in year one.",
+     "It's also not what these seats are hired for at this level, and I'd rather build a book in a market I intend to stay in than import one that leaves when I do. What I can bring on day one is the part that precedes a relationship: knowing which counterparties are worth the call."],
+    ['A varied CV',
+     "Trading, a venture-backed startup, then energy finance. It can read as someone still deciding.",
+     "The through line is commodity markets and the commercial side of them, and each move was toward more ownership of the deal rather than away from it. I also built and ran one company for five and a half years and sat on one board for nine, so the record on staying is better than the shape suggests."],
+  ],
+
+  diligence:[
+    ['PPA price and escalation',
+     "The counterparty's own load forecast and the last three contracts they signed, then a broker cross-check. A price nobody else is printing is a price you should be nervous about."],
+    ['Availability',
+     "The OEM, the operator's historical fleet data on the same equipment, and the independent engineer. Developer availability assumptions are the single most reliably optimistic number in a model."],
+    ['Capex',
+     "A Class-3 estimate with a real basis, not a developer budget, and contingency priced as its own line rather than folded in. I've scoped and procured that work; I know what a $400,000 engineering package buys and what it doesn't."],
+    ['Fuel',
+     "The supply agreements themselves: term, ceiling, indexation, and what happens the year the ceiling binds. In this model that one assumption is worth more than the interest rate."],
+    ['Financing cost',
+     "The margin in the actual term sheet plus the swap, not a rate assumption. Rate is the one input that re-sizes the loan rather than landing on equity, so it belongs in screening, not in stress."],
+    ['Tax credits',
+     "Counsel on adder eligibility, and a real bid from the transfer market rather than a headline rate. The gap between a statutory credit and cash in the account is where these deals get thinner than they look."],
+  ],
+
+  next:[
+    "Thirty minutes, no deck. I'd rather hear which market you're short of coverage in than talk about myself.",
+    "Send me a model and ask me to take it apart. Or use section 6, which is already open.",
+    "References who'll speak to the writing and to nine years of board work, on request.",
+  ],
+
 
   jobs:[
     { row:7, title:'Principal', co:'Compass International Trading Group', where:'Denver, CO', span:'March 2024 – present',
@@ -849,9 +992,9 @@ const SITE = {
 };
 
 const SECTIONS = [
-  ['track','Track record'], ['experience','Experience'], ['transactions','Transactions'],
-  ['research','Research'], ['model','Live model'],
-  ['background','Background'], ['contact','Contact'],
+  ['record','Track record'], ['mandate','Mandate'], ['background','Background'],
+  ['precedent','Precedent'], ['market','Market view'], ['analysis','Analysis'],
+  ['risk','Risk'], ['terms','Terms'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -901,12 +1044,12 @@ function showFormula(sheet, ref) {
   const isF = typeof raw === 'string' && raw[0] === '=';
   const def = SHEET_BY_NAME[sheet].cells[ref] || {};
   ftext.textContent = isF ? raw
-    : formatValue(readCell(sheet, ref), def.f) + '   — hardcoded input, no formula behind it';
+    : formatValue(readCell(sheet, ref), def.f) + '   — stated, not derived. Nothing behind it but a source.';
   ftext.classList.toggle('live', isF);
 }
 const HINT = matchMedia('(hover: none)').matches
-  ? 'Tap any underlined figure for its formula'
-  : 'Hover any underlined figure to read the formula behind it';
+  ? 'Tap any underlined figure to see where it comes from'
+  : 'Hover any underlined figure to see where the number comes from';
 function clearFormula() {
   fref.textContent = '—';
   ftext.textContent = HINT;
@@ -951,42 +1094,58 @@ function section(id, idx, title, right) {
   return w;
 }
 
-/* ── hero ────────────────────────────────────────────────────────── */
-(function hero(){
+/* ── front matter: the letterhead and the recommendation ─────────── */
+function secSummary(){
+  const fm = $('div', 'wrap');
+  const box = $('div', 'letter');
+  const hd = $('div', 'letter-h');
+  hd.appendChild($('span', null, 'Proposal'));
+  const rev = $('span', 'rev');
+  rev.append('Rev ' + SITE.rev + ' · ');
+  rev.appendChild(cell('Career', 'E7', { f:'date' }));
+  hd.appendChild(rev);
+  box.appendChild(hd);
+  const rows = $('div', 'mrows');
+  [['To', SITE.to], ['From', SITE.name + ' · ' + SITE.location],
+   ['Re', SITE.target], ['Basis', SITE.basis]].forEach(([k, v]) => {
+    const dl = $('dl', 'mline');
+    dl.appendChild($('dt', null, k));
+    dl.appendChild($('dd', null, v));
+    rows.appendChild(dl);
+  });
+  box.appendChild(rows);
+  fm.appendChild(box);
+  main.appendChild(fm);
+
   const s = $('div', 'wrap hero');
   const L = $('div');
-  L.appendChild($('div', 'eyebrow', SITE.role.split(' · ')[0] + ' · ' + SITE.location));
+  L.appendChild($('div', 'eyebrow', 'Origination · ' + SITE.location));
   L.appendChild($('h1', null, SITE.name));
-  L.appendChild($('p', 'role', 'I move power plants to where power is worth more.'));
-  L.appendChild($('p', 'lede', SITE.lede));
+  L.appendChild($('p', 'role', SITE.headline));
+  SITE.rec.forEach(t => L.appendChild($('p', 'lede', t)));
   const cta = $('div', 'cta');
   const a1 = $('a', 'btn primary', 'Email me'); a1.href = 'mailto:' + SITE.email;
   const a2 = $('a', 'btn', 'LinkedIn'); a2.href = SITE.linkedin; a2.target = '_blank'; a2.rel = 'noopener';
-  const a3 = $('a', 'btn', 'Run the deal model ↓'); a3.href = '#model';
+  const a3 = $('a', 'btn', 'Where I map to the seat ↓'); a3.href = '#mandate';
   cta.append(a1, a2, a3);
   L.appendChild(cta);
 
   const R = $('aside', 'cover');
-  R.appendChild($('h3', null, 'Cover'));
-  const rows = [
-    ['Prepared by', SITE.name, null],
-    ['Last updated', null, ['Career', 'E7', 'date']],
-    ['Years in finance', null, ['Career', 'F13', 'num1', ' yrs']],
-    ['Basis of preparation', 'Actuals; illustrative deal model below', null],
-  ];
-  rows.forEach(([k, plain, c]) => {
+  R.appendChild($('h3', null, 'Terms at a glance'));
+  SITE.terms.forEach(([k, plain, c]) => {
     const d = $('div', 'crow');
     d.appendChild($('dt', null, k));
     const dd = $('dd');
-    if (plain) dd.textContent = plain;
-    else { const e = cell(c[0], c[1], { f:c[2] }); dd.appendChild(e); if (c[3]) dd.append(c[3]); }
+    if (c) { dd.appendChild(cell(c[0], c[1], { f:c[2] })); if (c[3]) dd.append(c[3]); }
+    else dd.textContent = plain;
     d.appendChild(dd);
     R.appendChild(d);
   });
   const lg = $('div', 'legend');
-  lg.appendChild($('p', null, 'Font convention'));
+  lg.appendChild($('p', null, 'Where the numbers come from'));
   const ul = $('ul');
-  [['hard', 'Blue', 'a hardcoded input'], ['calc', 'Black', 'a calculation'], ['link', 'Green', 'pulls from another schedule']]
+  [['hard', 'Blue', 'stated, not derived'], ['calc', 'Black', 'calculated on this page'],
+   ['link', 'Green', 'pulled from another schedule']]
     .forEach(([c, term, mean]) => {
       const li = $('li');
       const b = $('b', c, term); li.append(b, ' — ' + mean);
@@ -995,14 +1154,13 @@ function section(id, idx, title, right) {
   lg.appendChild(ul);
   R.appendChild(lg);
 
-  const dl = $('dl'); dl.style.margin = '0';
   s.append(L, R);
   main.appendChild(s);
-})();
+}
 
-/* ── track record ────────────────────────────────────────────────── */
-(function track(){
-  const w = section('track', 'A1', 'Track record', 'Figures as disclosed');
+/* ── §1 track record ─────────────────────────────────────────────── */
+function secRecord(){
+  const w = section('record', '§1', 'Track record', 'Figures as disclosed');
   const mk = (tiles, cls) => {
     const g = $('div', 'tiles' + (cls ? ' ' + cls : ''));
     tiles.forEach(([k, sheet, ref, f, unit, prefix, suffix]) => {
@@ -1026,18 +1184,50 @@ function section(id, idx, title, right) {
   ]));
   const why = $('p');
   why.style.cssText = 'margin:22px 0 8px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)';
-  why.textContent = 'Why relocation works';
+  why.textContent = 'The commercial argument behind the mandate';
   w.appendChild(why);
   w.appendChild(mk([
     ['Capex reduction', 'Facts', 'C9', 'pct0', 'Against an NREL ATB greenfield comparable'],
     ['Revenue uplift', 'Facts', 'C10', 'pct0', 'Moving output to a better market'],
     ['Feedstock secured', 'Facts', 'C11', 'num1', 'Million tons, zero-cost supply'],
   ], 'sub'));
-})();
+}
 
-/* ── experience ──────────────────────────────────────────────────── */
-(function experience(){
-  const w = section('experience', 'A2', 'Experience', 'Tenure on an actual/365 basis');
+/* ── §2 the mandate ──────────────────────────────────────────────── */
+function secMandate(){
+  const w = section('mandate', '§2', 'The mandate', 'What the seat owns, and where I map to it');
+  const intro = $('p');
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
+  intro.textContent = "Origination seats vary in title and hardly at all in content. Five things sit with whoever holds the chair, whether it's called analyst or manager. Here they are, and here's what I'd bring to each. Where I'd be learning rather than arriving, section 7 says so plainly.";
+  w.appendChild(intro);
+
+  const t = $('table', 'sched pairs');
+  const thead = $('thead'), htr = $('tr');
+  ['What the seat owns', 'What I bring to it'].forEach(h => htr.appendChild($('th', null, h)));
+  thead.appendChild(htr); t.appendChild(thead);
+  const tb = $('tbody');
+  SITE.mandate.forEach(([own, desc, bring]) => {
+    const tr = $('tr');
+    const c1 = $('td'); c1.dataset.l = '';
+    c1.appendChild($('span', 'own', own));
+    c1.appendChild($('span', 'owd', desc));
+    tr.appendChild(c1);
+    const c2 = $('td', null, bring); c2.dataset.l = '';
+    tr.appendChild(c2);
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  w.appendChild(t);
+
+  const n = $('p');
+  n.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:80ch;line-height:1.6';
+  n.textContent = "None of that is the modeling seat, and I'm not applying for one. Section 6 is a model, but it's there to answer a different question: whether I can take one apart.";
+  w.appendChild(n);
+}
+
+/* ── §3 background ───────────────────────────────────────────────── */
+function secBackground(){
+  const w = section('background', '§3', 'Background', 'Tenure on an actual/365 basis');
   const roles = $('div', 'roles');
   const maxT = Math.max(...SITE.jobs.map(j => val('Career', 'F' + j.row)));
   SITE.jobs.forEach(j => {
@@ -1078,12 +1268,14 @@ function section(id, idx, title, right) {
   note.appendChild(cell('Career', 'F13', { f:'num1' }));
   note.append(" yrs) because Morgan Stanley and Forest City overlapped by two months in 2017. I've left it unreconciled on purpose. It's what happened.");
   w.appendChild(note);
-})();
 
-/* ── transactions ────────────────────────────────────────────────── */
-(function transactions(){
+  credBlock(w);
+}
+
+/* ── §4 precedent transactions ───────────────────────────────────── */
+function secPrecedent(){
   const live = SITE.deals.filter(d => d[5]).length;
-  const w = section('transactions', 'A3', 'Selected transactions & mandates',
+  const w = section('precedent', '§4', 'Precedent transactions',
                     SITE.deals.length + ' mandates · ' + live + ' live');
   const t = $('table', 'sched');
   const thead = $('thead'), htr = $('tr');
@@ -1109,17 +1301,21 @@ function section(id, idx, title, right) {
   n.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3)';
   n.textContent = "The sizes are in different units, so don't try to add the column. Counterparties and commercial terms are omitted where they're confidential.";
   w.appendChild(n);
-})();
+}
 
-/* ── research ────────────────────────────────────────────────────── */
-(function research(){
-  const w = section('research', 'A4', 'Independent research', 'Built outside mandate work');
-  const cols = $('div', 'cols');
+/* ── §5 market view ──────────────────────────────────────────────── */
+function secMarket(){
+  const w = section('market', '§5', 'Market view', 'Built outside mandate work');
+  const intro = $('p');
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
+  intro.textContent = "An originator is expected to hold a market view and defend it in a room. These are mine. Both were built on my own time because I wanted the answer, which is the only reason I'd trust anyone else's.";
+  w.appendChild(intro);
 
   const a = $('div', 'paper');
   a.appendChild($('h3', null, 'ERCOT crowding coefficient model'));
   a.appendChild($('p', 'cap', 'Original quantitative framework · supported by an agent-based market simulation in Python'));
   a.appendChild($('p', null, "It explains day-ahead to real-time price basis in ERCOT as a function of generator zone crowding, and it holds up well over the sample I ran. The coefficient is the fitted result; the table below just applies it. Ask me for the working paper and you'll get the period, the sample and the specification, which is what you should want before believing a number like this."));
+  a.appendChild($('p', null, "The reason it matters commercially is that basis is what a shaped contract is really selling. A customer buying at one node and settling at another is long or short that spread whether anyone prices it or not, and crowding is one of the few parts of it you can see coming."));
 
   const stat = $('div', 'tiles'); stat.style.marginBottom = '14px';
   [['Coefficient (α)', 'Research', 'C10', 'num2', '$/MWh per GW of zone crowding']].forEach(([k, s, r, f, u]) => {
@@ -1145,24 +1341,40 @@ function section(id, idx, title, right) {
   });
   const btb = $('tbody'); btb.appendChild(br); bt.appendChild(btb);
   a.appendChild(bt);
+  w.appendChild(a);
+
+  const cols = $('div', 'cols'); cols.style.marginTop = '18px';
 
   const b = $('div', 'paper');
-  b.appendChild($('h3', null, 'Patent-pending financial document processor'));
-  b.appendChild($('p', 'cap', 'Patent application filed · production system deployed'));
-  b.appendChild($('p', null, 'A knowledge graph system that ingests unstructured project finance documents, audits document sets for structural gaps, drafts the missing components, and assembles institutional-grade lender submission packages.'));
+  b.appendChild($('h3', null, 'SmartBidder · ERCOT storage dispatch simulator'));
+  b.appendChild($('p', 'cap', 'Working application · live demo available on request'));
+  b.appendChild($('p', null, "The crowding work turned into something you can operate. It's a battery dispatch and bidding simulator on ERCOT North Hub: day-ahead, forecast and real-time curves, a paintable charge and discharge schedule at fifteen-minute resolution, and an optimizer you can run against a naive benchmark to see what the forecast was worth."));
+  b.appendChild($('p', null, "One of the sliders is crowd behavior, which is the coefficient above wired into a decision rather than a paper. That is the whole point of building it. A market view you cannot act on is an opinion."));
+  const bl = $('dl', 'deflist');
+  [['Market', 'ERCOT North Hub, hourly with 15-minute optimizer precision'],
+   ['Asset', '40 MW / 80 MWh, two-hour duration, 87% round trip'],
+   ['Built', 'Independently, outside mandate work']].forEach(([k, v]) => {
+    const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); bl.appendChild(d);
+  });
+  b.appendChild(bl);
+
+  const c = $('div', 'paper');
+  c.appendChild($('h3', null, 'Patent-pending financial document processor'));
+  c.appendChild($('p', 'cap', 'Patent application filed · production system deployed'));
+  c.appendChild($('p', null, 'A knowledge graph system that ingests unstructured project finance documents, audits document sets for structural gaps, drafts the missing components, and assembles institutional-grade lender submission packages.'));
+  c.appendChild($('p', null, "It exists because assembling a package by hand is where deals quietly lose weeks, and because the gap you miss is never the one you were looking for."));
   const dl = $('dl', 'deflist');
   [['Application', 'Project finance document analysis and lender package preparation'],
    ['Built at', 'Compass International Trading Group'],
    ['Status', 'Patent pending; deployed']].forEach(([k, v]) => {
     const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); dl.appendChild(d);
   });
-  b.appendChild(dl);
+  c.appendChild(dl);
 
-  cols.append(a, b);
+  cols.append(b, c);
   w.appendChild(cols);
-})();
+}
 
-/* ── the live model ──────────────────────────────────────────────── */
 /* ── the live deal model ─────────────────────────────────────────── */
 
 /* the adjustable inputs, grouped, read straight off the workbook */
@@ -1196,7 +1408,7 @@ function underScenario(temp, read) {
 
 const RESULT = () => ({
   npv:val('Model', 'C55'), irr:val('Model', 'C56'),
-  dscr:val('Model', 'C57'), debt:val('Model', 'C43'), equity:val('Model', 'C45'),
+  dscr:val('Model', 'C57'), debt:val('Model', 'C45'), equity:val('Model', 'C50'),
 });
 
 /* Debt is sized at base case and pinned through every stress: at financial close
@@ -1260,13 +1472,17 @@ function syncControls() {
   });
 }
 
-(function modelSection(){
-  const w = section('model', 'A5', 'Live deal model',
-                    'Illustrative, not a live transaction');
+function secAnalysis(){
+  const w = section('analysis', '\u00a76', 'Supporting analysis',
+                    'Illustrative; not a live transaction');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
-  intro.textContent = "This is a generic 25 MW biomass relocation I invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms. The statutory tax parameters are public law; every project figure is made up. Debt is sculpted to a constant cover ratio, the funding requirement carries construction interest and a six-month reserve, and equity is drawn across the build. Move any dial and all of it recalculates.";
+  intro.textContent = "This section answers one question: can I take a model apart. Origination does not build them, it assembles the inputs and interrogates what comes back, so what follows is a working project finance model and then the part that actually matters, which is the list of things I would refuse to take on faith in someone else's.";
   w.appendChild(intro);
+  const intro2 = $('p');
+  intro2.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
+  intro2.textContent = "The deal is a generic 25 MW biomass relocation I invented end to end. It describes no client, counterparty or live transaction and contains no confidential terms. The statutory tax parameters are public law; every project figure is made up. Debt is sculpted to a constant cover ratio, the funding requirement carries construction interest and a six-month reserve, and equity is drawn across the build. Move any dial and all of it recalculates.";
+  w.appendChild(intro2);
 
   const box = $('div', 'model');
   const inp = $('div', 'inputs');
@@ -1415,10 +1631,50 @@ function syncControls() {
 
   box.append(inp, out);
   w.appendChild(box);
-})();
 
-(function background(){
-  const w = section('background', 'A6', 'Background');
+  /* ---- the interrogation: which assumptions actually move the answer ---- */
+  const q = $('div', 'quiz');
+  q.appendChild($('h3', null, 'What moves the answer'));
+  const qp = $('p');
+  qp.style.cssText = 'margin:0 0 14px;font-size:13px;line-height:1.6;color:#2c3034;max-width:80ch';
+  qp.textContent = "Each input taken ten percent either way before close, everything else held, ranked by how far equity NPV travels. That is a different question from the stress table above, which asks what happens after you have signed and the loan is already struck. This one re-sizes the financing around the change, because a different assumption at screening is a different deal.";
+  q.appendChild(qp);
+  const th = $('div'); th.id = 'tornado';
+  q.appendChild(th);
+  const qn = $('p');
+  qn.style.cssText = 'margin:12px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:80ch;line-height:1.6';
+  qn.textContent = "The ranking is the useful part, not the magnitudes. It says where the diligence budget goes, and it reorders itself as you move the dials, which is the argument for computing it rather than asserting it.";
+  q.appendChild(qn);
+
+  const dh = $('p');
+  dh.style.cssText = 'margin:26px 0 10px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)';
+  dh.textContent = "What I'd validate, and who I'd ask";
+  q.appendChild(dh);
+  const dt = $('table', 'sched pairs');
+  const dthead = $('thead'), dhtr = $('tr');
+  ['Driver', 'How I would test it'].forEach(h => dhtr.appendChild($('th', null, h)));
+  dthead.appendChild(dhtr); dt.appendChild(dthead);
+  const dtb = $('tbody');
+  SITE.diligence.forEach(([k, v]) => {
+    const tr = $('tr');
+    const c1 = $('td'); c1.dataset.l = '';
+    c1.appendChild($('span', 'own', k));
+    tr.appendChild(c1);
+    const c2 = $('td', null, v); c2.dataset.l = '';
+    tr.appendChild(c2);
+    dtb.appendChild(tr);
+  });
+  dt.appendChild(dtb);
+  q.appendChild(dt);
+  w.appendChild(q);
+}
+
+function credBlock(w){
+  const hr = $('p');
+  hr.style.cssText = 'margin:30px 0 14px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:14px';
+  hr.textContent = 'Credentials';
+  w.appendChild(hr);
+
   const cols = $('div', 'cols');
   const a = $('div', 'blk');
   a.appendChild($('h3', null, 'Education'));
@@ -1444,42 +1700,73 @@ function syncControls() {
 
   cols.append(a, b);
   w.appendChild(cols);
-})();
+}
 
-/* ── contact ─────────────────────────────────────────────────────── */
-(function contact(){
-  const w = section('contact', 'A7', 'Contact');
+/* ── §7 risks and mitigants ──────────────────────────────────────── */
+function secRisk(){
+  const w = section('risk', '§7', 'Risks and mitigants', 'Stated, rather than left to be found');
+  const intro = $('p');
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
+  intro.textContent = "Every memo I've written has this section, and the ones without it are the ones nobody believes. Here is the case against hiring me, written by me, because you're going to arrive at most of it anyway and I'd rather we started from the same list.";
+  w.appendChild(intro);
+
+  const t = $('table', 'sched risk');
+  const thead = $('thead'), htr = $('tr');
+  ['Risk', "Why it's fair", 'Mitigant'].forEach(h => htr.appendChild($('th', null, h)));
+  thead.appendChild(htr); t.appendChild(thead);
+  const tb = $('tbody');
+  SITE.risks.forEach(([risk, fair, mit]) => {
+    const tr = $('tr');
+    const a = $('td', null, risk); a.dataset.l = ''; tr.appendChild(a);
+    const b = $('td', null, fair); b.dataset.l = 'Why'; tr.appendChild(b);
+    const c = $('td', null, mit); c.dataset.l = 'Mitigant'; tr.appendChild(c);
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  w.appendChild(t);
+
+  const n = $('p');
+  n.style.cssText = 'margin:16px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:80ch;line-height:1.6';
+  n.textContent = "Three of those are the same risk wearing different clothes: I have not sold wholesale power to a utility. That's true, it's the whole gap, and no amount of adjacent experience closes it on paper. It closes on a desk.";
+  w.appendChild(n);
+}
+
+/* ── §8 terms and next steps ─────────────────────────────────────── */
+function secTerms(){
+  const w = section('terms', '§8', 'Terms and next steps');
   const c = $('div', 'contact');
   const a = $('div', 'blk');
+  a.appendChild($('h3', null, 'Contact'));
   const dl = $('dl', 'deflist');
   const link = (href, text) => { const x = $('a', 'mail', text); x.href = href; if (/^https/.test(href)) { x.target = '_blank'; x.rel = 'noopener'; } return x; };
   [['Email', link('mailto:' + SITE.email, SITE.email)],
    ['LinkedIn', link(SITE.linkedin, 'linkedin.com/in/andrewthomasgibson')],
    ['Website', link(SITE.site, 'andrewtgibson.com')],
-   ['Location', document.createTextNode(SITE.location + ' · national mandates')]].forEach(([k, v]) => {
+   ['Based', document.createTextNode(SITE.location + ' · travel to 50%')]].forEach(([k, v]) => {
     const d = $('div'); d.appendChild($('dt', null, k));
     const dd = $('dd'); dd.appendChild(v); d.appendChild(dd); dl.appendChild(d);
   });
   a.appendChild(dl);
 
   const b = $('div', 'blk');
-  const dl2 = $('dl', 'deflist');
-  [['Sectors', 'Biopower, solar, storage, energy and infrastructure assets'],
-   ['Focus', 'Origination, structuring, underwriting, deal execution'],
-   ['Status', '[Set availability]']].forEach(([k, v]) => {
-    const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); dl2.appendChild(d);
-  });
-  b.appendChild(dl2);
+  b.appendChild($('h3', null, 'Next steps'));
+  const ol = $('ol', 'steps');
+  SITE.next.forEach(t => ol.appendChild($('li', null, t)));
+  b.appendChild(ol);
   c.append(a, b);
   w.appendChild(c);
-})();
+}
+
+/* ── the document, in order ──────────────────────────────────────── */
+[secSummary, secRecord, secMandate, secBackground, secPrecedent,
+ secMarket, secAnalysis, secRisk, secTerms].forEach(f => f());
 
 /* ── footer ──────────────────────────────────────────────────────── */
 (function footer(){
   const f = $('footer');
   const w = $('div', 'wrap');
   const p = $('p');
-  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV. Source at ');
+  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV; the deal in section 6 is invented and describes no live transaction. Source at ');
   const a = $('a', 'mail', 'github.com/Tobombadil/Tobombadil'); a.href = SITE.repo; a.target = '_blank'; a.rel = 'noopener';
   p.append(a, '.');
   w.appendChild(p);
@@ -1657,6 +1944,87 @@ function drawHeat() {
   host.appendChild(t);
 }
 
+/* ── ranked sensitivity ──────────────────────────────────────────────
+   A tornado laid out as a schedule. Every bar is a complete model run
+   through underScenario(), not a derivative, so a clamped input or an
+   unfinanceable corner shows up as itself instead of as a smooth line. */
+const DRIVERS = [
+  ['PPA price, year 1',         'C13'],
+  ['Availability, steady state','C11'],
+  ['Capex before contingency',  'C22'],
+  ['Fuel contract ceiling',     'C17'],
+  ['Non-fuel opex, year 1',     'C19'],
+  ['Interest rate',             'C25'],
+  ['PPA escalator',             'C14'],
+  ['Target minimum DSCR',       'C24'],
+  ['Contingency',               'C23'],
+  ['Credit monetization',       'C34'],
+];
+
+function drawTornado() {
+  const host = document.getElementById('tornado');
+  if (!host) return;
+  host.textContent = '';
+  const base = val('Model', 'C55');
+  if (!isFinite(base)) { host.appendChild($('p', 'none', 'Not financeable at these inputs, so there is nothing to rank.')); return; }
+
+  const rows = DRIVERS.map(([lbl, ref]) => {
+    const d = SHEET_BY_NAME['Assumptions'].cells[ref];
+    const v0 = val('Assumptions', ref);
+    /* clamp to the slider's own band: a 10% move on 91% availability is not
+       100% availability, and pretending otherwise overstates the driver */
+    const lo = Math.max(d.min, v0 * 0.9), hi = Math.min(d.max, v0 * 1.1);
+    const f = x => underScenario({ ['Assumptions!' + ref]:x }, () => val('Model', 'C55'));
+    const nlo = f(lo), nhi = f(hi);
+    const dlo = isFinite(nlo) ? nlo - base : NaN;
+    const dhi = isFinite(nhi) ? nhi - base : NaN;
+    const swing = Math.max(isFinite(dlo) ? Math.abs(dlo) : 0, isFinite(dhi) ? Math.abs(dhi) : 0);
+    return { lbl, ref, dlo, dhi, swing, clamped:(lo > v0 * 0.9 + 1e-12 || hi < v0 * 1.1 - 1e-12) };
+  }).filter(r => r.swing > 0).sort((a, b) => b.swing - a.swing);
+
+  if (!rows.length) { host.appendChild($('p', 'none', 'Nothing moves the answer at these inputs.')); return; }
+  const max = rows[0].swing;
+
+  const t = $('table', 'torn');
+  const thead = $('thead'), htr = $('tr');
+  htr.appendChild($('th', null, 'Assumption'));
+  htr.appendChild($('th', 'c', 'Equity NPV, $M'));
+  htr.appendChild($('th', 'n', '−10%'));
+  htr.appendChild($('th', 'n', '+10%'));
+  thead.appendChild(htr); t.appendChild(thead);
+
+  const fmt = d => !isFinite(d) ? 'n.m.' : (d >= 0 ? '+' : '') + formatValue(d, 'num1');
+  const tb = $('tbody');
+  rows.forEach(r => {
+    const tr = $('tr');
+    const l = $('td', 'lbl', r.lbl + (r.clamped ? ' · clamped' : ''));
+    tr.appendChild(l);
+
+    const bc = $('td', 'bar');
+    const tbar = $('div', 'tb');
+    [r.dlo, r.dhi].forEach(d => {
+      if (!isFinite(d) || d === 0) return;
+      const wpc = Math.abs(d) / max * 50;
+      const i = $('i', d >= 0 ? 'up' : 'dn');
+      i.style.left = (d >= 0 ? 50 : 50 - wpc) + '%';
+      i.style.width = wpc + '%';
+      tbar.appendChild(i);
+    });
+    tbar.appendChild($('u'));
+    bc.appendChild(tbar);
+    tr.appendChild(bc);
+
+    [r.dlo, r.dhi].forEach(d => {
+      const td = $('td', 'n', fmt(d));
+      if (isFinite(d) && d < 0) td.classList.add('bad');
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  host.appendChild(t);
+}
+
 function drawStress() {
   const host = document.getElementById('stress');
   host.textContent = '';
@@ -1776,6 +2144,7 @@ function heavy() {
   }
   drawStress();
   drawHeat();
+  drawTornado();
 }
 
 syncControls();
