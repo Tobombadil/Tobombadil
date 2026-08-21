@@ -29,15 +29,15 @@
   --ink-3:#7d8791;
   --deep:#16324f;         /* slate navy: the document's structural voice */
   --deep-2:#0b1f33;
-  --deep-3:#26496d;
   --copper:#a8571c;       /* the one accent, spent sparingly */
   --copper-2:#c9762f;
-  --input:#1a3fcf;        /* modelling convention: hardcoded input */
-  --linkc:#0a7040;        /* modelling convention: link to another schedule */
+  --input:#1e5aa8;        /* modeling convention: a stated figure */
+  --linkc:#0f6b4a;        /* modeling convention: carried from another schedule */
+  --prose:#2b333d;        /* body copy: softer than the ink, same blue bias */
+  --bad:#a8302b;
   --series-1:#2a78d6;
   --series-2:#eb6834;
-  --good:#0ca30c;
-  --shade:#f6f1dd;
+  --good:#12784f;
   --ground:#e7ebf1;      /* the desk the sheet sits on */
   --maxw:1120px;
   --sheet:1240px;
@@ -66,7 +66,7 @@ body{
   border-left:1px solid var(--rule);border-right:1px solid var(--rule);
 }
 
-/* ── toolbar + formula bar ─────────────────────────────────────────── */
+/* ── toolbar + provenance bar ──────────────────────────────────────── */
 .bar{position:sticky;top:0;z-index:40;background:var(--chrome);border-bottom:1px solid var(--rule);
      max-width:var(--sheet);margin-left:auto;margin-right:auto;
      border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
@@ -89,8 +89,9 @@ nav a:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible{out
 .fref{flex:0 0 auto;min-width:96px;max-width:210px;display:flex;align-items:center;gap:6px;
       font:600 11px var(--sans);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
       border-right:1px solid var(--rule)}
-.ffx{flex:0 0 30px;display:flex;align-items:center;justify-content:center;
-     font:italic 700 12px var(--serif);color:var(--ink-3);border-right:1px solid var(--rule)}
+.ffx{flex:0 0 34px;display:flex;align-items:center;justify-content:center;
+     font:600 8.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;
+     color:var(--ink-3);border-right:1px solid var(--rule)}
 .ftext{flex:1 1 auto;display:flex;align-items:baseline;gap:9px;padding:0 12px;min-width:0;
        font:12.5px/30px var(--sans);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ftext .v{font-weight:600;font-variant-numeric:tabular-nums;flex:0 0 auto}
@@ -105,16 +106,8 @@ section{padding:52px 0 4px}
 
 /* ── hero ──────────────────────────────────────────────────────────── */
 .hero{padding:46px 0 8px;display:grid;grid-template-columns:1.55fr 1fr;gap:44px;align-items:start}
-.eyebrow{font:700 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
 h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-wrap:balance}
-.role{margin:12px 0 0;font:400 17px/1.4 var(--serif);color:var(--ink-2);font-style:italic;text-wrap:balance}
-.lede{margin:20px 0 0;max-width:60ch;font-size:14.5px;line-height:1.62;color:#2c3034}
-.cta{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border:1px solid var(--rule);
-     background:var(--paper);color:var(--ink);font:12px var(--sans);text-decoration:none;cursor:pointer}
-.btn:hover{border-color:var(--ink-3);background:var(--paper-2)}
-.btn.primary{background:var(--input);border-color:var(--input);color:#fff}
-.btn.primary:hover{background:#1535ad;border-color:#1535ad}
+.lede{margin:20px 0 0;max-width:60ch;font-size:14.5px;line-height:1.62;color:var(--prose)}
 
 .covercard{border:1px solid var(--rule);background:var(--paper)}
 .covercard h3{margin:0;padding:10px 14px;background:var(--chrome);border-bottom:1px solid var(--rule);
@@ -137,8 +130,6 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
          display:block;margin-bottom:7px}
 .tile .v{font:400 27px/1 var(--serif);letter-spacing:-.01em;display:block}
 .tile .u{font-size:11px;color:var(--ink-2);margin-top:5px;display:block}
-.tiles.sub{grid-template-columns:repeat(3,1fr)}
-.tiles.sub .tile .v{font-size:21px}
 
 /* ── ruled data rows ───────────────────────────────────────────────── */
 .sched{width:100%;border-collapse:collapse;font-size:13px}
@@ -150,7 +141,7 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .sched .desc{color:var(--ink-2);font-size:12.5px}
 .chip{display:inline-block;padding:2px 7px;border:1px solid var(--rule);background:var(--paper-2);
       font:10.5px var(--sans);color:var(--ink-2);white-space:nowrap}
-.chip.live{border-color:#b9c6f2;background:#eef2ff;color:var(--input)}
+.chip.live{border-color:#c2d3ea;background:#eef3fa;color:var(--input)}
 
 /* ── experience ────────────────────────────────────────────────────── */
 .roles{display:flex;flex-direction:column;gap:0}
@@ -164,7 +155,7 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .tbar{height:5px;background:var(--rule-2);margin:11px 0 13px;position:relative}
 .tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--series-1);display:block}
 .job ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
-.job li{padding-left:15px;position:relative;font-size:13.5px;line-height:1.55;color:#2c3034;max-width:78ch}
+.job li{padding-left:15px;position:relative;font-size:13.5px;line-height:1.55;color:var(--prose);max-width:78ch}
 .job li::before{content:"—";position:absolute;left:0;color:var(--ink-3)}
 
 /* ── the live model ────────────────────────────────────────────────── */
@@ -195,7 +186,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .otile .k{font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:block}
 .otile .v{font:400 26px/1.15 var(--serif);display:block;margin-top:6px}
 .otile .n{font-size:10.5px;color:var(--ink-3);display:block;margin-top:3px}
-.otile .v.neg{color:#b3312f}
+.otile .v.neg{color:var(--bad)}
 .viz{padding:16px 14px 6px}
 .viz + .viz{border-top:1px solid var(--rule)}
 .viz h4{margin:0 0 2px;font:700 12px var(--sans)}
@@ -211,14 +202,14 @@ svg.chart{display:block;min-width:440px;width:100%;height:auto}
 .tie{display:flex;align-items:center;gap:8px;padding:11px 14px;border-top:1px solid var(--rule);
      background:var(--paper-2);font-size:12px;color:var(--ink-2)}
 .tie b{color:var(--good);font-weight:700;display:inline-flex;align-items:center;gap:5px}
-.tie b.bad{color:#b3312f}
+.tie b.bad{color:var(--bad)}
 
 .tip{position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .1s;
-     background:#1c1e20;color:#fff;padding:7px 9px;font:11px/1.5 var(--sans);max-width:230px;
+     background:var(--deep-2);color:#fff;padding:7px 9px;font:11px/1.5 var(--sans);max-width:230px;
      box-shadow:0 3px 12px rgba(0,0,0,.24)}
 .tip.on{opacity:1}
 .tip b{display:block;font-size:11px;margin-bottom:3px}
-.tip i{font-style:normal;color:#b9bcc0}
+.tip i{font-style:normal;color:#9db2c6}
 
 /* ── two-column lists ──────────────────────────────────────────────── */
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:38px}
@@ -230,7 +221,7 @@ svg.chart{display:block;min-width:440px;width:100%;height:auto}
 .paper{border:1px solid var(--rule);background:var(--paper);padding:16px 18px}
 .paper h3{margin:0 0 4px;font:700 14px var(--sans)}
 .paper .cap{margin:0 0 12px;font:italic 11.5px var(--sans);color:var(--ink-3)}
-.paper p{margin:0 0 10px;font-size:13.5px;line-height:1.6;color:#2c3034;max-width:72ch}
+.paper p{margin:0 0 10px;font-size:13.5px;line-height:1.6;color:var(--prose);max-width:72ch}
 .paper p:last-child{margin-bottom:0}
 
 /* ══ presentation layer ═══════════════════════════════════════════════
@@ -312,8 +303,6 @@ body.at-cover .ftext{color:#8195a9}
 .toc .tnum{flex:0 0 34px;font:500 11.5px var(--mono);color:var(--copper);letter-spacing:.02em}
 .toc .tname{font:500 15px var(--sans);color:var(--ink);white-space:nowrap}
 .toc .lead{flex:1 1 auto;border-bottom:1.5px dotted #b4bfca;transform:translateY(-4px)}
-.toc .tthesis{display:block;grid-column:auto;margin:-8px 0 0 46px;padding-bottom:13px;
-              font:italic 12.5px/1.5 var(--serif);color:var(--ink-3);max-width:44ch}
 
 /* section dividers */
 section{padding:0 0 4px}
@@ -343,20 +332,8 @@ section > .wrap.body{padding-bottom:44px}
   .divider .wrap{grid-template-columns:1fr;gap:6px}
   .divider .num{grid-row:auto}
   .divider .thesis{font-size:14px}
-  .toc .tthesis{margin-left:0}
 }
 
-/* ── memo furniture ────────────────────────────────────────────────── */
-.letter{display:none}
-.letter-h{display:flex;align-items:baseline;gap:12px;padding:8px 14px;background:var(--chrome);
-          border-bottom:1px solid var(--rule);font:700 9.5px var(--sans);
-          letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
-.letter-h .rev{margin-left:auto;font-weight:400;letter-spacing:.08em;color:var(--ink-3)}
-.mrows{padding:5px 0}
-.mline{display:flex;gap:16px;margin:0;padding:5px 14px;font-size:12.5px;line-height:1.5}
-.mline dt{flex:0 0 58px;margin:0;padding-top:3px;font:700 9.5px var(--sans);
-          letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-.mline dd{flex:1 1 auto;margin:0}
 .hero{padding-top:26px}
 /* the terms rows carry long values now, so the value wraps and the label holds */
 .crow dt{flex:0 0 auto}
@@ -365,14 +342,14 @@ section > .wrap.body{padding-bottom:44px}
 /* the mandate map and the risk register both ride on .sched */
 .sched.pairs td{padding:12px 16px 12px 0;font-size:13px;vertical-align:top}
 .sched.pairs td:first-child{width:37%}
-.sched.pairs td:last-child{color:#2c3034;line-height:1.6}
+.sched.pairs td:last-child{color:var(--prose);line-height:1.6}
 .sched.pairs .own{display:block;font-weight:700}
 .sched.pairs .owd{display:block;margin-top:3px;color:var(--ink-3);font-size:11.5px;line-height:1.5}
-.sched.risk td{vertical-align:top;line-height:1.6;font-size:12.5px;color:#2c3034}
+.sched.risk td{vertical-align:top;line-height:1.6;font-size:12.5px;color:var(--prose)}
 .sched.risk td:first-child{width:24%;font-weight:700;color:var(--ink)}
 .sched.risk td:nth-child(2){width:33%;color:var(--ink-2)}
 
-.steps{margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:#2c3034}
+.steps{margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:var(--prose)}
 .steps li{margin-bottom:9px}
 
 /* ── ranked sensitivity ────────────────────────────────────────────── */
@@ -388,7 +365,7 @@ section > .wrap.body{padding-bottom:44px}
 .torn td.lbl{white-space:normal;width:32%;padding-right:16px}
 .torn td.bar{width:36%;padding-right:20px}
 .torn td.n{text-align:right;width:11%;color:var(--ink-2)}
-.torn td.n.bad{color:#b3312f}
+.torn td.n.bad{color:var(--bad)}
 .tb{position:relative;height:13px;background:var(--rule-2)}
 .tb i{position:absolute;top:0;bottom:0;display:block}
 .tb i.up{background:var(--series-1)}
@@ -436,7 +413,7 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   table.stress tr.key{background:var(--paper-2)}
   table.stress tr.key td{font-weight:700}
   table.stress td.muted{color:var(--ink-3)}
-  table.stress td.bad{color:#b3312f}
+  table.stress td.bad{color:var(--bad)}
   #stress{overflow-x:auto;padding-bottom:4px}
 
   /* values wired to the workbook get a quiet affordance */
@@ -446,13 +423,12 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
 .calc{color:var(--ink)}
 .link{color:var(--linkc)}
 .hard{color:var(--input)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 @media (max-width:960px){
   .hero{grid-template-columns:1fr;gap:30px}
   .model{grid-template-columns:1fr}
   .inputs{border-right:0;border-bottom:1px solid var(--rule)}
-  .tiles,.tiles.sub{grid-template-columns:repeat(2,1fr)}
+  .tiles{grid-template-columns:repeat(2,1fr)}
   .tile:nth-child(2){border-right:0}
   .tile:nth-child(1),.tile:nth-child(2){border-bottom:1px solid var(--rule)}
   .cols,.contact{grid-template-columns:1fr;gap:26px}
@@ -462,13 +438,10 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .wrap{padding:0 15px}
   .bar-in,.fbar-in{padding:0 15px}
   h1{font-size:33px}
-  .role{font-size:15px}
   section{padding:38px 0 4px}
   .otiles{grid-template-columns:repeat(2,1fr)}
   .otile:nth-child(2){border-right:0}
   .fref{flex-basis:74px;font-size:10px}
-  .tiles.sub{grid-template-columns:repeat(2,1fr)}
-  .tiles.sub .tile:nth-child(1),.tiles.sub .tile:nth-child(2){border-bottom:1px solid var(--rule)}
   .job-h{grid-template-columns:1fr}
   .job .when{text-align:left}
   .job .when b{display:inline;margin-right:7px}
@@ -485,8 +458,6 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .sched.pairs tr,.sched.risk tr{padding:14px 0}
   .sched.pairs .owd{margin-bottom:7px}
   .sched.risk td:nth-child(2),.sched.risk td:nth-child(3){margin-top:6px;display:block}
-  .mline{flex-direction:column;gap:1px;padding:6px 12px}
-  .mline dt{flex-basis:auto;padding-top:0}
   .crow{flex-direction:column;gap:2px}
   .crow dd{text-align:left}
   .torn td.lbl{width:auto;white-space:normal}
@@ -573,19 +544,9 @@ const SHEETS = [
 /* Headline figures, as disclosed on the CV. */
 {
   name:'Facts', rows:20, cols:[], cells:{
-    C3:{v:50,   f:'num0'},          /* transaction size underwritten — low  ($M) */
-    C4:{v:1200, f:'num0'},          /* transaction size underwritten — high ($M) */
     C5:{v:500,  f:'num0'},          /* feedstock agreements structured ($M) */
     C6:{v:800,  f:'num0'},          /* offtake agreements structured   ($M) */
     C7:{v:'=C5+C6', f:'num0'},      /* total agreements structured */
-    C8:{v:5,    f:'num0'},          /* biopower developments directed */
-    C9:{v:0.70, f:'pct0'},          /* capex reduction, relocation structure */
-    C10:{v:1.40,f:'pct0'},          /* revenue uplift, relocation structure */
-    C11:{v:3.0, f:'num1'},          /* feedstock & offtake rights (m tons) */
-    C12:{v:1.0, f:'num1'},          /* venture capital raised ($M) */
-    C13:{v:6000,f:'num0'},          /* commodity flows supported ($M) */
-    C14:{v:'=C13/1000', f:'num0'},  /* the same, in $B, for display */
-    C15:{v:'="$"&C3&"M – $"&C4/1000&"B"'},   /* the underwriting range, written out */
     C16:{v:1000, f:'num0'},         /* enterprise clients originated, Pakira */
   }
 },
@@ -593,15 +554,13 @@ const SHEETS = [
 /* Employment dates. Tenure accrues against TODAY() on every visit. */
 {
   name:'Career', rows:16, cols:[], cells:{
-    D7:{v:'=DATE(2024,3,1)'},  E7:{v:'=TODAY()'},        F7:{v:'=YEARFRAC(D7,E7)',  f:'num1'}, G7:{v:'=F7/F13', f:'pct0'},
-    D8:{v:'=DATE(2018,8,1)'},  E8:{v:'=DATE(2024,3,1)'}, F8:{v:'=YEARFRAC(D8,E8)',  f:'num1'}, G8:{v:'=F8/F13', f:'pct0'},
-    D9:{v:'=DATE(2017,3,1)'},  E9:{v:'=DATE(2018,8,1)'}, F9:{v:'=YEARFRAC(D9,E9)',  f:'num1'}, G9:{v:'=F9/F13', f:'pct0'},
-    D10:{v:'=DATE(2015,5,1)'}, E10:{v:'=DATE(2017,5,1)'},F10:{v:'=YEARFRAC(D10,E10)',f:'num1'},G10:{v:'=F10/F13',f:'pct0'},
+    D7:{v:'=DATE(2024,3,1)'},  E7:{v:'=TODAY()'},        F7:{v:'=YEARFRAC(D7,E7)',  f:'num1'},
+    D8:{v:'=DATE(2018,8,1)'},  E8:{v:'=DATE(2024,3,1)'}, F8:{v:'=YEARFRAC(D8,E8)',  f:'num1'},
+    D9:{v:'=DATE(2017,3,1)'},  E9:{v:'=DATE(2018,8,1)'}, F9:{v:'=YEARFRAC(D9,E9)',  f:'num1'},
+    D10:{v:'=DATE(2015,5,1)'}, E10:{v:'=DATE(2017,5,1)'},F10:{v:'=YEARFRAC(D10,E10)',f:'num1'},
     F12:{v:'=SUM(F7:F10)', f:'num1'},        /* total recorded tenure */
     F13:{v:'=YEARFRAC(D10,TODAY())', f:'num1'}, /* career span, first start to date */
     D16:{v:'=DATE(2017,1,1)'}, E16:{v:'=DATE(2026,1,1)'}, F16:{v:'=YEARFRAC(D16,E16)', f:'num0'},
-    F14:{v:'=MAX(F7:F10)', f:'num1'},
-    F15:{v:'=AVERAGE(F7:F10)', f:'num1'},
   }
 },
 
@@ -609,8 +568,6 @@ const SHEETS = [
 {
   name:'Research', rows:20, cols:[], cells:{
     C10:{v:3.17, f:'num2'},
-    C11:{v:0.92, f:'pct0'},
-    C12:{v:'=1-C11', f:'pct0'},
   }
 },
 
@@ -835,37 +792,13 @@ const nums = a => flat(a).filter(v => typeof v === 'number' && isFinite(v));
 
 const FN = {
   SUM:a => nums(a).reduce((x, y) => x + y, 0),
-  COUNT:a => nums(a).length,
-  AVERAGE:a => { const n = nums(a); return n.length ? n.reduce((x, y) => x + y, 0) / n.length : 0; },
   MAX:a => { const n = nums(a); return n.length ? Math.max(...n) : 0; },
   MIN:a => { const n = nums(a); return n.length ? Math.min(...n) : 0; },
   ABS:a => Math.abs(+a[0]),
-  ROUND:a => { const p = Math.pow(10, a[1] === undefined ? 0 : +a[1]); return Math.round(+a[0] * p) / p; },
   IF:a => (a[0] ? a[1] : a[2] !== undefined ? a[2] : false),
-  REPT:a => String(a[0]).repeat(Math.max(0, Math.min(200, Math.round(+a[1] || 0)))),
   TODAY:() => todaySerial(),
   DATE:a => serial(+a[0], +a[1], +a[2]),
-  YEAR:a => fromSerial(+a[0]).getUTCFullYear(),
-  MONTH:a => fromSerial(+a[0]).getUTCMonth() + 1,
   YEARFRAC:a => (+a[1] - +a[0]) / 365.25,
-  SUMPRODUCT:a => {
-    const arrs = a.map(x => Array.isArray(x) ? x : [x]);
-    const len = Math.min(...arrs.map(x => x.length));
-    let t = 0;
-    for (let i = 0; i < len; i++) t += arrs.reduce((p, x) => p * (typeof x[i] === 'number' ? x[i] : 0), 1);
-    return t;
-  },
-  COUNTIF:a => {
-    const range = Array.isArray(a[0]) ? a[0] : [a[0]];
-    const crit = String(a[1]).toLowerCase();
-    return range.filter(v => String(v).toLowerCase() === crit).length;
-  },
-  PMT:a => {
-    const r = +a[0], n = +a[1], pv = +a[2];
-    if (!isFinite(r) || !isFinite(n) || n <= 0) return NaN;
-    return r === 0 ? pv / n : pv * r / (1 - Math.pow(1 + r, -n));
-  },
-  NPV:a => { const r = +a[0]; return nums(a.slice(1)).reduce((s, c, i) => s + c / Math.pow(1 + r, i + 1), 0); },
   IRR:a => {
     const cf = nums(a);
     if (cf.length < 2) return NaN;
@@ -1006,7 +939,6 @@ const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_
 
 const SITE = {
   name:'Andrew T. Gibson',
-  role:'Commercial & Origination · Wholesale Power · Sourcing, Structuring & Negotiation',
   location:'Denver, CO',
   email:'hello@andrewtgibson.com',
   phone:'+1 (978) 500-9301',
@@ -1015,7 +947,7 @@ const SITE = {
   repo:'https://github.com/Tobombadil/Tobombadil',
 
   rev:4,
-  to:'Commercial leadership, wholesale power and energy origination',
+  to:'Commercial leadership, wholesale power',
   target:'Manager, Origination',
   basis:'Career figures as disclosed on the CV. The deal in 6.0 is invented.',
   headline:'Ten years sourcing, structuring and negotiating energy and commodity contracts. Looking for a bigger platform.',
@@ -1257,7 +1189,7 @@ function expandSrc(sheet, s) {
 }
 
 /* the provenance bar */
-function showFormula(sheet, ref, el) {
+function showSource(sheet, ref, el) {
   const key = sheet + '!' + ref;
   const meta = SRC[key];
   const kind = cellKind(sheet, ref);
@@ -1278,7 +1210,7 @@ function showFormula(sheet, ref, el) {
 const HINT = matchMedia('(hover: none)').matches
   ? 'Tap any underlined figure to see where it comes from'
   : 'Hover any underlined figure to see where the number comes from';
-function clearFormula() {
+function clearSource() {
   fref.textContent = '—';
   ftext.textContent = '';
   ftext.appendChild($('span', 'p', HINT));
@@ -1291,7 +1223,7 @@ const esc = s => String(s).replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>
 
 function reveal(el) {
   const [sheet, ref] = el.dataset.cell.split('!');
-  if (!narrow()) { showFormula(sheet, ref, el); return; }
+  if (!narrow()) { showSource(sheet, ref, el); return; }
   const meta = SRC[sheet + '!' + ref];
   const over = el.dataset.override;
   const raw = over || txt(sheet, ref, el.dataset.f);
@@ -1313,11 +1245,11 @@ document.addEventListener('focusin', e => {
 });
 document.addEventListener('pointerout', e => {
   if (e.target.closest && e.target.closest('[data-cell]') && !e.relatedTarget?.closest?.('[data-cell]')) {
-    clearFormula(); hideTip();
+    clearSource(); hideTip();
   }
 });
 document.addEventListener('click', e => {
-  if (!e.target.closest('[data-cell]')) { clearFormula(); hideTip(); }
+  if (!e.target.closest('[data-cell]')) { clearSource(); hideTip(); }
 });
 
 /* tooltip */
@@ -1442,8 +1374,7 @@ function cover(){
   inner.appendChild($('p', 'cover-sub', SITE.headline));
 
   const meta = $('div', 'cover-meta');
-  [['From', SITE.location], ['To', 'Commercial leadership, wholesale power'],
-   ['Basis', 'Actuals as disclosed; 6.0 is invented']].forEach(([k, v]) => {
+  [['From', SITE.location], ['To', SITE.to], ['Basis', SITE.basis]].forEach(([k, v]) => {
     const d = $('div');
     d.appendChild($('b', null, k));
     d.appendChild($('span', null, v));
@@ -1567,7 +1498,7 @@ function secSummary(){
 function secMandate(){
   const w = section('mandate');
   const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:80ch;line-height:1.6';
   intro.textContent = "The senior lead carries the customer. This chair carries everything that has to be true before that conversation is worth having, and takes the front of it as the balance shifts.";
   w.appendChild(intro);
 
@@ -1672,7 +1603,7 @@ function secPrecedent(){
 function secMarket(){
   const w = section('market');
   const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:80ch;line-height:1.6';
   intro.textContent = "An originator is expected to hold a market view and defend it in a room. These are mine, both built on my own time.";
   w.appendChild(intro);
 
@@ -1828,7 +1759,7 @@ function syncControls() {
 function secAnalysis(){
   const w = section('analysis');
   const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:78ch;line-height:1.6';
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:78ch;line-height:1.6';
   intro.textContent = "Origination doesn't build models, so what sits below this one matters more than it does. A generic 25 MW biomass relocation, invented end to end. It describes no client, counterparty or live transaction; the tax parameters are public law and every project figure is made up.";
   w.appendChild(intro);
 
@@ -1954,7 +1885,7 @@ function secAnalysis(){
   const gaps = $('div', 'viz');
   gaps.appendChild($('h4', null, 'What this leaves out'));
   const gp = $('p');
-  gp.style.cssText = 'margin:0;font-size:12.5px;line-height:1.6;color:#2c3034;max-width:74ch';
+  gp.style.cssText = 'margin:0;font-size:12.5px;line-height:1.6;color:var(--prose);max-width:74ch';
   gp.textContent = "A financing model would add a real construction drawdown, a cash sweep and covenant lockup, post-tax sculpting, a tax equity flip, working capital and a merchant tail. None of it is here. The first thing I'd ask about someone else's model is which of those they skipped.";
   gaps.appendChild(gp);
   out.appendChild(gaps);
@@ -1989,7 +1920,7 @@ function secAnalysis(){
   const q = $('div', 'quiz');
   q.appendChild($('h3', null, 'What moves the answer'));
   const qp = $('p');
-  qp.style.cssText = 'margin:0 0 14px;font-size:13px;line-height:1.6;color:#2c3034;max-width:80ch';
+  qp.style.cssText = 'margin:0 0 14px;font-size:13px;line-height:1.6;color:var(--prose);max-width:80ch';
   qp.textContent = "Each input taken ten percent either way before close, ranked by how far equity NPV travels. The stress table asks what the structure survives after you sign. This asks what you should have checked before.";
   q.appendChild(qp);
   const th = $('div'); th.id = 'tornado';
@@ -2059,7 +1990,7 @@ function credBlock(w){
 function secRisk(){
   const w = section('risk');
   const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:#2c3034;max-width:80ch;line-height:1.6';
+  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:80ch;line-height:1.6';
   intro.textContent = "Every memo I've written has this section. The ones without it are the ones nobody believes. Here's the case against hiring me, written by me.";
   w.appendChild(intro);
 
@@ -2450,9 +2381,9 @@ function heavy() {
 
 syncControls();
 recalc();
-clearFormula();
+clearSource();
 recalc();
-clearFormula();
+clearSource();
 </script>
 </body>
 </html>

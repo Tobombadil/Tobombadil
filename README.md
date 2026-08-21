@@ -106,11 +106,15 @@ so the legend cannot drift from the truth: a figure that stops being calculated 
 
 ### Supported functions
 
-`SUM` `AVERAGE` `COUNT` `COUNTIF` `MIN` `MAX` `ABS` `ROUND` `IF` `REPT` `SUMPRODUCT`
-`PMT` `NPV` `IRR` `TODAY` `DATE` `YEAR` `MONTH` `YEARFRAC`
+`SUM` `MIN` `MAX` `ABS` `IF` `IRR` `TODAY` `DATE` `YEARFRAC`
 
 Plus `+ - * / ^ &`, comparisons, parentheses, ranges (`D18:M18`) and cross-sheet references
 (`Assumptions!C34`). `IRR` solves by bisection.
+
+Nine, and the model uses all nine. It supported nineteen until a sweep found that ten were there
+only because the first version of this page was a spreadsheet — `REPT` drew in-cell bar charts,
+`COUNTIF` counted shipped projects, `SUMPRODUCT` built a weighted capability index, and none of
+those things exist any more. A test now fails if the engine grows a function no formula calls.
 
 ## 6.0, the supporting analysis
 
@@ -199,9 +203,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 122 checks.
+Three suites, run against a headless browser. 123 checks.
 
-- **`site.js`** (98) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (99) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
@@ -223,6 +227,29 @@ was reading equity in millions and formatting it as a percentage. It displayed 3
 other test passed, because they each read the model directly and never checked what the page had
 actually bound to. The tornado is verified the same way, by recomputing every bar from the stated
 mechanic and comparing against what the renderer actually drew.
+
+## What the spreadsheet left behind
+
+Three redesigns in, the page still carried a lot that only made sense when it was a worksheet. A
+runtime audit found it, and a test now guards each finding:
+
+| Found | Why it was there |
+|---|---|
+| 18 workbook cells nothing reads | An underwriting range, per-role career shares, capex-reduction and revenue-uplift figures, all from tiles that no longer exist |
+| 10 engine functions no formula calls | `REPT`, `COUNTIF`, `SUMPRODUCT` and friends, from the in-cell bar charts and the capability index |
+| 4 number formats nothing asks for | `usd`, `yr`, `yr2`, `mmmyy` |
+| 14 CSS classes absent from the DOM | The hero buttons, the memo letterhead, the contents thesis lines, the sub-tile row |
+| 2 palette tokens never referenced | `--shade` was a warm cream from the original scheme |
+| 3 `SITE` fields the cover duplicated inline | The cover wrote its own "To" and "Basis" strings while the fields sat unused |
+
+Two colour decisions came out of the same pass. The blue/green font convention was still on
+`#1a3fcf` and `#0a7040`, picked for the original warm palette, which put a royal blue and a
+saturated green next to slate navy and copper. They are now `#1e5aa8` and `#0f6b4a`. And the body
+prose colour, the negative red and the tooltip ground were literals rather than tokens; they are
+`--prose`, `--bad` and `--deep-2` now, so the palette is the whole palette.
+
+The `fx` glyph in the bar had been relabelled `src` but was still set in italic serif, which is
+the spreadsheet signifier rather than the word. It is mono now, and `showFormula` is `showSource`.
 
 ## Length
 
