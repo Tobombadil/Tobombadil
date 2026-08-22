@@ -225,6 +225,9 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .otile .k{font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:block}
 .otile .v{font:400 26px/1.15 var(--serif);display:block;margin-top:6px}
 .otile .n{font-size:10.5px;color:var(--ink-3);display:block;margin-top:3px}
+/* the same benchmark line the dials use, so one reading rule covers the box */
+.otile .fmkt,.sitem .fmkt{margin-top:5px;padding-top:5px;border-top:1px solid var(--rule-2);font-size:10px}
+.sitem .fmkt{margin-top:4px}
 .otile .v.neg{color:var(--bad)}
 .viz{padding:16px 14px 6px}
 .viz + .viz{border-top:1px solid var(--rule)}
@@ -583,6 +586,9 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
   .opane-cap{padding:10px 14px;font-size:11.5px}
   .otile{padding:12px}
   .otile .v{font-size:23px}
+  /* the funding row is four columns of ~82px, which wraps a range three deep.
+     The same figure sits on the leverage dial, so it goes there only. */
+  .sitem .fmkt{display:none}
 
   /* The generic .sched rule restacks any schedule into records on a phone,
      which turned this into ten rows of four unlabelled numbers. It stays a
@@ -663,9 +669,10 @@ const SHEETS = [
   }
 },
 
-/* Illustrative project inputs. A generic single-unit biomass relocation —
-   deliberately unlike any live mandate. Statutory tax parameters are public
-   (IRC 45Y / 48E / 172 / 6418); every project figure is invented. */
+/* Project inputs for a 50 MW biomass relocation. Statutory parameters are
+   public law (IRC 45Y / 48E / 172 / 6418); the rest are industry ranges and
+   published benchmarks, each carrying the range and source it came from in
+   `mkt` and `s`. No client, counterparty, site or transaction term appears. */
 {
   name:'Assumptions', rows:60, cols:[], cells:{
     C9: {v:50,    f:'num0', input:true, min:10,   max:80,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant',
@@ -685,7 +692,8 @@ const SHEETS = [
          mkt:[10,35],       s:'IND'},
     C17:{v:35,    f:'num0', input:true, min:10,   max:110,  step:1,    lbl:'Fuel contract ceiling', u:'$/green ton', grp:'Offtake & fuel',
          mkt:[25,50],       s:'IND'},
-    C18:{v:10,    f:'num0', input:true, min:0,    max:20,   step:1,    lbl:'Years to reach the ceiling', u:'yrs', grp:'Offtake & fuel'},
+    C18:{v:10,    f:'num0', input:true, min:0,    max:20,   step:1,    lbl:'Years to reach the ceiling', u:'yrs', grp:'Offtake & fuel',
+         mkt:[5,15],        s:'TERM'},
 
     C19:{v:16.1,  f:'num1', input:true, min:6,    max:30,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital',
          mkt:[13.8,18.4],   s:'IND'},
@@ -718,13 +726,13 @@ const SHEETS = [
     C35:{v:0.21,  f:'pct0', s:'IRC'},
     C36:{v:0.049, f:'pct1', s:'AZ'},
     C37:{v:1,     f:'num0'},
-    C38:{v:20,    f:'num0'},
+    C38:{v:20,    f:'num0', mkt:[20,25], s:'IRC'},
     C39:{v:0.80,  f:'pct0', s:'IRC172'},
-    C40:{v:25,    f:'num0'},
+    C40:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
 
     C45:{v:'=C9*1000*C10', f:'num0'},
     C46:{v:'=C9*1000*C22*(1+C23)/1000000', f:'num1'},
-    C47:{v:'=C35+C36*(1-C35)', f:'pct1'},
+    C47:{v:'=C35+C36*(1-C35)', f:'pct1', s:'BLEND'},
     C50:{v:'=C45*C21/1000000', f:'num2'},
     C51:{v:'=C46-IF(C29=2,C46*C33*0.5,0)', f:'num1'},
     C52:{v:2, f:'num0'},            /* construction period, years */
@@ -1784,6 +1792,8 @@ function secMarket(){
    would recognise, not a figure lifted from a paper that never printed it. */
 const BENCH = {
   IND:    ['industry range',   'Ranges a biomass developer, lender or IE would recognise. Not a published figure.'],
+  TERM:   ['contract term',    'Set by the supply agreement rather than by a market: how long the price has to climb from today to its ceiling.'],
+  BLEND:  ['IRC + A.R.S.',     'The two statutory rates combined: state tax is deductible against federal, so the blend is less than their sum.'],
   ATB:    ['NREL ATB',         'National Renewable Energy Laboratory, Annual Technology Baseline — dedicated biomass.'],
   AACE:   ['AACE Class 5',     'AACE International 18R-97: a Class 5 estimate carries a wide accuracy range, and contingency is set against it.'],
   NOVO:   ['Novo BioPower',    'The Snowflake, Arizona biomass plant contracts at a published $110/MWh, the nearest public comparable.'],
@@ -2103,10 +2113,17 @@ function secAnalysis(){
 
   /* ---- pane 1: returns ---- */
   const ot = $('div', 'otiles');
-  [['Project IRR', 'C63', 'pct1', 'Unlevered, after tax', '', ''],
-   ['Levered equity IRR', 'C56', 'pct1', 'After debt', '', ''],
-   ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M'],
-   ['Minimum DSCR', 'C57', 'x2', 'Flat by construction; here the leverage cap binds first', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
+  /* An output with no benchmark is as bare as an input with none. Anyone who
+     does not price power for a living cannot tell whether 26.5% is good, and
+     the levered return in particular reads as a broken model until you can
+     see the target it is being measured against. */
+  [['Project IRR', 'C63', 'pct1', 'Unlevered, after tax', '', '',
+    { mkt:[0.08, 0.12], f:'pct0', s:'IND', note:'new build, contracted' }],
+   ['Levered equity IRR', 'C56', 'pct1', 'After debt', '', '',
+    { mkt:[0.12, 0.18], f:'pct0', s:'IND', note:'sponsor target' }],
+   ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M', null],
+   ['Minimum DSCR', 'C57', 'x2', 'Flat by construction; the leverage cap binds first', '', '',
+    { mkt:[1.30, 1.45], f:'x2', s:'IND', note:'lender requirement' }]].forEach(([k, ref, f, n, pre, suf, bm]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
     const v = $('span', 'v');
@@ -2116,18 +2133,21 @@ function secAnalysis(){
     if (suf) v.append(suf);
     t.appendChild(v);
     t.appendChild($('span', 'n', n));
+    if (bm) { const m = marketLine(bm); if (m) t.appendChild(m); }
     ot.appendChild(t);
   });
   panes[0].appendChild(ot);
 
   const cs = $('div', 'stack');
-  [['Funding requirement', 'C49'], ['Senior debt', 'C45'], ['Equity', 'C50'], ['Leverage', null]].forEach(([k, ref]) => {
+  [['Funding requirement', 'C49', null], ['Senior debt', 'C45', null], ['Equity', 'C50', null],
+   ['Leverage', null, { mkt:[0.65, 0.80], f:'pct0', s:'IND' }]].forEach(([k, ref, bm]) => {
     const d = $('div', 'sitem');
     d.appendChild($('span', 'k', k));
     const v = $('span', 'v');
     if (ref) { v.append('$'); v.appendChild(cell('Model', ref, { f:'num1' })); v.append('M'); }
     else v.id = 'leverage';
     d.appendChild(v);
+    if (bm) { const m = marketLine(bm); if (m) d.appendChild(m); }
     cs.appendChild(d);
   });
   panes[0].appendChild(cs);

@@ -158,6 +158,18 @@ Sources are named honestly, which matters more than making them look impressive:
 The capex benchmark is deliberately the *new-build* figure, 4,000–5,000 $/kW against a set value
 of 1,065. The gap is not an error; it is the entire thesis, and the line says so.
 
+The **outputs** carry benchmarks too, on the same convention, because they are the figures a
+reader is least able to judge unaided. Project IRR sits against 8–12% for contracted new build,
+minimum cover against a 1.30–1.45x lender requirement, and the levered equity return against a
+12–18% sponsor target. That last one matters most: at 78.7% it reads as a broken model until the
+target it is being measured against is visible beside it, at which point it reads as what it is —
+a capex-light deal at 80% leverage where the cap binds before the covenant does.
+
+Six tests hold the coverage: every dial and every held-constant figure carries a range or a
+source, every source tag is one the page can expand, every range runs low to high, every tag
+resolves to a sentence on hover, and the three judgeable outputs are benchmarked. A future dial
+cannot ship bare.
+
 Four figures are deliberately **not** the ones in that study, and each uses the public benchmark
 the study itself cites:
 
@@ -349,9 +361,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 151 checks.
+Three suites, run against a headless browser. 157 checks.
 
-- **`site.js`** (124) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (130) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
