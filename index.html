@@ -223,8 +223,10 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .legend-row span{display:flex;align-items:center;gap:6px}
 .swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
 .chartbox{overflow-x:auto}
-.stress .sm{display:none}
-.stress .drop{display:table-cell}
+.stress .u{color:var(--ink-3);font-size:11px}
+/* it spans the two figure columns, so it must be allowed to wrap inside them
+   rather than inherit the nowrap that keeps figures on one line */
+.stress td.wide2{color:var(--ink-3);font-style:italic;white-space:normal}
 /* the number the stress pane exists to produce */
 .breakeven-line{margin:0 0 10px;font-size:13px;line-height:1.55;color:var(--prose)}
 .breakeven-line b{color:var(--ink);font-weight:700;white-space:nowrap}
@@ -570,22 +572,19 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
   .otile{padding:12px}
   .otile .v{font-size:23px}
 
-  /* The generic .sched card rule turned this into 9 rows x 6 stacked
-     lines, five of six of them unlabelled numbers. Two columns are
-     derivable and one is a note, so the phone gets the other three as a
-     table: what it is, what equity gets, whether it covers debt. */
-  /* three columns wanted 430px in a 328px box, so the last one sat off the
-     edge. Fixed layout gives the names the slack and pins the numbers. */
+  /* The generic .sched rule restacks any schedule into records on a phone,
+     which turned this into ten rows of four unlabelled numbers. It stays a
+     table, on fixed layout so the names take the slack and the three figure
+     columns are pinned to what a figure needs. */
   .sched.stress{display:table;table-layout:fixed;width:100%;font-size:12px}
-  .sched.stress td:first-child,.sched.stress th:first-child{width:47%}
+  .sched.stress td:first-child,.sched.stress th:first-child{width:44%;white-space:normal}
+  .sched.stress td.n,.sched.stress th.n{width:18.6%}
   .sched.stress thead{display:table-header-group}
   .sched.stress tr{display:table-row;padding:0;border:0}
-  .sched.stress td{display:table-cell;padding:8px 6px 8px 0;border-bottom:1px solid var(--rule-2)}
+  .sched.stress td{display:table-cell;padding:8px 5px 8px 0;border-bottom:1px solid var(--rule-2)}
   .sched.stress td.n{text-align:right}
-  .sched.stress .drop,.sched.stress th.drop{display:none}
-  .sched.stress .lg{display:none}
-  .sched.stress .sm{display:inline}
-  .sched.stress th{padding:0 6px 7px 0;font-size:9.5px}
+  .sched.stress th{padding:0 5px 7px 0;font-size:9.5px;white-space:normal;line-height:1.3}
+  .sched.stress .u{display:block;margin-left:0}
 }
 
 </style>
@@ -1784,46 +1783,87 @@ const RESULT = () => ({
   dscr:val('Model', 'C57'), debt:val('Model', 'C45'), equity:val('Model', 'C50'),
 });
 
-/* Debt is sized at base case and pinned through every stress: at financial close
-   the loan is already struck, so a stress hits equity, not the lender. */
-const pinDebt = () => {
-  const pin = {};
-  /* pin the debt side only. A capex overrun is funded by equity, so the funding
-     requirement and the equity contribution must still move with the stress. */
-  ['C45','C46','C47','C48'].forEach(r => pin['Model!' + r] = val('Model', r));
-  YCOLS.forEach(c => pin['Model!' + c + '19'] = val('Model', c + '19'));
-  return pin;
-};
+/* ── how much room each assumption has ───────────────────────────────
+   The old pane shocked seven inputs by fixed amounts — capex +25%, price
+   −15% — and printed the NPV that fell out. Nothing said whether 25% was
+   a lot, so the figures had no reference. These answer the question those
+   shocks were reaching for: how far can this move before equity is worth
+   nothing, and what move is that.
 
-/* Timing matters. A rate move happens before you sign, so it re-sizes the loan.
-   Everything operating happens after, when the facility is already struck and the
-   hit lands on equity and the cover ratio instead. A capex overrun sits in
-   between: the loan is fixed, so equity funds the excess. */
-/* the fourth field is the name the phone uses, where the column is 96px */
-const STRESSES = [
-  ['Fuel at the contract ceiling from day one', 'after',  () => ({ 'Assumptions!C18':0 }), 'Fuel at ceiling'],
-  ['Capex +25%',             'after',  () => ({ 'Assumptions!C22':val('Assumptions', 'C22') * 1.25 }), 'Capex +25%'],
-  ['PPA price −15%',         'after',  () => ({ 'Assumptions!C13':val('Assumptions', 'C13') * 0.85 }), 'PPA −15%'],
-  ['Availability −8 points', 'after',  () => ({ 'Assumptions!C11':val('Assumptions', 'C11') - 0.08,
-                                                'Assumptions!C12':val('Assumptions', 'C12') - 0.08 }), 'Availability −8'],
-  ['Non-fuel opex +20%',     'after',  () => ({ 'Assumptions!C19':val('Assumptions', 'C19') * 1.20 }), 'Opex +20%'],
-  ['Interest +200 bps',      'before', () => ({ 'Assumptions!C25':val('Assumptions', 'C25') + 0.02 }), 'Rate +200bps'],
-  ['No tax credits',         'after',  () => ({ 'Assumptions!C29':0 }), 'No credits'],
-];
-const merge = list => Object.assign({}, ...list.map(([, , f]) => f()));
+   Every solve re-runs the whole model, debt included: a worse assumption
+   is a differently-sized loan, because you would have underwritten it
+   that way. That keeps one basis across every row. */
 
-/* the PPA price at which equity NPV is zero */
-function breakeven(extra) {
-  const f = p => underScenario(Object.assign({}, extra, { 'Assumptions!C13':p }), () => val('Model', 'C55'));
-  /* note: the breakeven re-sizes debt, since a different price is a different deal */
-  let lo = 5, hi = 500, flo = f(lo), fhi = f(hi);
-  if (!isFinite(flo) || !isFinite(fhi) || flo * fhi > 0) return NaN;
-  for (let i = 0; i < 60; i++) {
-    const mid = (lo + hi) / 2, fm = f(mid);
-    if (!isFinite(fm)) break;
-    if (flo * fm <= 0) { hi = mid; fhi = fm; } else { lo = mid; flo = fm; }
+const NPV = () => val('Model', 'C55');
+
+/* $20k of NPV, on an answer measured in tens of millions and printed to the
+   hundred thousand: close enough to call zero, and reached in a dozen steps */
+const EPS = 0.02;
+
+/* Which way this input has to move for equity NPV to fall. The model says,
+   rather than a hand-kept list: capex up hurts, price down hurts, and a
+   driver whose sign flips as the deal changes stays correct. */
+function adverseDir(ref) {
+  const d = SHEET_BY_NAME['Assumptions'].cells[ref];
+  const v0 = val('Assumptions', ref);
+  const h = Math.max(Math.abs(v0) * 0.02, d.step || 0.01);
+  const f = x => underScenario({ ['Assumptions!' + ref]:x }, NPV);
+  const up = f(Math.min(d.max, v0 + h)), dn = f(Math.max(d.min, v0 - h));
+  const bad = v => isFinite(v) ? v : -Infinity;   /* unfinanceable is worse */
+  return bad(dn) < bad(up) ? -1 : 1;
+}
+
+/* Bisect for the value at which equity NPV reaches zero, moving the input
+   the adverse way, as far as its own declared range allows. */
+function driverBreakeven(ref, dir, base = NPV()) {
+  const d = SHEET_BY_NAME['Assumptions'].cells[ref];
+  const v0 = val('Assumptions', ref), lim = dir > 0 ? d.max : d.min;
+  const f = x => underScenario({ ['Assumptions!' + ref]:x }, NPV);
+  const gone = v => !isFinite(v) || v <= 0;
+  if (gone(base)) return null;                   /* already at or below zero */
+  if (!gone(f(lim))) return { out:true };        /* survives its whole range */
+  /* Stop on the answer, not on the input. A tolerance in input units means a
+     different thing for every driver — half a dollar on the PPA price is a
+     million of NPV, half a dollar on capex is nothing — so bisect until NPV
+     is within EPS of zero and let each driver take the steps it needs. Every
+     step is a full run of the model, ten times over. */
+  let a = v0, b = lim, at = (a + b) / 2;
+  for (let i = 0; i < 30; i++) {
+    const m = (a + b) / 2, v = f(m);
+    at = m;
+    if (isFinite(v) && Math.abs(v) < EPS) return { at, pct:v0 === 0 ? NaN : (at - v0) / Math.abs(v0) };
+    if (gone(v)) b = m; else a = m;
+    at = (a + b) / 2;
   }
-  return (lo + hi) / 2;
+  return { at, pct:v0 === 0 ? NaN : (at - v0) / Math.abs(v0) };
+}
+
+/* And the summary number: how far off every assumption has to be, at the
+   same time, each by the same fraction of its own value. */
+function uniformBreakeven(dirs) {
+  const cells = SHEET_BY_NAME['Assumptions'].cells;
+  const v0 = {};
+  DRIVERS.forEach(([, ref]) => v0[ref] = val('Assumptions', ref));
+  const at = t => {
+    const o = {};
+    DRIVERS.forEach(([, ref], i) => {
+      const d = cells[ref];
+      o['Assumptions!' + ref] = Math.max(d.min, Math.min(d.max, v0[ref] * (1 + dirs[i] * t)));
+    });
+    return underScenario(o, NPV);
+  };
+  const gone = v => !isFinite(v) || v <= 0;
+  if (gone(at(0))) return null;
+  if (!gone(at(1))) return { out:true };
+  /* on the answer, as above: NPV moves fast in t, so a tolerance on t alone
+     would leave hundreds of thousands on the table */
+  let a = 0, b = 1;
+  for (let i = 0; i < 30; i++) {
+    const m = (a + b) / 2, v = at(m);
+    if (isFinite(v) && Math.abs(v) < EPS) return { t:m };
+    if (gone(v)) b = m; else a = m;
+  }
+  return { t:(a + b) / 2 };
 }
 
 function picker(ref, label, opts) {
@@ -1850,9 +1890,9 @@ function syncControls() {
    stacked blocks with three headings, which read as three sections and ran
    six screens on a phone. */
 const PANES = [
-  ['returns', 'Returns', 'What the deal earns, and the cash flow underneath it.'],
-  ['stress',  'Stress',  'What the structure survives once the terms are struck.'],
-  ['drivers', 'Drivers', 'What was worth checking before they were.'],
+  ['returns',     'Returns',     'What the deal earns, and the cash flow underneath it.'],
+  ['sensitivity', 'Sensitivity', 'Which assumptions the answer actually turns on.'],
+  ['stress',      'Stress',      'How far each one can be wrong before equity is worth nothing.'],
 ];
 
 function secAnalysis(){
@@ -2031,23 +2071,23 @@ function secAnalysis(){
   v1.appendChild(cb);
   panes[0].appendChild(v1);
 
-  /* ---- pane 2: stress ---- */
+  /* ---- pane 3: stress ---- */
   /* not .wide: the three columns the phone keeps fit without scrolling */
   const v2 = $('div', 'viz');
   const be = $('p', 'breakeven-line'); be.id = 'breakeven';
   v2.appendChild(be);
-  v2.appendChild($('p', 'cap', "Each risk at the worst realistic end of its range, alone and then together. A rate move happens before you sign and re-sizes the loan; an operating stress lands after, and equity absorbs it."));
+  v2.appendChild($('p', 'cap', "Each assumption taken the wrong way on its own, as far as its range allows, until equity NPV reaches zero. Every row re-underwrites the deal at the worse number, so the loan re-sizes with it. Least room first."));
   const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
   v2.appendChild(sw2);
-  panes[1].appendChild(v2);
+  panes[2].appendChild(v2);
 
-  /* ---- pane 3: drivers ---- */
+  /* ---- pane 2: sensitivity ---- */
   const v3 = $('div', 'viz');
   v3.appendChild($('h4', null, 'What moves the answer'));
   v3.appendChild($('p', 'cap', "One assumption at a time, taken ten percent either way before close. The bar is how far equity NPV moves from its base; the top row is the assumption worth the most diligence. The ranking is the point, not the magnitudes, and it reorders as you move the dials."));
   const th = $('div'); th.id = 'tornado';
   v3.appendChild(th);
-  panes[2].appendChild(v3);
+  panes[1].appendChild(v3);
 
   const v4 = $('div', 'viz');
   v4.appendChild($('h4', null, "How I'd test the top four"));
@@ -2065,7 +2105,7 @@ function secAnalysis(){
   });
   dt.appendChild(dtb);
   v4.appendChild(dt);
-  panes[2].appendChild(v4);
+  panes[1].appendChild(v4);
 
   panes.forEach(p => out.appendChild(p));
   show(0);
@@ -2314,17 +2354,20 @@ const MID = '#f0efec';
    A tornado laid out as a schedule. Every bar is a complete model run
    through underScenario(), not a derivative, so a clamped input or an
    unfinanceable corner shows up as itself instead of as a smooth line. */
+/* the third field is the unit to print beside the value. The cells carry a
+   `u` of their own, but it is a slider hint as often as a unit — "sizes the
+   debt", "\u00a76418 transfer" — so the ones that are really units are named here. */
 const DRIVERS = [
-  ['PPA price, year 1',         'C13'],
-  ['Availability, steady state','C11'],
-  ['Capex before contingency',  'C22'],
-  ['Fuel contract ceiling',     'C17'],
-  ['Non-fuel opex, year 1',     'C19'],
-  ['Interest rate',             'C25'],
-  ['PPA escalator',             'C14'],
-  ['Target minimum DSCR',       'C24'],
-  ['Contingency',               'C23'],
-  ['Credit monetization',       'C34'],
+  ['PPA price, year 1',         'C13', '$/MWh'],
+  ['Availability, steady state','C11', ''],
+  ['Capex before contingency',  'C22', '$/kW'],
+  ['Fuel contract ceiling',     'C17', '$/ton'],
+  ['Non-fuel opex, year 1',     'C19', '$M'],
+  ['Interest rate',             'C25', ''],
+  ['PPA escalator',             'C14', ''],
+  ['Target minimum DSCR',       'C24', ''],
+  ['Contingency',               'C23', ''],
+  ['Credit monetization',       'C34', ''],
 ];
 
 function drawTornado() {
@@ -2439,46 +2482,91 @@ function drawTornado() {
 
 function drawStress() {
   const host = document.getElementById('stress');
+  if (!host) return;
   host.textContent = '';
-  const base = RESULT();
-  const rows = [['Base case', '', base, true, 'Base case']];
-  const pin = pinDebt();
-  STRESSES.forEach(([name, when, f, short]) => rows.push([name, when,
-    underScenario(when === 'before' ? f() : Object.assign({}, f(), pin), RESULT), false, short]));
-  /* the stack sizes the loan under the pre-close moves, then takes the operating hits on top */
-  const pre = merge(STRESSES.filter(x => x[1] === 'before'));
-  const stackPin = underScenario(pre, pinDebt);
-  const post = merge(STRESSES.filter(x => x[1] === 'after'));
-  rows.push(['All stresses stacked', 'both',
-    underScenario(Object.assign({}, pre, post, stackPin), RESULT), true, 'All stacked']);
+  const head = document.getElementById('breakeven');
+  const base = NPV();
+
+  if (!isFinite(base) || base <= 0) {
+    if (head) head.textContent = 'Equity NPV is already at or below zero at these inputs, so there is no room to measure.';
+    return;
+  }
+
+  const dirs = DRIVERS.map(([, ref]) => adverseDir(ref));
+  const rows = DRIVERS.map(([lbl, ref, unit], i) => {
+    const d = SHEET_BY_NAME['Assumptions'].cells[ref];
+    return { lbl, ref, unit, f:d.f, v0:val('Assumptions', ref),
+             dir:dirs[i], r:driverBreakeven(ref, dirs[i], base) };
+  });
+  /* least room first: the top row is the assumption to be most sure of */
+  rows.sort((a, b) => {
+    const ra = a.r && a.r.at !== undefined ? Math.abs(a.r.pct) : Infinity;
+    const rb = b.r && b.r.at !== undefined ? Math.abs(b.r.pct) : Infinity;
+    return ra - rb;
+  });
+
+  const all = uniformBreakeven(dirs);
+  const tight = rows.find(r => r.r && r.r.at !== undefined);
+
+  if (head) {
+    head.textContent = '';
+    delete head.dataset.t;
+    if (all && all.t !== undefined) head.dataset.t = all.t;
+    if (all && all.t !== undefined) {
+      head.append('Every assumption would have to be ');
+      head.appendChild($('b', null, formatValue(all.t, 'pct1') + ' worse than planned'));
+      head.append(', all at once, to take equity NPV to zero.');
+    } else {
+      head.append('No uniform move within these ranges takes equity NPV to zero.');
+    }
+    if (tight) {
+      head.append(' On its own, the tightest is ');
+      head.appendChild($('b', null, tight.lbl.replace(/,.*$/, '')));
+      head.append(', with ' + formatValue(Math.abs(tight.r.pct), 'pct1') + ' of room.');
+    }
+  }
 
   const t = $('table', 'sched stress');
   const thead = $('thead'), htr = $('tr');
-  ['Case', 'Hits', 'Equity NPV', 'Δ NPV', 'Levered IRR', 'Min DSCR'].forEach((h, i) =>
-    htr.appendChild($('th', (i > 1 ? 'n' : '') + ([1, 3, 4].includes(i) ? ' drop' : ''), h)));
+  [['Assumption', ''], ['Planned', 'n'], ['Zero at', 'n'], ['Move', 'n']]
+    .forEach(([h, c]) => htr.appendChild($('th', c, h)));
   thead.appendChild(htr); t.appendChild(thead);
+
+  /* the unit is a property of the row, not of each figure in it: printing it
+     in both value columns said it twice and cost the phone the width */
+  const num = (v, r) => formatValue(v, r.f);
   const tb = $('tbody');
-  rows.forEach(([name, when, r, strong, short]) => {
+  rows.forEach(r => {
     const tr = $('tr');
-    if (strong) tr.className = 'key';
-    /* both names ride in the cell and CSS picks one, so the phone gets a
-       table it can read rather than a column three words wide */
-    const nm = $('td');
-    nm.append($('span', 'lg', name), $('span', 'sm', short));
+    /* the solved figures, unrounded, so a check can put them back into the
+       model and confirm they really do land on zero */
+    tr.dataset.ref = r.ref;
+    if (r.r && r.r.at !== undefined) { tr.dataset.at = r.r.at; tr.dataset.pct = r.r.pct; }
+    else if (r.r && r.r.out) tr.dataset.survives = r.dir > 0 ? 'max' : 'min';
+    const nm = $('td', null, r.lbl);
+    if (r.unit) nm.append(' ', $('span', 'u', r.unit));
     tr.appendChild(nm);
-    tr.appendChild($('td', 'muted drop', when === 'before' ? 'before close' : when === 'after' ? 'after close' : when === 'both' ? 'both' : ''));
-    const npv = $('td', 'n', formatValue(r.npv, 'num1'));
-    if (r.npv < 0) npv.classList.add('bad');
-    tr.appendChild(npv);
-    const d = r.npv - base.npv;
-    tr.appendChild($('td', 'n muted drop', name === 'Base case' ? '·' : (d >= 0 ? '+' : '') + formatValue(d, 'num1')));
-    tr.appendChild($('td', 'n drop', isFinite(r.irr) ? formatValue(r.irr, 'pct1') : '—'));
-    const ds = $('td', 'n', r.dscr >= 900 ? 'no debt' : formatValue(r.dscr, 'x2'));
-    if (r.dscr < 1) ds.classList.add('bad');
-    tr.appendChild(ds);
+    const p = $('td', 'n muted', num(r.v0, r));
+    tr.appendChild(p);
+
+    if (r.r && r.r.at !== undefined) {
+      tr.appendChild($('td', 'n', num(r.r.at, r)));
+      const m = $('td', 'n');
+      m.textContent = (r.r.pct >= 0 ? '+' : '−') + formatValue(Math.abs(r.r.pct), 'pct1');
+      /* under a tenth of its own value is not much room */
+      if (Math.abs(r.r.pct) < 0.10) m.classList.add('bad');
+      tr.appendChild(m);
+    } else {
+      const c = $('td', 'n muted wide2'); c.colSpan = 2;
+      c.textContent = 'survives its whole range';
+      tr.appendChild(c);
+    }
     tb.appendChild(tr);
   });
   t.appendChild(tb);
+  t.setAttribute('aria-label', 'How far each assumption can move before equity NPV reaches zero, ' +
+    'least room first.' + (tight ? ' ' + tight.lbl + ' has the least, at ' +
+    formatValue(Math.abs(tight.r.pct), 'pct1') + '.' : ''));
   host.appendChild(t);
 }
 
@@ -2547,18 +2635,7 @@ function recalc() {
 }
 
 function heavy() {
-  const be = document.getElementById('breakeven');
-  if (be) {
-    const b0 = breakeven({}), b1 = breakeven(merge(STRESSES));
-    be.textContent = 'Breakeven PPA price, where equity NPV is zero: ';
-    const a = $('b', null, isFinite(b0) ? '$' + formatValue(b0, 'num0') + '/MWh' : 'n.m.');
-    be.appendChild(a);
-    be.append(' at base, ');
-    const c = $('b', null, isFinite(b1) ? '$' + formatValue(b1, 'num0') + '/MWh' : 'n.m.');
-    be.appendChild(c);
-    be.append(' with every stress stacked.');
-  }
-  drawStress();
+  drawStress();      /* writes the headline as well as the table */
   drawTornado();
 }
 

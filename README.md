@@ -139,15 +139,18 @@ Twenty operating years behind a two-year construction period:
   blended rate with state deductible federally, and an election between the production credit
   (ten years, energy-community adder, monetized under §6418) and the investment credit (once at
   COD, halving the depreciable basis by half the credit).
-- **Stress tests that respect timing.** A rate move happens before you sign, so it re-sizes the
-  loan. Operating stresses land on a facility already struck and are absorbed by equity and the
-  cover ratio. The table says which is which, and the stacked case sizes under the pre-close move
-  before taking the operating hits.
+- **Margin of safety, not arbitrary shocks.** For each driver, the value at which equity NPV
+  reaches zero, and the percentage move that takes it there. Every row re-underwrites the deal at
+  the worse number, so the loan re-sizes with it and one basis holds across the table. Plus the
+  summary figure: how far off every assumption has to be *at once* — each by the same fraction of
+  its own value — before equity is worth nothing.
 - **Both returns.** A project IRR on the unlevered stream, where tax carries no interest shield
   and the whole build is funded up front, alongside the levered equity IRR. The spread between
   them is what the financing is actually contributing.
-- **A breakeven solve.** Bisection on the PPA price at which equity NPV is zero, stated above the
-  stress table at base and with every stress stacked.
+- **A breakeven solver that stops on the answer.** Bisection, but the stopping test is on NPV
+  rather than on the input. A tolerance in input units means a different thing for every driver —
+  half a dollar on the PPA price is a million of NPV, half a dollar on capex is nothing — so each
+  solve runs until NPV is inside `EPS` of zero and takes the steps it needs, typically a dozen.
 - **Three checks.** Sources equal uses, debt amortizes to zero, loss carryforwards never go
   negative. A fourth gate sits in front of them: a stream whose EBITDA turns negative inside the
   tenor is not financeable at all, so debt is zero and the badge says so rather than reporting a
@@ -174,8 +177,8 @@ so it is followed by the part that matters:
 
 - **What moves the answer** — a live tornado. Each input taken ten percent either way *before
   close*, so the financing re-sizes around it, ranked by how far equity NPV travels. That is a
-  deliberately different question from the stress table, which asks what happens *after* you have
-  signed and the loan is already struck. Moves are clamped to each slider's own band, and a
+  deliberately different question from the stress pane, which asks how far one thing can go before
+  the equity is gone rather than which thing matters most. Moves are clamped to each slider's own band, and a
   clamped driver says so, because a 10% move on 91% availability is not 100% availability.
 - **What I'd validate, and who I'd ask** — each top driver mapped to the diligence that would
   actually settle it.
@@ -255,24 +258,58 @@ The assumptions column is `align-self:start` and sticky, so it stops where it st
 stretching to whichever readout is open, and stays put while a long one scrolls past. The divider
 moved to the outputs column, which always runs the full height of the row.
 
+The readouts are **Returns, Sensitivity, Stress**, in that order: what the deal earns, which
+assumptions the answer turns on, then how far each can be wrong. Sensitivity sits second because
+it is the question that decides which rows of the third one you care about.
+
+### Why the stress pane was rewritten
+
+It applied seven shocks of fixed size — capex +25%, price −15% — and printed the NPV that fell
+out. Nothing on the page said whether 25% was a lot, so the figures had no reference and the pane
+read as arbitrary. Worse, it invited the wrong comparison: the shocks were not calibrated against
+each other, so their ranking meant nothing.
+
+It now answers what those shocks were reaching for. For every driver: the planned value, the value
+at which equity NPV reaches zero, and the move between them as a percentage — sorted least room
+first, so the top row is the assumption to be most sure of. Two drivers survive their whole
+declared range and say so, which is its own finding: raising the cover target or losing credit
+monetization cannot wipe the equity on their own.
+
+Above it sits the number the user actually asked for, and the most quotable thing in 6.0: **every
+assumption 1.9% worse than planned, all at once**, takes equity NPV to zero — against 6.5% of room
+on the tightest single one. That gap between one-at-a-time and all-at-once is the real lesson of
+the pane, and it is now a sentence rather than an inference.
+
+What was lost, deliberately: the before-close/after-close distinction, which had the loan re-sized
+by a rate move but pinned against operating misses. Every row here re-underwrites the deal, which
+is one basis rather than two and is the right one for "how wrong could my view be." The seven
+named scenarios and the stacked case are gone with it.
+
+Six tests hold the arithmetic, and they are the strongest in the suite because they can put the
+answer back into the model: every printed breakeven is fed to the model and must return zero;
+a step back toward plan must still be worth something and a step past it must not; the percentage
+must be the move it claims; a driver that "survives its range" must actually survive it; and the
+across-the-board figure must zero the deal, with half of it leaving value and half again past it
+not.
+
 Series colours `#2a78d6` / `#eb6834` were validated against the white surface: CVD ΔE 24.7,
 normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 123 checks.
+Three suites, run against a headless browser. 148 checks.
 
-- **`site.js`** (99) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (121) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
-- **`crosscheck.js`** (8) — an **independent implementation** of the whole project model, written
+- **`crosscheck.js`** (7) — an **independent implementation** of the whole project model, written
   from the stated mechanics rather than from the workbook, compared against the page across 250
   random input vectors and 14 fields including IRR. It also asserts that the headline tiles agree
-  with the stress table's base case, which are computed by different paths, and that structural
+  with that independent model at base case, and that structural
   invariants hold on every vector: no negative debt or equity, leverage inside its cap, sources
   equal uses, debt amortized.
-- **`mobile.js`** (16) — responsive layout at 390px and 768px, plus the phone audit: every
+- **`mobile.js`** (20) — responsive layout at 390px and 768px, plus the phone audit: every
   section reachable in the nav whichever one is active, the source bar hidden where it would
   truncate, tapping a figure revealing its full source inside the viewport, the assumption
   panel starting closed, the model's outputs within one screen of its heading, and sticky
@@ -376,11 +413,10 @@ could catch, and each got a different treatment rather than a smaller font:
 - **Eighteen open dials pushed the model's own outputs a screen and a half below its heading.**
   The assumption panel starts closed on a phone. The outputs now sit 646px from the divider.
 - **The stress table exploded to 2,012px.** The generic `.sched` rule restacks any schedule into
-  records on a phone, which turned 9 rows × 6 columns into 54 stacked lines — five of every six an
-  unlabelled number. It stays a table below 680px and drops to the three columns that answer the
-  question: what the case is, what equity gets, whether it still covers debt. `STRESSES` carries a
-  short name as a fourth field, the way `SECTIONS` does, and a `min-width:430px` floor left over
-  from when it had to scroll now applies only above 680px.
+  records on a phone, which turned it into rows of unlabelled numbers. It stays a table below
+  680px, on fixed layout so the names take the slack and the figure columns are pinned to what a
+  figure needs. The unit moved from each value to the row label, which said it once instead of
+  twice and gave the phone back the width.
 
 ## Still to decide
 
