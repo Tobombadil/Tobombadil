@@ -83,7 +83,7 @@ agree.
 Hovering any figure names it and says, in a sentence, where the number came from, with live
 operands substituted:
 
-> **Equity NPV**  ·  **$81.5M**  Discounted equity cash flow plus the terminal value, less the
+> **Equity NPV**  ·  **$51.7M**  Discounted equity cash flow plus the terminal value, less the
 > equity drawn across the two-year build.
 
 This replaced a bar that printed the raw formula. `=C5+C6` was legible when the page was a
@@ -180,9 +180,43 @@ the study itself cites:
 | Debt rate | 6.5% | A market project-finance rate; the source uses a USDA guaranteed-loan programme rate, which is a financing route rather than a parameter and would read as an error without its context |
 | Acquisition | absent | This is a relocation capex model and always was. No acquisition price, ask or bid appears |
 
-The unlevered return lands at 26.5% against the source study's 25.4%, so the economics carry
-across; scale is return-neutral, so moving to 50 MW changes the absolute figures and not the
-percentages. **The leverage cap now binds instead of the covenant**, because a relocated plant is
+### Where the return comes from, and why the base case moved
+
+Aligning to the study produced a 26.5% unlevered return, which matched its 25.4% but invited
+"your model is optimistic" as the first question in any room. A diagnostic took every assumption
+to a conservative value one at a time and measured what it cost:
+
+| | cost to unlevered IRR |
+|---|---|
+| capex 1,065 → 2,500 $/kW | **−15.6pp** |
+| no tax credits at all | **−11.4pp** |
+| PPA 110 → 95 $/MWh | −6.9pp |
+| fuel at the ceiling from day one | −4.4pp |
+| availability 95% → 88% | −2.7pp |
+| straight-line rather than bonus depreciation | −1.4pp |
+| no terminal value | −0.3pp |
+
+The return was not spread across the model. It was two bets: buying the equipment at a fifth of
+new-build cost, and monetizing ten years of §45Y. Financing terms — leverage, tenor, rate — move
+the equity return but not the project return at all, which is the correct behavior and worth
+seeing.
+
+The credits are statute and stayed. The capex was carrying a **distressed acquisition**, which is
+a deal-specific advantage rather than a market parameter, and on a public page that reads as an
+optimistic model rather than as a good trade. It moved to a relocation cost anyone would
+recognize — 2,000 $/kW before contingency, about 55% of new build all-in — and availability came
+off best-in-class to merely good.
+
+The base case is now **12.9% unlevered, 24.2% to equity, 1.40x cover**, and the **covenant binds
+again instead of the leverage cap**, so the sculpt holds at its target the way the page describes.
+Every headline figure sits inside or beside its benchmark band. The upside is still one drag of
+the capex dial away, which is the better argument anyway: it shows where the value in a relocation
+actually comes from rather than asserting it. A paragraph in the model footer says all of this in
+four sentences.
+
+Which constraint binds is written at recalc rather than fixed in the markup, because it moves with
+the dials — a test asserts the page names whichever one is actually binding, and that when the
+covenant binds, cover sits exactly on it. **The leverage cap now binds instead of the covenant**, because a relocated plant is
 capex-light enough that the sculpt would support far more debt than 80% of funded cost. Minimum
 cover therefore sits at 2.47x rather than at the 1.40x target — still flat in every year, which is
 the property the sculpt actually guarantees, and the page says so rather than claiming the target.
@@ -361,9 +395,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 157 checks.
+Three suites, run against a headless browser. 158 checks.
 
-- **`site.js`** (130) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (131) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.

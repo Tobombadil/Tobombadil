@@ -678,16 +678,16 @@ const SHEETS = [
     C9: {v:50,    f:'num0', input:true, min:10,   max:80,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant',
          mkt:[20,80],       s:'IND'},
     C10:{v:0.9167,f:'pct0', mkt:[0.88,0.97], s:'IND'},
-    C11:{v:0.95,  f:'pct0', input:true, min:0.50, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant',
-         mkt:[0.85,0.95],   s:'IND'},
-    C12:{v:0.85,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant',
-         mkt:[0.75,0.90],   s:'IND'},
+    C11:{v:0.91,  f:'pct0', input:true, min:0.50, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant',
+         mkt:[0.85,0.95],   s:'IND', note:'95% is best-in-class, not a plan'},
+    C12:{v:0.80,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant',
+         mkt:[0.75,0.90],   s:'IND', note:'a relocated unit commissions slowly'},
 
     C13:{v:110,   f:'num0', input:true, min:55,   max:150,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel',
-         mkt:[90,130],      s:'NOVO'},
+         mkt:[90,130],      s:'NOVO', note:'Snowflake AZ contracts at 110'},
     C14:{v:0.025, f:'pct1', input:true, min:0,    max:0.04, step:0.005,lbl:'PPA escalator', u:'p.a.', grp:'Offtake & fuel',
          mkt:[0.02,0.03],   s:'IND'},
-    C15:{v:1.39,  f:'num2', mkt:[1.2,1.6], s:'IND'},
+    C15:{v:1.39,  f:'num2', mkt:[1.2,1.6], s:'IND', note:'green tons, so moisture drives it'},
     C16:{v:20,    f:'num0', input:true, min:0,    max:60,   step:1,    lbl:'Delivered fuel cost today', u:'$/green ton', grp:'Offtake & fuel',
          mkt:[10,35],       s:'IND'},
     C17:{v:35,    f:'num0', input:true, min:10,   max:110,  step:1,    lbl:'Fuel contract ceiling', u:'$/green ton', grp:'Offtake & fuel',
@@ -696,14 +696,14 @@ const SHEETS = [
          mkt:[5,15],        s:'TERM'},
 
     C19:{v:16.1,  f:'num1', input:true, min:6,    max:30,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital',
-         mkt:[13.8,18.4],   s:'IND'},
+         mkt:[13.8,18.4],   s:'IND', note:'all-in: labor, tax, insurance, lease, water, SG&A'},
     C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital',
          mkt:[0.02,0.03],   s:'CPI'},
     C21:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
-    C22:{v:1065,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital',
-         mkt:[4000,5000],   s:'ATB', note:'new build; relocation is a fraction of it'},
+    C22:{v:2000,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital',
+         mkt:[4000,5000],   s:'ATB', note:'new build; this is 55% of it all-in. Drag it to 1,065 for equipment bought distressed'},
     C23:{v:0.35,  f:'pct0', input:true, min:0.10, max:1.00, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital',
-         mkt:[0.30,0.50],   s:'AACE'},
+         mkt:[0.30,0.50],   s:'AACE', note:'what a Class 5 estimate carries'},
 
     C24:{v:1.40,  f:'x2',   input:true, min:1.20, max:2.00, step:0.05, lbl:'Target minimum DSCR', u:'sizes the debt', grp:'Financing',
          mkt:[1.30,1.50],   s:'IND'},
@@ -712,7 +712,7 @@ const SHEETS = [
     C26:{v:20,    f:'num0', input:true, min:5,    max:25,   step:1,    lbl:'Debt tenor', u:'yrs', grp:'Financing',
          mkt:[15,20],       s:'IND'},
     C27:{v:0.80,  f:'pct0', input:true, min:0.30, max:0.85, step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing',
-         mkt:[0.65,0.80],   s:'IND'},
+         mkt:[0.65,0.80],   s:'IND', note:'on funded cost, not on capex'},
     C28:{v:0.10,  f:'pct1', input:true, min:0.06, max:0.20, step:0.005,lbl:'Equity discount rate', u:'p.a.', grp:'Financing',
          mkt:[0.09,0.12],   s:'IND'},
 
@@ -722,7 +722,7 @@ const SHEETS = [
     C32:{v:0.10,  f:'pct0', s:'IRC45Y'},
     C33:{v:0.30,  f:'pct0', s:'IRC48E'},
     C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetization', u:'\u00a76418 transfer', grp:'Tax & incentives',
-         mkt:[0.90,0.95],   s:'X6418'},
+         mkt:[0.90,0.95],   s:'X6418', note:'the buyer takes the discount'},
     C35:{v:0.21,  f:'pct0', s:'IRC'},
     C36:{v:0.049, f:'pct1', s:'AZ'},
     C37:{v:1,     f:'num0'},
@@ -1789,9 +1789,9 @@ function secMarket(){
 /* Where each benchmark comes from. Statute is cited by section. Two published
    references are named because they publish these categories directly. The
    rest say "industry range", which is honest: a range everyone in the sector
-   would recognise, not a figure lifted from a paper that never printed it. */
+   would recognize, not a figure lifted from a paper that never printed it. */
 const BENCH = {
-  IND:    ['industry range',   'Ranges a biomass developer, lender or IE would recognise. Not a published figure.'],
+  IND:    ['industry range',   'Ranges a biomass developer, lender or IE would recognize. Not a published figure.'],
   TERM:   ['contract term',    'Set by the supply agreement rather than by a market: how long the price has to climb from today to its ceiling.'],
   BLEND:  ['IRC + A.R.S.',     'The two statutory rates combined: state tax is deductible against federal, so the blend is less than their sum.'],
   ATB:    ['NREL ATB',         'National Renewable Energy Laboratory, Annual Technology Baseline — dedicated biomass.'],
@@ -2122,7 +2122,7 @@ function secAnalysis(){
    ['Levered equity IRR', 'C56', 'pct1', 'After debt', '', '',
     { mkt:[0.12, 0.18], f:'pct0', s:'IND', note:'sponsor target' }],
    ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M', null],
-   ['Minimum DSCR', 'C57', 'x2', 'Flat by construction; the leverage cap binds first', '', '',
+   ['Minimum DSCR', 'C57', 'x2', '', '', '',
     { mkt:[1.30, 1.45], f:'x2', s:'IND', note:'lender requirement' }]].forEach(([k, ref, f, n, pre, suf, bm]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
@@ -2132,7 +2132,11 @@ function secAnalysis(){
     v.appendChild(cell('Model', ref, { f }));
     if (suf) v.append(suf);
     t.appendChild(v);
-    t.appendChild($('span', 'n', n));
+    const nn = $('span', 'n', n);
+    /* which constraint binds moves with the dials, so this one is written at
+       recalc rather than fixed here */
+    if (ref === 'C57') nn.id = 'dscr-note';
+    t.appendChild(nn);
     if (bm) { const m = marketLine(bm); if (m) t.appendChild(m); }
     ot.appendChild(t);
   });
@@ -2154,7 +2158,7 @@ function secAnalysis(){
 
   const v1 = $('div', 'viz wide');
   v1.appendChild($('h4', null, 'Cash flow cover, years 1–20'));
-  v1.appendChild($('p', 'cap', "In $M. Debt service is sculpted to hold the cover ratio flat, so it tracks EBITDA rather than sitting level. Sized at the lesser of what that sculpt supports and the leverage cap; here the cap binds, which is why cover sits well above its target. The gap is what's left for equity before tax."));
+  v1.appendChild($('p', 'cap', "In $M. Debt service is sculpted to hold the cover ratio flat, so it tracks EBITDA rather than sitting level. Sized at the lesser of what that sculpt supports and the leverage cap, so cover sits at the target when the covenant binds and above it when the cap does. The gap is what's left for equity before tax."));
   const lr = $('div', 'legend-row');
   [['EBITDA', 'var(--series-1)'], ['Debt service', 'var(--series-2)']].forEach(([t, c]) => {
     const sp = $('span');
@@ -2207,6 +2211,11 @@ function secAnalysis(){
 
   /* ---- the footer, across both columns ---- */
   const foot = $('div', 'mfoot');
+  /* the first question anyone asks a model showing a good return */
+  const wr = $('p');
+  wr.append($('b', null, 'Where the return comes from. '),
+    "Taken one at a time to a conservative value, two assumptions carry most of it: capex, worth about 16 points of unlevered return between a distressed equipment buy and a full-price one, and ten years of \u00a745Y monetized under \u00a76418, worth about 11. Everything else is worth three points or less, and the terminal value is nine percent of gross present value. Capex is set here at a relocation cost anyone would recognize rather than at the distressed number, so the upside is on the dial rather than in the answer.");
+  foot.appendChild(wr);
   const gp = $('p');
   gp.append($('b', null, 'What this leaves out. '),
     "A financing model would add a real construction drawdown, a cash sweep and covenant lockup, post-tax sculpting, a tax equity flip, working capital and a merchant tail. None of it is here. The first thing I'd ask about someone else's model is which of those they skipped.");
@@ -2720,6 +2729,16 @@ function recalc() {
 
   const lev = document.getElementById('leverage');
   if (lev) lev.textContent = formatValue(val('Model', 'C51'), 'pct0');
+
+  /* the sculpt always holds cover flat; whether it holds it AT the target
+     depends on which of the two constraints is the binding one */
+  const dn = document.getElementById('dscr-note');
+  if (dn) {
+    const capBinds = val('Model', 'C44') < val('Model', 'C42');
+    dn.textContent = capBinds
+      ? 'Flat by construction; the leverage cap binds before the covenant'
+      : 'Flat by construction; the covenant is what sizes the loan';
+  }
 
   const badge = document.getElementById('tie');
   if (badge) {
