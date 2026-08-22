@@ -1981,6 +1981,9 @@ const TRADE = () => {
   const read = () => ({
     capex:val('Assumptions', 'C46'), funding:val('Model', 'C49'),
     months:val('Assumptions', 'C62'),
+    debt:val('Model', 'C45'), lev:val('Model', 'C51'),
+    /* which of the two limits actually struck the loan */
+    sizedBy:val('Model', 'C44') < val('Model', 'C42') ? 'leverage cap' : 'cash flow',
     equity:val('Model', 'C50'), proj:val('Model', 'C63'),
     npv:val('Model', 'C55'), dscr:val('Model', 'C57'),
     financeable:val('Model', 'C40'),
@@ -2267,8 +2270,8 @@ function secAnalysis(){
   const tbars = $('div'); tbars.id = 'tradebars';
   tr.appendChild(tbars);
   const tn = $('p');
-  tn.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:74ch';
-  tn.textContent = "Nobody builds greenfield biomass at a market power price, which is the point: at new-build cost the same contracted plant does not clear its own cost of capital. The asset is only interesting because the equipment already exists and can be moved.";
+  tn.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:78ch';
+  tn.textContent = "The leverage dial is the same in both columns, so the equity does not move because anyone changed the capital structure. Debt is the lesser of what the cash flow will carry and what the leverage cap allows, and the cash flow is identical here: the same plant, the same offtake, the same fuel. Quadruple the capital cost and the debt cannot follow, so the covenant takes over from the cap and equity absorbs the whole difference. Lenders size on cash flow, not on cost, which is why nobody builds greenfield biomass at a market power price.";
   tr.appendChild(tn);
   panes[0].appendChild(tr);
 
@@ -2847,20 +2850,37 @@ function drawTrade() {
   [['Months to first power', 'months', 'num0', '', ' mo', true],
    ['Capital cost, all in', 'capex', 'num1', '$', 'M', true],
    ['Funding requirement',  'funding', 'num1', '$', 'M', true],
+   ['Senior debt',          'debt', 'num1', '$', 'M', null],
    ['Equity required',      'equity', 'num1', '$', 'M', true],
+   ['Leverage, of funding', 'lev', 'pct1', '', '', false],
+   ['Debt sized by',        'sizedBy', 'text', '', '', null],
+   ['Minimum cover',        'dscr', 'x2', '', '', false],
    ['Project IRR',          'proj', 'pct1', '', '', false],
    ['Equity NPV',           'npv', 'num1', '$', 'M', false],
-   ['Minimum cover',        'dscr', 'x2', '', '', false],
   ].forEach(([lbl, k, f, pre, suf, lowerIsBetter]) => {
     const tr2 = $('tr');
     tr2.appendChild($('td', null, lbl));
+    if (f === 'text') {
+      /* the punchline of the whole comparison, so it is a row rather than
+         something a reader has to infer from the two above it */
+      tr2.appendChild($('td', 'n', brown[k]));
+      tr2.appendChild($('td', 'n muted', green[k]));
+      tr2.appendChild($('td', 'n muted', brown[k] === green[k] ? 'same' : 'differs'));
+      tb.appendChild(tr2);
+      return;
+    }
     tr2.appendChild($('td', 'n', num(brown[k], f, pre, suf)));
     tr2.appendChild($('td', 'n muted', num(green[k], f, pre, suf)));
     const d = brown[k] - green[k];
-    const good = lowerIsBetter ? d < 0 : d > 0;
-    const dc = $('td', 'n ' + (isFinite(d) && d !== 0 ? (good ? 'good' : 'bad') : 'muted'));
+    /* null means the row has no better direction: more debt is not a win */
+    const good = lowerIsBetter === null ? null : lowerIsBetter ? d < 0 : d > 0;
+    const dc = $('td', 'n ' + (good !== null && isFinite(d) && d !== 0
+      ? (good ? 'good' : 'bad') : 'muted'));
+    /* a difference of two percentages is points, not percent */
     dc.textContent = !isFinite(d) ? '\u2014'
-      : (d >= 0 ? '+' : '\u2212') + num(Math.abs(d), f, pre, suf);
+      : (d >= 0 ? '+' : '\u2212') + (f.startsWith('pct')
+          ? formatValue(Math.abs(d), f).replace('%', '') + ' pts'
+          : num(Math.abs(d), f, pre, suf));
     tr2.appendChild(dc);
     tb.appendChild(tr2);
   });
