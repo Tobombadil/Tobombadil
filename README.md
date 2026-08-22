@@ -383,6 +383,50 @@ moved to the outputs column, which always runs the full height of the row.
 The readouts are **Trade, Returns, Sensitivity, Stress**. The trade leads because it is the
 pitch; the rest describe the thing it is pitching.
 
+### The case, before the arithmetic
+
+A model with no thesis over it is a spreadsheet. 6.0 now opens on the argument
+the numbers are evidence for, in four moves:
+
+- **The demand.** AI load is the largest new-load event in a generation, and what it is short of
+  is not capital but a delivery date. Turbine slots are ordered years out and large-load
+  interconnection takes years more.
+- **The asset.** Small biopower plants sit idle, stranded when qualifying-facility contracts
+  expired or when the host mill that supplied both their steam load and their fuel shut down.
+- **The fuel.** Mill residuals and restoration thinnings are a disposal cost to whoever holds
+  them. Where the counterparty pays to have material taken away, delivered fuel prices at haulage.
+- **The story.** Restoration thinning reduces the fuel load that drives catastrophic fire, which
+  is a better answer to "where does your firm power come from" than a new gas peaker, and a real
+  co-benefit rather than a label.
+
+Followed immediately by what would kill it: interconnection at the destination, the air permit,
+fuel security over twenty years, and condition risk in used equipment. A test asserts the
+counterweight is there and names all four — a thesis with no case against it is a pitch deck.
+
+### Time to power is a model output
+
+Speed is the product, so it stops being prose. Four stage durations taken from a real relocation
+schedule become cells, and the critical path sums to first power:
+
+| | months |
+|---|---|
+| Development and financing | 11 |
+| Dismantle, crate and haul | 7 |
+| Foundations and re-erection | 4 |
+| Commissioning to first power | 3 |
+| **First power** | **25** |
+| Full commercial operation | 27 |
+
+Permitting runs alongside financing rather than after it, so it is not on the path; the long pole
+inside it is the air permit. The Trade readout puts that 25 against what else a buyer short of
+firm capacity could order — a new biomass plant at 42 months, new gas at 48–72 including the
+turbine slot, new nuclear at 120–180 — because on that axis a relocated plant is not competing
+with new biomass, it is competing with a queue position.
+
+Durations and stage names only. No dates, no route, no site, no counterparty. Tests assert the
+figure is the sum of its stages rather than a typed number, that relocation is the fastest row,
+and that only the row this model computes is labelled as coming from this model.
+
 ### The trade is the thesis, and it is computed
 
 The capex gap is not an awkward assumption to defend. It is the whole trade: the same plant, the
@@ -440,9 +484,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 172 checks.
+Three suites, run against a headless browser. 182 checks.
 
-- **`site.js`** (145) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (155) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.

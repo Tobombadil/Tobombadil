@@ -160,6 +160,26 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .job li::before{content:"—";position:absolute;left:0;color:var(--ink-3)}
 
 /* ── the live model ────────────────────────────────────────────────── */
+/* the case, above the model that serves it */
+.why{margin:0 0 26px}
+.why h3{margin:0 0 12px;font:700 12px var(--sans)}
+.whys{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule)}
+.whyc{padding:13px 15px;border-right:1px solid var(--rule)}
+.whyc:last-child{border-right:0}
+.whyc b{display:block;font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;
+        color:var(--copper);margin-bottom:6px}
+.whyc p{margin:0;font-size:12.5px;line-height:1.55;color:var(--prose)}
+.against{margin:12px 0 0;font:italic 12px var(--sans);line-height:1.6;color:var(--ink-3);max-width:96ch}
+@media (max-width:900px){
+  .whys{grid-template-columns:repeat(2,1fr)}
+  .whyc:nth-child(2){border-right:0}
+  .whyc:nth-child(1),.whyc:nth-child(2){border-bottom:1px solid var(--rule)}
+}
+@media (max-width:560px){
+  .whys{grid-template-columns:1fr}
+  .whyc{border-right:0;border-bottom:1px solid var(--rule)}
+  .whyc:last-child{border-bottom:0}
+}
 .model{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--rule);background:var(--paper)}
 /* The dials stop where they stop rather than stretching to whichever readout
    is open, which otherwise left a tall empty panel under them, and they stay
@@ -253,12 +273,13 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .trade-t td.bad{color:var(--bad);font-weight:600}
 .trade-t tr:last-child td{border-bottom:0}
 /* the same gap as a picture */
-#tradebars{margin-top:20px}
-#tradebars h4{margin:0 0 10px;font:700 12px var(--sans)}
+#timeline,#tradebars{margin-top:22px}
+#timeline h4,#tradebars h4{margin:0 0 3px;font:700 12px var(--sans)}
+#timeline .cap{margin:0 0 11px}
 /* .cbar, not .tbar: that name is already an absolutely-positioned 5px rule
    elsewhere on the page, and inheriting its position broke this one */
 .cbar{display:flex;align-items:center;gap:12px;margin-bottom:9px;font-size:12px}
-.cbar .l{flex:0 0 74px;color:var(--ink-2)}
+.cbar .l{flex:0 0 168px;color:var(--ink-2)}
 .cbar .tk{flex:1 1 auto;height:16px;background:var(--paper-2);min-width:0}
 .cbar i{display:block;height:100%}
 .cbar i.own{background:var(--good)}
@@ -267,7 +288,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .cbar .p{flex:0 0 76px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-3);font-size:11px}
 @media (max-width:680px){
   .cbar{gap:8px;font-size:11.5px}
-  .cbar .l{flex-basis:60px}
+  .cbar .l{flex-basis:96px}
   .cbar .v{flex-basis:54px}
   .cbar .p{display:none}
 }
@@ -777,6 +798,23 @@ const SHEETS = [
     C39:{v:0.80,  f:'pct0', s:'IRC172'},
     C40:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
 
+    /* The critical path to first power, in months. Permitting runs alongside
+       financing rather than after it, so it is not on this path; the long pole
+       inside it is the air permit, which is why the range on C61 is wide. */
+    C55:{v:11,    f:'num0', input:true, min:6,  max:24, step:1, lbl:'Development and financing', u:'months', grp:'Schedule',
+         mkt:[9,18],   s:'IND'},
+    C56:{v:7,     f:'num0', input:true, min:4,  max:14, step:1, lbl:'Dismantle, crate and haul', u:'months', grp:'Schedule',
+         mkt:[6,12],   s:'IND'},
+    C57:{v:4,     f:'num0', input:true, min:2,  max:12, step:1, lbl:'Foundations and re-erection', u:'months', grp:'Schedule',
+         mkt:[4,10],   s:'IND'},
+    C58:{v:3,     f:'num0', input:true, min:1,  max:8,  step:1, lbl:'Commissioning to first power', u:'months', grp:'Schedule',
+         mkt:[2,6],    s:'IND'},
+    C59:{v:2,     f:'num0', mkt:[1,4], s:'IND'},          /* first power to full COD */
+    C61:{v:42,    f:'num0', input:true, min:24, max:72, step:1, lbl:'Greenfield, for comparison', u:'months', grp:'Schedule',
+         mkt:[36,48],  s:'IND', note:'a new biomass plant, ordered and built'},
+    C62:{v:'=C55+C56+C57+C58', f:'num0'},                 /* months to first power */
+    C63:{v:'=C62+C59', f:'num0'},                         /* months to full operation */
+
     C45:{v:'=C9*1000*C10', f:'num0'},
     C46:{v:'=C9*1000*C22*(1+C23)/1000000', f:'num1'},
     C47:{v:'=C35+C36*(1-C35)', f:'pct1', s:'BLEND'},
@@ -1182,6 +1220,19 @@ const SITE = {
     ['Fuel',
      "Term, ceiling, indexation, and what happens the year the ceiling binds. Here that outranks the interest rate."],
   ],
+
+  /* the argument the model is evidence for. Four moves, then the case against */
+  thesis:[
+    ['The demand',
+     "AI load is the largest new-load event in a generation, and what it is short of is not capital but a delivery date. Turbine slots are ordered years out and large-load interconnection takes years more. Firm, low-carbon and soon is a combination almost nothing can currently offer."],
+    ['The asset',
+     "Small biopower plants sit idle across the country, stranded when qualifying-facility contracts expired or when the host mill that supplied both their steam load and their fuel shut down. Boiler, turbine-generator and balance of plant are frequently still serviceable."],
+    ['The fuel',
+     "Mill residuals and forest-restoration thinnings are a disposal cost to whoever holds them, not a product. Where the counterparty pays to have the material taken away, delivered fuel prices at haulage rather than at commodity, which is what the fuel dials below assume and then take away again."],
+    ['The story',
+     "Restoration thinning reduces the fuel load that drives catastrophic fire. For a utility or a hyperscaler being asked where its firm power comes from, wildfire mitigation and forest health is a materially better answer than a new gas peaker, and it is a real co-benefit rather than a label."],
+  ],
+  against:"What would kill it: interconnection at the destination, which is the long pole unless you site behind the meter or on ground that already has capacity; the air permit, which is the slowest thing on the critical path and the one a community can contest; fuel security, because free today is not free for twenty years, which is why the model ramps to a contract ceiling; and condition risk in used equipment, which an ultrasonic inspection either clears or does not.",
 
   next:[
     "Thirty minutes, no deck. I'd rather hear which market you're short of coverage in than talk about myself.",
@@ -1929,12 +1980,15 @@ const NPV = () => val('Model', 'C55');
 const TRADE = () => {
   const read = () => ({
     capex:val('Assumptions', 'C46'), funding:val('Model', 'C49'),
+    months:val('Assumptions', 'C62'),
     equity:val('Model', 'C50'), proj:val('Model', 'C63'),
     npv:val('Model', 'C55'), dscr:val('Model', 'C57'),
     financeable:val('Model', 'C40'),
   });
   const brown = read();
+  /* greenfield moves both what it costs and how long it takes */
   const green = underScenario({ 'Assumptions!C22':val('Assumptions', 'C41') }, read);
+  green.months = val('Assumptions', 'C61');
   return { brown, green };
 };
 
@@ -2050,6 +2104,22 @@ function secAnalysis(){
   intro.appendChild($('b', 'em-n', ''));
   intro.append(" of the capital cost, because the equipment already exists. Parameters are industry ranges and public benchmarks, tax is statute, and each dial carries the range it sits in. No client, no counterparty, no site and no transaction term appears anywhere in it.");
   w.appendChild(intro);
+
+  /* the argument, before the arithmetic that serves it */
+  const why = $('div', 'why');
+  why.appendChild($('h3', null, 'Why this trade, now'));
+  const wg = $('div', 'whys');
+  SITE.thesis.forEach(([k, v]) => {
+    const c = $('div', 'whyc');
+    c.appendChild($('b', null, k));
+    c.appendChild($('p', null, v));
+    wg.appendChild(c);
+  });
+  why.appendChild(wg);
+  const ag = $('p', 'against');
+  ag.textContent = SITE.against;
+  why.appendChild(ag);
+  w.appendChild(why);
 
   const box = $('div', 'model');
 
@@ -2192,6 +2262,8 @@ function secAnalysis(){
   const tt = $('table', 'sched trade-t');
   tt.id = 'trade';
   tr.appendChild(tt);
+  const clock = $('div'); clock.id = 'timeline';
+  tr.appendChild(clock);
   const tbars = $('div'); tbars.id = 'tradebars';
   tr.appendChild(tbars);
   const tn = $('p');
@@ -2675,6 +2747,58 @@ function drawTornado() {
   host.appendChild(t);
 }
 
+/* What a buyer who needs firm power is actually choosing between. Capital cost
+   is the second question; the first is when the electrons arrive, and on that
+   axis a relocated plant is not competing with new biomass, it is competing
+   with a turbine slot and an interconnection queue. */
+const ALTERNATIVES = [
+  ['New biomass plant', 'C61', 'alt', [36, 48]],
+  ['New gas, incl. turbine slot', null, 'alt', [48, 72]],
+  ['New nuclear', null, 'alt', [120, 180]],
+];
+
+function drawTimeline() {
+  const host = document.getElementById('timeline');
+  if (!host) return;
+  host.textContent = '';
+  const own = val('Assumptions', 'C62');
+  if (!isFinite(own) || own <= 0) return;
+
+  const rows = [['Relocate this plant', own, 'own', null]];
+  ALTERNATIVES.forEach(([lbl, ref, cls, band]) => {
+    const v = ref ? val('Assumptions', ref) : (band[0] + band[1]) / 2;   /* the dial wins */
+    rows.push([lbl, v, cls, band]);
+  });
+  const max = Math.max(...rows.map(r => r[1]));
+
+  host.appendChild($('h4', null, 'Months to first power'));
+  host.appendChild($('p', 'cap', 'What a buyer short of firm capacity is choosing between. The relocation schedule is the sum of its own critical path; the rest are the lead times those routes carry today.'));
+  const wrap = $('div', 'cbars');
+  rows.forEach(([lbl, v, cls, band]) => {
+    const r = $('div', 'cbar');
+    r.appendChild($('span', 'l', lbl));
+    const track = $('div', 'tk');
+    const fill = $('i', cls);
+    fill.style.width = (v / max * 100) + '%';
+    track.appendChild(fill);
+    r.appendChild(track);
+    r.appendChild($('span', 'v', formatValue(v, 'num0') + ' mo'));
+    r.appendChild($('span', 'p', band ? band[0] + '\u2013' + band[1] : 'this model'));
+    wrap.appendChild(r);
+  });
+  host.appendChild(wrap);
+  /* written, not cell()d: paintCells runs before heavy(), so a cell created
+     here would never be filled in */
+  const fn = $('p', 'cap');
+  fn.style.margin = '9px 0 0';
+  fn.textContent = 'First power is unit one. Full commercial operation follows '
+    + formatValue(val('Assumptions', 'C59'), 'num0') + ' months later, at '
+    + formatValue(val('Assumptions', 'C63'), 'num0') + ' months from the start.';
+  host.appendChild(fn);
+  host.setAttribute('aria-label', 'Months to first power: ' +
+    rows.map(r => r[0] + ' ' + formatValue(r[1], 'num0')).join(', ') + '.');
+}
+
 /* the same two capital costs as a picture, because a four-times gap read down
    a column is a fact and seen side by side is an argument */
 function drawTradeBars(brown, green, netkW) {
@@ -2720,7 +2844,8 @@ function drawTrade() {
   const num = (v, f, pre, suf) => !isFinite(v) ? 'n.m.'
     : (pre || '') + formatValue(v, f) + (suf || '');
   const tb = $('tbody');
-  [['Capital cost, all in', 'capex', 'num1', '$', 'M', true],
+  [['Months to first power', 'months', 'num0', '', ' mo', true],
+   ['Capital cost, all in', 'capex', 'num1', '$', 'M', true],
    ['Funding requirement',  'funding', 'num1', '$', 'M', true],
    ['Equity required',      'equity', 'num1', '$', 'M', true],
    ['Project IRR',          'proj', 'pct1', '', '', false],
@@ -2740,6 +2865,7 @@ function drawTrade() {
     tb.appendChild(tr2);
   });
   host.appendChild(tb);
+  drawTimeline();
   drawTradeBars(brown, green, val('Assumptions', 'C45'));
   host.setAttribute('aria-label', 'The same project relocated against built new. ' +
     'Relocating costs ' + formatValue(brown.capex, 'num1') + ' million against ' +
