@@ -198,6 +198,28 @@ A 5×5 NPV heatmap used to sit alongside the tornado. It answered the same quest
 drivers that the tornado answers over ten, so 6.0 carried three overlapping sensitivity displays.
 It was cut.
 
+### One instrument, three readouts
+
+6.0 used to run 5,017px on a phone — 5.9 screens, nearly twice the next-largest section — and it
+read as three separate things: a model box, a loose *held constant* list, then a second titled
+essay with its own introduction. Four changes brought it to 1,491px:
+
+- **The outputs column became a tab strip**: Returns, Stress, Drivers. All three panes stay in the
+  DOM, so every figure is still computed and every test can still read it, but only one is in flow.
+  The charts are `viewBox`-based and measure no layout, so a pane drawn while hidden is correct
+  when shown. Arrow keys move between tabs and only the open tab is in the tab order.
+- **Held constant moved into the assumptions column** as a closed group. It is a list of inputs, so
+  it belongs with the inputs, and that deleted a block.
+- **What this leaves out and the integrity line merged** into one footer spanning both columns,
+  which closes the box instead of trailing off it.
+- **One assumption group opens by default, not three.** Three ran the column to 1,181px against a
+  461px pane, leaving most of the box empty. One is 558px and lines up with the readouts — and it
+  is the group holding the dial the tornado ranks first.
+
+The assumptions column is `align-self:start` and sticky, so it stops where it stops rather than
+stretching to whichever readout is open, and stays put while a long one scrolls past. The divider
+moved to the outputs column, which always runs the full height of the row.
+
 Series colours `#2a78d6` / `#eb6834` were validated against the white surface: CVD ΔE 24.7,
 normal-vision ΔE 33.6 — both clear of the floors.
 
@@ -317,7 +339,13 @@ could catch, and each got a different treatment rather than a smaller font:
   goes to the tooltip, which wraps, positions itself in the viewport, and is dismissed by tapping
   elsewhere. That also gives back a third of the sticky chrome: 70px to 47px.
 - **Eighteen open dials pushed the model's own outputs a screen and a half below its heading.**
-  The assumption panel starts closed on a phone. The outputs now sit 536px from the divider.
+  The assumption panel starts closed on a phone. The outputs now sit 646px from the divider.
+- **The stress table exploded to 2,012px.** The generic `.sched` rule restacks any schedule into
+  records on a phone, which turned 9 rows × 6 columns into 54 stacked lines — five of every six an
+  unlabelled number. It stays a table below 680px and drops to the three columns that answer the
+  question: what the case is, what equity gets, whether it still covers debt. `STRESSES` carries a
+  short name as a fourth field, the way `SECTIONS` does, and a `min-width:430px` floor left over
+  from when it had to scroll now applies only above 680px.
 
 ## Still to decide
 

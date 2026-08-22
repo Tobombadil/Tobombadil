@@ -161,7 +161,11 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 
 /* ── the live model ────────────────────────────────────────────────── */
 .model{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--rule);background:var(--paper)}
-.inputs{border-right:1px solid var(--rule);background:var(--paper-2)}
+/* The dials stop where they stop rather than stretching to whichever readout
+   is open, which otherwise left a tall empty panel under them, and they stay
+   put while a long readout scrolls past. The divider moves to the outputs
+   column, which always runs the full height of the row. */
+.inputs{background:var(--paper-2);align-self:start;position:sticky;top:104px}
 .inputs h3,.outputs h3{margin:0;padding:10px 14px;background:var(--chrome);border-bottom:1px solid var(--rule);
         font:700 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-2);
         display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -180,7 +184,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
   border-radius:50%;background:var(--input);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--input);margin-top:-6px}
 input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(--paper);border-radius:50%;
   background:var(--input);box-shadow:0 0 0 1px var(--input)}
-.outputs{min-width:0}
+/* one instrument, three readouts. The tab strip is the outputs column's
+   header, so it lines up with the Assumptions bar across the gutter. */
+.outputs{min-width:0;display:flex;flex-direction:column;border-left:1px solid var(--rule)}
+.otabs{display:flex;background:var(--chrome);border-bottom:1px solid var(--rule)}
+.otab{appearance:none;background:none;border:0;border-right:1px solid var(--rule);
+      border-bottom:2px solid transparent;margin-bottom:-1px;padding:10px 16px;cursor:pointer;
+      font:700 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.otab:hover{color:var(--ink)}
+.otab[aria-selected=true]{background:var(--paper);color:var(--ink);border-bottom-color:var(--copper)}
+.opane[hidden]{display:none}
+.opane-cap{margin:0;padding:11px 14px;border-bottom:1px solid var(--rule-2);
+           font:italic 11.5px var(--sans);color:var(--ink-3)}
+/* held constant: inputs that do not move, so they live with the inputs */
+.hfld{margin:0;padding:4px 14px 10px;list-style:none}
+.hfld li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+         padding:4px 0;font-size:11.5px;line-height:1.5}
+.hfld .k{color:var(--ink-2)}
+.hfld .v{white-space:nowrap}
+/* the footer closes the box across both columns */
+.mfoot{grid-column:1/-1;border-top:1px solid var(--rule);background:var(--paper-2)}
+.mfoot p{margin:0;padding:13px 14px;font-size:12.5px;line-height:1.6;color:var(--prose);max-width:92ch}
+.mfoot b{color:var(--ink);font-weight:700}
+.mfoot .tie{border-top:1px solid var(--rule-2);background:none;flex-wrap:wrap}
 .otiles{display:grid;grid-template-columns:repeat(4,1fr)}
 .otile{padding:14px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .otile:nth-child(4){border-right:0}
@@ -190,12 +216,18 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .otile .v.neg{color:var(--bad)}
 .viz{padding:16px 14px 6px}
 .viz + .viz{border-top:1px solid var(--rule)}
+.opane > .viz:first-of-type{padding-top:14px}
 .viz h4{margin:0 0 2px;font:700 12px var(--sans)}
 .viz .cap{margin:0 0 12px;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.45}
 .legend-row{display:flex;gap:16px;margin:0 0 10px;font-size:11px;color:var(--ink-2)}
 .legend-row span{display:flex;align-items:center;gap:6px}
 .swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
 .chartbox{overflow-x:auto}
+.stress .sm{display:none}
+.stress .drop{display:table-cell}
+/* the number the stress pane exists to produce */
+.breakeven-line{margin:0 0 10px;font-size:13px;line-height:1.55;color:var(--prose)}
+.breakeven-line b{color:var(--ink);font-weight:700;white-space:nowrap}
 svg.chart{display:block;min-width:440px;width:100%;height:auto}
 .tick{font:10px var(--sans);fill:var(--ink-3)}
 .axis{stroke:var(--rule);stroke-width:1}
@@ -354,9 +386,6 @@ section > .wrap.body{padding-bottom:44px}
 .steps li{margin-bottom:9px}
 
 /* ── ranked sensitivity ────────────────────────────────────────────── */
-.quiz{margin-top:30px;border-top:1px solid var(--rule);padding-top:22px}
-.quiz h3{margin:0 0 8px;font:700 12px var(--sans)}
-.quiz .none{margin:0;font:italic 12px var(--sans);color:var(--ink-3)}
 .torn{width:100%;border-collapse:collapse;font-size:12.5px}
 .torn th{font:700 10.5px var(--sans);letter-spacing:.05em;text-align:left;color:var(--ink-2);
          border-bottom:1px solid var(--ink-3);padding:0 10px 6px 0;white-space:nowrap}
@@ -394,12 +423,6 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .igb{padding-bottom:4px}
   .fld select{width:100%;font:12px var(--sans);padding:5px 6px;border:1px solid var(--rule);
               background:var(--paper);color:var(--input);font-weight:700}
-  .held{margin-top:-1px;padding:12px 16px;border:1px solid var(--rule);border-top:0;background:var(--paper-2)}
-  .held p{margin:0 0 7px;font:600 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-  .held ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:2px 26px}
-  .held li{font-size:11.5px;color:var(--ink-2);line-height:1.7}
-  @media (max-width:820px){.held ul{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:520px){.held ul{grid-template-columns:1fr}}
 
   /* capital stack strip */
   .stack{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rule)}
@@ -408,8 +431,10 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .sitem .k{display:block;font:700 9px var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
   .sitem .v{display:block;font:400 16px var(--serif);margin-top:3px}
 
-  /* stress table */
-  table.stress{font-size:12.5px;min-width:430px}
+  /* stress table. The 430px floor is what made the six columns scroll; on a
+     phone it drops to three that fit, so the floor would fight them. */
+  table.stress{font-size:12.5px}
+  @media (min-width:681px){table.stress{min-width:430px}}
   table.stress td{padding:7px 10px 7px 0}
   table.stress tr.key{background:var(--paper-2)}
   table.stress tr.key td{font-weight:700}
@@ -500,12 +525,37 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
   .sched.pairs .owd{font-size:12.5px}
   .torn{font-size:12px}
   .viz .cap{font-size:12px}
-  .held li,.legend li{font-size:12px}
+  .legend li{font-size:12px}
   .tile .u,.otile .n{font-size:11.5px}
 
   /* a box that scrolls sideways should say so */
   .viz.wide > h4::after{content:' ·  scrolls sideways';font:italic 10.5px var(--sans);
                         color:var(--ink-3);letter-spacing:0;text-transform:none}
+
+  /* 6.0: three readouts, one at a time. The tabs share the width and get
+     thumb-sized targets. */
+  .inputs{position:static}
+  .otab{flex:1 1 0;min-width:0;padding:13px 4px;font-size:9.5px;letter-spacing:.08em}
+  .opane-cap{padding:10px 14px;font-size:11.5px}
+  .otile{padding:12px}
+  .otile .v{font-size:23px}
+
+  /* The generic .sched card rule turned this into 9 rows x 6 stacked
+     lines, five of six of them unlabelled numbers. Two columns are
+     derivable and one is a note, so the phone gets the other three as a
+     table: what it is, what equity gets, whether it covers debt. */
+  /* three columns wanted 430px in a 328px box, so the last one sat off the
+     edge. Fixed layout gives the names the slack and pins the numbers. */
+  .sched.stress{display:table;table-layout:fixed;width:100%;font-size:12px}
+  .sched.stress td:first-child,.sched.stress th:first-child{width:47%}
+  .sched.stress thead{display:table-header-group}
+  .sched.stress tr{display:table-row;padding:0;border:0}
+  .sched.stress td{display:table-cell;padding:8px 6px 8px 0;border-bottom:1px solid var(--rule-2)}
+  .sched.stress td.n{text-align:right}
+  .sched.stress .drop,.sched.stress th.drop{display:none}
+  .sched.stress .lg{display:none}
+  .sched.stress .sm{display:inline}
+  .sched.stress th{padding:0 6px 7px 0;font-size:9.5px}
 }
 
 </style>
@@ -1719,15 +1769,16 @@ const pinDebt = () => {
    Everything operating happens after, when the facility is already struck and the
    hit lands on equity and the cover ratio instead. A capex overrun sits in
    between: the loan is fixed, so equity funds the excess. */
+/* the fourth field is the name the phone uses, where the column is 96px */
 const STRESSES = [
-  ['Fuel at the contract ceiling from day one', 'after',  () => ({ 'Assumptions!C18':0 })],
-  ['Capex +25%',             'after',  () => ({ 'Assumptions!C22':val('Assumptions', 'C22') * 1.25 })],
-  ['PPA price −15%',         'after',  () => ({ 'Assumptions!C13':val('Assumptions', 'C13') * 0.85 })],
+  ['Fuel at the contract ceiling from day one', 'after',  () => ({ 'Assumptions!C18':0 }), 'Fuel at ceiling'],
+  ['Capex +25%',             'after',  () => ({ 'Assumptions!C22':val('Assumptions', 'C22') * 1.25 }), 'Capex +25%'],
+  ['PPA price −15%',         'after',  () => ({ 'Assumptions!C13':val('Assumptions', 'C13') * 0.85 }), 'PPA −15%'],
   ['Availability −8 points', 'after',  () => ({ 'Assumptions!C11':val('Assumptions', 'C11') - 0.08,
-                                                'Assumptions!C12':val('Assumptions', 'C12') - 0.08 })],
-  ['Non-fuel opex +20%',     'after',  () => ({ 'Assumptions!C19':val('Assumptions', 'C19') * 1.20 })],
-  ['Interest +200 bps',      'before', () => ({ 'Assumptions!C25':val('Assumptions', 'C25') + 0.02 })],
-  ['No tax credits',         'after',  () => ({ 'Assumptions!C29':0 })],
+                                                'Assumptions!C12':val('Assumptions', 'C12') - 0.08 }), 'Availability −8'],
+  ['Non-fuel opex +20%',     'after',  () => ({ 'Assumptions!C19':val('Assumptions', 'C19') * 1.20 }), 'Opex +20%'],
+  ['Interest +200 bps',      'before', () => ({ 'Assumptions!C25':val('Assumptions', 'C25') + 0.02 }), 'Rate +200bps'],
+  ['No tax credits',         'after',  () => ({ 'Assumptions!C29':0 }), 'No credits'],
 ];
 const merge = list => Object.assign({}, ...list.map(([, , f]) => f()));
 
@@ -1765,14 +1816,25 @@ function syncControls() {
   });
 }
 
+/* The outputs column is three readouts of one model. It used to be three
+   stacked blocks with three headings, which read as three sections and ran
+   six screens on a phone. */
+const PANES = [
+  ['returns', 'Returns', 'What the deal earns, and the cash flow underneath it.'],
+  ['stress',  'Stress',  'What the structure survives once the terms are struck.'],
+  ['drivers', 'Drivers', 'What was worth checking before they were.'],
+];
+
 function secAnalysis(){
   const w = section('analysis');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:78ch;line-height:1.6';
-  intro.textContent = "Origination doesn't build models, so what sits below this one matters more than it does. A generic 25 MW biomass relocation, invented end to end. It describes no client, counterparty or live transaction; the tax parameters are public law and every project figure is made up.";
+  intro.textContent = "Origination doesn't build models, so how I read one matters more than that I can build one. Below is a generic 25 MW biomass relocation, invented end to end: no client, no counterparty, no live deal. The tax parameters are public law. Every project figure is made up.";
   w.appendChild(intro);
 
   const box = $('div', 'model');
+
+  /* ---- the assumptions column ---- */
   const inp = $('div', 'inputs');
   const ih = $('h3');
   ih.append('Assumptions');
@@ -1785,61 +1847,121 @@ function secAnalysis(){
   ih.appendChild(rb);
   inp.appendChild(ih);
 
-  /* Eighteen dials open at once made the inputs column twice the height of the
-     outputs column, which left a large empty rectangle inside the box. The two
-     groups worth reaching for first stay open; the rest are one click away. */
-  const OPEN_BY_DEFAULT = ['Offtake & fuel', 'Costs & capital', 'Financing'];
-  /* on a phone the columns stack, so eighteen open dials push the outputs a
-     screen and a half below the fold. Start closed and let them be opened. */
-  const startClosed = matchMedia('(max-width:680px)').matches;
-  INPUT_GROUPS.forEach(([grp, list]) => {
+  /* a collapsible group of dials, or of figures that do not move */
+  function group(title, open, fill) {
     const sec = $('div', 'igrp');
-    const open = !startClosed && OPEN_BY_DEFAULT.includes(grp);
     sec.dataset.open = open ? '1' : '0';
     const hd = $('button', 'igh'); hd.type = 'button';
     hd.setAttribute('aria-expanded', String(open));
-    const ttl = $('span', null, grp), chev = $('span', 'chev', '▾');
-    hd.append(ttl, chev);
+    hd.append($('span', null, title), $('span', 'chev', '▾'));
     hd.addEventListener('click', () => {
-      const open = sec.dataset.open !== '0';
-      sec.dataset.open = open ? '0' : '1';
-      hd.setAttribute('aria-expanded', String(!open));
+      const isOpen = sec.dataset.open !== '0';
+      sec.dataset.open = isOpen ? '0' : '1';
+      hd.setAttribute('aria-expanded', String(!isOpen));
     });
     sec.appendChild(hd);
     const body = $('div', 'igb');
-
-    list.forEach(([ref, def]) => {
-      const f = $('div', 'fld');
-      const h = $('div', 'fld-h');
-      const l = $('label', null, def.lbl); l.htmlFor = 'in-' + ref;
-      const o = $('output'); o.id = 'out-' + ref; o.dataset.out = 'Assumptions!' + ref;
-      if (def.u) o.dataset.unit = def.u;
-      h.append(l, o); f.appendChild(h);
-      const sl = $('input'); sl.type = 'range'; sl.id = 'in-' + ref;
-      sl.min = def.min; sl.max = def.max; sl.step = def.step; sl.value = def.v;
-      sl.dataset.bind = 'Assumptions!' + ref;
-      sl.setAttribute('aria-label', def.lbl + (def.u ? ', ' + def.u : ''));
-      sl.addEventListener('input', () => { overrides['Assumptions!' + ref] = parseFloat(sl.value); recalc(); });
-      f.appendChild(sl);
-      body.appendChild(f);
-    });
-
-    if (grp === 'Tax & incentives') {
-      body.appendChild(picker('C29', 'Credit election',
-        [[1, 'Production credit (§45Y)'], [2, 'Investment credit (§48E)'], [0, 'None']]));
-      body.appendChild(picker('C37', 'Depreciation',
-        [[1, 'Bonus, 100% in year 1'], [0, 'Straight line, 20 years']]));
-    }
+    fill(body);
     sec.appendChild(body);
     inp.appendChild(sec);
+  }
+
+  /* Three groups open ran this column to 1,181px against a 461px pane, which
+     left most of the box empty. One group is 558px and lines up with the
+     readouts; it is also the group holding the dial the tornado ranks first.
+     On a phone the columns stack, so they all start closed. */
+  const OPEN_BY_DEFAULT = ['Offtake & fuel'];
+  const startClosed = matchMedia('(max-width:680px)').matches;
+
+  INPUT_GROUPS.forEach(([grp, list]) => {
+    group(grp, !startClosed && OPEN_BY_DEFAULT.includes(grp), body => {
+      list.forEach(([ref, def]) => {
+        const f = $('div', 'fld');
+        const h = $('div', 'fld-h');
+        const l = $('label', null, def.lbl); l.htmlFor = 'in-' + ref;
+        const o = $('output'); o.id = 'out-' + ref; o.dataset.out = 'Assumptions!' + ref;
+        if (def.u) o.dataset.unit = def.u;
+        h.append(l, o); f.appendChild(h);
+        const sl = $('input'); sl.type = 'range'; sl.id = 'in-' + ref;
+        sl.min = def.min; sl.max = def.max; sl.step = def.step; sl.value = def.v;
+        sl.dataset.bind = 'Assumptions!' + ref;
+        sl.setAttribute('aria-label', def.lbl + (def.u ? ', ' + def.u : ''));
+        sl.addEventListener('input', () => { overrides['Assumptions!' + ref] = parseFloat(sl.value); recalc(); });
+        f.appendChild(sl);
+        body.appendChild(f);
+      });
+      if (grp === 'Tax & incentives') {
+        body.appendChild(picker('C29', 'Credit election',
+          [[1, 'Production credit (§45Y)'], [2, 'Investment credit (§48E)'], [0, 'None']]));
+        body.appendChild(picker('C37', 'Depreciation',
+          [[1, 'Bonus, 100% in year 1'], [0, 'Straight line, 20 years']]));
+      }
+    });
   });
 
+  /* these are inputs too, so they sit with the inputs rather than in a
+     block of their own underneath the box */
+  group('Held constant', false, body => {
+    const ul = $('ul', 'hfld');
+    [['Derate', 'C10', ''], ['Fuel use', 'C15', ' GT/MWh'], ['Maintenance reserve', 'C21', ' $/kW-yr'],
+     ['PTC base rate (§45Y)', 'C30', ' $/MWh'], ['Energy-community adder', 'C32', ''],
+     ['ITC base rate (§48E)', 'C33', ''], ['Blended tax rate', 'C47', ''],
+     ['NOL usage cap (§172)', 'C39', ''], ['Project life', 'C40', ' yrs']].forEach(([k, ref, suf]) => {
+      const li = $('li');
+      li.append($('span', 'k', k));
+      const v = $('span', 'v');
+      v.appendChild(cell('Assumptions', ref));
+      if (suf) v.append(suf);
+      li.appendChild(v);
+      ul.appendChild(li);
+    });
+    body.appendChild(ul);
+  });
+
+  /* ---- the outputs column: one tab strip, three panes ---- */
   const out = $('div', 'outputs');
+  const strip = $('div', 'otabs'); strip.setAttribute('role', 'tablist');
+  strip.setAttribute('aria-label', 'Model readouts');
+  const tabs = [], panes = [];
+
+  const show = i => {
+    tabs.forEach((t, j) => {
+      t.setAttribute('aria-selected', String(j === i));
+      t.tabIndex = j === i ? 0 : -1;
+      panes[j].hidden = j !== i;
+    });
+  };
+
+  PANES.forEach(([id, label, cap], i) => {
+    const t = $('button', 'otab', label); t.type = 'button';
+    t.id = 'tab-' + id; t.setAttribute('role', 'tab');
+    t.setAttribute('aria-controls', 'pane-' + id);
+    t.addEventListener('click', () => show(i));
+    t.addEventListener('keydown', e => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      const n = (i + d + tabs.length) % tabs.length;
+      show(n); tabs[n].focus();
+    });
+    strip.appendChild(t);
+    tabs.push(t);
+
+    const pane = $('div', 'opane');
+    pane.id = 'pane-' + id;
+    pane.setAttribute('role', 'tabpanel');
+    pane.setAttribute('aria-labelledby', 'tab-' + id);
+    pane.appendChild($('p', 'opane-cap', cap));
+    panes.push(pane);
+  });
+  out.appendChild(strip);
+
+  /* ---- pane 1: returns ---- */
   const ot = $('div', 'otiles');
-  [['Project IRR', 'C63', 'pct1', 'Unlevered, after tax. What the asset earns on its own', '', ''],
-   ['Levered equity IRR', 'C56', 'pct1', 'After debt. Not meaningful on a sliver of equity', '', ''],
+  [['Project IRR', 'C63', 'pct1', 'Unlevered, after tax', '', ''],
+   ['Levered equity IRR', 'C56', 'pct1', 'After debt', '', ''],
    ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M'],
-   ['Minimum DSCR', 'C57', 'x2', 'Sculpted, so it holds at the target', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
+   ['Minimum DSCR', 'C57', 'x2', 'Sculpted, so it holds at target', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
     const v = $('span', 'v');
@@ -1851,7 +1973,7 @@ function secAnalysis(){
     t.appendChild($('span', 'n', n));
     ot.appendChild(t);
   });
-  out.appendChild(ot);
+  panes[0].appendChild(ot);
 
   const cs = $('div', 'stack');
   [['Funding requirement', 'C49'], ['Senior debt', 'C45'], ['Equity', 'C50'], ['Leverage', null]].forEach(([k, ref]) => {
@@ -1863,11 +1985,11 @@ function secAnalysis(){
     d.appendChild(v);
     cs.appendChild(d);
   });
-  out.appendChild(cs);
+  panes[0].appendChild(cs);
 
-  const v1 = $('div', 'viz');
+  const v1 = $('div', 'viz wide');
   v1.appendChild($('h4', null, 'Cash flow cover, years 1–20'));
-  v1.appendChild($('p', 'cap', "In $M. Debt service is sculpted to hold the cover ratio at target, so it tracks EBITDA rather than sitting flat, and stops at the tenor. The gap is what's left for equity before tax."));
+  v1.appendChild($('p', 'cap', "In $M. Debt service is sculpted to hold the cover ratio at target, so it tracks EBITDA rather than sitting flat. The gap is what's left for equity before tax."));
   const lr = $('div', 'legend-row');
   [['EBITDA', 'var(--series-1)'], ['Debt service', 'var(--series-2)']].forEach(([t, c]) => {
     const sp = $('span');
@@ -1875,78 +1997,32 @@ function secAnalysis(){
     sp.append(sw, t); lr.appendChild(sp);
   });
   v1.appendChild(lr);
-  v1.classList.add('wide');
   const cb = $('div', 'chartbox'); cb.id = 'cashflow';
   v1.appendChild(cb);
-  out.appendChild(v1);
+  panes[0].appendChild(v1);
 
+  /* ---- pane 2: stress ---- */
+  /* not .wide: the three columns the phone keeps fit without scrolling */
   const v2 = $('div', 'viz');
-  v2.appendChild($('h4', null, 'Stress tests'));
-  const be = $('p', 'breakeven-line');
-  be.id = 'breakeven';
+  const be = $('p', 'breakeven-line'); be.id = 'breakeven';
   v2.appendChild(be);
-  v2.appendChild($('p', 'cap', "Each risk at the worst realistic end of its range, alone and then together. When the hit lands matters: a rate move happens before you sign and re-sizes the loan; an operating stress lands after, and equity absorbs it."));
-  v2.classList.add('wide');
+  v2.appendChild($('p', 'cap', "Each risk at the worst realistic end of its range, alone and then together. A rate move happens before you sign and re-sizes the loan; an operating stress lands after, and equity absorbs it."));
   const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
   v2.appendChild(sw2);
-  out.appendChild(v2);
+  panes[1].appendChild(v2);
 
-  const gaps = $('div', 'viz');
-  gaps.appendChild($('h4', null, 'What this leaves out'));
-  const gp = $('p');
-  gp.style.cssText = 'margin:0;font-size:12.5px;line-height:1.6;color:var(--prose);max-width:74ch';
-  gp.textContent = "A financing model would add a real construction drawdown, a cash sweep and covenant lockup, post-tax sculpting, a tax equity flip, working capital and a merchant tail. None of it is here. The first thing I'd ask about someone else's model is which of those they skipped.";
-  gaps.appendChild(gp);
-  out.appendChild(gaps);
-
-  const tie = $('div', 'tie');
-  tie.append('Sources equal uses · debt amortizes to zero · loss carryforwards never go negative. ');
-  const badge = $('b'); badge.id = 'tie'; tie.appendChild(badge);
-  out.appendChild(tie);
-
-  box.append(inp, out);
-  w.appendChild(box);
-
-  /* the dials above are the ones worth moving; these sit underneath the box so
-     they do not stretch the inputs column past the bottom of the outputs one */
-  const held = $('div', 'held');
-  held.appendChild($('p', null, 'Held constant'));
-  const hl = $('ul');
-  [['Derate', 'C10', ''], ['Fuel use', 'C15', ' GT/MWh'], ['Maintenance reserve', 'C21', ' $/kW-yr'],
-   ['PTC base rate (§45Y)', 'C30', ' $/MWh'], ['Energy-community adder', 'C32', ''],
-   ['ITC base rate (§48E)', 'C33', ''], ['Blended tax rate', 'C47', ''],
-   ['NOL usage cap (§172)', 'C39', ''], ['Project life', 'C40', ' yrs']].forEach(([k, ref, suf]) => {
-    const li = $('li');
-    li.append(k + ' ');
-    li.appendChild(cell('Assumptions', ref));
-    if (suf) li.append(suf);
-    hl.appendChild(li);
-  });
-  held.appendChild(hl);
-  w.appendChild(held);
-
-  /* ---- the interrogation: which assumptions actually move the answer ---- */
-  const q = $('div', 'quiz');
-  q.appendChild($('h3', null, 'What moves the answer'));
-  const qp = $('p');
-  qp.style.cssText = 'margin:0 0 14px;font-size:13px;line-height:1.6;color:var(--prose);max-width:80ch';
-  qp.textContent = "Each input taken ten percent either way before close, ranked by how far equity NPV travels. The stress table asks what the structure survives after you sign. This asks what you should have checked before.";
-  q.appendChild(qp);
+  /* ---- pane 3: drivers ---- */
+  const v3 = $('div', 'viz');
+  v3.appendChild($('h4', null, 'What moves the answer'));
+  v3.appendChild($('p', 'cap', 'Each input taken ten percent either way before close, ranked by how far equity NPV travels. The ranking is the point, not the magnitudes, and it reorders as you move the dials.'));
   const th = $('div'); th.id = 'tornado';
-  q.appendChild(th);
-  const qn = $('p');
-  qn.style.cssText = 'margin:12px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:80ch;line-height:1.6';
-  qn.textContent = "The ranking is the point, not the magnitudes, and it reorders as you move the dials.";
-  q.appendChild(qn);
+  v3.appendChild(th);
+  panes[2].appendChild(v3);
 
-  const dh = $('p');
-  dh.style.cssText = 'margin:26px 0 10px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)';
-  dh.textContent = "How I'd test the top four";
-  q.appendChild(dh);
+  const v4 = $('div', 'viz');
+  v4.appendChild($('h4', null, "How I'd test the top four"));
+  /* no header row: the heading above it already says driver and test */
   const dt = $('table', 'sched pairs');
-  const dthead = $('thead'), dhtr = $('tr');
-  ['Driver', 'How I would test it'].forEach(h => dhtr.appendChild($('th', null, h)));
-  dthead.appendChild(dhtr); dt.appendChild(dthead);
   const dtb = $('tbody');
   SITE.diligence.forEach(([k, v]) => {
     const tr = $('tr');
@@ -1958,8 +2034,25 @@ function secAnalysis(){
     dtb.appendChild(tr);
   });
   dt.appendChild(dtb);
-  q.appendChild(dt);
-  w.appendChild(q);
+  v4.appendChild(dt);
+  panes[2].appendChild(v4);
+
+  panes.forEach(p => out.appendChild(p));
+  show(0);
+
+  /* ---- the footer, across both columns ---- */
+  const foot = $('div', 'mfoot');
+  const gp = $('p');
+  gp.append($('b', null, 'What this leaves out. '),
+    "A financing model would add a real construction drawdown, a cash sweep and covenant lockup, post-tax sculpting, a tax equity flip, working capital and a merchant tail. None of it is here. The first thing I'd ask about someone else's model is which of those they skipped.");
+  foot.appendChild(gp);
+  const tie = $('div', 'tie');
+  tie.append('Sources equal uses · debt amortizes to zero · loss carryforwards never go negative. ');
+  const badge = $('b'); badge.id = 'tie'; tie.appendChild(badge);
+  foot.appendChild(tie);
+
+  box.append(inp, out, foot);
+  w.appendChild(box);
 }
 
 function credBlock(w){
@@ -2272,34 +2365,38 @@ function drawStress() {
   const host = document.getElementById('stress');
   host.textContent = '';
   const base = RESULT();
-  const rows = [['Base case', '', base, true]];
+  const rows = [['Base case', '', base, true, 'Base case']];
   const pin = pinDebt();
-  STRESSES.forEach(([name, when, f]) => rows.push([name, when,
-    underScenario(when === 'before' ? f() : Object.assign({}, f(), pin), RESULT), false]));
+  STRESSES.forEach(([name, when, f, short]) => rows.push([name, when,
+    underScenario(when === 'before' ? f() : Object.assign({}, f(), pin), RESULT), false, short]));
   /* the stack sizes the loan under the pre-close moves, then takes the operating hits on top */
   const pre = merge(STRESSES.filter(x => x[1] === 'before'));
   const stackPin = underScenario(pre, pinDebt);
   const post = merge(STRESSES.filter(x => x[1] === 'after'));
   rows.push(['All stresses stacked', 'both',
-    underScenario(Object.assign({}, pre, post, stackPin), RESULT), true]);
+    underScenario(Object.assign({}, pre, post, stackPin), RESULT), true, 'All stacked']);
 
   const t = $('table', 'sched stress');
   const thead = $('thead'), htr = $('tr');
   ['Case', 'Hits', 'Equity NPV', 'Δ NPV', 'Levered IRR', 'Min DSCR'].forEach((h, i) =>
-    htr.appendChild($('th', i > 1 ? 'n' : null, h)));
+    htr.appendChild($('th', (i > 1 ? 'n' : '') + ([1, 3, 4].includes(i) ? ' drop' : ''), h)));
   thead.appendChild(htr); t.appendChild(thead);
   const tb = $('tbody');
-  rows.forEach(([name, when, r, strong]) => {
+  rows.forEach(([name, when, r, strong, short]) => {
     const tr = $('tr');
     if (strong) tr.className = 'key';
-    tr.appendChild($('td', null, name));
-    tr.appendChild($('td', 'muted', when === 'before' ? 'before close' : when === 'after' ? 'after close' : when === 'both' ? 'both' : ''));
+    /* both names ride in the cell and CSS picks one, so the phone gets a
+       table it can read rather than a column three words wide */
+    const nm = $('td');
+    nm.append($('span', 'lg', name), $('span', 'sm', short));
+    tr.appendChild(nm);
+    tr.appendChild($('td', 'muted drop', when === 'before' ? 'before close' : when === 'after' ? 'after close' : when === 'both' ? 'both' : ''));
     const npv = $('td', 'n', formatValue(r.npv, 'num1'));
     if (r.npv < 0) npv.classList.add('bad');
     tr.appendChild(npv);
     const d = r.npv - base.npv;
-    tr.appendChild($('td', 'n muted', name === 'Base case' ? '·' : (d >= 0 ? '+' : '') + formatValue(d, 'num1')));
-    tr.appendChild($('td', 'n', isFinite(r.irr) ? formatValue(r.irr, 'pct1') : '—'));
+    tr.appendChild($('td', 'n muted drop', name === 'Base case' ? '·' : (d >= 0 ? '+' : '') + formatValue(d, 'num1')));
+    tr.appendChild($('td', 'n drop', isFinite(r.irr) ? formatValue(r.irr, 'pct1') : '—'));
     const ds = $('td', 'n', r.dscr >= 900 ? 'no debt' : formatValue(r.dscr, 'x2'));
     if (r.dscr < 1) ds.classList.add('bad');
     tr.appendChild(ds);
