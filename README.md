@@ -194,6 +194,33 @@ sculpting.
 - **Ranked sensitivity** — a tornado laid out as a schedule rather than a chart, since the filing
   is the idiom and the ranking is the message.
 
+### Why the tornado did not read
+
+It was the one display on the page that had to be explained before it could be used, which for a
+sensitivity chart is a failing grade. Four things were wrong, in the order they defeat a reader:
+
+- **No axis.** Bars sat on a bare track with an unlabelled centre tick. There was no scale, and
+  nothing said the centre was the base case. It now carries a real axis in the header — round
+  ticks in $M via the same `niceScale` the cash-flow chart uses, and the centre labelled with the
+  live base NPV rather than a zero.
+- **The bar's side and the columns' order disagreed.** Bars are placed by the sign of the *NPV*
+  change, so left is always worse. The columns were headed `−10%` and `+10%`, which is the *input*
+  moving. On capex, 10% low is the right-hand bar, because cheaper capex helps — so a reader who
+  maps the left header to the left bar is wrong on half the rows. That was the actual defect. The
+  columns now read **If 10% low** / **If 10% high**, and the axis says `← worse` / `better →`.
+- **The colours were borrowed.** Blue and orange are the cash-flow chart's EBITDA and debt service.
+  The same two colours meant two different things in one section, and neither meaning was stated.
+  Bars are now red where NPV falls and green where it rises, matching the number in the same row —
+  and the side of the base case they land on says it a second time, so colour never carries it
+  alone.
+- **The track was noise.** A grey band behind every bar rendered as a striped grid and carried no
+  information. Removed; the bars sit on the paper against a single zero rule.
+
+Tests hold the parts a redesign would quietly break: that the axis is labelled and ordered, that
+its centre is the base case rather than zero, that the direction words are present, that the
+column headers name the input rather than the answer, that every bar's colour agrees with the
+number beside it, and that no bar runs past the axis.
+
 A 5×5 NPV heatmap used to sit alongside the tornado. It answered the same question over two
 drivers that the tornado answers over ten, so 6.0 carried three overlapping sensitivity displays.
 It was cut.
