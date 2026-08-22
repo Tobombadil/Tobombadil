@@ -132,6 +132,30 @@ maintenance reserve, escalation, tenor and the Arizona-blended tax rate. The pla
 rather than that study's 36, so it is plainly not that plant; non-fuel opex scales with it,
 holding the researched cost per kW-year flat.
 
+### Nothing in the prose asserts a number the model owns
+
+A paragraph once claimed capex was "worth about 16 points of unlevered return" — a static
+sentence describing a model that moves underneath it. The section intro said 36 MW while the
+model ran 50, which is precisely the failure the page's `data-cell` discipline exists to prevent.
+
+Both are gone. The intro reads its scale off the cell and computes the capex ratio live. The
+attribution paragraph was deleted outright: the Trade readout says it as a comparison and the
+Sensitivity readout ranks the rest, neither of which can go stale.
+
+The CV figures had the same latent bug in the other direction — `Facts!C5`, `C6` and `C16` are
+displayed live in the summary tiles, and the same three numbers were typed into five prose
+strings, so editing a cell would move the tile and leave the sentences behind. Prose may now
+template the workbook the way a source line already could:
+
+```js
+'Negotiated exclusive agreements for ${Facts!C5:num0}M of intake and ${Facts!C6:num0}M of offtake.'
+```
+
+Four tests hold the line: the intro's scale must equal its cell, the capex ratio must equal the
+computed one, the CV figures in prose must equal the cells that hold them, and **no template may
+be left unexpanded** — which immediately caught one string rendering through a path that had not
+been routed through the expander.
+
 ### Every dial carries its benchmark
 
 An assumption with no benchmark beside it is an assertion. Each input now prints the range a
@@ -180,7 +204,7 @@ the study itself cites:
 | Debt rate | 6.5% | A market project-finance rate; the source uses a USDA guaranteed-loan programme rate, which is a financing route rather than a parameter and would read as an error without its context |
 | Acquisition | absent | This is a relocation capex model and always was. No acquisition price, ask or bid appears |
 
-### Where the return comes from, and why the base case moved
+### Where the return comes from
 
 Aligning to the study produced a 26.5% unlevered return, which matched its 25.4% but invited
 "your model is optimistic" as the first question in any room. A diagnostic took every assumption
@@ -334,13 +358,13 @@ A 5×5 NPV heatmap used to sit alongside the tornado. It answered the same quest
 drivers that the tornado answers over ten, so 6.0 carried three overlapping sensitivity displays.
 It was cut.
 
-### One instrument, three readouts
+### One instrument, four readouts
 
 6.0 used to run 5,017px on a phone — 5.9 screens, nearly twice the next-largest section — and it
 read as three separate things: a model box, a loose *held constant* list, then a second titled
 essay with its own introduction. Four changes brought it to 1,491px:
 
-- **The outputs column became a tab strip**: Returns, Stress, Drivers. All three panes stay in the
+- **The outputs column became a tab strip**: Trade, Returns, Sensitivity, Stress. All three panes stay in the
   DOM, so every figure is still computed and every test can still read it, but only one is in flow.
   The charts are `viewBox`-based and measure no layout, so a pane drawn while hidden is correct
   when shown. Arrow keys move between tabs and only the open tab is in the tab order.
@@ -356,9 +380,30 @@ The assumptions column is `align-self:start` and sticky, so it stops where it st
 stretching to whichever readout is open, and stays put while a long one scrolls past. The divider
 moved to the outputs column, which always runs the full height of the row.
 
-The readouts are **Returns, Sensitivity, Stress**, in that order: what the deal earns, which
-assumptions the answer turns on, then how far each can be wrong. Sensitivity sits second because
-it is the question that decides which rows of the third one you care about.
+The readouts are **Trade, Returns, Sensitivity, Stress**. The trade leads because it is the
+pitch; the rest describe the thing it is pitching.
+
+### The trade is the thesis, and it is computed
+
+The capex gap is not an awkward assumption to defend. It is the whole trade: the same plant, the
+same offtake, the same fuel, at a quarter of the capital cost because the equipment already
+exists. So the first readout states it as a counterfactual the model actually runs — every figure
+in the *Build new* column is this model evaluated again with capex moved to a greenfield dial,
+never a number typed into prose:
+
+| | Relocate | Build new | Difference |
+|---|---|---|---|
+| Capital cost, all in | $71.9M | $303.8M | −$231.9M |
+| Equity required | $15.6M | $214.7M | −$199.1M |
+| Project IRR | 24.5% | 3.4% | +21.1% |
+| Equity NPV | $100.2M | $(109.2)M | +$209.4M |
+
+Greenfield biomass does not clear its cost of capital at a market power price, which is exactly
+why the asset is interesting: it is only worth having because it already exists and can be moved.
+The same two capital costs are drawn as bars underneath, because a four-times gap read down a
+column is a fact and seen side by side is an argument. Five tests hold it: the greenfield column
+is recomputed independently and must match, the difference column must reconcile, and the bar
+widths must be the ratio of the figures beside them.
 
 ### Why the stress pane was rewritten
 
@@ -395,9 +440,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 158 checks.
+Three suites, run against a headless browser. 172 checks.
 
-- **`site.js`** (131) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (145) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.

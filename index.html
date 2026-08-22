@@ -239,6 +239,38 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
 .chartbox{overflow-x:auto}
 .stress .u{color:var(--ink-3);font-size:11px}
+.em-n{font-weight:700;color:var(--ink)}
+/* the trade: two columns of the same model, and the gap between them */
+.trade-t{width:100%;border-collapse:collapse;font-size:13px}
+.trade-t th{font:700 9.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;
+            color:var(--ink-3);text-align:left;padding:0 8px 7px 0;border-bottom:1px solid var(--rule)}
+.trade-t th.n{text-align:right}
+.trade-t td{padding:7px 8px 7px 0;border-bottom:1px solid var(--rule-2);white-space:nowrap}
+.trade-t td:first-child{white-space:normal;color:var(--ink-2)}
+.trade-t td.n{text-align:right;font-variant-numeric:tabular-nums}
+.trade-t td.muted{color:var(--ink-3)}
+.trade-t td.good{color:var(--good);font-weight:600}
+.trade-t td.bad{color:var(--bad);font-weight:600}
+.trade-t tr:last-child td{border-bottom:0}
+/* the same gap as a picture */
+#tradebars{margin-top:20px}
+#tradebars h4{margin:0 0 10px;font:700 12px var(--sans)}
+/* .cbar, not .tbar: that name is already an absolutely-positioned 5px rule
+   elsewhere on the page, and inheriting its position broke this one */
+.cbar{display:flex;align-items:center;gap:12px;margin-bottom:9px;font-size:12px}
+.cbar .l{flex:0 0 74px;color:var(--ink-2)}
+.cbar .tk{flex:1 1 auto;height:16px;background:var(--paper-2);min-width:0}
+.cbar i{display:block;height:100%}
+.cbar i.own{background:var(--good)}
+.cbar i.alt{background:var(--ink-3)}
+.cbar .v{flex:0 0 62px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.cbar .p{flex:0 0 76px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-3);font-size:11px}
+@media (max-width:680px){
+  .cbar{gap:8px;font-size:11.5px}
+  .cbar .l{flex-basis:60px}
+  .cbar .v{flex-basis:54px}
+  .cbar .p{display:none}
+}
 /* it spans the two figure columns, so it must be allowed to wrap inside them
    rather than inherit the nowrap that keeps figures on one line */
 .stress td.wide2{color:var(--ink-3);font-style:italic;white-space:normal}
@@ -594,6 +626,18 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
      which turned this into ten rows of four unlabelled numbers. It stays a
      table, on fixed layout so the names take the slack and the three figure
      columns are pinned to what a figure needs. */
+  /* the trade restacked into ten cards on a phone, the same generic .sched
+     trap the margin table hit. It stays a table; the difference column is the
+     one thing a reader can do in their head, so that is what goes. */
+  .sched.trade-t{display:table;table-layout:fixed;width:100%;font-size:12px}
+  .sched.trade-t thead{display:table-header-group}
+  .sched.trade-t tr{display:table-row;padding:0;border:0}
+  .sched.trade-t td{display:table-cell;padding:7px 5px 7px 0;border-bottom:1px solid var(--rule-2)}
+  .sched.trade-t td:first-child,.sched.trade-t th:first-child{width:44%;white-space:normal}
+  .sched.trade-t td.n,.sched.trade-t th.n{width:28%;text-align:right}
+  .sched.trade-t td:last-child,.sched.trade-t th:last-child{display:none}
+  .sched.trade-t th{padding:0 5px 7px 0;font-size:9.5px;white-space:normal;line-height:1.3}
+
   .sched.stress{display:table;table-layout:fixed;width:100%;font-size:12px}
   .sched.stress td:first-child,.sched.stress th:first-child{width:44%;white-space:normal}
   .sched.stress td.n,.sched.stress th.n{width:18.6%}
@@ -700,8 +744,11 @@ const SHEETS = [
     C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital',
          mkt:[0.02,0.03],   s:'CPI'},
     C21:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
-    C22:{v:2000,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital',
-         mkt:[4000,5000],   s:'ATB', note:'new build; this is 55% of it all-in. Drag it to 1,065 for equipment bought distressed'},
+    C22:{v:1065,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital',
+         mkt:[4000,5000],   s:'ATB', note:'the greenfield cost of the same plant'},
+    /* the counterfactual the whole trade is measured against */
+    C41:{v:4500,  f:'num0', input:true, min:3000, max:6500, step:100,  lbl:'Greenfield capex, for comparison', u:'$/kW', grp:'Costs & capital',
+         mkt:[4000,5000],   s:'ATB', note:'what it would cost to build new'},
     C23:{v:0.35,  f:'pct0', input:true, min:0.10, max:1.00, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital',
          mkt:[0.30,0.50],   s:'AACE', note:'what a Class 5 estimate carries'},
 
@@ -1110,7 +1157,7 @@ const SITE = {
      "Seventy-thirty describes what I already do. What's missing is anyone senior to learn it from, which is the whole reason I'm writing. I'm not arriving with a playbook."],
     ["I haven't sold full-requirements wholesale supply",
      "My origination is partial power and energy products, not a utility's full load. I've never priced a full-requirements contract.",
-     "The product would be new. The motion wouldn't. I source, structure, negotiate and close today, including exclusive agreements for $500M of intake and $800M of offtake."],
+     "The product would be new. The motion wouldn't. I source, structure, negotiate and close today, including exclusive agreements for ${Facts!C5:num0}M of intake and ${Facts!C6:num0}M of offtake."],
     ['I have not sat on the co-op side of a procurement',
      "I've worked with cooperatives, tribes and governments as a counterparty, not from inside their procurement. Governance-driven buying is a different animal.",
      "Nine years on a governed, member-accountable board through four mergers is my closest analogue: competing constituencies, and no authority to simply decide. Not the same. Not nothing."],
@@ -1148,14 +1195,14 @@ const SITE = {
       bullets:[
         'Originated proposals and contracts end to end on partial power projects: sourced counterparties, advanced them through pipeline stages, structured and negotiated the terms, and carried them through execution.',
         'Built and advanced the pipeline by exploring market opportunities, building relationships and tracking RFPs in CRM.',
-        'Negotiated exclusive agreements for $500M of intake and $800M of offtake rights on energy products.',
+        'Negotiated exclusive agreements for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake rights on energy products.',
         'Built a data room per project so every assumption across markets, engineering and risk is supported, with third-party commercial, legal and technical work behind it.',
         'Won a proposal by working out what the investment committee required, then benchmarking every figure to the market.',
       ] },
     { row:8, title:'Commercial Manager', co:'Pakira, Inc.', where:'Cambridge, MA', span:'August 2018 to March 2024',
       note:'Market intelligence platform for the building materials and forest products industries.',
       bullets:[
-        'Built the commercial function from zero to 1,000+ enterprise clients at 30%+ month-over-month growth across industries.',
+        'Built the commercial function from zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth across industries.',
         'Raised $1 million; worked with a 10-person team and 40 interns across product, engineering, data, marketing and sales.',
       ] },
     { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'March 2017 to August 2018',
@@ -1170,11 +1217,11 @@ const SITE = {
   ],
 
   deals:[
-    ['Intake & offtake rights','Exclusive agreements negotiated on energy products; $500M intake, $800M offtake','2024–','$1.3B','Executed',1],
+    ['Intake & offtake rights','Exclusive agreements negotiated on energy products; \u0024{Facts!C5:num0}M intake, \u0024{Facts!C6:num0}M offtake','2024–','$1.3B','Executed',1],
     ['Partial power origination','Proposals and contracts end to end: sourcing, structuring, negotiation, execution','2024–','Multiple','Ongoing',1],
     ['Investment committee proposal','Won by establishing committee requirements, then benchmarking every figure to the market','2024','Awarded','Won',0],
     ['Project data rooms','Every assumption supported across markets, engineering and risk, with third-party validation','2024–','Per project','Ongoing',1],
-    ['Pakira commercial function','Zero to 1,000+ enterprise clients at 30%+ month-over-month growth','2018–2024','1,000+ clients','Built',0],
+    ['Pakira commercial function','Zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth','2018–2024','{Facts!C16:num0}+ clients','Built',0],
     ['Venture raise','Capital raised to build the platform and the team behind it','2018','$1.0M','Closed',0],
     ['Trading systems deployment','Rollout supporting 300+ traders managing $6B in commodity flows','2017–2018','$6B flows','Delivered',0],
     ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017–2018','$1M volume','Closed',0],
@@ -1208,7 +1255,7 @@ const SECTIONS = [
   ['experience', '3.0', 'Experience',            'Ten years, and what each seat actually taught', 'Experience'],
   ['precedent',  '4.0', 'Selected transactions', 'What has been sourced, structured, negotiated and signed', 'Precedent'],
   ['market',     '5.0', 'Market view',           'A view I built on my own time, and can defend in a room', 'Market'],
-  ['analysis',   '6.0', 'Supporting analysis',   'A working model, and the teardown that matters more than it does', 'Analysis'],
+  ['analysis',   '6.0', 'Supporting analysis',   'Brownfield against greenfield, and the teardown that matters more than the model', 'Analysis'],
   ['risk',       '7.0', 'Risks and mitigants',   'The case against hiring me, written by me', 'Risk'],
   ['terms',      '8.0', 'Terms and next steps',  'What I am asking for', 'Terms'],
 ];
@@ -1264,6 +1311,7 @@ function paintCells(root = document) {
    figure carries a name and a sentence instead, with {REF} substituted
    live so the sentence cannot drift from the arithmetic. */
 const SRC = {
+  'Assumptions!C9': ['Nameplate capacity', "Two units of the size a relocated biomass plant is usually built in. It sets generation, capex and the maintenance reserve, so it scales the whole model.", '', ' MW'],
   'Career!E7':  ['Document date', 'Today. The page re-dates itself on every visit, so this is never a stale draft.'],
   'Career!F13': ['Years in finance', 'From the Morgan Stanley start in May 2015 to today, on an actual/365 basis.', '', ' yrs'],
   'Career!F12': ['Recorded tenure', 'The four roles added together. It runs ahead of the career span because Morgan Stanley and Forest City overlapped by two months in 2017.', '', ' yrs'],
@@ -1300,6 +1348,10 @@ const SRC = {
   SRC['Career!F' + r] = ['Tenure, ' + co,
     'From {D' + r + ':date} to {E' + r + ':date}, on an actual/365 basis.', '', '\u2009yrs'];
 });
+
+/* SITE prose may template the workbook the same way a source line does, so a
+   figure typed into a sentence cannot drift from the cell that also displays it */
+const say = t => expandSrc('Facts', t);
 
 /* {C5} and {D7:date} become the live formatted value of that cell */
 function expandSrc(sheet, s) {
@@ -1563,7 +1615,7 @@ function secSummary(){
   const w = section('summary');
   const grid = $('div', 'hero');
   const L = $('div');
-  SITE.rec.forEach(t => L.appendChild($('p', 'lede', t)));
+  SITE.rec.forEach(t => L.appendChild($('p', 'lede', say(t))));
 
   const R = $('aside', 'covercard');
   R.appendChild($('h3', null, 'Terms at a glance'));
@@ -1601,8 +1653,8 @@ function secSummary(){
 
   const g = $('div', 'tiles');
   [['Years in finance', 'Career', 'F13', 'num1', 'Since May 2015, accruing', '', ''],
-   ['Rights negotiated', 'Facts', 'C7', 'num0', 'Intake $500M + offtake $800M, exclusive', '$', 'M'],
-   ['Clients originated', 'Facts', 'C16', 'num0', 'Zero to 1,000+ enterprise, 30%+ month over month', '', '+'],
+   ['Rights negotiated', 'Facts', 'C7', 'num0', 'Intake \u0024{Facts!C5:num0}M + offtake \u0024{Facts!C6:num0}M, exclusive', '$', 'M'],
+   ['Clients originated', 'Facts', 'C16', 'num0', 'Zero to {Facts!C16:num0}+ enterprise, 30%+ month over month', '', '+'],
    ['On a governed board', 'Career', 'F16', 'num0', 'Four mergers; youngest ever elected', '', ' yrs'],
   ].forEach(([k, sheet, ref, f, unit, prefix, suffix]) => {
     const t = $('div', 'tile');
@@ -1612,7 +1664,7 @@ function secSummary(){
     v.appendChild(cell(sheet, ref, { f }));
     if (suffix) v.append(suffix);
     t.appendChild(v);
-    t.appendChild($('span', 'u', unit));
+    t.appendChild($('span', 'u', say(unit)));
     g.appendChild(t);
   });
   g.style.marginTop = '30px';
@@ -1676,7 +1728,7 @@ function secExperience(){
 
     if (j.note) { const n = $('p', 'co'); n.style.margin = '0 0 10px'; n.textContent = j.note; d.appendChild(n); }
     const ul = $('ul');
-    j.bullets.forEach(t => ul.appendChild($('li', null, t)));
+    j.bullets.forEach(t => ul.appendChild($('li', null, say(t))));
     d.appendChild(ul);
     roles.appendChild(d);
   });
@@ -1708,9 +1760,9 @@ function secPrecedent(){
   SITE.deals.forEach(([name, desc, period, size, status, isLive]) => {
     const tr = $('tr');
     const c1 = $('td'); c1.appendChild($('strong', null, name)); tr.appendChild(c1);
-    const c2 = $('td', 'desc', desc); c2.dataset.l = ''; tr.appendChild(c2);
+    const c2 = $('td', 'desc', say(desc)); c2.dataset.l = ''; tr.appendChild(c2);
     const c3 = $('td', null, period); c3.dataset.l = 'Period'; tr.appendChild(c3);
-    const c4 = $('td', 'n', size); c4.dataset.l = 'Size'; tr.appendChild(c4);
+    const c4 = $('td', 'n', say(size)); c4.dataset.l = 'Size'; tr.appendChild(c4);
     const c5 = $('td'); c5.dataset.l = '';
     c5.appendChild($('span', 'chip' + (isLive ? ' live' : ''), status));
     tr.appendChild(c5);
@@ -1870,6 +1922,22 @@ const RESULT = () => ({
 
 const NPV = () => val('Model', 'C55');
 
+/* The trade, computed rather than claimed: the same plant, the same offtake,
+   the same fuel, priced as if the equipment had to be built new. Every figure
+   in the greenfield column is a full run of this model with one input moved,
+   so it cannot drift from the brownfield column beside it. */
+const TRADE = () => {
+  const read = () => ({
+    capex:val('Assumptions', 'C46'), funding:val('Model', 'C49'),
+    equity:val('Model', 'C50'), proj:val('Model', 'C63'),
+    npv:val('Model', 'C55'), dscr:val('Model', 'C57'),
+    financeable:val('Model', 'C40'),
+  });
+  const brown = read();
+  const green = underScenario({ 'Assumptions!C22':val('Assumptions', 'C41') }, read);
+  return { brown, green };
+};
+
 /* $20k of NPV, on an answer measured in tens of millions and printed to the
    hundred thousand: close enough to call zero, and reached in a dozen steps */
 const EPS = 0.02;
@@ -1964,6 +2032,7 @@ function syncControls() {
    stacked blocks with three headings, which read as three sections and ran
    six screens on a phone. */
 const PANES = [
+  ['trade',       'Trade',       'The same plant relocated or built new. The gap is the opportunity.'],
   ['returns',     'Returns',     'What the deal earns, and the cash flow underneath it.'],
   ['sensitivity', 'Sensitivity', 'Which assumptions the answer actually turns on.'],
   ['stress',      'Stress',      'How far each one can be wrong before equity is worth nothing.'],
@@ -1973,7 +2042,13 @@ function secAnalysis(){
   const w = section('analysis');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:78ch;line-height:1.6';
-  intro.textContent = "Origination doesn't build models, so how I read one matters more than that I can build one. Below is a 36 MW biomass relocation, on the parameters I would actually underwrite one on: plant configuration, availability, fuel rate and operating cost from industry ranges and public benchmarks, tax from statute. No client, no counterparty, no site and no transaction term appears anywhere in it.";
+  /* every figure in this sentence is read from the model, because a sentence
+     that describes a live model and does not move with it will be wrong */
+  intro.append("Origination doesn't build models, so how I read one matters more than that I can build one. Below is a ");
+  intro.appendChild(cell('Assumptions', 'C9'));
+  intro.append(" MW biomass plant relocated rather than built new, which is the whole trade: the same offtake and the same fuel at ");
+  intro.appendChild($('b', 'em-n', ''));
+  intro.append(" of the capital cost, because the equipment already exists. Parameters are industry ranges and public benchmarks, tax is statute, and each dial carries the range it sits in. No client, no counterparty, no site and no transaction term appears anywhere in it.");
   w.appendChild(intro);
 
   const box = $('div', 'model');
@@ -2111,7 +2186,21 @@ function secAnalysis(){
   });
   out.appendChild(strip);
 
-  /* ---- pane 1: returns ---- */
+  /* ---- pane 1: the trade ---- */
+  const tr = $('div', 'viz');
+  tr.appendChild($('p', 'cap', "The same plant, the same offtake, the same fuel. The only thing that changes is what the equipment costs, because in a relocation it already exists. Every figure in the second column is this model run again at new-build capex, so the two cannot drift apart."));
+  const tt = $('table', 'sched trade-t');
+  tt.id = 'trade';
+  tr.appendChild(tt);
+  const tbars = $('div'); tbars.id = 'tradebars';
+  tr.appendChild(tbars);
+  const tn = $('p');
+  tn.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:74ch';
+  tn.textContent = "Nobody builds greenfield biomass at a market power price, which is the point: at new-build cost the same contracted plant does not clear its own cost of capital. The asset is only interesting because the equipment already exists and can be moved.";
+  tr.appendChild(tn);
+  panes[0].appendChild(tr);
+
+  /* ---- pane 2: returns ---- */
   const ot = $('div', 'otiles');
   /* An output with no benchmark is as bare as an input with none. Anyone who
      does not price power for a living cannot tell whether 26.5% is good, and
@@ -2140,7 +2229,7 @@ function secAnalysis(){
     if (bm) { const m = marketLine(bm); if (m) t.appendChild(m); }
     ot.appendChild(t);
   });
-  panes[0].appendChild(ot);
+  panes[1].appendChild(ot);
 
   const cs = $('div', 'stack');
   [['Funding requirement', 'C49', null], ['Senior debt', 'C45', null], ['Equity', 'C50', null],
@@ -2154,7 +2243,7 @@ function secAnalysis(){
     if (bm) { const m = marketLine(bm); if (m) d.appendChild(m); }
     cs.appendChild(d);
   });
-  panes[0].appendChild(cs);
+  panes[1].appendChild(cs);
 
   const v1 = $('div', 'viz wide');
   v1.appendChild($('h4', null, 'Cash flow cover, years 1–20'));
@@ -2168,9 +2257,9 @@ function secAnalysis(){
   v1.appendChild(lr);
   const cb = $('div', 'chartbox'); cb.id = 'cashflow';
   v1.appendChild(cb);
-  panes[0].appendChild(v1);
+  panes[1].appendChild(v1);
 
-  /* ---- pane 3: stress ---- */
+  /* ---- pane 4: stress ---- */
   /* not .wide: the three columns the phone keeps fit without scrolling */
   const v2 = $('div', 'viz');
   const be = $('p', 'breakeven-line'); be.id = 'breakeven';
@@ -2178,15 +2267,15 @@ function secAnalysis(){
   v2.appendChild($('p', 'cap', "Each assumption taken the wrong way on its own, as far as its range allows, until equity NPV reaches zero. Every row re-underwrites the deal at the worse number, so the loan re-sizes with it. Least room first."));
   const sw2 = $('div', 'chartbox'); sw2.id = 'stress';
   v2.appendChild(sw2);
-  panes[2].appendChild(v2);
+  panes[3].appendChild(v2);
 
-  /* ---- pane 2: sensitivity ---- */
+  /* ---- pane 3: sensitivity ---- */
   const v3 = $('div', 'viz');
   v3.appendChild($('h4', null, 'What moves the answer'));
   v3.appendChild($('p', 'cap', "One assumption at a time, taken ten percent either way before close. The bar is how far equity NPV moves from its base; the top row is the assumption worth the most diligence. The ranking is the point, not the magnitudes, and it reorders as you move the dials."));
   const th = $('div'); th.id = 'tornado';
   v3.appendChild(th);
-  panes[1].appendChild(v3);
+  panes[2].appendChild(v3);
 
   const v4 = $('div', 'viz');
   v4.appendChild($('h4', null, "How I'd test the top four"));
@@ -2204,18 +2293,13 @@ function secAnalysis(){
   });
   dt.appendChild(dtb);
   v4.appendChild(dt);
-  panes[1].appendChild(v4);
+  panes[2].appendChild(v4);
 
   panes.forEach(p => out.appendChild(p));
   show(0);
 
   /* ---- the footer, across both columns ---- */
   const foot = $('div', 'mfoot');
-  /* the first question anyone asks a model showing a good return */
-  const wr = $('p');
-  wr.append($('b', null, 'Where the return comes from. '),
-    "Taken one at a time to a conservative value, two assumptions carry most of it: capex, worth about 16 points of unlevered return between a distressed equipment buy and a full-price one, and ten years of \u00a745Y monetized under \u00a76418, worth about 11. Everything else is worth three points or less, and the terminal value is nine percent of gross present value. Capex is set here at a relocation cost anyone would recognize rather than at the distressed number, so the upside is on the dial rather than in the answer.");
-  foot.appendChild(wr);
   const gp = $('p');
   gp.append($('b', null, 'What this leaves out. '),
     "A financing model would add a real construction drawdown, a cash sweep and covenant lockup, post-tax sculpting, a tax equity flip, working capital and a merchant tail. None of it is here. The first thing I'd ask about someone else's model is which of those they skipped.");
@@ -2277,9 +2361,9 @@ function secRisk(){
   const tb = $('tbody');
   SITE.risks.forEach(([risk, fair, mit]) => {
     const tr = $('tr');
-    const a = $('td', null, risk); a.dataset.l = ''; tr.appendChild(a);
-    const b = $('td', null, fair); b.dataset.l = 'Why'; tr.appendChild(b);
-    const c = $('td', null, mit); c.dataset.l = 'Mitigant'; tr.appendChild(c);
+    const a = $('td', null, say(risk)); a.dataset.l = ''; tr.appendChild(a);
+    const b = $('td', null, say(fair)); b.dataset.l = 'Why'; tr.appendChild(b);
+    const c = $('td', null, say(mit)); c.dataset.l = 'Mitigant'; tr.appendChild(c);
     tb.appendChild(tr);
   });
   t.appendChild(tb);
@@ -2591,6 +2675,78 @@ function drawTornado() {
   host.appendChild(t);
 }
 
+/* the same two capital costs as a picture, because a four-times gap read down
+   a column is a fact and seen side by side is an argument */
+function drawTradeBars(brown, green, netkW) {
+  const host = document.getElementById('tradebars');
+  if (!host) return;
+  host.textContent = '';
+  if (!isFinite(brown.capex) || !isFinite(green.capex) || !(netkW > 0)) return;
+  const max = Math.max(brown.capex, green.capex);
+  if (!(max > 0)) return;
+
+  host.appendChild($('h4', null, 'Capital cost, all in'));
+  const rows = [['Relocate', brown.capex, 'own'], ['Build new', green.capex, 'alt']];
+  const wrap = $('div', 'cbars');
+  rows.forEach(([lbl, v, cls]) => {
+    const r = $('div', 'cbar');
+    r.appendChild($('span', 'l', lbl));
+    const track = $('div', 'tk');
+    const fill = $('i', cls);
+    fill.style.width = (v / max * 100) + '%';
+    track.appendChild(fill);
+    r.appendChild(track);
+    r.appendChild($('span', 'v', '$' + formatValue(v, 'num1') + 'M'));
+    r.appendChild($('span', 'p', formatValue(v * 1e6 / netkW, 'num0') + ' $/kW'));
+    wrap.appendChild(r);
+  });
+  host.appendChild(wrap);
+}
+
+/* Brownfield against greenfield, every cell a model run rather than a claim */
+function drawTrade() {
+  const host = document.getElementById('trade');
+  if (!host) return;
+  host.textContent = '';
+  const { brown, green } = TRADE();
+
+  const thead = $('thead'), htr = $('tr');
+  htr.appendChild($('th', null, ''));
+  htr.appendChild($('th', 'n', 'Relocate'));
+  htr.appendChild($('th', 'n', 'Build new'));
+  htr.appendChild($('th', 'n', 'Difference'));
+  thead.appendChild(htr); host.appendChild(thead);
+
+  const num = (v, f, pre, suf) => !isFinite(v) ? 'n.m.'
+    : (pre || '') + formatValue(v, f) + (suf || '');
+  const tb = $('tbody');
+  [['Capital cost, all in', 'capex', 'num1', '$', 'M', true],
+   ['Funding requirement',  'funding', 'num1', '$', 'M', true],
+   ['Equity required',      'equity', 'num1', '$', 'M', true],
+   ['Project IRR',          'proj', 'pct1', '', '', false],
+   ['Equity NPV',           'npv', 'num1', '$', 'M', false],
+   ['Minimum cover',        'dscr', 'x2', '', '', false],
+  ].forEach(([lbl, k, f, pre, suf, lowerIsBetter]) => {
+    const tr2 = $('tr');
+    tr2.appendChild($('td', null, lbl));
+    tr2.appendChild($('td', 'n', num(brown[k], f, pre, suf)));
+    tr2.appendChild($('td', 'n muted', num(green[k], f, pre, suf)));
+    const d = brown[k] - green[k];
+    const good = lowerIsBetter ? d < 0 : d > 0;
+    const dc = $('td', 'n ' + (isFinite(d) && d !== 0 ? (good ? 'good' : 'bad') : 'muted'));
+    dc.textContent = !isFinite(d) ? '\u2014'
+      : (d >= 0 ? '+' : '\u2212') + num(Math.abs(d), f, pre, suf);
+    tr2.appendChild(dc);
+    tb.appendChild(tr2);
+  });
+  host.appendChild(tb);
+  drawTradeBars(brown, green, val('Assumptions', 'C45'));
+  host.setAttribute('aria-label', 'The same project relocated against built new. ' +
+    'Relocating costs ' + formatValue(brown.capex, 'num1') + ' million against ' +
+    formatValue(green.capex, 'num1') + ' million, and returns ' +
+    formatValue(brown.proj, 'pct1') + ' against ' + formatValue(green.proj, 'pct1') + '.');
+}
+
 function drawStress() {
   const host = document.getElementById('stress');
   if (!host) return;
@@ -2756,6 +2912,13 @@ function recalc() {
 }
 
 function heavy() {
+  /* "a quarter of the capital cost" has to move when either dial does */
+  const en = document.querySelector('#analysis .em-n');
+  if (en) {
+    const b = val('Assumptions', 'C22'), g = val('Assumptions', 'C41');
+    en.textContent = (g > 0 && isFinite(b / g)) ? formatValue(b / g, 'pct0') : 'a fraction';
+  }
+  drawTrade();
   drawStress();      /* writes the headline as well as the table */
   drawTornado();
 }
