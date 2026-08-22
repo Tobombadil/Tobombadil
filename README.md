@@ -271,6 +271,11 @@ C13:{ v:88, f:'num0', input:true, min:40, max:160, step:1,
       lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel' },
 ```
 
+A `SITE.terms` row is `[label, text, cellSpec, linkField]`. Give it a `cellSpec` and the value is
+read live off the workbook; give it a `linkField` and the text becomes a link to `SITE[field]` —
+the availability row points at `SITE.calendly` that way. It renders in copper rather than the
+`a.mail` green, because green is a modeling convention the legend defines directly beneath it.
+
 Anything with `input:true` becomes a slider automatically, filed under its `grp`, and is a
 candidate for the tornado if it is named in `DRIVERS`. Two attributes are deliberately distinct:
 **`data-cell`** marks a displayed figure, and `paintCells()` rewrites its `textContent` on every
@@ -316,12 +321,11 @@ could catch, and each got a different treatment rather than a smaller font:
 
 ## Still to decide
 
-- **Availability status**, on the terms block, currently *"[Set availability]"*. The phone number
-  from the CV is deliberately not published — a public web page is a different exposure to a
-  targeted PDF.
-- **The SmartBidder link.** 5.0 describes the ERCOT storage dispatch simulator but does not link
+- **The simulator link.** 5.0 describes the BESS schedule optimization simulator but does not link
   it, because the current host (`ascendthecrowd.andrew-generalemail.workers.dev`) puts an
   email-derived handle in the URL. Move it to a subdomain and add an `href`.
+- **The phone number** is published in 8.0 because it is on the CV being sent with this page.
+  A public web page is a different exposure to a targeted PDF; delete `SITE.phone` to drop it.
 
 ## Deployment
 

@@ -116,6 +116,7 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .crow:last-child{border-bottom:0}
 .crow dt{flex:1 1 auto;margin:0;color:var(--ink-2)}
 .crow dd{flex:0 0 auto;margin:0;text-align:right}
+.crow a{color:var(--copper);font-weight:600;text-decoration:underline;text-underline-offset:2px}
 .legend{padding:10px 13px;border-top:1px solid var(--rule);background:var(--paper-2)}
 .legend p{margin:0 0 5px;font:700 9.5px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
 .legend li{list-style:none;font-size:11.5px;color:var(--ink-2);line-height:1.7}
@@ -943,6 +944,7 @@ const SITE = {
   email:'hello@andrewtgibson.com',
   phone:'+1 (978) 500-9301',
   linkedin:'https://linkedin.com/in/andrewthomasgibson',
+  calendly:'https://calendly.com/andrewtgibson',
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
 
@@ -964,7 +966,8 @@ const SITE = {
     ['Markets', 'ERCOT and SPP today; WECC on a curve', null],
     ['Products', 'Wholesale power, PPAs and offtake, feedstock and supply', null],
     ['In finance', null, ['Career', 'F13', 'num1', ' yrs, accruing']],
-    ['Status', '[Set availability]', null],
+    /* a fourth field names the SITE link the row's value points at */
+    ['Status', 'Open · book thirty minutes', null, 'calendly'],
   ],
 
   mandate:[
@@ -1448,11 +1451,17 @@ function secSummary(){
 
   const R = $('aside', 'covercard');
   R.appendChild($('h3', null, 'Terms at a glance'));
-  SITE.terms.forEach(([k, plain, c]) => {
+  SITE.terms.forEach(([k, plain, c, link]) => {
     const d = $('div', 'crow');
     d.appendChild($('dt', null, k));
     const dd = $('dd');
     if (c) { dd.appendChild(cell(c[0], c[1], { f:c[2] })); if (c[3]) dd.append(c[3]); }
+    else if (link) {
+      /* not .mail: green is a convention the legend defines two inches below */
+      const x = $('a', null, plain);
+      x.href = SITE[link]; x.target = '_blank'; x.rel = 'noopener';
+      dd.appendChild(x);
+    }
     else dd.textContent = plain;
     d.appendChild(dd);
     R.appendChild(d);
@@ -1642,9 +1651,9 @@ function secMarket(){
   const cols = $('div', 'cols'); cols.style.marginTop = '18px';
 
   const b = $('div', 'paper');
-  b.appendChild($('h3', null, 'SmartBidder · ERCOT storage dispatch simulator'));
+  b.appendChild($('h3', null, 'BESS schedule optimization simulator'));
   b.appendChild($('p', 'cap', 'Working application · live demo available on request'));
-  b.appendChild($('p', null, "The crowding work turned into something you can operate: a battery dispatch simulator on ERCOT North Hub, with day-ahead, forecast and real-time curves, a paintable schedule at fifteen-minute resolution, and an optimizer you can run against a naive benchmark."));
+  b.appendChild($('p', null, "The crowding work turned into something you can operate: a battery schedule optimizer on ERCOT North Hub, with day-ahead, forecast and real-time curves, a paintable schedule at fifteen-minute resolution, and a solver you can run against a naive benchmark."));
   b.appendChild($('p', null, "One slider is crowd behavior, which is the coefficient above wired into a decision rather than a paper. A market view you can't act on is an opinion."));
   b.appendChild($('p', 'cap', '40 MW / 80 MWh on ERCOT North Hub, 87% round trip.'));
 
@@ -2026,6 +2035,7 @@ function secTerms(){
   [['Email', link('mailto:' + SITE.email, SITE.email)],
    ['Phone', link('tel:' + SITE.phone.replace(/[^+\d]/g, ''), SITE.phone)],
    ['LinkedIn', link(SITE.linkedin, 'linkedin.com/in/andrewthomasgibson')],
+   ['Availability', link(SITE.calendly, 'calendly.com/andrewtgibson')],
    ['Website', link(SITE.site, 'andrewtgibson.com')],
    ['Based', document.createTextNode(SITE.location + ' · travel to 50%')]].forEach(([k, v]) => {
     const d = $('div'); d.appendChild($('dt', null, k));
