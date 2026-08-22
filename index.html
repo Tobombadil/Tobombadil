@@ -656,29 +656,29 @@ const SHEETS = [
    (IRC 45Y / 48E / 172 / 6418); every project figure is invented. */
 {
   name:'Assumptions', rows:60, cols:[], cells:{
-    C9: {v:25,    f:'num0', input:true, min:10,   max:60,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant'},
-    C10:{v:0.94,  f:'pct0'},
-    C11:{v:0.91,  f:'pct0', input:true, min:0.75, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant'},
-    C12:{v:0.82,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant'},
+    C9: {v:36,    f:'num0', input:true, min:10,   max:60,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant'},
+    C10:{v:0.9167,f:'pct0'},
+    C11:{v:0.95,  f:'pct0', input:true, min:0.50, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant'},
+    C12:{v:0.85,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant'},
 
-    C13:{v:88,    f:'num0', input:true, min:55,   max:140,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel'},
-    C14:{v:0.02,  f:'pct1', input:true, min:0,    max:0.04, step:0.005,lbl:'PPA escalator', u:'p.a.', grp:'Offtake & fuel'},
-    C15:{v:1.35,  f:'num2'},
-    C16:{v:14,    f:'num0', input:true, min:0,    max:40,   step:1,    lbl:'Delivered fuel cost today', u:'$/green ton', grp:'Offtake & fuel'},
-    C17:{v:26,    f:'num0', input:true, min:10,   max:60,   step:1,    lbl:'Fuel contract ceiling', u:'$/green ton', grp:'Offtake & fuel'},
+    C13:{v:110,   f:'num0', input:true, min:55,   max:150,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel'},
+    C14:{v:0.025, f:'pct1', input:true, min:0,    max:0.04, step:0.005,lbl:'PPA escalator', u:'p.a.', grp:'Offtake & fuel'},
+    C15:{v:1.39,  f:'num2'},
+    C16:{v:20,    f:'num0', input:true, min:0,    max:60,   step:1,    lbl:'Delivered fuel cost today', u:'$/green ton', grp:'Offtake & fuel'},
+    C17:{v:35,    f:'num0', input:true, min:10,   max:110,  step:1,    lbl:'Fuel contract ceiling', u:'$/green ton', grp:'Offtake & fuel'},
     C18:{v:10,    f:'num0', input:true, min:0,    max:20,   step:1,    lbl:'Years to reach the ceiling', u:'yrs', grp:'Offtake & fuel'},
 
-    C19:{v:5.2,   f:'num1', input:true, min:2,    max:12,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital'},
+    C19:{v:11.6,  f:'num1', input:true, min:4,    max:20,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital'},
     C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital'},
     C21:{v:25,    f:'num0'},
-    C22:{v:2600,  f:'num0', input:true, min:1800, max:4200, step:50,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital'},
-    C23:{v:0.25,  f:'pct0', input:true, min:0.10, max:0.45, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital'},
+    C22:{v:1065,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital'},
+    C23:{v:0.35,  f:'pct0', input:true, min:0.10, max:1.00, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital'},
 
     C24:{v:1.40,  f:'x2',   input:true, min:1.20, max:2.00, step:0.05, lbl:'Target minimum DSCR', u:'sizes the debt', grp:'Financing'},
-    C25:{v:0.065, f:'pct1', input:true, min:0.03, max:0.12, step:0.005,lbl:'Interest rate', u:'p.a.', grp:'Financing'},
-    C26:{v:18,    f:'num0', input:true, min:5,    max:20,   step:1,    lbl:'Debt tenor', u:'yrs', grp:'Financing'},
-    C27:{v:0.75,  f:'pct0', input:true, min:0.30, max:0.80, step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing'},
-    C28:{v:0.11,  f:'pct1', input:true, min:0.06, max:0.20, step:0.005,lbl:'Equity discount rate', u:'p.a.', grp:'Financing'},
+    C25:{v:0.065, f:'pct1', input:true, min:0.03, max:0.16, step:0.005,lbl:'Interest rate', u:'p.a.', grp:'Financing'},
+    C26:{v:20,    f:'num0', input:true, min:5,    max:25,   step:1,    lbl:'Debt tenor', u:'yrs', grp:'Financing'},
+    C27:{v:0.80,  f:'pct0', input:true, min:0.30, max:0.85, step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing'},
+    C28:{v:0.10,  f:'pct1', input:true, min:0.06, max:0.20, step:0.005,lbl:'Equity discount rate', u:'p.a.', grp:'Financing'},
 
     C29:{v:1,     f:'num0'},
     C30:{v:27.5,  f:'num1'},
@@ -687,7 +687,7 @@ const SHEETS = [
     C33:{v:0.30,  f:'pct0'},
     C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetization', u:'\u00a76418 transfer', grp:'Tax & incentives'},
     C35:{v:0.21,  f:'pct0'},
-    C36:{v:0.05,  f:'pct0'},
+    C36:{v:0.049, f:'pct1'},
     C37:{v:1,     f:'num0'},
     C38:{v:20,    f:'num0'},
     C39:{v:0.80,  f:'pct0'},
@@ -1899,7 +1899,7 @@ function secAnalysis(){
   const w = section('analysis');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:78ch;line-height:1.6';
-  intro.textContent = "Origination doesn't build models, so how I read one matters more than that I can build one. Below is a generic 25 MW biomass relocation, invented end to end: no client, no counterparty, no live deal. The tax parameters are public law. Every project figure is made up.";
+  intro.textContent = "Origination doesn't build models, so how I read one matters more than that I can build one. Below is a 36 MW biomass relocation, on the parameters I would actually underwrite one on: plant configuration, availability, fuel rate and operating cost from industry ranges and public benchmarks, tax from statute. No client, no counterparty, no site and no transaction term appears anywhere in it.";
   w.appendChild(intro);
 
   const box = $('div', 'model');
@@ -2031,7 +2031,7 @@ function secAnalysis(){
   [['Project IRR', 'C63', 'pct1', 'Unlevered, after tax', '', ''],
    ['Levered equity IRR', 'C56', 'pct1', 'After debt', '', ''],
    ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M'],
-   ['Minimum DSCR', 'C57', 'x2', 'Sculpted, so it holds at target', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
+   ['Minimum DSCR', 'C57', 'x2', 'Flat by construction; here the leverage cap binds first', '', '']].forEach(([k, ref, f, n, pre, suf]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
     const v = $('span', 'v');
@@ -2059,7 +2059,7 @@ function secAnalysis(){
 
   const v1 = $('div', 'viz wide');
   v1.appendChild($('h4', null, 'Cash flow cover, years 1–20'));
-  v1.appendChild($('p', 'cap', "In $M. Debt service is sculpted to hold the cover ratio at target, so it tracks EBITDA rather than sitting flat. The gap is what's left for equity before tax."));
+  v1.appendChild($('p', 'cap', "In $M. Debt service is sculpted to hold the cover ratio flat, so it tracks EBITDA rather than sitting level. Sized at the lesser of what that sculpt supports and the leverage cap; here the cap binds, which is why cover sits well above its target. The gap is what's left for equity before tax."));
   const lr = $('div', 'legend-row');
   [['EBITDA', 'var(--series-1)'], ['Debt service', 'var(--series-2)']].forEach(([t, c]) => {
     const sp = $('span');
@@ -2354,13 +2354,20 @@ const MID = '#f0efec';
    A tornado laid out as a schedule. Every bar is a complete model run
    through underScenario(), not a derivative, so a clamped input or an
    unfinanceable corner shows up as itself instead of as a smooth line. */
-/* the third field is the unit to print beside the value. The cells carry a
+/* The third field is the unit to print beside the value. The cells carry a
    `u` of their own, but it is a slider hint as often as a unit — "sizes the
-   debt", "\u00a76418 transfer" — so the ones that are really units are named here. */
+   debt", "\u00a76418 transfer" — so the ones that are really units are named
+   here.
+
+   The fourth converts the cell's own value into the figure to show. Capex is
+   dialled in $/kW, because it has to scale when the capacity slider moves,
+   but $/kW is not the number anyone quotes a project in. It is shown as a
+   total instead: dollars per kW, times the plant, in millions. */
+const asTotal = { f:'num1', of:v => v * val('Assumptions', 'C9') / 1000 };
 const DRIVERS = [
   ['PPA price, year 1',         'C13', '$/MWh'],
   ['Availability, steady state','C11', ''],
-  ['Capex before contingency',  'C22', '$/kW'],
+  ['Capex before contingency',  'C22', '$M', asTotal],
   ['Fuel contract ceiling',     'C17', '$/ton'],
   ['Non-fuel opex, year 1',     'C19', '$M'],
   ['Interest rate',             'C25', ''],
@@ -2493,9 +2500,9 @@ function drawStress() {
   }
 
   const dirs = DRIVERS.map(([, ref]) => adverseDir(ref));
-  const rows = DRIVERS.map(([lbl, ref, unit], i) => {
+  const rows = DRIVERS.map(([lbl, ref, unit, show], i) => {
     const d = SHEET_BY_NAME['Assumptions'].cells[ref];
-    return { lbl, ref, unit, f:d.f, v0:val('Assumptions', ref),
+    return { lbl, ref, unit, f:show ? show.f : d.f, show, v0:val('Assumptions', ref),
              dir:dirs[i], r:driverBreakeven(ref, dirs[i], base) };
   });
   /* least room first: the top row is the assumption to be most sure of */
@@ -2534,7 +2541,7 @@ function drawStress() {
 
   /* the unit is a property of the row, not of each figure in it: printing it
      in both value columns said it twice and cost the phone the width */
-  const num = (v, r) => formatValue(v, r.f);
+  const num = (v, r) => formatValue(r.show ? r.show.of(v) : v, r.f);
   const tb = $('tbody');
   rows.forEach(r => {
     const tr = $('tr');

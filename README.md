@@ -83,7 +83,7 @@ agree.
 Hovering any figure names it and says, in a sentence, where the number came from, with live
 operands substituted:
 
-> **Equity NPV**  ·  **$11.0M**  Discounted equity cash flow plus the terminal value, less the
+> **Equity NPV**  ·  **$81.5M**  Discounted equity cash flow plus the terminal value, less the
 > equity drawn across the two-year build.
 
 This replaced a bar that printed the raw formula. `=C5+C6` was legible when the page was a
@@ -118,15 +118,38 @@ those things exist any more. A test now fails if the engine grows a function no 
 
 ## 6.0, the supporting analysis
 
-The appendix is a working project finance model: a generic **25 MW single-unit biomass
-relocation**, invented end to end. **It describes no client, counterparty or live transaction and
-contains no confidential terms.** Statutory tax parameters are public law (IRC §45Y, §48E, §172,
-§6418); every project figure is made up.
+The appendix is a working project finance model: a **36 MW biomass relocation**, at the
+parameters you would actually underwrite one on. **No client, counterparty, site or transaction
+term appears anywhere in it.** Statutory tax parameters are public law (IRC §45Y, §48E, §172,
+§6418); the rest are industry ranges and public benchmarks.
+
+### Where the parameters come from
+
+The figures were originally invented, which made the model internally consistent but not
+defensible in a room. They now sit in line with a real biomass relocation study: plant
+configuration and derate, availability, fuel rate per MWh and contract-ceiling ramp, operating
+cost, maintenance reserve, escalation, tenor and the Arizona-blended tax rate.
+
+Four figures are deliberately **not** the ones in that study, and each uses the public benchmark
+the study itself cites:
+
+| | Used here | Why not the source figure |
+|---|---|---|
+| PPA price | $110/MWh | The public Novo BioPower Arizona benchmark, not a named counterparty's indicative guarantee |
+| Contingency | 35% | The outside engineer's Class-5 number, not the risk overlay carried on top of it |
+| Debt rate | 6.5% | A market project-finance rate; the source uses a USDA guaranteed-loan programme rate, which is a financing route rather than a parameter and would read as an error without its context |
+| Acquisition | absent | This is a relocation capex model and always was. No acquisition price, ask or bid appears |
+
+The unlevered return lands at 26.5% against the source study's 25.4%, so the economics carry
+across. **The leverage cap now binds instead of the covenant**, because a relocated plant is
+capex-light enough that the sculpt would support far more debt than 80% of funded cost. Minimum
+cover therefore sits at 2.47x rather than at the 1.40x target — still flat in every year, which is
+the property the sculpt actually guarantees, and the page says so rather than claiming the target.
 
 Twenty operating years behind a two-year construction period:
 
-- **Sculpted amortization.** Debt service holds the cover ratio at a constant target, and the loan
-  is sized as the present value of that stream at the debt rate. Coverage therefore holds at the
+- **Sculpted amortization.** Debt service holds the cover ratio flat, and the loan is sized as the
+  lesser of the present value of that stream at the debt rate and the leverage cap. Coverage therefore holds at the
   target in every year of the tenor and the balance amortizes to exactly zero.
 - **Construction interest and a reserve.** The funding requirement is capex plus IDC plus a
   six-month debt service reserve, which releases to equity when the loan is repaid. Leverage is
@@ -297,9 +320,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 148 checks.
+Three suites, run against a headless browser. 150 checks.
 
-- **`site.js`** (121) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (123) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
