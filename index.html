@@ -177,6 +177,18 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .fld label{font-size:12px;color:var(--ink-2)}
 .fld output{font:700 13px var(--sans);color:var(--input);font-variant-numeric:tabular-nums}
 .fld .u{font-weight:400;font-size:10.5px;color:var(--ink-3);margin-left:3px}
+/* the benchmark beside each dial: what the market expects, and who says so */
+.fmkt{margin-top:6px;font:10.5px/1.45 var(--sans);color:var(--ink-3)}
+.fmkt b{font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.fmkt i{font-style:normal;border-bottom:1px dotted var(--rule);cursor:help}
+.bkey{margin:0;padding:10px 14px;border-top:1px solid var(--rule);
+      font:10.5px/1.5 var(--sans);color:var(--ink-3)}
+.bkey i{font-style:italic}
+/* the range wraps to its own row, so each entry needs to read as one block
+   rather than leaving its source floating between two figures */
+.hfld li{flex-wrap:wrap;padding:6px 0;border-bottom:1px solid var(--rule-2)}
+.hfld li:last-child{border-bottom:0}
+.hfld .fmkt{flex:1 0 100%;margin-top:1px;text-align:right}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;cursor:pointer;display:block}
 input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule);border-radius:2px}
 input[type=range]::-moz-range-track{height:3px;background:var(--rule);border-radius:2px}
@@ -656,41 +668,58 @@ const SHEETS = [
    (IRC 45Y / 48E / 172 / 6418); every project figure is invented. */
 {
   name:'Assumptions', rows:60, cols:[], cells:{
-    C9: {v:36,    f:'num0', input:true, min:10,   max:60,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant'},
-    C10:{v:0.9167,f:'pct0'},
-    C11:{v:0.95,  f:'pct0', input:true, min:0.50, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant'},
-    C12:{v:0.85,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant'},
+    C9: {v:50,    f:'num0', input:true, min:10,   max:80,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant',
+         mkt:[20,80],       s:'IND'},
+    C10:{v:0.9167,f:'pct0', mkt:[0.88,0.97], s:'IND'},
+    C11:{v:0.95,  f:'pct0', input:true, min:0.50, max:0.97, step:0.01, lbl:'Availability, steady state', u:'', grp:'Plant',
+         mkt:[0.85,0.95],   s:'IND'},
+    C12:{v:0.85,  f:'pct0', input:true, min:0.55, max:0.95, step:0.01, lbl:'Availability, year 1', u:'commissioning', grp:'Plant',
+         mkt:[0.75,0.90],   s:'IND'},
 
-    C13:{v:110,   f:'num0', input:true, min:55,   max:150,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel'},
-    C14:{v:0.025, f:'pct1', input:true, min:0,    max:0.04, step:0.005,lbl:'PPA escalator', u:'p.a.', grp:'Offtake & fuel'},
-    C15:{v:1.39,  f:'num2'},
-    C16:{v:20,    f:'num0', input:true, min:0,    max:60,   step:1,    lbl:'Delivered fuel cost today', u:'$/green ton', grp:'Offtake & fuel'},
-    C17:{v:35,    f:'num0', input:true, min:10,   max:110,  step:1,    lbl:'Fuel contract ceiling', u:'$/green ton', grp:'Offtake & fuel'},
+    C13:{v:110,   f:'num0', input:true, min:55,   max:150,  step:1,    lbl:'PPA price, year 1', u:'$/MWh', grp:'Offtake & fuel',
+         mkt:[90,130],      s:'NOVO'},
+    C14:{v:0.025, f:'pct1', input:true, min:0,    max:0.04, step:0.005,lbl:'PPA escalator', u:'p.a.', grp:'Offtake & fuel',
+         mkt:[0.02,0.03],   s:'IND'},
+    C15:{v:1.39,  f:'num2', mkt:[1.2,1.6], s:'IND'},
+    C16:{v:20,    f:'num0', input:true, min:0,    max:60,   step:1,    lbl:'Delivered fuel cost today', u:'$/green ton', grp:'Offtake & fuel',
+         mkt:[10,35],       s:'IND'},
+    C17:{v:35,    f:'num0', input:true, min:10,   max:110,  step:1,    lbl:'Fuel contract ceiling', u:'$/green ton', grp:'Offtake & fuel',
+         mkt:[25,50],       s:'IND'},
     C18:{v:10,    f:'num0', input:true, min:0,    max:20,   step:1,    lbl:'Years to reach the ceiling', u:'yrs', grp:'Offtake & fuel'},
 
-    C19:{v:11.6,  f:'num1', input:true, min:4,    max:20,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital'},
-    C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital'},
-    C21:{v:25,    f:'num0'},
-    C22:{v:1065,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital'},
-    C23:{v:0.35,  f:'pct0', input:true, min:0.10, max:1.00, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital'},
+    C19:{v:16.1,  f:'num1', input:true, min:6,    max:30,   step:0.1,  lbl:'Non-fuel opex, year 1', u:'$M', grp:'Costs & capital',
+         mkt:[13.8,18.4],   s:'IND'},
+    C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital',
+         mkt:[0.02,0.03],   s:'CPI'},
+    C21:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
+    C22:{v:1065,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital',
+         mkt:[4000,5000],   s:'ATB', note:'new build; relocation is a fraction of it'},
+    C23:{v:0.35,  f:'pct0', input:true, min:0.10, max:1.00, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital',
+         mkt:[0.30,0.50],   s:'AACE'},
 
-    C24:{v:1.40,  f:'x2',   input:true, min:1.20, max:2.00, step:0.05, lbl:'Target minimum DSCR', u:'sizes the debt', grp:'Financing'},
-    C25:{v:0.065, f:'pct1', input:true, min:0.03, max:0.16, step:0.005,lbl:'Interest rate', u:'p.a.', grp:'Financing'},
-    C26:{v:20,    f:'num0', input:true, min:5,    max:25,   step:1,    lbl:'Debt tenor', u:'yrs', grp:'Financing'},
-    C27:{v:0.80,  f:'pct0', input:true, min:0.30, max:0.85, step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing'},
-    C28:{v:0.10,  f:'pct1', input:true, min:0.06, max:0.20, step:0.005,lbl:'Equity discount rate', u:'p.a.', grp:'Financing'},
+    C24:{v:1.40,  f:'x2',   input:true, min:1.20, max:2.00, step:0.05, lbl:'Target minimum DSCR', u:'sizes the debt', grp:'Financing',
+         mkt:[1.30,1.50],   s:'IND'},
+    C25:{v:0.065, f:'pct1', input:true, min:0.03, max:0.16, step:0.005,lbl:'Interest rate', u:'p.a.', grp:'Financing',
+         mkt:[0.06,0.08],   s:'IND'},
+    C26:{v:20,    f:'num0', input:true, min:5,    max:25,   step:1,    lbl:'Debt tenor', u:'yrs', grp:'Financing',
+         mkt:[15,20],       s:'IND'},
+    C27:{v:0.80,  f:'pct0', input:true, min:0.30, max:0.85, step:0.05, lbl:'Maximum leverage', u:'of capex', grp:'Financing',
+         mkt:[0.65,0.80],   s:'IND'},
+    C28:{v:0.10,  f:'pct1', input:true, min:0.06, max:0.20, step:0.005,lbl:'Equity discount rate', u:'p.a.', grp:'Financing',
+         mkt:[0.09,0.12],   s:'IND'},
 
     C29:{v:1,     f:'num0'},
-    C30:{v:27.5,  f:'num1'},
-    C31:{v:0.02,  f:'pct1'},
-    C32:{v:0.10,  f:'pct0'},
-    C33:{v:0.30,  f:'pct0'},
-    C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetization', u:'\u00a76418 transfer', grp:'Tax & incentives'},
-    C35:{v:0.21,  f:'pct0'},
-    C36:{v:0.049, f:'pct1'},
+    C30:{v:27.5,  f:'num1', s:'IRC45Y'},
+    C31:{v:0.02,  f:'pct1', s:'IRC45Y'},
+    C32:{v:0.10,  f:'pct0', s:'IRC45Y'},
+    C33:{v:0.30,  f:'pct0', s:'IRC48E'},
+    C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetization', u:'\u00a76418 transfer', grp:'Tax & incentives',
+         mkt:[0.90,0.95],   s:'X6418'},
+    C35:{v:0.21,  f:'pct0', s:'IRC'},
+    C36:{v:0.049, f:'pct1', s:'AZ'},
     C37:{v:1,     f:'num0'},
     C38:{v:20,    f:'num0'},
-    C39:{v:0.80,  f:'pct0'},
+    C39:{v:0.80,  f:'pct0', s:'IRC172'},
     C40:{v:25,    f:'num0'},
 
     C45:{v:'=C9*1000*C10', f:'num0'},
@@ -1749,6 +1778,41 @@ function secMarket(){
 
 /* ── the live deal model ─────────────────────────────────────────── */
 
+/* Where each benchmark comes from. Statute is cited by section. Two published
+   references are named because they publish these categories directly. The
+   rest say "industry range", which is honest: a range everyone in the sector
+   would recognise, not a figure lifted from a paper that never printed it. */
+const BENCH = {
+  IND:    ['industry range',   'Ranges a biomass developer, lender or IE would recognise. Not a published figure.'],
+  ATB:    ['NREL ATB',         'National Renewable Energy Laboratory, Annual Technology Baseline — dedicated biomass.'],
+  AACE:   ['AACE Class 5',     'AACE International 18R-97: a Class 5 estimate carries a wide accuracy range, and contingency is set against it.'],
+  NOVO:   ['Novo BioPower',    'The Snowflake, Arizona biomass plant contracts at a published $110/MWh, the nearest public comparable.'],
+  CPI:    ['CPI',              'General cost inflation; operating contracts are usually indexed to it.'],
+  X6418:  ['\u00a76418 market','Transferable credits sell at a discount to face; 90 to 95 cents is the convention.'],
+  IRC45Y: ['IRC \u00a745Y',   'Clean electricity production credit, statutory rate and indexation.'],
+  IRC48E: ['IRC \u00a748E',   'Clean electricity investment credit, statutory rate.'],
+  IRC172: ['IRC \u00a7172',   'Statutory cap on how much income a carried-forward loss may offset.'],
+  IRC:    ['IRC',              'US statutory federal corporate rate.'],
+  AZ:     ['A.R.S. \u00a743-1111', 'Arizona statutory corporate rate, deductible against federal.'],
+};
+
+/* "market 90-130 $/MWh" in the cell's own units */
+function marketLine(d) {
+  if (!d.mkt && !d.s) return null;
+  const w = $('div', 'fmkt');
+  if (d.mkt) {
+    const lo = formatValue(d.mkt[0], d.f), hi = formatValue(d.mkt[1], d.f);
+    w.append($('b', null, lo + '\u2013' + hi), ' ');
+  }
+  if (d.s && BENCH[d.s]) {
+    const tag = $('i', null, BENCH[d.s][0]);
+    tag.title = BENCH[d.s][1];
+    w.appendChild(tag);
+  }
+  if (d.note) w.append(' \u00b7 ' + d.note);
+  return w;
+}
+
 /* the adjustable inputs, grouped, read straight off the workbook */
 const INPUT_GROUPS = (() => {
   const g = new Map();
@@ -1958,6 +2022,9 @@ function secAnalysis(){
         sl.setAttribute('aria-label', def.lbl + (def.u ? ', ' + def.u : ''));
         sl.addEventListener('input', () => { overrides['Assumptions!' + ref] = parseFloat(sl.value); recalc(); });
         f.appendChild(sl);
+        /* an assumption with no benchmark beside it is an assertion */
+        const mk = marketLine(def);
+        if (mk) f.appendChild(mk);
         body.appendChild(f);
       });
       if (grp === 'Tax & incentives') {
@@ -1983,10 +2050,18 @@ function secAnalysis(){
       v.appendChild(cell('Assumptions', ref));
       if (suf) v.append(suf);
       li.appendChild(v);
+      const mk = marketLine(SHEET_BY_NAME['Assumptions'].cells[ref]);
+      if (mk) li.appendChild(mk);
       ul.appendChild(li);
     });
     body.appendChild(ul);
   });
+
+  /* the grey line under each dial needs saying once */
+  const key = $('p', 'bkey');
+  key.append('Grey figures are the range the market would expect, with its source. ',
+    $('i', null, 'Hover a source to see what it is.'));
+  inp.appendChild(key);
 
   /* ---- the outputs column: one tab strip, three panes ---- */
   const out = $('div', 'outputs');

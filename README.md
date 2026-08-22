@@ -118,7 +118,7 @@ those things exist any more. A test now fails if the engine grows a function no 
 
 ## 6.0, the supporting analysis
 
-The appendix is a working project finance model: a **36 MW biomass relocation**, at the
+The appendix is a working project finance model: a **50 MW biomass relocation**, at the
 parameters you would actually underwrite one on. **No client, counterparty, site or transaction
 term appears anywhere in it.** Statutory tax parameters are public law (IRC §45Y, §48E, §172,
 §6418); the rest are industry ranges and public benchmarks.
@@ -126,9 +126,37 @@ term appears anywhere in it.** Statutory tax parameters are public law (IRC §45
 ### Where the parameters come from
 
 The figures were originally invented, which made the model internally consistent but not
-defensible in a room. They now sit in line with a real biomass relocation study: plant
-configuration and derate, availability, fuel rate per MWh and contract-ceiling ramp, operating
-cost, maintenance reserve, escalation, tenor and the Arizona-blended tax rate.
+defensible in a room. They now sit in line with a real biomass relocation study: derate,
+availability, fuel rate per MWh and contract-ceiling ramp, operating cost per kW-year,
+maintenance reserve, escalation, tenor and the Arizona-blended tax rate. The plant is 50 MW
+rather than that study's 36, so it is plainly not that plant; non-fuel opex scales with it,
+holding the researched cost per kW-year flat.
+
+### Every dial carries its benchmark
+
+An assumption with no benchmark beside it is an assertion. Each input now prints the range a
+reader would expect it to sit in and where that range comes from, so the question in the room
+becomes *why this end of the range* rather than *where did that come from*:
+
+> **PPA price, year 1** — 110 $/MWh
+> `90–130` *Novo BioPower*
+
+Sources are named honestly, which matters more than making them look impressive:
+
+- **Statute** is cited by section: IRC §45Y (production credit rate and indexation), §48E
+  (investment credit rate), §172 (NOL cap), and A.R.S. §43-1111 for the Arizona rate.
+- **Two published references** are named because they publish these categories directly: the NREL
+  Annual Technology Baseline for dedicated-biomass capital cost, and AACE International 18R-97 for
+  what contingency a Class 5 estimate carries.
+- **One public comparable**: Novo BioPower at Snowflake, Arizona contracts at a published
+  $110/MWh. It is a market comparable, not a party to anything, and a test asserts it appears on
+  the page only inside a benchmark line.
+- **Everything else says "industry range"**, which is what it is — a range anyone in the sector
+  would recognise — rather than borrowing an institution's authority for a number it never
+  published. Hovering any source tag gives the sentence behind it.
+
+The capex benchmark is deliberately the *new-build* figure, 4,000–5,000 $/kW against a set value
+of 1,065. The gap is not an error; it is the entire thesis, and the line says so.
 
 Four figures are deliberately **not** the ones in that study, and each uses the public benchmark
 the study itself cites:
@@ -141,7 +169,8 @@ the study itself cites:
 | Acquisition | absent | This is a relocation capex model and always was. No acquisition price, ask or bid appears |
 
 The unlevered return lands at 26.5% against the source study's 25.4%, so the economics carry
-across. **The leverage cap now binds instead of the covenant**, because a relocated plant is
+across; scale is return-neutral, so moving to 50 MW changes the absolute figures and not the
+percentages. **The leverage cap now binds instead of the covenant**, because a relocated plant is
 capex-light enough that the sculpt would support far more debt than 80% of funded cost. Minimum
 cover therefore sits at 2.47x rather than at the 1.40x target — still flat in every year, which is
 the property the sculpt actually guarantees, and the page says so rather than claiming the target.
@@ -320,9 +349,9 @@ normal-vision ΔE 33.6 — both clear of the floors.
 
 ## Verification
 
-Three suites, run against a headless browser. 150 checks.
+Three suites, run against a headless browser. 151 checks.
 
-- **`site.js`** (123) — behavior, content and style: values against hand calculations, the stress,
+- **`site.js`** (124) — behavior, content and style: values against hand calculations, the stress,
   tornado and breakeven logic, the memo furniture, the font convention, the confidentiality
   sweep, the cover and contents furniture, the webfont link and its fallback stacks, and
   guards on em dashes, contractions and American spelling.
