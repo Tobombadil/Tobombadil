@@ -392,11 +392,8 @@ section > .wrap.body{padding-bottom:44px}
 .torn th.n{text-align:right}
 .torn th.c{text-align:center}
 .torn td{padding:6px 10px 6px 0;border-bottom:1px solid var(--rule-2);white-space:nowrap}
-.torn td.lbl{white-space:normal;width:32%;padding-right:16px}
-.torn td.bar{width:36%;padding-right:20px}
-.torn td.n{text-align:right;width:12%;color:var(--ink-2);font-variant-numeric:tabular-nums}
-.torn td.n.bad{color:var(--bad)}
-.torn td.n.good{color:var(--good)}
+.torn td.lbl{white-space:normal;width:34%;padding-right:20px}
+.torn td.bar{width:66%;padding-right:4px}
 /* the axis, carried in the header so every bar below is read against it */
 .tax{padding:0 0 3px}
 .taxdir{display:flex;justify-content:space-between;align-items:baseline;
@@ -418,7 +415,8 @@ section > .wrap.body{padding-bottom:44px}
 .taxs .zero::after{background:var(--ink-3);height:6px}
 /* no track: the grey band behind every bar read as a grid and said nothing */
 .tb{position:relative;height:13px}
-.tb i{position:absolute;top:0;bottom:0;display:block}
+.tb i{position:absolute;top:0;bottom:0;display:block;cursor:default}
+.tb i:focus-visible{outline:2px solid var(--input);outline-offset:2px}
 .tb i.up{background:var(--good)}
 .tb i.dn{background:var(--bad)}
 .tb u{position:absolute;left:50%;top:-7px;bottom:-7px;width:1px;background:var(--ink-3);opacity:.45}
@@ -513,12 +511,8 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
      header row, so both have to be given the width. */
   .torn{table-layout:fixed;width:100%}
   .torn td.lbl,.torn th:first-child{width:42%;white-space:normal}
-  .torn td.bar,.torn th.c{width:30%;padding-right:10px}
-  .torn td.n,.torn th.n{width:14%}
-  /* the headers say what moved, so they wrap rather than overrun each other */
-  .torn th.n{white-space:normal;line-height:1.3}
-  .taxdir{font-size:7.5px;letter-spacing:.04em}
-  .taxdir .w::before,.taxdir .b::after{content:''}
+  .torn td.bar,.torn th.c{width:58%;padding-right:4px}
+  .taxdir{font-size:8px;letter-spacing:.05em}
   /* the centre label is the caption's job at this width, and five ticks
      collide in 110px */
   .taxdir{font-size:8px;letter-spacing:.06em}
@@ -2389,13 +2383,8 @@ function drawTornado() {
   ax.appendChild(axw);
   htr.appendChild(ax);
 
-  /* the columns are the input moving, not the answer. Saying "−10%" over a
-     column of NPV changes is what made the left bar look like the left column. */
-  htr.appendChild($('th', 'n', 'If 10% low'));
-  htr.appendChild($('th', 'n', 'If 10% high'));
   thead.appendChild(htr); t.appendChild(thead);
 
-  const fmt = d => !isFinite(d) ? 'n.m.' : (d >= 0 ? '+' : '') + formatValue(d, 'num1');
   const tb = $('tbody');
   rows.forEach(r => {
     const tr = $('tr');
@@ -2404,27 +2393,41 @@ function drawTornado() {
 
     const bc = $('td', 'bar');
     const tbar = $('div', 'tb');
-    [r.dlo, r.dhi].forEach(d => {
+    [['lo', r.dlo], ['hi', r.dhi]].forEach(([side, d]) => {
       if (!isFinite(d) || d === 0) return;
       const wpc = Math.abs(d) / max * 50;
-      /* the colour is the same fact as the number beside it: red where equity
-         NPV falls, green where it rises. Which side of the base case it lands
-         on says the same thing again, so neither reading carries it alone. */
+      /* red where equity NPV falls, green where it rises. Which side of the
+         base case it lands on says the same thing again, so neither reading
+         carries it alone. */
       const i = $('i', d >= 0 ? 'up' : 'dn');
       i.style.left = (d >= 0 ? 50 : 50 - wpc) + '%';
       i.style.width = wpc + '%';
-      i.title = (d >= 0 ? 'up ' : 'down ') + formatValue(Math.abs(d), 'num1') + 'M';
+      /* the exact figures used to be two columns beside the bar, which said
+         them twice once the axis could be read. They live on the bar now. */
+      i.dataset.side = side;
+      i.dataset.d = d.toFixed(4);
+      i.tabIndex = 0;
+      const word = side === 'lo' ? 'If 10% low' : 'If 10% high';
+      i.setAttribute('aria-label', r.lbl + '. ' + word + ', equity NPV ' +
+        formatValue(base + d, 'num1') + ' million, ' + (d >= 0 ? 'up ' : 'down ') +
+        formatValue(Math.abs(d), 'num1') + ' million.');
+      const at = ev => {
+        const b = i.getBoundingClientRect();
+        showTip('<b>' + esc(r.lbl) + '</b>' + word + ' · equity NPV <i>' +
+          formatValue(base + d, 'num1') + '</i><br>' + (d >= 0 ? 'up' : 'down') +
+          ' <i>' + formatValue(Math.abs(d), 'num1') + '</i> from base',
+          ev.clientX || b.left + b.width / 2, ev.clientY || b.top);
+      };
+      i.addEventListener('pointerenter', at);
+      i.addEventListener('pointermove', at);
+      i.addEventListener('pointerleave', hideTip);
+      i.addEventListener('focus', at);
+      i.addEventListener('blur', hideTip);
       tbar.appendChild(i);
     });
     tbar.appendChild($('u'));
     bc.appendChild(tbar);
     tr.appendChild(bc);
-
-    [r.dlo, r.dhi].forEach(d => {
-      const td = $('td', 'n', fmt(d));
-      if (isFinite(d)) td.classList.add(d < 0 ? 'bad' : 'good');
-      tr.appendChild(td);
-    });
     tb.appendChild(tr);
   });
   t.appendChild(tb);

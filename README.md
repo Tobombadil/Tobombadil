@@ -216,10 +216,18 @@ sensitivity chart is a failing grade. Four things were wrong, in the order they 
 - **The track was noise.** A grey band behind every bar rendered as a striped grid and carried no
   information. Removed; the bars sit on the paper against a single zero rule.
 
+Then the axis made the two numeric columns redundant — they printed the figures the bar was
+already showing to scale, and cost the bars two thirds of their width. They are gone. The exact
+values did not go with them: each bar carries its endpoint and its delta as data, is focusable,
+drives the page's own tooltip on hover, focus or tap, and names itself to a screen reader. A
+tornado is now a name and a bar, and it finally looks like one.
+
 Tests hold the parts a redesign would quietly break: that the axis is labelled and ordered, that
-its centre is the base case rather than zero, that the direction words are present, that the
-column headers name the input rather than the answer, that every bar's colour agrees with the
-number beside it, and that no bar runs past the axis.
+its centre is the base case rather than zero, that the direction words are present, that the table
+is a name and a bar and nothing else, that every bar is drawn on the side and in the colour its
+own value calls for, that each still carries its exact figure and is reachable, and that no bar
+runs past the axis. The drift check — which recomputes every endpoint independently and compares —
+now reads the figures off the bars rather than off a printed column, so it tests what is drawn.
 
 A 5×5 NPV heatmap used to sit alongside the tornado. It answered the same question over two
 drivers that the tornado answers over ten, so 6.0 carried three overlapping sensitivity displays.
