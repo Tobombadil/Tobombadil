@@ -443,9 +443,7 @@ never a number typed into prose:
 | Funding requirement | $77.9M | $313.2M | −$235.3M |
 | Senior debt | $62.3M | $98.5M | −$36.2M |
 | Equity required | $15.6M | $214.7M | −$199.1M |
-| Leverage, of funding | 80.0% | 31.4% | +48.6 pts |
-| Debt sized by | leverage cap | cash flow | differs |
-| Minimum cover | 2.21x | 1.40x | +0.81x |
+| Minimum DSCR | 2.21x | 1.40x | +0.81x |
 | Project IRR | 24.5% | 3.4% | +21.1 pts |
 | Equity NPV | $100.2M | $(109.2)M | +$209.4M |
 
@@ -462,17 +460,27 @@ and what the leverage cap allows, and **the sculpt supports the same $98.5M in b
 because it is the same plant selling the same power on the same fuel. Relocated, the cap ($62.3M)
 binds first, so leverage lands exactly on the dial. Built new, the cap would allow $263.2M but the
 covenant holds debt at $98.5M, leverage falls to 31.4%, and equity absorbs every dollar of the
-difference. Senior debt, leverage and the binding constraint are now rows of their own, because
-*lenders size on cash flow, not on cost* is the most instructive line in the comparison and the
-reader should not have to derive it.
+difference. **What the table shows, and what it deliberately doesn't.** Senior debt and the funding
+requirement are both rows, so the leverage is there for anyone who wants to divide for it. It is
+not a row of its own, and neither is the binding constraint: both were tried and both read as
+jargon, inviting the misreading that somebody had *chosen* a lower gearing for the new build. The
+sentence under the table carries the point instead, and the definitions carry the mechanics. The
+cover ratio is called **Minimum DSCR** here, matching the Returns pane rather than inventing a
+second name for the same figure.
 
-Twelve tests hold the pane: the greenfield column is recomputed independently and must match, the
+**Every row explains itself.** The trade rows are drawn strings with no cell behind them, so the
+provenance bar had nothing to hook into and a reader who did not know what "Minimum DSCR" meant
+had nowhere to ask. Each label now carries a definition, shown through the same chrome as a source
+line: the formula bar on a wide screen, the tooltip on a phone.
+
+Eleven tests hold the pane: the greenfield column is recomputed independently and must match, the
 difference column must reconcile, the bar widths must be the ratio of the figures beside them, the
-sculpt-supported debt must be identical across the two columns, the named binding constraint must
-agree with the model's own cap-versus-sculpt comparison, and a difference of two percentages must
-be quoted in points rather than percent. The rows are addressed by label, not by index — inserting
-Senior debt above Project IRR would otherwise have re-pointed the IRR assertions at Minimum cover
-and gone on passing. Senior debt is the one row drawn in neutral grey: more debt is not a win.
+sculpt-supported debt must be identical across the two columns, the binding constraint must
+actually differ between them, the relocation must lever to exactly the dialled cap when debt is
+divided by funding, and a difference of two percentages must be quoted in points rather than
+percent. The rows are addressed by label, not by index — inserting a row above Project IRR would
+otherwise have re-pointed the IRR assertions at the row below and gone on passing. Senior debt is
+drawn in neutral grey: more debt is not a win.
 
 ### Capex is dialled in dollars
 

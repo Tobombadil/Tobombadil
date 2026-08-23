@@ -1420,15 +1420,11 @@ const DEF = {
   'Funding requirement':
     'What has to be raised: the capital cost, plus interest accruing during construction, plus the debt service reserve the lender requires at closing. Always larger than the capital cost.',
   'Senior debt':
-    'The loan. Sized as the lower of two limits, not chosen: what the cash flow will service at the target cover ratio, and what the leverage cap allows.',
+    'The loan. Sized as the lower of two limits rather than chosen: what the cash flow will service at the target cover ratio, and what the leverage cap allows. Divide it by the funding requirement above for the leverage actually achieved.',
   'Equity required':
     'The funding requirement less the loan. Equity is the residual, which is why a cost overrun lands on it rather than being shared.',
-  'Leverage, of funding':
-    'Senior debt as a share of everything funded, including construction interest and the reserve, rather than as a share of capex. Lenders measure it this way, and it is the lower of the two ratios.',
-  'Debt sized by':
-    'Which of the two limits actually struck the loan. "Leverage cap" means the cash flow would have carried more debt than the cap permits; "cash flow" means the covenant bound first and the cap was never reached.',
-  'Minimum cover':
-    'The debt service coverage ratio in its worst year: cash available for debt service divided by debt service. 1.40x means the project generates 40% more cash than it owes. Lenders set a floor, typically 1.30 to 1.45x for contracted generation, and breaching it traps distributions.',
+  'Minimum DSCR':
+    'Debt service coverage in the worst year of the tenor: cash available for debt service divided by debt service. 1.40x means the project throws off 40% more cash than it owes that year. Lenders set a floor, typically 1.30 to 1.45x for contracted generation, and breaching it traps distributions. It sits above the floor only when the leverage limit bound first and the loan is smaller than the cash flow could carry.',
   'Project IRR':
     'The unlevered return: the whole build funded up front, with no interest deduction. It measures the asset, so financing cannot flatter it.',
   'Equity NPV':
@@ -2065,9 +2061,7 @@ const TRADE = () => {
   const read = () => ({
     capex:val('Assumptions', 'C46'), funding:val('Model', 'C49'),
     months:val('Assumptions', 'C62'),
-    debt:val('Model', 'C45'), lev:val('Model', 'C51'),
-    /* which of the two limits actually struck the loan */
-    sizedBy:val('Model', 'C44') < val('Model', 'C42') ? 'leverage cap' : 'cash flow',
+    debt:val('Model', 'C45'),
     equity:val('Model', 'C50'), proj:val('Model', 'C63'),
     npv:val('Model', 'C55'), dscr:val('Model', 'C57'),
     financeable:val('Model', 'C40'),
@@ -2367,7 +2361,7 @@ function secAnalysis(){
   tr.appendChild(tbars);
   const tn = $('p');
   tn.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:78ch';
-  tn.textContent = "The leverage dial is the same in both columns, so the equity does not move because anyone changed the capital structure. Debt is the lesser of what the cash flow will carry and what the leverage cap allows, and the cash flow is identical here: the same plant, the same offtake, the same fuel. Quadruple the capital cost and the debt cannot follow, so the covenant takes over from the cap and equity absorbs the whole difference. Lenders size on cash flow, not on cost, which is why nobody builds greenfield biomass at a market power price.";
+  tn.textContent = "The equity does not move because anyone changed the capital structure: the leverage limit is the same in both columns. Debt is the lesser of what the cash flow will service at the cover ratio and what that limit allows, and the cash flow is identical here, being the same plant on the same offtake and the same fuel, so it supports the same loan either way. Relocated, the leverage limit is what binds. Built new, quadrupling the cost cannot quadruple the cash flow, so the cover ratio binds instead, the loan stops at what the plant can service, and equity absorbs the difference. Leverage is the output of that test rather than a policy: lenders size on cash flow, not on cost, which is why nobody builds greenfield biomass at a market power price.";
   tr.appendChild(tn);
   panes[0].appendChild(tr);
 
@@ -2946,9 +2940,7 @@ function drawTrade() {
    ['Funding requirement',  'funding', 'num1', '$', 'M', true],
    ['Senior debt',          'debt', 'num1', '$', 'M', null],
    ['Equity required',      'equity', 'num1', '$', 'M', true],
-   ['Leverage, of funding', 'lev', 'pct1', '', '', false],
-   ['Debt sized by',        'sizedBy', 'text', '', '', null],
-   ['Minimum cover',        'dscr', 'x2', '', '', false],
+   ['Minimum DSCR',         'dscr', 'x2', '', '', false],
    ['Project IRR',          'proj', 'pct1', '', '', false],
    ['Equity NPV',           'npv', 'num1', '$', 'M', false],
   ].forEach(([lbl, k, f, pre, suf, lowerIsBetter]) => {
@@ -2959,15 +2951,6 @@ function drawTrade() {
                     dfn.setAttribute('aria-label', lbl + '. ' + DEF[lbl]); }
     lc.appendChild(dfn);
     tr2.appendChild(lc);
-    if (f === 'text') {
-      /* the punchline of the whole comparison, so it is a row rather than
-         something a reader has to infer from the two above it */
-      tr2.appendChild($('td', 'n', brown[k]));
-      tr2.appendChild($('td', 'n muted', green[k]));
-      tr2.appendChild($('td', 'n muted', brown[k] === green[k] ? 'same' : 'differs'));
-      tb.appendChild(tr2);
-      return;
-    }
     tr2.appendChild($('td', 'n', num(brown[k], f, pre, suf)));
     tr2.appendChild($('td', 'n muted', num(green[k], f, pre, suf)));
     const d = brown[k] - green[k];
