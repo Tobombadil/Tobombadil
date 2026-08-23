@@ -182,22 +182,23 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 /* the case, above the model that serves it */
 .why{margin:0 0 26px}
 .why h3{margin:0 0 12px;font:700 12px var(--sans)}
-.whys{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule)}
-.whyc{padding:13px 15px;border-right:1px solid var(--rule)}
-.whyc:last-child{border-right:0}
+.whys{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+      background:var(--rule);border:1px solid var(--rule)}
+.whyc{padding:13px 15px;background:var(--paper)}
+/* an odd last card fills its row instead of leaving a hole */
+.whyc:last-child:nth-child(3n+2){grid-column:span 2}
 .whyc b{display:block;font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;
         color:var(--copper);margin-bottom:6px}
 .whyc p{margin:0;font-size:12.5px;line-height:1.55;color:var(--prose)}
 .against{margin:12px 0 0;font:italic 12px var(--sans);line-height:1.6;color:var(--ink-3);max-width:96ch}
 @media (max-width:900px){
   .whys{grid-template-columns:repeat(2,1fr)}
-  .whyc:nth-child(2){border-right:0}
-  .whyc:nth-child(1),.whyc:nth-child(2){border-bottom:1px solid var(--rule)}
+  .whyc:last-child:nth-child(3n+2){grid-column:auto}
+  .whyc:last-child:nth-child(2n+1){grid-column:span 2}
 }
 @media (max-width:560px){
   .whys{grid-template-columns:1fr}
-  .whyc{border-right:0;border-bottom:1px solid var(--rule)}
-  .whyc:last-child{border-bottom:0}
+  .whyc:last-child{grid-column:auto}
 }
 .model{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--rule);background:var(--paper)}
 /* The dials stop where they stop rather than stretching to whichever readout
@@ -758,7 +759,7 @@ const SHEETS = [
    published benchmarks, each carrying the range and source it came from in
    `mkt` and `s`. No client, counterparty, site or transaction term appears. */
 {
-  name:'Assumptions', rows:80, cols:[], cells:{
+  name:'Assumptions', rows:85, cols:[], cells:{
     C9: {v:50,    f:'num0', input:true, min:10,   max:80,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant',
          mkt:[20,80],       s:'IND'},
     C10:{v:0.9167,f:'pct0', mkt:[0.88,0.97], s:'IND'},
@@ -824,15 +825,37 @@ const SHEETS = [
        itself. Behind the meter at a host with capacity that can be close to
        right; grid-tied it is not. Carried separately so it can be argued with,
        and set to zero if the destination genuinely needs nothing. */
-    C73:{v:2.50,  f:'num2', input:true, min:0,    max:20,   step:0.25, lbl:'Interconnection and grid connection', u:'$M', grp:'Acquiring and moving it',
-         mkt:[0,12], mpre:'$', msuf:'M', mf:'num0', s:'IND',
-         note:'zero behind the meter, large on a network upgrade'},
+    /* How the plant reaches its load, which is a configuration rather than a
+       number. Behind the meter needs a feeder, metering and protection to the
+       host. A grid connection needs a switchyard, a gen-tie to the point of
+       interconnection, and whatever network upgrades the utility's study calls
+       for. Doing both is not redundancy: the plant can be finished long before
+       a data centre is, and the tie is what lets it earn in the meantime. */
+    C74:{v:1,     f:'num0'},                              /* 0 BTM, 1 both, 2 grid */
+    C75:{v:0.60,  f:'num2', input:true, min:0.1,  max:5,    step:0.05, lbl:'Behind-the-meter connection', u:'$M', grp:'Reaching the load',
+         mkt:[0.3,2], mpre:'$', msuf:'M', mf:'num1', s:'IND',
+         note:'feeder, metering and protection to the host'},
+    C76:{v:1.20,  f:'num2', input:true, min:0.3,  max:6,    step:0.05, lbl:'Switchyard and step-up transformer', u:'$M', grp:'Reaching the load',
+         mkt:[0.8,3], mpre:'$', msuf:'M', mf:'num1', s:'IND'},
+    C77:{v:0.5,   f:'num2', input:true, min:0,    max:20,   step:0.25, lbl:'Gen-tie length', u:'miles to the interconnection point', grp:'Reaching the load',
+         mkt:[0,10],        s:'IND', note:'the radial line, owned by the project'},
+    C78:{v:1.0,   f:'num2', input:true, min:0.4,  max:3.5,  step:0.1,  lbl:'Gen-tie cost', u:'$M per mile', grp:'Reaching the load',
+         mkt:[0.5,2.5], mpre:'$', msuf:'M', mf:'num1', s:'IND', note:'overhead, at sub-transmission voltage'},
+    C79:{v:0.20,  f:'num2', input:true, min:0,    max:15,   step:0.05, lbl:'Network upgrades', u:'$M', grp:'Reaching the load',
+         mkt:[0,10], mpre:'$', msuf:'M', mf:'num0', s:'IND',
+         note:'the utility side, and the number the study can move most'},
+    C73:{v:'=IF(C74<=1,C75,0)+IF(C74>=1,C76+C77*C78+C79,0)', f:'num2'},
     /* The one line that is contingent rather than planned: the boiler either
        passes ultrasonic inspection or it is retubed. The preconditions above
        call this the genuine coin flip, so the model should carry it. */
-    C72:{v:4.15,  f:'num2', input:true, min:0,    max:15,   step:0.05, lbl:'Boiler refurbishment, if inspection calls for it', u:'$M', grp:'Acquiring and moving it',
-         mkt:[0,8], mpre:'$', msuf:'M', mf:'num0', s:'EST',
-         note:'full retube: waterwall, superheater, economizer'},
+    /* The coin flip the preconditions name, made a dial instead of a footnote.
+       The base case provisions the full retube because the inspection has not
+       been done; clearing it is upside, not the plan. */
+    C80:{v:2,     f:'num0'},                              /* 0 none, 1 partial, 2 full */
+    C81:{v:4.15,  f:'num2', input:true, min:1,    max:10,   step:0.05, lbl:'Full retube, if called for', u:'$M', grp:'Acquiring and moving it',
+         mkt:[2,8], mpre:'$', msuf:'M', mf:'num0', s:'EST',
+         note:'waterwall, superheater, economizer, generating bank'},
+    C72:{v:'=IF(C80=0,0,IF(C80=1,C81*0.45,C81))', f:'num2'},
     /* the counterfactual the whole trade is measured against */
     C41:{v:225,   f:'num1', input:true, min:100,  max:400,  step:1,    lbl:'Greenfield capex, for comparison', u:'$M', grp:'Costs & capital',
          mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
@@ -1296,6 +1319,8 @@ const SITE = {
      "Small biopower plants sit idle across the country, stranded when qualifying-facility contracts expired or when the host mill that supplied both their steam load and their fuel shut down. Boiler, turbine-generator and balance of plant are frequently still serviceable."],
     ['The fuel',
      "Mill residuals and forest-restoration thinnings are a disposal cost to whoever holds them, not a product. Where the counterparty pays to have the material taken away, delivered fuel prices at haulage rather than at commodity, which is what the fuel dials below assume and then take away again."],
+    ['The bridge',
+     "Behind the meter is the plan, not the dependency. A gen-tie to the utility lets the plant run as a standalone merchant or contracted project from commissioning, earning while the load it was bought for is still being built, and it turns the single worst schedule risk in the trade into a revenue question rather than a stranding one."],
     ['The story',
      "Restoration thinning reduces the fuel load that drives catastrophic fire. For a utility or a hyperscaler being asked where its firm power comes from, wildfire mitigation and forest health is a materially better answer than a new gas peaker, and it is a real co-benefit rather than a label."],
   ],
@@ -1305,8 +1330,8 @@ const SITE = {
   musts:[
     ['Both ends on a heavy-haul route',
      'Boilers, the turbine-generator and the air-cooled condenser move as oversize and overweight loads. Origin and destination each need a rail siding or a permitted road route with the bridges to carry it. A plant that cannot be got out is not for sale at any price, and the haul dial below assumes a route exists.'],
-    ['Interconnection or load at the destination',
-     'Either capacity already studied at the point of interconnection, or a behind-the-meter host taking the output. Joining a queue cold gives back the schedule advantage that is the whole reason to do this.'],
+    ['A grid tie as well as the host',
+     'The plan is behind the meter, and the plant should still connect to the utility. A relocated plant can be finished in about two years; the data centre it serves will not be. A gen-tie means the plant sells firm power from the day it is commissioned instead of waiting on someone else\'s construction, and it is the fallback if that load never arrives. Joining a queue cold, on the other hand, gives back the schedule advantage that is the whole reason to do this.'],
     ['An air permit that can be obtained on the schedule',
      'The slowest thing on the critical path, and the one a community can contest. A destination in a maintenance area, or one without an existing permitted source to work from, moves the timeline by more than the move itself.'],
     ['Fuel inside an economic haul radius',
@@ -1314,7 +1339,7 @@ const SITE = {
     ['Equipment that inspects clean',
      'Pressure parts, the turbine and the generator each carry condition risk that only inspection resolves. This is the one precondition that is a genuine coin flip, and it is why diligence is priced before acquisition rather than after.'],
   ],
-  against:"What would kill it: interconnection at the destination, which is the long pole unless you site behind the meter or on ground that already has capacity; the air permit, which is the slowest thing on the critical path and the one a community can contest; fuel security, because free today is not free for twenty years, which is why the model ramps to a contract ceiling; and condition risk in used equipment, which an ultrasonic inspection either clears or does not.",
+  against:"What would kill it: the network upgrades a system impact study comes back with, which are the utility's number rather than the project's and the one line in the capital cost that can move by an order of magnitude; the air permit, which is the slowest thing on the critical path and the one a community can contest; fuel security, because free today is not free for twenty years, which is why the model ramps to a contract ceiling; and condition risk in used equipment, which an ultrasonic inspection either clears or does not. Each of the four is a dial below, so the reader can price the disagreement rather than take it on faith.",
 
   next:[
     "Thirty minutes, no deck. I'd rather hear which market you're short of coverage in than talk about myself.",
@@ -1466,6 +1491,8 @@ const SRC = {
   'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
 
   'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, ${C71}M of development and permitting, ${C65}M to take it down and crate it, ${C67}M of haul, ${C68}M to put it back up and commission it, ${C73}M to connect it, and ${C72}M of boiler refurbishment.', '$', 'M'],
+  'Assumptions!C73': ['Reaching the load', 'Behind-the-meter connection at ${C75}M, a switchyard at ${C76}M, {C77} miles of gen-tie at ${C78}M a mile, and ${C79}M of network upgrades. Which of those apply is set by the grid configuration above.', '$', 'M'],
+  'Assumptions!C72': ['Boiler refurbishment', 'A full retube costs ${C81}M. What the model carries depends on what the ultrasonic inspection is assumed to find.', '$', 'M'],
   'Assumptions!C67': ['Haul', '${C70}M of permits, pilot cars and route survey, owed at any distance, plus {C66} route miles at ${C69}k a mile for the transport contract itself. Under 3% of capex: moving the plant is the cheap part, and putting it back up is not.', '$', 'M'],
   'Assumptions!C46': ['Capex, all in', 'The ${C22}M above, plus {C23} contingency.', '$', 'M'],
 
@@ -2049,7 +2076,7 @@ function scaleCapex(k) {
   /* C22 is the sum of its parts now, so the parts are what travel with
      capacity. Haul distance does not: a bigger plant is more loads over the
      same road, which is the per-mile rate, not the mileage. */
-  ['C64', 'C71', 'C65', 'C70', 'C69', 'C68', 'C73', 'C72', 'C41'].forEach(ref => {
+  ['C64', 'C71', 'C65', 'C70', 'C69', 'C68', 'C75', 'C76', 'C79', 'C81', 'C41'].forEach(ref => {
     const d = SHEET_BY_NAME['Assumptions'].cells[ref];
     const next = Math.min(d.max, Math.max(d.min, val('Assumptions', ref) * k));
     const s = document.getElementById('in-' + ref);
@@ -2367,6 +2394,16 @@ function secAnalysis(){
         if (mk) f.appendChild(mk);
         body.appendChild(f);
       });
+      if (grp === 'Reaching the load') {
+        body.insertBefore(picker('C74', 'Grid configuration',
+          [[1, 'Behind the meter, with a grid tie'], [0, 'Behind the meter only'],
+           [2, 'Grid-tied, standalone']]), body.firstChild);
+      }
+      if (grp === 'Acquiring and moving it') {
+        body.insertBefore(picker('C80', 'Boiler condition, after inspection',
+          [[2, 'Full retube provisioned'], [1, 'Partial, waterwall only'],
+           [0, 'Inspection clears, none needed']]), body.firstChild);
+      }
       if (grp === 'Tax & incentives') {
         body.appendChild(picker('C29', 'Credit election',
           [[1, 'Production credit (§45Y)'], [2, 'Investment credit (§48E)'], [0, 'None']]));

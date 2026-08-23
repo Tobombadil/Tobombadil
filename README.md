@@ -514,7 +514,7 @@ with, while its components are:
 | Dismantle, crate and load out | $6.85M | 12.9% |
 | Haul — $0.60M fixed, plus 1,800 miles at $0.50k/mile | $1.50M | 2.8% |
 | Foundations, re-erection and commissioning | $27.15M | 51.0% |
-| Interconnection and grid connection | $2.50M | 4.7% |
+| Reaching the load (configured, see below) | $2.50M | 4.7% |
 | Boiler refurbishment, if inspection calls for it | $4.15M | 7.8% |
 | **Capex, before contingency** | **$53.25M** | |
 
@@ -548,6 +548,47 @@ to this plant, not its figures, and no line naming a party, a site or a price. A
 deliberately held slightly off the source-implied per-kW so the real transaction figure is not
 recoverable, and its own tag says it is illustrative. The confidentiality sweep was widened to
 every party, agency and place the budget names once it had been read in full.
+
+### Two configurations, not two numbers
+
+Interconnection and boiler condition are not really assumptions with a value — they are
+*decisions with a cost*, so each is a picker rather than a slider, and each drives a formula over
+component dials.
+
+**Reaching the load.** The plan is behind the meter. But a relocated plant can be finished in
+about two years and the data centre it serves will not be, so the plant also ties to the utility:
+it sells firm power from commissioning instead of waiting on someone else's construction, and the
+tie is the fallback if that load never arrives. That turns the worst schedule risk in the trade
+from a stranding question into a revenue question, which is why it is a thesis card ("The bridge")
+and not just a line item.
+
+| | behind the meter only | **with a grid tie** | grid-tied standalone |
+|---|---|---|---|
+| | $0.60M | **$2.50M** | $1.90M |
+
+Built from four dials: the behind-the-meter feeder, metering and protection; a switchyard and
+step-up transformer; the **gen-tie** — the radial line the project owns from its switchyard to the
+utility's point of interconnection, priced per mile at sub-transmission voltage; and **network
+upgrades**, which are the utility's own reinforcements, come out of the system impact study, and
+are the single line in the capital cost that can move by an order of magnitude. The counterweight
+paragraph was rewritten to name that specifically, since "interconnection" as a risk is now
+answered by the configuration.
+
+**Boiler condition.** The source flags the ultrasonic inspection as a genuine coin flip and a
+$2–5M finding. The base case provisions a full retube because the inspection has not been done;
+clearing it is upside, not the plan.
+
+| | inspection clears | partial, waterwall only | **full retube provisioned** |
+|---|---|---|---|
+| | $0.00M | $1.87M | **$4.15M** |
+
+The base case is unchanged at $71.9M all-in. The crosscheck's reference model re-derives both
+configured lines itself rather than reading the page's answer, so a wrong branch fails on the
+sweep rather than agreeing with itself.
+
+The `.whys` grid also stopped being hardcoded to four cards. Rules are drawn as 1px gaps over a
+ruled background rather than per-cell borders, so any number of cards holds at any breakpoint, and
+an odd last card spans its row instead of leaving a hole.
 
 ### Sanity-checking the source
 
