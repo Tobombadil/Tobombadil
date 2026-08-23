@@ -758,7 +758,7 @@ const SHEETS = [
    published benchmarks, each carrying the range and source it came from in
    `mkt` and `s`. No client, counterparty, site or transaction term appears. */
 {
-  name:'Assumptions', rows:70, cols:[], cells:{
+  name:'Assumptions', rows:75, cols:[], cells:{
     C9: {v:50,    f:'num0', input:true, min:10,   max:80,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant',
          mkt:[20,80],       s:'IND'},
     C10:{v:0.9167,f:'pct0', mkt:[0.88,0.97], s:'IND'},
@@ -797,15 +797,23 @@ const SHEETS = [
          mkt:() => perKw(150, 450), mpre:'$', msuf:'M', mf:'num1', s:'USED',
          note:'idle thermal plant, bought for its equipment'},
     C65:{v:9,     f:'num1', input:true, min:2,    max:30,   step:0.5,  lbl:'Dismantle, crate and load out', u:'$M', grp:'Acquiring and moving it',
-         mkt:[6,15], mpre:'$', msuf:'M', mf:'num0', s:'IND'},
+         mkt:[6,15], mpre:'$', msuf:'M', mf:'num0', s:'SPLIT'},
     C66:{v:450,   f:'num0', input:true, min:50,   max:2000, step:25,   lbl:'Haul distance', u:'miles', grp:'Acquiring and moving it',
-         mkt:[100,1000],    s:'IND', note:'both ends must sit on a heavy-haul route'},
-    C69:{v:20,    f:'num1', input:true, min:5,    max:60,   step:0.5,  lbl:'Haul cost', u:'$k per route mile', grp:'Acquiring and moving it',
-         mkt:[12,35], mpre:'$', msuf:'k', mf:'num0', s:'IND',
-         note:'the whole convoy, with permits and escorts'},
-    C67:{v:'=C66*C69/1000', f:'num1'},                    /* haul, in $M */
+         mkt:[100,1000],    s:'SPLIT', note:'both ends must sit on a heavy-haul route'},
+    /* Heavy haul is quoted per load against a surveyed route, and most of the
+       cost does not care how long the route is: crane mobilization, bridge
+       analysis, permits, escorts and utility line lifts are all incurred at
+       fifty miles as at five hundred. Split accordingly, or a short move
+       prices at almost nothing. */
+    C70:{v:5.4,   f:'num1', input:true, min:1,    max:20,   step:0.1,  lbl:'Mobilization, rigging and permits', u:'$M', grp:'Acquiring and moving it',
+         mkt:[2,10], mpre:'$', msuf:'M', mf:'num0', s:'SPLIT',
+         note:'incurred whatever the distance'},
+    C69:{v:8,     f:'num1', input:true, min:2,    max:30,   step:0.5,  lbl:'Haul, per route mile', u:'$k per mile', grp:'Acquiring and moving it',
+         mkt:[4,20], mpre:'$', msuf:'k', mf:'num0', s:'SPLIT',
+         note:'the whole convoy, several hundred loads'},
+    C67:{v:'=C70+C66*C69/1000', f:'num1'},                /* haul, in $M */
     C68:{v:23.25, f:'num1', input:true, min:8,    max:80,   step:0.25, lbl:'Foundations, re-erection and interconnection', u:'$M', grp:'Acquiring and moving it',
-         mkt:[15,40], mpre:'$', msuf:'M', mf:'num0', s:'IND'},
+         mkt:[15,40], mpre:'$', msuf:'M', mf:'num0', s:'SPLIT'},
     /* the counterfactual the whole trade is measured against */
     C41:{v:225,   f:'num1', input:true, min:100,  max:400,  step:1,    lbl:'Greenfield capex, for comparison', u:'$M', grp:'Costs & capital',
          mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
@@ -1439,7 +1447,7 @@ const SRC = {
   'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
 
   'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, dismantling of ${C65}M, ${C67}M of haul, and ${C68}M to put it back up on new foundations.', '$', 'M'],
-  'Assumptions!C67': ['Haul', '{C66} route miles at ${C69}k a mile, for the whole convoy: permits, escorts and route engineering included.', '$', 'M'],
+  'Assumptions!C67': ['Haul', '${C70}M to mobilize cranes, survey the route and permit it, which is owed at any distance, plus {C66} route miles at ${C69}k a mile for the convoy itself.', '$', 'M'],
   'Assumptions!C46': ['Capex, all in', 'The ${C22}M above, plus {C23} contingency.', '$', 'M'],
 
   'Model!C49': ['Funding requirement', 'Construction cost of ${C41}M, plus ${C47}M of interest during construction, plus a ${C48}M debt service reserve.', '$', 'M'],
@@ -2000,6 +2008,7 @@ const BENCH = {
   IND:    ['industry range',   'Ranges a biomass developer, lender or IE would recognize. Not a published figure.'],
   TERM:   ['contract term',    'Set by the supply agreement rather than by a market: how long the price has to climb from today to its ceiling.'],
   BLEND:  ['IRC + A.R.S.',     'The two statutory rates combined: state tax is deductible against federal, so the blend is less than their sum.'],
+  SPLIT:  ['assumed breakdown', 'Not a quoted figure and not a survey. The capex total is the benchmarked number, against NREL ATB; this is my own split of it into parts that can be argued with separately, and each range is a plausibility band rather than a published one. Heavy haul in particular is quoted per load against a surveyed route, so read the per-mile figure as indicative.'],
   USED:   ['used-plant range', 'What idle thermal generating equipment changes hands for, per kW of nameplate, when it is bought to be moved rather than run in place. A range, not a quote: the figure here is illustrative and is not any actual asking price.'],
   ATB:    ['NREL ATB',         'National Renewable Energy Laboratory, Annual Technology Baseline — dedicated biomass.'],
   AACE:   ['AACE Class 5',     'AACE International 18R-97: a Class 5 estimate carries a wide accuracy range, and contingency is set against it.'],
@@ -2021,7 +2030,7 @@ function scaleCapex(k) {
   /* C22 is the sum of its parts now, so the parts are what travel with
      capacity. Haul distance does not: a bigger plant is more loads over the
      same road, which is the per-mile rate, not the mileage. */
-  ['C64', 'C65', 'C69', 'C68', 'C41'].forEach(ref => {
+  ['C64', 'C65', 'C70', 'C69', 'C68', 'C41'].forEach(ref => {
     const d = SHEET_BY_NAME['Assumptions'].cells[ref];
     const next = Math.min(d.max, Math.max(d.min, val('Assumptions', ref) * k));
     const s = document.getElementById('in-' + ref);

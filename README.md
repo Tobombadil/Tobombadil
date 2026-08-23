@@ -511,14 +511,28 @@ with, while its components are:
 |---|---|
 | Acquisition, plant as it stands | $12.0M |
 | Dismantle, crate and load out | $9.0M |
-| Haul — 450 route miles at $20k/mile | $9.0M |
+| Haul — $5.4M to mobilize, plus 450 miles at $8k/mile | $9.0M |
 | Foundations, re-erection and interconnection | $23.3M |
 | **Capex, before contingency** | **$53.25M** |
 
 `C22` is a formula over the four, so it cannot be quietly retyped, and a test asserts the parts
-still sum to it. Haul is distance × rate rather than a lump, which is the dial that answers "how
-far is this thing moving" — and the rate is what scales with plant size, not the mileage, since a
-bigger plant is more loads over the same road.
+still sum to it. The rate is what scales with plant size, not the mileage, since a bigger plant is
+more loads over the same road.
+
+**Where the breakdown came from, honestly.** The capex *total* is the benchmarked number, against
+NREL ATB. The split into four is mine: I fixed acquisition from a used-equipment per-kW range and
+chose the rest so they reconcile to the total, which means the haul figure was a residual before
+it was a rate. That is a legitimate way to build a breakdown and an illegitimate thing to dress as
+a market range, so these cells no longer carry the `IND` tag ("a range a developer, lender or IE
+would recognize"). They carry `SPLIT`, which says on hover that it is not a quoted figure and not
+a survey. A test fails if any component of capex claims `IND` again.
+
+**Haul has a fixed leg.** First cut priced it purely per route mile, which put a whole 50 MW plant
+on the road for $1.0M over fifty miles. Wrong shape, not a small error: crane mobilization, route
+survey, bridge analysis, permits, escorts and utility line lifts are owed at fifty miles as at
+five hundred. It is now mobilization + miles × rate, so 50 miles costs $5.8M and 2,000 costs
+$21.4M. Two tests hold that shape — a short move must exceed the fixed leg, and quadrupling the
+distance must not quadruple the cost.
 
 The acquisition benchmark is a **per-kW used-plant range**, resolved live against the capacity
 dial, and the source tag says outright that the figure is illustrative and is not any actual
