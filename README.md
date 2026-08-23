@@ -441,8 +441,6 @@ never a number typed into prose:
 | Months to first power | 25 mo | 42 mo | −17 mo |
 | Capital cost, all in | $71.9M | $303.8M | −$231.9M |
 | Funding requirement | $77.9M | $313.2M | −$235.3M |
-| Senior debt | $62.3M | $98.5M | −$36.2M |
-| Equity required | $15.6M | $214.7M | −$199.1M |
 | Minimum DSCR | 2.21x | 1.40x | +0.81x |
 | Project IRR | 24.5% | 3.4% | +21.1 pts |
 | Equity NPV | $100.2M | $(109.2)M | +$209.4M |
@@ -460,24 +458,35 @@ and what the leverage cap allows, and **the sculpt supports the same $98.5M in b
 because it is the same plant selling the same power on the same fuel. Relocated, the cap ($62.3M)
 binds first, so leverage lands exactly on the dial. Built new, the cap would allow $263.2M but the
 covenant holds debt at $98.5M, leverage falls to 31.4%, and equity absorbs every dollar of the
-difference. **What the table shows, and what it deliberately doesn't.** Senior debt and the funding
-requirement are both rows, so the leverage is there for anyone who wants to divide for it. It is
-not a row of its own, and neither is the binding constraint: both were tried and both read as
-jargon, inviting the misreading that somebody had *chosen* a lower gearing for the new build. The
-sentence under the table carries the point instead, and the definitions carry the mechanics. The
-cover ratio is called **Minimum DSCR** here, matching the Returns pane rather than inventing a
-second name for the same figure.
+difference. **The trade compares the asset; the capital structure lives on Returns.** Four financing rows were
+tried here and all four were cut: senior debt, equity required, leverage, and which limit sized the
+loan. Each was added to explain why greenfield equity is so much larger, and each instead invited
+the misreading that somebody had *chosen* a lower gearing for the new build. Nobody did — and the
+comparison never depended on it, because **Project IRR is unlevered**: the whole build funded up
+front, no interest deduction. The headline return is financing-free already.
+
+Holding both columns at 80% was the obvious alternative and is worse. The model prices it: forced
+to the cap, a greenfield build takes $263.2M of debt at a **0.52x** cover ratio — roughly half the
+cash it owes in year one, which is a default at closing rather than a tight structure. It would
+also *flatter* greenfield, lifting NPV from −$109.2M to −$76.7M, because cheap leverage on a
+value-destroying asset shrinks the equity cheque. A comparison is not made fair by writing a loan
+no lender would sign.
+
+So the one financing figure that stays is the one that is really about the asset: whether it can
+service debt at all. It is called **Minimum DSCR**, matching the Returns pane rather than inventing
+a second name for the same number, and the two columns tell the story on their own — 2.21x clear of
+the floor when the cost cap binds first, 1.40x exactly on it when the cash flow binds.
 
 **Every row explains itself.** The trade rows are drawn strings with no cell behind them, so the
 provenance bar had nothing to hook into and a reader who did not know what "Minimum DSCR" meant
 had nowhere to ask. Each label now carries a definition, shown through the same chrome as a source
 line: the formula bar on a wide screen, the tooltip on a phone.
 
-Eleven tests hold the pane: the greenfield column is recomputed independently and must match, the
+Ten tests hold the pane: the greenfield column is recomputed independently and must match, the
 difference column must reconcile, the bar widths must be the ratio of the figures beside them, the
 sculpt-supported debt must be identical across the two columns, the binding constraint must
-actually differ between them, the relocation must lever to exactly the dialled cap when debt is
-divided by funding, and a difference of two percentages must be quoted in points rather than
+actually differ between them, the relocation must lever to exactly the dialled cap and clear the
+cover floor while greenfield sits on it, and a difference of two percentages must be quoted in points rather than
 percent. The rows are addressed by label, not by index — inserting a row above Project IRR would
 otherwise have re-pointed the IRR assertions at the row below and gone on passing. Senior debt is
 drawn in neutral grey: more debt is not a win.
