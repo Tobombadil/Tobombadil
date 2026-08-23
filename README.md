@@ -507,32 +507,52 @@ because a checklist of nouns is decoration.
 Capex was one dial. It is now the sum of four, because "$53.25M" is not a figure anyone can argue
 with, while its components are:
 
-| | |
-|---|---|
-| Acquisition, plant as it stands | $12.0M |
-| Dismantle, crate and load out | $9.0M |
-| Haul — $5.4M to mobilize, plus 450 miles at $8k/mile | $9.0M |
-| Foundations, re-erection and interconnection | $23.3M |
-| **Capex, before contingency** | **$53.25M** |
+| | | share |
+|---|---|---|
+| Acquisition, plant as it stands | $8.00M | 15.0% |
+| Development, financing and permitting | $3.10M | 5.8% |
+| Dismantle, crate and load out | $6.85M | 12.9% |
+| Haul — $0.60M fixed, plus 1,800 miles at $0.50k/mile | $1.50M | 2.8% |
+| Foundations, re-erection and commissioning | $29.65M | 55.7% |
+| Boiler refurbishment, if inspection calls for it | $4.15M | 7.8% |
+| **Capex, before contingency** | **$53.25M** | |
 
 `C22` is a formula over the four, so it cannot be quietly retyped, and a test asserts the parts
 still sum to it. The rate is what scales with plant size, not the mileage, since a bigger plant is
 more loads over the same road.
 
-**Where the breakdown came from, honestly.** The capex *total* is the benchmarked number, against
-NREL ATB. The split into four is mine: I fixed acquisition from a used-equipment per-kW range and
-chose the rest so they reconcile to the total, which means the haul figure was a residual before
-it was a rate. That is a legitimate way to build a breakdown and an illegitimate thing to dress as
-a market range, so these cells no longer carry the `IND` tag ("a range a developer, lender or IE
-would recognize"). They carry `SPLIT`, which says on hover that it is not a quoted figure and not
-a survey. A test fails if any component of capex claims `IND` again.
+**Where the breakdown came from.** The *total* was always grounded: the source study's base budget
+works out to $1,064/kW, which is where the page's $1,065/kW came from. The *split* of it was not.
+The first version was back-solved — acquisition set from a used-equipment per-kW range, the rest
+chosen to reconcile — which made the haul a residual before it was a rate, and it was then tagged
+`IND` ("a range a developer, lender or IE would recognize"), a source it did not have.
 
-**Haul has a fixed leg.** First cut priced it purely per route mile, which put a whole 50 MW plant
-on the road for $1.0M over fifty miles. Wrong shape, not a small error: crane mobilization, route
-survey, bridge analysis, permits, escorts and utility line lifts are owed at fifty miles as at
-five hundred. It is now mobilization + miles × rate, so 50 miles costs $5.8M and 2,000 costs
-$21.4M. Two tests hold that shape — a short move must exceed the fixed leg, and quadrupling the
-distance must not quadruple the cost.
+It is now proportioned against the study's own bottom-up budget: roughly ninety line items across
+financing, permitting, decommissioning, transport, re-erection and commissioning, each with crew
+counts, hours, rates and a fixed-against-variable split. The proportions above match that budget's
+to within rounding, and capex all-in is unchanged at $71.9M, so nothing downstream moved.
+
+The correction was not small. **Haul is 2.9% of a relocation budget, not the 17% the back-solve
+gave it** — a per-mile rate of roughly $500, not $20,000. The instructive proportion is the other
+side of it: **re-erection is 56%**. Moving the plant is the cheap part; putting it back up is the
+expensive part, and a relocation does not avoid that cost. Two tests pin both halves.
+
+Two line items the model had missed entirely are now in it: **development, financing and
+permitting** (the FEED package, the air permit, the interconnection study, closing costs), and
+**boiler refurbishment** — a full retube, contingent on the ultrasonic inspection. The
+preconditions list already called that inspection the genuine coin flip; the model now prices it.
+
+These cells carry an `EST` tag saying what the figure is and is not: the budget's *shape* applied
+to this plant, not its figures, and no line naming a party, a site or a price. Acquisition is
+deliberately held slightly off the source-implied per-kW so the real transaction figure is not
+recoverable, and its own tag says it is illustrative. The confidentiality sweep was widened to
+every party, agency and place the budget names once it had been read in full.
+
+**Two things the source does differently, left as they are.** It carries **50% contingency**
+against the page's 35% — both sit inside the AACE Class 5 band the page cites, but the source is
+the more conservative, and raising it would move every headline figure. And it moves **two units in
+parallel**, where the page models one plant, which is already documented above. Neither is a defect
+to fix silently.
 
 The acquisition benchmark is a **per-kW used-plant range**, resolved live against the capacity
 dial, and the source tag says outright that the figure is illustrative and is not any actual
