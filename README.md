@@ -590,6 +590,39 @@ The `.whys` grid also stopped being hardcoded to four cards. Rules are drawn as 
 ruled background rather than per-cell borders, so any number of cards holds at any breakpoint, and
 an odd last card spans its row instead of leaving a hole.
 
+### The financing dials explain themselves
+
+Three questions in a row about this model turned out to be missing *explanations* rather than
+missing numbers, and all three were in the financing block — which is where the mechanics live and
+where a label cannot carry them. Every dial in that group now has a provenance sentence saying what
+it does to the answer, with live operands substituted, and a test fails if one is added without one.
+
+**Target minimum DSCR** is the clearest case. It is the covenant the loan is sized to: in any year
+the plant may owe its cash available for debt service divided by that figure, and the loan is the
+present value of that stream at the debt rate. But it only reaches the answer when it is the limit
+that *binds* — and in the base case it is not. Sculpting supports $98.5M; the leverage cap allows
+$62.3M; the smaller is drawn.
+
+The consequence is worth stating plainly, because a slider that does nothing is worse than no
+slider at all if the page does not say so:
+
+| target | sculpt supports | cap allows | drawn | actual DSCR | equity NPV |
+|---|---|---|---|---|---|
+| 1.20x | $114.9M | $62.3M | $62.3M | 2.21x | $100.2M |
+| 1.40x | $98.5M | $62.3M | $62.3M | 2.21x | $100.2M |
+| 1.80x | $76.6M | $62.3M | $62.3M | 2.21x | $100.2M |
+| 2.00x | $68.9M | $62.3M | $62.3M | 2.21x | $100.2M |
+
+**Across its entire slider range the dial changes nothing.** It first bites at 2.21x — which is
+exactly the actual minimum DSCR the model already reports, and that is an identity rather than a
+coincidence: the realised cover is the target divided by how far the loan was cut below the sculpt,
+so the covenant takes over precisely when the target reaches the realised figure. Move the same
+dial in the greenfield column, where the covenant *is* binding, and debt runs $114.9M down to
+$68.9M with cover tracking the target exactly.
+
+That is also why the Stress pane reports it as surviving its whole range. It is not that the shock
+is too small; it is that on this structure the covenant is not the constraint.
+
 ### Sanity-checking the source
 
 Re-anchoring to a study is only worth doing if the study holds up, so it was audited rather than

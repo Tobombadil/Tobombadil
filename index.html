@@ -1491,6 +1491,16 @@ const SRC = {
   'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
 
   'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, ${C71}M of development and permitting, ${C65}M to take it down and crate it, ${C67}M of haul, ${C68}M to put it back up and commission it, ${C73}M to connect it, and ${C72}M of boiler refurbishment.', '$', 'M'],
+  /* The financing dials are the ones whose effect is not readable off the
+     label. Each says what it does to the answer, with the live operands in it. */
+  'Assumptions!C24': ['Target minimum DSCR', 'The covenant the loan is sized to. In any year the plant may owe its cash available for debt service divided by this figure, and the loan is the present value of that stream at the debt rate, which comes to ${Model!C42}M. But it only reaches the answer when it is the limit that binds: the leverage cap allows ${Model!C44}M, and the loan is the smaller of the two.'],
+  'Assumptions!C25': ['Interest rate', 'The senior rate. It discounts the allowable debt service stream, so a higher rate supports a smaller loan on the same cash flow, and it is also what accrues on the drawn balance through construction.'],
+  'Assumptions!C26': ['Debt tenor', 'The years the loan is sized over. Only cash flow inside the tenor counts toward it, so a shorter tenor supports less debt even where the plant runs for decades longer.', '', ' yrs'],
+  'Assumptions!C27': ['Maximum leverage', 'The cap on debt as a share of funded cost rather than of capex. Interest during construction and the reserve are themselves funded by the loan, so the cap solves rather than multiplies, and lands at ${Model!C44}M.'],
+  'Assumptions!C28': ['Equity discount rate', 'What equity is assumed to demand. It sets the hurdle the equity NPV is measured against and changes nothing about the project itself.'],
+  'Assumptions!C23': ['Contingency', 'Carried over every capital line before anything is funded. A Class 5 estimate has a wide accuracy range and this is the allowance held against it, taking ${C22}M of capex to ${C46}M.'],
+  'Assumptions!C34': ['Credit monetization', 'What a transfer under §6418 nets, since the buyer takes a discount for taking the credit. Applied to the credit itself rather than to the tax bill.'],
+
   'Assumptions!C73': ['Reaching the load', 'Behind-the-meter connection at ${C75}M, a switchyard at ${C76}M, {C77} miles of gen-tie at ${C78}M a mile, and ${C79}M of network upgrades. Which of those apply is set by the grid configuration above.', '$', 'M'],
   'Assumptions!C72': ['Boiler refurbishment', 'A full retube costs ${C81}M. What the model carries depends on what the ultrasonic inspection is assumed to find.', '$', 'M'],
   'Assumptions!C67': ['Haul', '${C70}M of permits, pilot cars and route survey, owed at any distance, plus {C66} route miles at ${C69}k a mile for the transport contract itself. Under 3% of capex: moving the plant is the cheap part, and putting it back up is not.', '$', 'M'],
