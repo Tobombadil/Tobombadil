@@ -513,7 +513,8 @@ with, while its components are:
 | Development, financing and permitting | $3.10M | 5.8% |
 | Dismantle, crate and load out | $6.85M | 12.9% |
 | Haul — $0.60M fixed, plus 1,800 miles at $0.50k/mile | $1.50M | 2.8% |
-| Foundations, re-erection and commissioning | $29.65M | 55.7% |
+| Foundations, re-erection and commissioning | $27.15M | 51.0% |
+| Interconnection and grid connection | $2.50M | 4.7% |
 | Boiler refurbishment, if inspection calls for it | $4.15M | 7.8% |
 | **Capex, before contingency** | **$53.25M** | |
 
@@ -548,11 +549,45 @@ deliberately held slightly off the source-implied per-kW so the real transaction
 recoverable, and its own tag says it is illustrative. The confidentiality sweep was widened to
 every party, agency and place the budget names once it had been read in full.
 
-**Two things the source does differently, left as they are.** It carries **50% contingency**
-against the page's 35% — both sit inside the AACE Class 5 band the page cites, but the source is
-the more conservative, and raising it would move every headline figure. And it moves **two units in
-parallel**, where the page models one plant, which is already documented above. Neither is a defect
-to fix silently.
+### Sanity-checking the source
+
+Re-anchoring to a study is only worth doing if the study holds up, so it was audited rather than
+trusted. **Its arithmetic is clean**: variable cost equals crew × hours × rate on all 73 costed
+lines, cost equals variable + fixed on all 81, the six stage totals reconcile to the stated base
+budget to the dollar, and the contingency and quarterly phasing both tie out. Its capacity
+assumptions match the page's independently — 18 MW nameplate per unit against 16.5 MW net is the
+0.9167 derate the page carries, arrived at from the other direction.
+
+Four things it does **not** support, which is why an audit was worth the hour:
+
+- **No interconnection construction anywhere.** The budget carries a $125k interconnection *study*
+  and a $55k utilities-install line, and nothing for a gen-tie, substation, switchyard or network
+  upgrade. Behind the meter at a host with existing capacity that can be close to right; grid-tied
+  it is not, and it is the kind of omission that moves a number by eight figures. The page now
+  carries **interconnection as its own dial**, defaulting to $2.5M inside the same total, with a
+  range from zero to $12M. It is the one line in that group deliberately tagged `IND` rather than
+  `EST`, because it is the page's addition and not the study's.
+- **The retube contradicts itself.** The notes tab says "Retubing excluded" and flags it as a
+  $2–5M unquantified risk; the schedule budgets $3.0M for it and the base budget total includes
+  that $3.0M. Both cannot be true. Worse, **only one of the two units is retubed** — two identical
+  same-vintage twins, one provisioned and one not.
+- **The cross-reference is dangling.** The notes point to a section called "UNACCOUNTED RISKS" in
+  the budget tab. There is no such section in the workbook.
+- **The line-item precision is partly presentational.** Within the decommissioning stages the
+  "fixed cost" column is exactly hours × $409.02 — a lump-sum allocation spread by labour hours,
+  not ninety independent estimates. The construction stages vary properly, so those are genuinely
+  built up. And the second crew's budget is a line-for-line duplicate of the first's.
+
+**A correction to what this file said before.** The source model uses 50% contingency, and the
+page's 35% was described here as the less conservative choice. That reads the provenance wrong:
+the contractor's own Class 5 estimate used **35%**, and the study's owner then layered 50% on top
+of it. The page's 35% is the estimator's number, not a softening of it. It is left at 35% for that
+reason, and the AACE range beside it already runs to 50% so the more conservative case is one drag
+away.
+
+**One thing left alone deliberately:** the study moves two units in parallel where the page models
+one plant, which is already documented above and is part of what keeps the page plainly not that
+deal.
 
 The acquisition benchmark is a **per-kW used-plant range**, resolved live against the capacity
 dial, and the source tag says outright that the figure is illustrative and is not any actual

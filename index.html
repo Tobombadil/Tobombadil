@@ -789,7 +789,7 @@ const SHEETS = [
        separately instead of having to accept one number. */
     /* not an input any more, but the stress and sensitivity panes move capex
        as one quantity, so it still needs a band to be moved within */
-    C22:{v:'=C64+C71+C65+C67+C68+C72', f:'num1', min:15, max:300,
+    C22:{v:'=C64+C71+C65+C67+C68+C73+C72', f:'num1', min:15, max:300,
          mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
          s:'ATB', note:'the greenfield cost of the same plant'},
 
@@ -816,9 +816,17 @@ const SHEETS = [
          mkt:[0.3,1.2], mpre:'$', msuf:'k', mf:'num1', s:'EST',
          note:'the transport contract, across all loads'},
     C67:{v:'=C70+C66*C69/1000', f:'num2'},                /* haul, in $M */
-    C68:{v:29.65, f:'num2', input:true, min:10,   max:80,   step:0.05, lbl:'Foundations, re-erection and commissioning', u:'$M', grp:'Acquiring and moving it',
+    C68:{v:27.15, f:'num2', input:true, min:10,   max:80,   step:0.05, lbl:'Foundations, re-erection and commissioning', u:'$M', grp:'Acquiring and moving it',
          mkt:[20,45], mpre:'$', msuf:'M', mf:'num0', s:'EST',
-         note:'over half the budget, and the part a relocation does not avoid'},
+         note:'half the budget, and the part a relocation does not avoid'},
+    /* The relocation budget this is proportioned from carries an
+       interconnection *study* and no construction line for the connection
+       itself. Behind the meter at a host with capacity that can be close to
+       right; grid-tied it is not. Carried separately so it can be argued with,
+       and set to zero if the destination genuinely needs nothing. */
+    C73:{v:2.50,  f:'num2', input:true, min:0,    max:20,   step:0.25, lbl:'Interconnection and grid connection', u:'$M', grp:'Acquiring and moving it',
+         mkt:[0,12], mpre:'$', msuf:'M', mf:'num0', s:'IND',
+         note:'zero behind the meter, large on a network upgrade'},
     /* The one line that is contingent rather than planned: the boiler either
        passes ultrasonic inspection or it is retubed. The preconditions above
        call this the genuine coin flip, so the model should carry it. */
@@ -1457,7 +1465,7 @@ const SRC = {
   'Assumptions!C40': ['Project life', 'The economic life used to value the years after the PPA expires.', '', ' yrs'],
   'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
 
-  'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, ${C71}M of development and permitting, ${C65}M to take it down and crate it, ${C67}M of haul, ${C68}M to put it back up and commission it, and ${C72}M of boiler refurbishment.', '$', 'M'],
+  'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, ${C71}M of development and permitting, ${C65}M to take it down and crate it, ${C67}M of haul, ${C68}M to put it back up and commission it, ${C73}M to connect it, and ${C72}M of boiler refurbishment.', '$', 'M'],
   'Assumptions!C67': ['Haul', '${C70}M of permits, pilot cars and route survey, owed at any distance, plus {C66} route miles at ${C69}k a mile for the transport contract itself. Under 3% of capex: moving the plant is the cheap part, and putting it back up is not.', '$', 'M'],
   'Assumptions!C46': ['Capex, all in', 'The ${C22}M above, plus {C23} contingency.', '$', 'M'],
 
@@ -2041,7 +2049,7 @@ function scaleCapex(k) {
   /* C22 is the sum of its parts now, so the parts are what travel with
      capacity. Haul distance does not: a bigger plant is more loads over the
      same road, which is the per-mile rate, not the mileage. */
-  ['C64', 'C71', 'C65', 'C70', 'C69', 'C68', 'C72', 'C41'].forEach(ref => {
+  ['C64', 'C71', 'C65', 'C70', 'C69', 'C68', 'C73', 'C72', 'C41'].forEach(ref => {
     const d = SHEET_BY_NAME['Assumptions'].cells[ref];
     const next = Math.min(d.max, Math.max(d.min, val('Assumptions', ref) * k));
     const s = document.getElementById('in-' + ref);
