@@ -9,7 +9,7 @@ Open `index.html` in a browser. That's the whole toolchain.
 
 It is a **proposal, laid out the way a power-sector filing is laid out**, because the proposal is
 the deliverable in an origination seat and you may as well see one. A full-bleed cover, a contents
-page with decimal numbering and dot leaders, eight numbered sections each opening on a divider
+page with decimal numbering and dot leaders, seven numbered sections each opening on a divider
 band, a mandate map, a risk register, and an appendix of supporting analysis.
 
 The idiom comes from the real documents: co-op long-term RFPs and integrated resource plans, which
@@ -70,7 +70,7 @@ cell('Model', 'C49', { f:'num1' })   // → a live <span data-cell="Model!C49">1
 Section order is explicit rather than implied by where a function happens to sit in the file:
 
 ```js
-[cover, contents, secSummary, secMandate, secExperience, secPrecedent,
+[cover, contents, secSummary, secMandate, secExperience,
  secMarket, secAnalysis, secRisk, secTerms].forEach(f => f());
 ```
 
@@ -590,6 +590,42 @@ The `.whys` grid also stopped being hardcoded to four cards. Rules are drawn as 
 ruled background rather than per-cell borders, so any number of cards holds at any breakpoint, and
 an odd last card spans its row instead of leaving a hole.
 
+### The editorial pass
+
+A read of the whole document against the role spec, rather than of one section at a time.
+
+**4.0 Selected Transactions was deleted.** Nine rows, and every one of them was already a bullet in
+3.0 — a reader met the same career twice. Four of the nine were not transactions at all: a
+trading-systems rollout and a portfolio-analytics build are work, not deals sourced, structured and
+signed. What survives is the five that really are deals, as a table at the foot of 3.0 where the
+career that produced them already is. Eight sections became seven.
+
+**The tenure-reconciliation footnote went.** It explained, at length, why recorded tenure ran 0.2
+years ahead of career span. Honest, and a leftover from when this page was a spreadsheet: on a
+proposal it draws a reader's attention to a rounding difference nobody asked about. Its cell went
+with it, which the dead-cell audit caught immediately.
+
+**The risk register went from six rows to four**, because it closed by admitting three of the six
+were one risk in different clothes. They are now one row that says the thing once: never sold
+full-requirements supply, never sat inside a cooperative's procurement, all of it at one firm.
+
+**5.0 lost a third of its words.** It had grown to ten blocks of prose before a single number — five
+thesis cards, five precondition paragraphs, and a counterweight paragraph restating four of the
+preconditions in different words. Now four thesis cards, a one-line screen, and the counterweight
+carried by the screen itself. This matters beyond length: at 37% of the page's words, the section
+was making an argument the prose denies. The role says plainly that modelling is somebody else's
+chair, and a reader counts pages.
+
+**Aimed at the actual role.** The terms card led with "ERCOT and SPP today; WECC on a curve" — one
+market with no evidence behind it, and the gap in the first card a reader sees. It now reads WECC
+and the Southeast, with data-centre load national, and carries a Customers row, because the spec's
+customers are cooperatives, municipals and the large loads inside their territories. The thesis in
+5.0 names that buyer explicitly instead of leaving the connection to be made. And nine years on a
+governed, member-accountable board through four mergers moved from a stat tile to the second
+paragraph of the summary and to the head of the credentials block: for a seat selling into public
+power, where buying happens through governance rather than through a pitch, it is the closest
+analogue anyone outside a cooperative can offer.
+
 ### The financing dials explain themselves
 
 Three questions in a row about this model turned out to be missing *explanations* rather than
@@ -838,7 +874,7 @@ could catch, and each got a different treatment rather than a smaller font:
 
 - **The nav could reach one section of eight.** The names need 849px in a 390px bar. Below 680px
   the links become their section numbers, and whichever section you are in gets a short label
-  back: `1.0  2.0  3.0  4.0  5.0  6.0 Analysis  7.0  8.0`. `SECTIONS` carries that short label as
+  back: `1.0  2.0  3.0  4.0  5.0 Analysis  6.0  7.0`. `SECTIONS` carries that short label as
   a fifth field. A test drives every section active in turn and fails if the last link clips.
 - **The provenance bar had 210px for a 297px sentence**, so it truncated every source it was
   given, on a device that cannot hover anyway. The bar is hidden below 680px and the same content

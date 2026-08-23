@@ -161,19 +161,16 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 
 /* ── the live model ────────────────────────────────────────────────── */
 /* the screening list: preconditions, not priced risks */
-.mustsh{margin:22px 0 10px;font:700 12px var(--sans)}
-.musts{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;
-       gap:0;border:1px solid var(--rule);border-bottom:0}
-.musts li{padding:11px 14px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
-.musts li:nth-child(2n){border-right:0}
-.musts li:last-child:nth-child(2n+1){grid-column:1 / -1;border-right:0}
-.musts b{display:block;font:600 12px var(--sans);color:var(--ink);margin-bottom:4px}
-.musts b::before{content:'\2713';color:var(--copper);margin-right:7px;font-weight:700}
-.musts span{font-size:12px;line-height:1.55;color:var(--prose)}
-@media (max-width:640px){
-  .musts{grid-template-columns:1fr}
-  .musts li{border-right:0}
-}
+.mustsh{margin:20px 0 8px;font:700 12px var(--sans)}
+.musts{margin:0;padding:0;list-style:none;border-top:1px solid var(--rule-2)}
+.musts li{padding:6px 0;border-bottom:1px solid var(--rule-2);font-size:12.5px;
+          line-height:1.5;color:var(--ink-3)}
+.musts b{font:600 12.5px var(--sans);color:var(--ink)}
+.musts b::before{content:'\2713';color:var(--copper);margin-right:8px;font-weight:700}
+.musts b::after{content:' \00b7'}
+
+/* a heading inside a section, for a block that is not its own section */
+.subh{margin:26px 0 10px;font:700 12px var(--sans)}
 
 /* a term with a definition behind it, marked the way a footnote would be */
 .def[data-def]{border-bottom:1px dotted var(--ink-3);cursor:help}
@@ -741,7 +738,6 @@ const SHEETS = [
     D8:{v:'=DATE(2018,8,1)'},  E8:{v:'=DATE(2024,3,1)'}, F8:{v:'=YEARFRAC(D8,E8)',  f:'num1'},
     D9:{v:'=DATE(2017,3,1)'},  E9:{v:'=DATE(2018,8,1)'}, F9:{v:'=YEARFRAC(D9,E9)',  f:'num1'},
     D10:{v:'=DATE(2015,5,1)'}, E10:{v:'=DATE(2017,5,1)'},F10:{v:'=YEARFRAC(D10,E10)',f:'num1'},
-    F12:{v:'=SUM(F7:F10)', f:'num1'},        /* total recorded tenure */
     F13:{v:'=YEARFRAC(D10,TODAY())', f:'num1'}, /* career span, first start to date */
     D16:{v:'=DATE(2017,1,1)'}, E16:{v:'=DATE(2026,1,1)'}, F16:{v:'=YEARFRAC(D16,E16)', f:'num0'},
   }
@@ -1242,21 +1238,21 @@ const SITE = {
   rev:4,
   to:'Commercial leadership, wholesale power',
   target:'Manager, Origination',
-  basis:'Career figures as disclosed on the CV. The deal in 6.0 is invented.',
+  basis:'Career figures as disclosed on the CV. The deal in 5.0 is a worked example.',
   headline:'Ten years sourcing, structuring and negotiating energy and commodity contracts. Looking for a bigger platform.',
   rec:[
     "I originate, structure and negotiate energy and commodity contracts. I source the counterparties, build the commercial case, and coordinate the legal, technical and market inputs that carry a deal into a model and then through a committee.",
-    "I've worked with utilities, cooperatives, tribes, developers, engineers and power plants, which is most of the table a power deal gets decided at. Nine years on a governed, member-accountable board through four mergers taught me the rest. Morgan Stanley trained me.",
-    "What I want is the second seat on live deals, paired with a senior originator, with a route to carrying them. Not a title. This page is laid out the way I'd lay out a proposal, because the proposal is the deliverable: mandate first, evidence second, and the risks in 7.0 rather than buried.",
+    "Public power buys through governance, not through a pitch. I spent nine years on a governed, member-accountable board, through four mergers, building consensus with no authority to simply decide. That is the closest thing to a cooperative board that anyone outside one can bring, and it is why this seat interests me more than a trading desk would. I have worked with utilities, cooperatives, tribes, developers and power plants, which is most of the table a power deal is decided at.",
+    "What I want is the second seat on live deals, paired with a senior originator, with a route to carrying them. Not a title. This page is laid out the way I'd lay out a proposal, because the proposal is the deliverable: mandate first, evidence second, and the risks in 6.0 rather than buried.",
   ],
   terms:[
     ['Role', 'Manager, Origination', null],
     ['Seat', 'Second chair to a senior originator, growing into ownership', null],
     ['Based', 'Denver, Colorado', null],
     ['Travel', 'To 50%', null],
-    ['Markets', 'ERCOT and SPP today; WECC on a curve', null],
+    ['Markets', 'WECC and the Southeast; data-centre load is national', null],
+    ['Customers', 'Cooperatives, municipals, and the large loads inside them', null],
     ['Products', 'Wholesale power, PPAs and offtake, feedstock and supply', null],
-    ['In finance', null, ['Career', 'F13', 'num1', ' yrs, accruing']],
     /* a fourth field names the SITE link the row's value points at */
     ['Status', 'Open · book thirty minutes', null, 'calendly'],
   ],
@@ -1283,21 +1279,15 @@ const SITE = {
     ["I have already had Manager on my card",
      "I run origination now and built a company before that. A second-chair seat, seventy percent coordination, is a sideways step on paper.",
      "Seventy-thirty describes what I already do. What's missing is anyone senior to learn it from, which is the whole reason I'm writing. I'm not arriving with a playbook."],
-    ["I haven't sold full-requirements wholesale supply",
-     "My origination is partial power and energy products, not a utility's full load. I've never priced a full-requirements contract.",
-     "The product would be new. The motion wouldn't. I source, structure, negotiate and close today, including exclusive agreements for ${Facts!C5:num0}M of intake and ${Facts!C6:num0}M of offtake."],
-    ['I have not sat on the co-op side of a procurement',
-     "I've worked with cooperatives, tribes and governments as a counterparty, not from inside their procurement. Governance-driven buying is a different animal.",
-     "Nine years on a governed, member-accountable board through four mergers is my closest analogue: competing constituencies, and no authority to simply decide. Not the same. Not nothing."],
+    ["I have never sold wholesale power to a utility",
+     "Partial power and energy products, not a utility's full load. Never priced a full-requirements contract, never sat inside a cooperative's procurement, and all of it at one firm over two and a half years. Three gaps that are really one.",
+     "The product would be new. The motion would not: I source, structure, negotiate and close today, including exclusive agreements for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake. The closest I have to the governance side is nine years on a member-accountable board through four mergers. Not the same. Not nothing. It closes on a desk, not on paper."],
     ['My market is ERCOT, not WECC',
-     "The crowding research is ERCOT because that's where the data was. Price formation in the West is a different animal.",
-     "Method travels, price formation doesn't. I'd spend the first quarter learning a market properly rather than pretending I had. I've done that once already."],
+     "The crowding research is ERCOT because that is where the data was. Price formation in the West is a different animal, and the Southeast is different again.",
+     "Method travels, price formation does not. I would spend the first quarter learning a market properly rather than pretending I had. I have done that once already."],
     ['I build models, and this is not a modeling seat',
-     "Section 6.0 is a working project finance model. A fair reading is that I want the modeling chair.",
-     "Knowing how one is built is what makes you useful interrogating one, and 6.0 is a teardown, not a display. I'd need discipline to stay out of modeling's lane."],
-    ['My power experience is one company deep',
-     "Two and a half years at one firm is where all of my energy origination has happened.",
-     "Which is why I'm writing rather than staying put. Watching a second organization run the same process, from the second chair, is the fastest thing I could learn."],
+     "Section 5.0 is a working project finance model. A fair reading is that I want the modeling chair.",
+     "Knowing how one is built is what makes you useful interrogating one, and 5.0 is a teardown rather than a display: what it shows is which assumption to distrust first. Staying out of modeling's lane would take discipline, and I know it."],
   ],
 
   diligence:[
@@ -1311,36 +1301,32 @@ const SITE = {
      "Term, ceiling, indexation, and what happens the year the ceiling binds. Here that outranks the interest rate."],
   ],
 
-  /* the argument the model is evidence for. Four moves, then the case against */
+  /* the argument the model is evidence for. Four moves, then the buyer */
   thesis:[
     ['The demand',
-     "AI load is the largest new-load event in a generation, and what it is short of is not capital but a delivery date. Turbine slots are ordered years out and large-load interconnection takes years more. Firm, low-carbon and soon is a combination almost nothing can currently offer."],
+     "AI load is short of a delivery date, not of capital. Turbine slots run years out and large-load interconnection runs longer. Firm, low-carbon and soon is a combination almost nothing offers."],
     ['The asset',
-     "Small biopower plants sit idle across the country, stranded when qualifying-facility contracts expired or when the host mill that supplied both their steam load and their fuel shut down. Boiler, turbine-generator and balance of plant are frequently still serviceable."],
+     "Small biopower plants sit idle across the country, stranded when a qualifying-facility contract expired or the host mill shut. Boiler, turbine-generator and balance of plant are often still serviceable."],
     ['The fuel',
-     "Mill residuals and forest-restoration thinnings are a disposal cost to whoever holds them, not a product. Where the counterparty pays to have the material taken away, delivered fuel prices at haulage rather than at commodity, which is what the fuel dials below assume and then take away again."],
+     "Mill residuals and restoration thinnings are a disposal cost, not a product. Where somebody pays to have the material taken away, delivered fuel prices at haulage rather than at commodity."],
     ['The bridge',
-     "Behind the meter is the plan, not the dependency. A gen-tie to the utility lets the plant run as a standalone merchant or contracted project from commissioning, earning while the load it was bought for is still being built, and it turns the single worst schedule risk in the trade into a revenue question rather than a stranding one."],
-    ['The story',
-     "Restoration thinning reduces the fuel load that drives catastrophic fire. For a utility or a hyperscaler being asked where its firm power comes from, wildfire mitigation and forest health is a materially better answer than a new gas peaker, and it is a real co-benefit rather than a label."],
+     "Behind the meter is the plan, not the dependency. A gen-tie means the plant sells firm power from commissioning instead of waiting on a data centre that will not be finished when it is."],
   ],
-  /* Screening criteria, not risks. A risk is something you price; these are
-     things that either hold or the deal is not a deal, and they are what an
-     originator checks before spending a week on a model. */
+  /* The screen, not the risk register: these either hold or there is no deal.
+     One line each, because a reader checking a screen is scanning it. */
   musts:[
     ['Both ends on a heavy-haul route',
-     'Boilers, the turbine-generator and the air-cooled condenser move as oversize and overweight loads. Origin and destination each need a rail siding or a permitted road route with the bridges to carry it. A plant that cannot be got out is not for sale at any price, and the haul dial below assumes a route exists.'],
+     'a plant that cannot be got out is not for sale at any price.'],
     ['A grid tie as well as the host',
-     'The plan is behind the meter, and the plant should still connect to the utility. A relocated plant can be finished in about two years; the data centre it serves will not be. A gen-tie means the plant sells firm power from the day it is commissioned instead of waiting on someone else\'s construction, and it is the fallback if that load never arrives. Joining a queue cold, on the other hand, gives back the schedule advantage that is the whole reason to do this.'],
-    ['An air permit that can be obtained on the schedule',
-     'The slowest thing on the critical path, and the one a community can contest. A destination in a maintenance area, or one without an existing permitted source to work from, moves the timeline by more than the move itself.'],
+     'so the plant earns before the load it was bought for arrives.'],
+    ['An air permit on the schedule',
+     'the slowest thing on the critical path, and the one a community can contest.'],
     ['Fuel inside an economic haul radius',
-     'Mill residuals and restoration thinnings are only free where somebody is paying to dispose of them. Beyond roughly the radius the trucking economics allow, free material becomes a purchased commodity and the fuel dials stop describing it.'],
+     'free material becomes a commodity past the radius trucking allows.'],
     ['Equipment that inspects clean',
-     'Pressure parts, the turbine and the generator each carry condition risk that only inspection resolves. This is the one precondition that is a genuine coin flip, and it is why diligence is priced before acquisition rather than after.'],
+     'the genuine coin flip, which is why diligence is priced before acquisition.'],
   ],
-  against:"What would kill it: the network upgrades a system impact study comes back with, which are the utility's number rather than the project's and the one line in the capital cost that can move by an order of magnitude; the air permit, which is the slowest thing on the critical path and the one a community can contest; fuel security, because free today is not free for twenty years, which is why the model ramps to a contract ceiling; and condition risk in used equipment, which an ultrasonic inspection either clears or does not. Each of the four is a dial below, so the reader can price the disagreement rather than take it on faith.",
-
+  against:"The buyer this is built for is a cooperative or municipal with data-centre load inside its territory: firm, local, low-carbon, and available years before anything else can be. What would kill it is on the dials below, so the disagreement can be priced rather than argued.",
   next:[
     "Thirty minutes, no deck. I'd rather hear which market you're short of coverage in than talk about myself.",
     "Send me a model and ask me to take it apart. Or use 6.0, which is already open.",
@@ -1351,11 +1337,10 @@ const SITE = {
     { row:7, title:'Origination Manager', co:'Compass International', where:'Denver, CO', span:'March 2024 to present',
       note:'Energy origination: sourcing, structuring, negotiation and execution.',
       bullets:[
-        'Originated proposals and contracts end to end on partial power projects: sourced counterparties, advanced them through pipeline stages, structured and negotiated the terms, and carried them through execution.',
-        'Built and advanced the pipeline by exploring market opportunities, building relationships and tracking RFPs in CRM.',
-        'Negotiated exclusive agreements for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake rights on energy products.',
-        'Built a data room per project so every assumption across markets, engineering and risk is supported, with third-party commercial, legal and technical work behind it.',
+        'Originated end to end on partial power: sourced counterparties, advanced the pipeline, structured and negotiated terms, and carried them through execution.',
+        'Negotiated exclusive agreements for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake rights.',
         'Won a proposal by working out what the investment committee required, then benchmarking every figure to the market.',
+        'Built a data room per project, so every assumption across markets, engineering and risk has third-party work behind it.',
       ] },
     { row:8, title:'Commercial Manager', co:'Pakira, Inc.', where:'Cambridge, MA', span:'August 2018 to March 2024',
       note:'Market intelligence platform for the building materials and forest products industries.',
@@ -1366,7 +1351,7 @@ const SITE = {
     { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'March 2017 to August 2018',
       bullets:[
         'Top trader of cohort; grew book of business past $1 million by building relationships, offering solutions and negotiating deals.',
-        'Priced and executed against customer requirements on physical spreads; led a trading-systems rollout for 300+ traders managing $6B in flows.',
+        'Priced against customer requirements on physical spreads; led a trading-systems rollout for 300+ traders managing $6B in flows.',
       ] },
     { row:10, title:'Financial Analyst', co:'Morgan Stanley', where:'Portsmouth, NH', span:'May 2015 to May 2017',
       bullets:[
@@ -1374,16 +1359,15 @@ const SITE = {
       ] },
   ],
 
+  /* Only transactions belong here. A systems rollout and a portfolio
+     analytics build were work rather than deals, and listing them diluted
+     the four that were signed. */
   deals:[
-    ['Intake & offtake rights','Exclusive agreements negotiated on energy products; \u0024{Facts!C5:num0}M intake, \u0024{Facts!C6:num0}M offtake','2024–','$1.3B','Executed',1],
-    ['Partial power origination','Proposals and contracts end to end: sourcing, structuring, negotiation, execution','2024–','Multiple','Ongoing',1],
-    ['Investment committee proposal','Won by establishing committee requirements, then benchmarking every figure to the market','2024','Awarded','Won',0],
-    ['Project data rooms','Every assumption supported across markets, engineering and risk, with third-party validation','2024–','Per project','Ongoing',1],
-    ['Pakira commercial function','Zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth','2018–2024','{Facts!C16:num0}+ clients','Built',0],
+    ['Intake & offtake rights','Exclusive agreements on energy products: \u0024{Facts!C5:num0}M intake, \u0024{Facts!C6:num0}M offtake','2024\u2013','$1.3B','Executed',1],
+    ['Partial power origination','Sourced, structured, negotiated and carried through execution','2024\u2013','Multiple','Ongoing',1],
+    ['Investment committee proposal','Won by establishing what the committee required, then benchmarking every figure','2024','Awarded','Won',0],
+    ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017\u20132018','$1M','Closed',0],
     ['Venture raise','Capital raised to build the platform and the team behind it','2018','$1.0M','Closed',0],
-    ['Trading systems deployment','Rollout supporting 300+ traders managing $6B in commodity flows','2017–2018','$6B flows','Delivered',0],
-    ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017–2018','$1M volume','Closed',0],
-    ['Morgan Stanley analytics','Institutional and UHNW portfolio analysis; 18,000 client records consolidated','2015–2017','18,000 records','Delivered',0],
   ],
 
   education:[
@@ -1392,14 +1376,12 @@ const SITE = {
     ['MassChallenge','Accelerator, two cohorts'],
   ],
   awards:[
-    ['MIT FinTech Grand Prize','Pakira, Inc.'],
-    ['MIT Startup Spotlight','Pakira, Inc.'],
-    ['FinTech Connect Award','Pakira, Inc.'],
+    ['Pakira, Inc.','MIT FinTech Grand Prize · MIT Startup Spotlight · FinTech Connect Award'],
   ],
   skills:[
-    ['Origination', 'Counterparty sourcing, commercial structuring, contract negotiation, RFP and proposal coordination, investment committee materials, deal execution'],
-    ['Wholesale power', 'PPA and offtake structures, supply and feedstock agreements, load and interval data, dispatch economics'],
-    ['Analysis', 'Model interrogation and stress testing, pricing validation, market benchmarking. Advanced Excel, SQL, Python'],
+    ['Origination', 'Counterparty sourcing, structuring, negotiation, RFP coordination, IC materials, execution'],
+    ['Wholesale power', 'PPAs and offtake, supply and feedstock, load and interval data, dispatch economics'],
+    ['Analysis', 'Model interrogation and stress testing, pricing validation, benchmarking. Excel, SQL, Python'],
   ],
   board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire and Vermont', span:'2017 to 2026',
           note:'Nine years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
@@ -1411,11 +1393,10 @@ const SECTIONS = [
   ['summary',    '1.0', 'Summary',               'What I am proposing, and on what terms', 'Summary'],
   ['mandate',    '2.0', 'The mandate',           'The five things the second seat owns, and where I map to each', 'Mandate'],
   ['experience', '3.0', 'Experience',            'Ten years, and what each seat actually taught', 'Experience'],
-  ['precedent',  '4.0', 'Selected transactions', 'What has been sourced, structured, negotiated and signed', 'Precedent'],
-  ['market',     '5.0', 'Market view',           'A view I built on my own time, and can defend in a room', 'Market'],
-  ['analysis',   '6.0', 'Supporting analysis',   'Brownfield against greenfield, and the teardown that matters more than the model', 'Analysis'],
-  ['risk',       '7.0', 'Risks and mitigants',   'The case against hiring me, written by me', 'Risk'],
-  ['terms',      '8.0', 'Terms and next steps',  'What I am asking for', 'Terms'],
+  ['market',     '4.0', 'Market view',           'A view I built on my own time, and can defend in a room', 'Market'],
+  ['analysis',   '5.0', 'Supporting analysis',   'A model taken apart, which is what the seat actually does', 'Analysis'],
+  ['risk',       '6.0', 'Risks and mitigants',   'The case against hiring me, written by me', 'Risk'],
+  ['terms',      '7.0', 'Terms and next steps',  'What I am asking for', 'Terms'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1472,7 +1453,6 @@ const SRC = {
   'Assumptions!C9': ['Nameplate capacity', "Two units of the size a relocated biomass plant is usually built in. It sets generation, capex and the maintenance reserve, so it scales the whole model.", '', ' MW'],
   'Career!E7':  ['Document date', 'Today. The page re-dates itself on every visit, so this is never a stale draft.'],
   'Career!F13': ['Years in finance', 'From the Morgan Stanley start in May 2015 to today, on an actual/365 basis.', '', ' yrs'],
-  'Career!F12': ['Recorded tenure', 'The four roles added together. It runs ahead of the career span because Morgan Stanley and Forest City overlapped by two months in 2017.', '', ' yrs'],
   'Career!F16': ['Board tenure', 'January 2017 to January 2026, on an actual/365 basis.', '', ' yrs'],
 
   'Facts!C7':   ['Rights negotiated', 'Intake of ${C5}M plus offtake of ${C6}M, as exclusive agreements on energy products.', '$', 'M'],
@@ -1791,7 +1771,7 @@ function cover(){
     s.append(sw, lbl);
     cap.appendChild(s);
   });
-  cap.appendChild($('i', null, 'Illustrative, on a two-hour battery. The simulator behind it is in 5.0.'));
+  cap.appendChild($('i', null, 'Illustrative, on a two-hour battery. The simulator behind it is in 4.0.'));
   c.appendChild(cap);
 
   main.appendChild(c);
@@ -1952,22 +1932,16 @@ function secExperience(){
   });
   w.appendChild(roles);
 
-  const note = $('p');
-  note.style.cssText = 'margin:16px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:78ch;line-height:1.6';
-  note.append('Recorded tenure (');
-  note.appendChild(cell('Career', 'F12', { f:'num1' }));
-  note.append(' yrs) exceeds the career span (');
-  note.appendChild(cell('Career', 'F13', { f:'num1' }));
-  note.append(" yrs) because Morgan Stanley and Forest City overlapped by two months in 2017. I've left it unreconciled.");
-  w.appendChild(note);
+  /* the deals, where the career that produced them already is */
+  w.appendChild($('h3', 'subh', 'What was signed'));
+  dealTable(w);
 
   credBlock(w);
 }
 
-/* ── §4 precedent transactions ───────────────────────────────────── */
-function secPrecedent(){
-  const live = SITE.deals.filter(d => d[5]).length;
-  const w = section('precedent');
+/* ── the deals table, drawn into §3 ─────────────────────── */
+/* the deals themselves, at the foot of the career that produced them */
+function dealTable(w){
   const t = $('table', 'sched');
   const thead = $('thead'), htr = $('tr');
   ['Mandate','Description','Period','Size','Status'].forEach((h, i) => {
@@ -1989,8 +1963,8 @@ function secPrecedent(){
   t.appendChild(tb);
   w.appendChild(t);
   const n = $('p');
-  n.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3)';
-  n.textContent = "Sizes are in different units, so don't add the column. Terms are omitted where they're confidential.";
+  n.style.cssText = 'margin:12px 0 0;font:italic 11px var(--sans);color:var(--ink-3)';
+  n.textContent = "Terms are omitted where they are confidential.";
   w.appendChild(n);
 }
 
@@ -2005,8 +1979,7 @@ function secMarket(){
   const a = $('div', 'paper');
   a.appendChild($('h3', null, 'ERCOT crowding coefficient model'));
   a.appendChild($('p', 'cap', 'Original quantitative framework · supported by an agent-based market simulation in Python'));
-  a.appendChild($('p', null, "It explains day-ahead to real-time basis in ERCOT as a function of generator zone crowding. The coefficient is the fitted result; the table applies it. Ask for the working paper and you get the period, the sample and the specification, which is what you should want before believing a number like this."));
-  a.appendChild($('p', null, "Basis is what a shaped contract is really selling. A customer buying at one node and settling at another is long that spread whether anyone prices it or not, and crowding is one of the few parts you can see coming."));
+  a.appendChild($('p', null, "It explains day-ahead to real-time basis as a function of generator zone crowding. Basis is what a shaped contract is really selling: a customer buying at one node and settling at another is long that spread whether anyone prices it or not, and crowding is one of the few parts you can see coming. Ask for the working paper and you get the period, the sample and the specification, which is what you should want before believing a number like this."));
 
   const stat = $('div', 'tiles'); stat.style.marginBottom = '14px';
   [['Coefficient (α)', 'Research', 'C10', 'num2', '$/MWh per GW of zone crowding']].forEach(([k, s, r, f, u]) => {
@@ -2325,7 +2298,7 @@ function secAnalysis(){
   SITE.musts.forEach(([k, v]) => {
     const li = $('li');
     li.appendChild($('b', null, k));
-    li.appendChild($('span', null, v));
+    li.append(' ' + v);
     ml.appendChild(li);
   });
   why.appendChild(ml);
@@ -2625,15 +2598,7 @@ function credBlock(w){
 
   const cols = $('div', 'cols');
   const a = $('div', 'blk');
-  a.appendChild($('h3', null, 'Education'));
-  const e = $('dl', 'deflist');
-  SITE.education.forEach(([k, v]) => { const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); e.appendChild(d); });
-  a.appendChild(e);
-  a.appendChild($('h3', null, 'Recognition')).style.marginTop = '22px';
-  const r = $('dl', 'deflist');
-  SITE.awards.forEach(([k, v]) => { const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); r.appendChild(d); });
-  a.appendChild(r);
-  a.appendChild($('h3', null, 'Board')).style.marginTop = '22px';
+  a.appendChild($('h3', null, 'Board and governance'));
   const bd = $('div', 'paper');
   bd.appendChild($('h3', null, SITE.board.role));
   bd.appendChild($('p', 'cap', SITE.board.org + ' · ' + SITE.board.span));
@@ -2641,10 +2606,16 @@ function credBlock(w){
   a.appendChild(bd);
 
   const b = $('div', 'blk');
-  b.appendChild($('h3', null, 'Technical skills'));
-  const s = $('dl', 'deflist');
-  SITE.skills.forEach(([k, v]) => { const d = $('div'); d.appendChild($('dt', null, k)); d.appendChild($('dd', null, v)); s.appendChild(d); });
-  b.appendChild(s);
+  const dl = (title, rows, top) => {
+    const h = $('h3', null, title); if (top) h.style.marginTop = '22px';
+    b.appendChild(h);
+    const d = $('dl', 'deflist');
+    rows.forEach(([k, v]) => { const x = $('div'); x.appendChild($('dt', null, k)); x.appendChild($('dd', null, v)); d.appendChild(x); });
+    b.appendChild(d);
+  };
+  dl('Technical skills', SITE.skills, false);
+  dl('Education', SITE.education, true);
+  dl('Recognition', SITE.awards, true);
 
   cols.append(a, b);
   w.appendChild(cols);
@@ -2675,7 +2646,7 @@ function secRisk(){
 
   const n = $('p');
   n.style.cssText = 'margin:16px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:80ch;line-height:1.6';
-  n.textContent = "Three of those are one risk in different clothes: I have not sold wholesale power to a utility. That's the gap. It closes on a desk, not on paper.";
+  n.textContent = "The gap is the second row. Everything else on this page is evidence that the rest of the motion is already there.";
   w.appendChild(n);
 }
 
@@ -2708,7 +2679,7 @@ function secTerms(){
 }
 
 /* ── the document, in order ──────────────────────────────────────── */
-[cover, contents, secSummary, secMandate, secExperience, secPrecedent,
+[cover, contents, secSummary, secMandate, secExperience,
  secMarket, secAnalysis, secRisk, secTerms].forEach(f => f());
 
 /* ── footer ──────────────────────────────────────────────────────── */
