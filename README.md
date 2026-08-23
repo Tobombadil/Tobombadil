@@ -441,7 +441,7 @@ never a number typed into prose:
 | Months to first power | 25 mo | 42 mo | −17 mo |
 | Capital cost, all in | $71.9M | $303.8M | −$231.9M |
 | Funding requirement | $77.9M | $313.2M | −$235.3M |
-| Minimum DSCR | 2.21x | 1.40x | +0.81x |
+| DSCR | 2.21x | 1.40x | +0.81x |
 | Project IRR | 24.5% | 3.4% | +21.1 pts |
 | Equity NPV | $100.2M | $(109.2)M | +$209.4M |
 
@@ -473,8 +473,9 @@ value-destroying asset shrinks the equity cheque. A comparison is not made fair 
 no lender would sign.
 
 So the one financing figure that stays is the one that is really about the asset: whether it can
-service debt at all. It is called **Minimum DSCR**, matching the Returns pane rather than inventing
-a second name for the same number, and the two columns tell the story on their own — 2.21x clear of
+service debt at all. It is called **DSCR** in both places rather than *Minimum DSCR* here and
+something else there, with the worst-year detail moved into the row's definition where it belongs,
+and the two columns tell the story on their own — 2.21x clear of
 the floor when the cost cap binds first, 1.40x exactly on it when the cash flow binds.
 
 **Every row explains itself.** The trade rows are drawn strings with no cell behind them, so the
@@ -490,6 +491,43 @@ cover floor while greenfield sits on it, and a difference of two percentages mus
 percent. The rows are addressed by label, not by index — inserting a row above Project IRR would
 otherwise have re-pointed the IRR assertions at the row below and gone on passing. Senior debt is
 drawn in neutral grey: more debt is not a win.
+
+### What has to be true first
+
+Above the model sits a five-item screen, and it is deliberately not the risk register. A risk is
+something you price; these are things that either hold or there is no deal, and they are what an
+originator actually checks before spending a week in a spreadsheet: **both ends on a heavy-haul
+route** (a plant that cannot be got out is not for sale at any price), interconnection or load at
+the destination, an air permit obtainable on the schedule, fuel inside an economic haul radius,
+and equipment that inspects clean. Each says *why* rather than only *what* — a test enforces that,
+because a checklist of nouns is decoration.
+
+### Capex is built from its parts
+
+Capex was one dial. It is now the sum of four, because "$53.25M" is not a figure anyone can argue
+with, while its components are:
+
+| | |
+|---|---|
+| Acquisition, plant as it stands | $12.0M |
+| Dismantle, crate and load out | $9.0M |
+| Haul — 450 route miles at $20k/mile | $9.0M |
+| Foundations, re-erection and interconnection | $23.3M |
+| **Capex, before contingency** | **$53.25M** |
+
+`C22` is a formula over the four, so it cannot be quietly retyped, and a test asserts the parts
+still sum to it. Haul is distance × rate rather than a lump, which is the dial that answers "how
+far is this thing moving" — and the rate is what scales with plant size, not the mileage, since a
+bigger plant is more loads over the same road.
+
+The acquisition benchmark is a **per-kW used-plant range**, resolved live against the capacity
+dial, and the source tag says outright that the figure is illustrative and is not any actual
+asking price. Nothing about a real transaction appears here — the confidentiality sweep still
+runs on every build.
+
+C22 keeps a `min`/`max` despite no longer being an input, because the sensitivity and stress panes
+move capex as a single quantity and need a band to move it within. Losing that band is what the
+suite caught first when the split landed.
 
 ### Capex is dialled in dollars
 

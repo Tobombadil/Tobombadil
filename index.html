@@ -160,6 +160,21 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .job li::before{content:"—";position:absolute;left:0;color:var(--ink-3)}
 
 /* ── the live model ────────────────────────────────────────────────── */
+/* the screening list: preconditions, not priced risks */
+.mustsh{margin:22px 0 10px;font:700 12px var(--sans)}
+.musts{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;
+       gap:0;border:1px solid var(--rule);border-bottom:0}
+.musts li{padding:11px 14px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+.musts li:nth-child(2n){border-right:0}
+.musts li:last-child:nth-child(2n+1){grid-column:1 / -1;border-right:0}
+.musts b{display:block;font:600 12px var(--sans);color:var(--ink);margin-bottom:4px}
+.musts b::before{content:'\2713';color:var(--copper);margin-right:7px;font-weight:700}
+.musts span{font-size:12px;line-height:1.55;color:var(--prose)}
+@media (max-width:640px){
+  .musts{grid-template-columns:1fr}
+  .musts li{border-right:0}
+}
+
 /* a term with a definition behind it, marked the way a footnote would be */
 .def[data-def]{border-bottom:1px dotted var(--ink-3);cursor:help}
 .def[data-def]:hover,.def[data-def]:focus{border-bottom-color:var(--copper);color:var(--ink);outline:0}
@@ -743,7 +758,7 @@ const SHEETS = [
    published benchmarks, each carrying the range and source it came from in
    `mkt` and `s`. No client, counterparty, site or transaction term appears. */
 {
-  name:'Assumptions', rows:60, cols:[], cells:{
+  name:'Assumptions', rows:70, cols:[], cells:{
     C9: {v:50,    f:'num0', input:true, min:10,   max:80,   step:1,    lbl:'Nameplate capacity', u:'MW', grp:'Plant',
          mkt:[20,80],       s:'IND'},
     C10:{v:0.9167,f:'pct0', mkt:[0.88,0.97], s:'IND'},
@@ -769,9 +784,28 @@ const SHEETS = [
     C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital',
          mkt:[0.02,0.03],   s:'CPI'},
     C21:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
-    C22:{v:53.25, f:'num1', input:true, min:15,   max:300,  step:0.25, lbl:'Capex', u:'$M, before contingency', grp:'Costs & capital',
+    /* Capex is no longer typed in as a lump. It is what the four things below
+       add up to, so a reader can argue with the acquisition or the haul
+       separately instead of having to accept one number. */
+    /* not an input any more, but the stress and sensitivity panes move capex
+       as one quantity, so it still needs a band to be moved within */
+    C22:{v:'=C64+C65+C67+C68', f:'num1', min:15, max:300,
          mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
          s:'ATB', note:'the greenfield cost of the same plant'},
+
+    C64:{v:12,    f:'num1', input:true, min:0,    max:60,   step:0.5,  lbl:'Acquisition, plant as it stands', u:'$M', grp:'Acquiring and moving it',
+         mkt:() => perKw(150, 450), mpre:'$', msuf:'M', mf:'num1', s:'USED',
+         note:'idle thermal plant, bought for its equipment'},
+    C65:{v:9,     f:'num1', input:true, min:2,    max:30,   step:0.5,  lbl:'Dismantle, crate and load out', u:'$M', grp:'Acquiring and moving it',
+         mkt:[6,15], mpre:'$', msuf:'M', mf:'num0', s:'IND'},
+    C66:{v:450,   f:'num0', input:true, min:50,   max:2000, step:25,   lbl:'Haul distance', u:'miles', grp:'Acquiring and moving it',
+         mkt:[100,1000],    s:'IND', note:'both ends must sit on a heavy-haul route'},
+    C69:{v:20,    f:'num1', input:true, min:5,    max:60,   step:0.5,  lbl:'Haul cost', u:'$k per route mile', grp:'Acquiring and moving it',
+         mkt:[12,35], mpre:'$', msuf:'k', mf:'num0', s:'IND',
+         note:'the whole convoy, with permits and escorts'},
+    C67:{v:'=C66*C69/1000', f:'num1'},                    /* haul, in $M */
+    C68:{v:23.25, f:'num1', input:true, min:8,    max:80,   step:0.25, lbl:'Foundations, re-erection and interconnection', u:'$M', grp:'Acquiring and moving it',
+         mkt:[15,40], mpre:'$', msuf:'M', mf:'num0', s:'IND'},
     /* the counterfactual the whole trade is measured against */
     C41:{v:225,   f:'num1', input:true, min:100,  max:400,  step:1,    lbl:'Greenfield capex, for comparison', u:'$M', grp:'Costs & capital',
          mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
@@ -1238,6 +1272,21 @@ const SITE = {
     ['The story',
      "Restoration thinning reduces the fuel load that drives catastrophic fire. For a utility or a hyperscaler being asked where its firm power comes from, wildfire mitigation and forest health is a materially better answer than a new gas peaker, and it is a real co-benefit rather than a label."],
   ],
+  /* Screening criteria, not risks. A risk is something you price; these are
+     things that either hold or the deal is not a deal, and they are what an
+     originator checks before spending a week on a model. */
+  musts:[
+    ['Both ends on a heavy-haul route',
+     'Boilers, the turbine-generator and the air-cooled condenser move as oversize and overweight loads. Origin and destination each need a rail siding or a permitted road route with the bridges to carry it. A plant that cannot be got out is not for sale at any price, and the haul dial below assumes a route exists.'],
+    ['Interconnection or load at the destination',
+     'Either capacity already studied at the point of interconnection, or a behind-the-meter host taking the output. Joining a queue cold gives back the schedule advantage that is the whole reason to do this.'],
+    ['An air permit that can be obtained on the schedule',
+     'The slowest thing on the critical path, and the one a community can contest. A destination in a maintenance area, or one without an existing permitted source to work from, moves the timeline by more than the move itself.'],
+    ['Fuel inside an economic haul radius',
+     'Mill residuals and restoration thinnings are only free where somebody is paying to dispose of them. Beyond roughly the radius the trucking economics allow, free material becomes a purchased commodity and the fuel dials stop describing it.'],
+    ['Equipment that inspects clean',
+     'Pressure parts, the turbine and the generator each carry condition risk that only inspection resolves. This is the one precondition that is a genuine coin flip, and it is why diligence is priced before acquisition rather than after.'],
+  ],
   against:"What would kill it: interconnection at the destination, which is the long pole unless you site behind the meter or on ground that already has capacity; the air permit, which is the slowest thing on the critical path and the one a community can contest; fuel security, because free today is not free for twenty years, which is why the model ramps to a contract ceiling; and condition risk in used equipment, which an ultrasonic inspection either clears or does not.",
 
   next:[
@@ -1389,6 +1438,10 @@ const SRC = {
   'Assumptions!C40': ['Project life', 'The economic life used to value the years after the PPA expires.', '', ' yrs'],
   'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
 
+  'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, dismantling of ${C65}M, ${C67}M of haul, and ${C68}M to put it back up on new foundations.', '$', 'M'],
+  'Assumptions!C67': ['Haul', '{C66} route miles at ${C69}k a mile, for the whole convoy: permits, escorts and route engineering included.', '$', 'M'],
+  'Assumptions!C46': ['Capex, all in', 'The ${C22}M above, plus {C23} contingency.', '$', 'M'],
+
   'Model!C49': ['Funding requirement', 'Construction cost of ${C41}M, plus ${C47}M of interest during construction, plus a ${C48}M debt service reserve.', '$', 'M'],
   'Model!C45': ['Senior debt', 'The lower of what the cover ratio will support (${C42}M) and what the leverage cap allows (${C44}M). Whichever is smaller is the loan, so the binding limit moves with the dials.', '$', 'M'],
   'Model!C51': ['Leverage, of funding', 'Senior debt of ${C45}M over the ${C49}M actually funded, which includes construction interest and the reserve. Measured on funded cost rather than on capex, because that is what the loan documents measure.'],
@@ -1396,7 +1449,7 @@ const SRC = {
   'Model!C55': ['Equity NPV', 'Discounted equity cash flow plus the terminal value, less the equity drawn across the two-year build.', '$', 'M'],
   'Model!C56': ['Levered equity IRR', 'The return on the equity alone, after debt service and tax, with the construction draw counted at the front.'],
   'Model!C63': ['Project IRR', 'The unlevered return: the whole build funded up front, and tax carrying no interest shield. The spread against the levered return is what the financing contributes.'],
-  'Model!C57': ['Minimum DSCR', 'The lowest cover ratio inside the tenor. Debt service is sculpted to hold the ratio at its target, so it lands there in every year rather than sagging in one.'],
+  'Model!C57': ['DSCR, worst year', 'The lowest cover ratio inside the tenor. Debt service is sculpted to hold the ratio at its target, so it lands there in every year rather than sagging in one.'],
 };
 ['C','D','E','F','G','H','I'].forEach(c => {
   SRC['Research!' + c + '17'] = ['Implied basis',
@@ -1419,7 +1472,7 @@ const DEF = {
     'Equipment, dismantling, haulage, civils and re-erection, plus contingency. It excludes financing costs, which sit in the funding requirement below.',
   'Funding requirement':
     'What has to be raised: the capital cost, plus interest accruing during construction, plus the debt service reserve the lender requires at closing. Always larger than the capital cost.',
-  'Minimum DSCR':
+  'DSCR':
     'Debt service coverage in the worst year of the tenor: cash available for debt service divided by debt service. 1.40x means the project throws off 40% more cash than it owes that year. Lenders set a floor, typically 1.30 to 1.45x for contracted generation, and breaching it traps distributions. It sits above the floor only when the leverage limit bound first and the loan is smaller than the cash flow could carry.',
   'Project IRR':
     'The unlevered return: the whole build funded up front, with no interest deduction. It measures the asset, so financing cannot flatter it.',
@@ -1947,6 +2000,7 @@ const BENCH = {
   IND:    ['industry range',   'Ranges a biomass developer, lender or IE would recognize. Not a published figure.'],
   TERM:   ['contract term',    'Set by the supply agreement rather than by a market: how long the price has to climb from today to its ceiling.'],
   BLEND:  ['IRC + A.R.S.',     'The two statutory rates combined: state tax is deductible against federal, so the blend is less than their sum.'],
+  USED:   ['used-plant range', 'What idle thermal generating equipment changes hands for, per kW of nameplate, when it is bought to be moved rather than run in place. A range, not a quote: the figure here is illustrative and is not any actual asking price.'],
   ATB:    ['NREL ATB',         'National Renewable Energy Laboratory, Annual Technology Baseline — dedicated biomass.'],
   AACE:   ['AACE Class 5',     'AACE International 18R-97: a Class 5 estimate carries a wide accuracy range, and contingency is set against it.'],
   NOVO:   ['Novo BioPower',    'The Snowflake, Arizona biomass plant contracts at a published $110/MWh, the nearest public comparable.'],
@@ -1964,7 +2018,10 @@ const BENCH = {
    Clamped to each slider's own range, and the slider is moved with the value so
    the control never disagrees with the model. */
 function scaleCapex(k) {
-  ['C22', 'C41'].forEach(ref => {
+  /* C22 is the sum of its parts now, so the parts are what travel with
+     capacity. Haul distance does not: a bigger plant is more loads over the
+     same road, which is the per-mile rate, not the mileage. */
+  ['C64', 'C65', 'C69', 'C68', 'C41'].forEach(ref => {
     const d = SHEET_BY_NAME['Assumptions'].cells[ref];
     const next = Math.min(d.max, Math.max(d.min, val('Assumptions', ref) * k));
     const s = document.getElementById('in-' + ref);
@@ -2195,6 +2252,18 @@ function secAnalysis(){
   const ag = $('p', 'against');
   ag.textContent = SITE.against;
   why.appendChild(ag);
+
+  /* the screen, before the model: these either hold or there is no deal */
+  const mh = $('h4', 'mustsh', 'What has to be true first');
+  why.appendChild(mh);
+  const ml = $('ul', 'musts');
+  SITE.musts.forEach(([k, v]) => {
+    const li = $('li');
+    li.appendChild($('b', null, k));
+    li.appendChild($('span', null, v));
+    ml.appendChild(li);
+  });
+  why.appendChild(ml);
   w.appendChild(why);
 
   const box = $('div', 'model');
@@ -2371,7 +2440,7 @@ function secAnalysis(){
    ['Levered equity IRR', 'C56', 'pct1', 'After debt', '', '',
     { mkt:[0.12, 0.18], f:'pct0', s:'IND', note:'sponsor target' }],
    ['Equity NPV', 'C55', 'num1', 'Equity drawn across construction', '$', 'M', null],
-   ['Minimum DSCR', 'C57', 'x2', '', '', '',
+   ['DSCR', 'C57', 'x2', '', '', '',
     { mkt:[1.30, 1.45], f:'x2', s:'IND', note:'lender requirement' }]].forEach(([k, ref, f, n, pre, suf, bm]) => {
     const t = $('div', 'otile');
     t.appendChild($('span', 'k', k));
@@ -2933,7 +3002,7 @@ function drawTrade() {
   [['Months to first power', 'months', 'num0', '', ' mo', true],
    ['Capital cost, all in', 'capex', 'num1', '$', 'M', true],
    ['Funding requirement',  'funding', 'num1', '$', 'M', true],
-   ['Minimum DSCR',         'dscr', 'x2', '', '', false],
+   ['DSCR',                 'dscr', 'x2', '', '', false],
    ['Project IRR',          'proj', 'pct1', '', '', false],
    ['Equity NPV',           'npv', 'num1', '$', 'M', false],
   ].forEach(([lbl, k, f, pre, suf, lowerIsBetter]) => {
