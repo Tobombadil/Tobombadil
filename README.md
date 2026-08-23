@@ -179,8 +179,9 @@ Sources are named honestly, which matters more than making them look impressive:
   would recognise — rather than borrowing an institution's authority for a number it never
   published. Hovering any source tag gives the sentence behind it.
 
-The capex benchmark is deliberately the *new-build* figure, 4,000–5,000 $/kW against a set value
-of 1,065. The gap is not an error; it is the entire thesis, and the line says so.
+The capex benchmark is deliberately the *new-build* figure: NREL ATB's 4,000–5,000 $/kW against a
+relocation dialled at $53.3M before contingency, which is about $1,065/kW on the same net capacity.
+The gap is not an error; it is the entire thesis, and the line says so.
 
 The **outputs** carry benchmarks too, on the same convention, because they are the figures a
 reader is least able to judge unaided. Project IRR sits against 8–12% for contracted new build,
@@ -473,6 +474,30 @@ be quoted in points rather than percent. The rows are addressed by label, not by
 Senior debt above Project IRR would otherwise have re-pointed the IRR assertions at Minimum cover
 and gone on passing. Senior debt is the one row drawn in neutral grey: more debt is not a win.
 
+### Capex is dialled in dollars
+
+It used to be dialled in $/kW and multiplied by nameplate: `MW × 1000 × $/kW × (1+contingency)`.
+That is an engineer's unit, and the page already conceded the point — a shim named `asTotal`
+multiplied the dial back into millions for the sensitivity and stress panes, so the same figure
+appeared in two different units depending which tab you were on. The cell now holds millions, the
+shim is gone, and the label is just **Capex**.
+
+The change is output-neutral by construction: $53.25M × 1.35 is the same $71.9M all-in that
+50,000 kW × $1,065/kW × 1.35 produced, and a test asserts both readings of that number agree.
+
+Two consequences had to be handled rather than accepted:
+
+- **The benchmark is published per kW**, so freezing it into millions would pin it to one
+  nameplate. A `mkt` entry may now be a *function*, resolved against the live net-capacity cell,
+  and any benchmark line built from one is redrawn on each recalc. Drag capacity to 70 MW and the
+  ATB range moves from $183–229M to $257–321M.
+- **Capex no longer scales with capacity on its own.** A per-kW rate did that by construction; a
+  dollar total does not, which would have made the capacity slider free revenue — the most
+  inviting bug on the page. Moving nameplate now moves both capex dials with it, holding the
+  implied unit rate, and the sponsor can overrule either afterwards. The slider snaps to its own
+  step, so the override is read back off the control rather than kept independently, or the dial
+  and the model would quietly hold different numbers.
+
 ### Why the stress pane was rewritten
 
 It applied seven shocks of fixed size — capex +25%, price −15% — and printed the NPV that fell
@@ -487,8 +512,8 @@ declared range and say so, which is its own finding: raising the cover target or
 monetization cannot wipe the equity on their own.
 
 Above it sits the number the user actually asked for, and the most quotable thing in 6.0: **every
-assumption 1.9% worse than planned, all at once**, takes equity NPV to zero — against 6.5% of room
-on the tightest single one. That gap between one-at-a-time and all-at-once is the real lesson of
+assumption 8.6% worse than planned, all at once**, takes equity NPV to zero — against 24.0% of room
+on the tightest single one, the PPA price. That gap between one-at-a-time and all-at-once is the real lesson of
 the pane, and it is now a sentence rather than an inference.
 
 What was lost, deliberately: the before-close/after-close distinction, which had the loan re-sized

@@ -160,6 +160,10 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .job li::before{content:"—";position:absolute;left:0;color:var(--ink-3)}
 
 /* ── the live model ────────────────────────────────────────────────── */
+/* a term with a definition behind it, marked the way a footnote would be */
+.def[data-def]{border-bottom:1px dotted var(--ink-3);cursor:help}
+.def[data-def]:hover,.def[data-def]:focus{border-bottom-color:var(--copper);color:var(--ink);outline:0}
+
 /* the case, above the model that serves it */
 .why{margin:0 0 26px}
 .why h3{margin:0 0 12px;font:700 12px var(--sans)}
@@ -765,11 +769,13 @@ const SHEETS = [
     C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital',
          mkt:[0.02,0.03],   s:'CPI'},
     C21:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
-    C22:{v:1065,  f:'num0', input:true, min:600,  max:5000, step:25,   lbl:'Capex, before contingency', u:'$/kW', grp:'Costs & capital',
-         mkt:[4000,5000],   s:'ATB', note:'the greenfield cost of the same plant'},
+    C22:{v:53.25, f:'num1', input:true, min:15,   max:300,  step:0.25, lbl:'Capex', u:'$M, before contingency', grp:'Costs & capital',
+         mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
+         s:'ATB', note:'the greenfield cost of the same plant'},
     /* the counterfactual the whole trade is measured against */
-    C41:{v:4500,  f:'num0', input:true, min:3000, max:6500, step:100,  lbl:'Greenfield capex, for comparison', u:'$/kW', grp:'Costs & capital',
-         mkt:[4000,5000],   s:'ATB', note:'what it would cost to build new'},
+    C41:{v:225,   f:'num1', input:true, min:100,  max:400,  step:1,    lbl:'Greenfield capex, for comparison', u:'$M', grp:'Costs & capital',
+         mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
+         s:'ATB', note:'what it would cost to build new'},
     C23:{v:0.35,  f:'pct0', input:true, min:0.10, max:1.00, step:0.05, lbl:'Contingency', u:'', grp:'Costs & capital',
          mkt:[0.30,0.50],   s:'AACE', note:'what a Class 5 estimate carries'},
 
@@ -816,7 +822,7 @@ const SHEETS = [
     C63:{v:'=C62+C59', f:'num0'},                         /* months to full operation */
 
     C45:{v:'=C9*1000*C10', f:'num0'},
-    C46:{v:'=C9*1000*C22*(1+C23)/1000000', f:'num1'},
+    C46:{v:'=C22*(1+C23)', f:'num1'},
     C47:{v:'=C35+C36*(1-C35)', f:'pct1', s:'BLEND'},
     C50:{v:'=C45*C21/1000000', f:'num2'},
     C51:{v:'=C46-IF(C29=2,C46*C33*0.5,0)', f:'num1'},
@@ -1384,7 +1390,8 @@ const SRC = {
   'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
 
   'Model!C49': ['Funding requirement', 'Construction cost of ${C41}M, plus ${C47}M of interest during construction, plus a ${C48}M debt service reserve.', '$', 'M'],
-  'Model!C45': ['Senior debt', 'The lower of what the cover ratio will support and what the leverage cap allows. Here the covenant binds, not the cap.', '$', 'M'],
+  'Model!C45': ['Senior debt', 'The lower of what the cover ratio will support (${C42}M) and what the leverage cap allows (${C44}M). Whichever is smaller is the loan, so the binding limit moves with the dials.', '$', 'M'],
+  'Model!C51': ['Leverage, of funding', 'Senior debt of ${C45}M over the ${C49}M actually funded, which includes construction interest and the reserve. Measured on funded cost rather than on capex, because that is what the loan documents measure.'],
   'Model!C50': ['Equity', 'The funding requirement less the loan. Equity takes whatever is left, which is why a cost overrun lands on it.', '$', 'M'],
   'Model!C55': ['Equity NPV', 'Discounted equity cash flow plus the terminal value, less the equity drawn across the two-year build.', '$', 'M'],
   'Model!C56': ['Levered equity IRR', 'The return on the equity alone, after debt service and tax, with the construction draw counted at the front.'],
@@ -1402,6 +1409,32 @@ const SRC = {
 
 /* SITE prose may template the workbook the same way a source line does, so a
    figure typed into a sentence cannot drift from the cell that also displays it */
+/* The trade rows are drawn strings, not cells, so they carry no source of their
+   own. These are definitions rather than provenance: what the term means, in the
+   sense this page uses it. */
+const DEF = {
+  'Months to first power':
+    'When the first unit can deliver power, counted from a decision to proceed. Full commercial operation follows a little later; this is the date a buyer short of capacity is actually buying.',
+  'Capital cost, all in':
+    'Equipment, dismantling, haulage, civils and re-erection, plus contingency. It excludes financing costs, which sit in the funding requirement below.',
+  'Funding requirement':
+    'What has to be raised: the capital cost, plus interest accruing during construction, plus the debt service reserve the lender requires at closing. Always larger than the capital cost.',
+  'Senior debt':
+    'The loan. Sized as the lower of two limits, not chosen: what the cash flow will service at the target cover ratio, and what the leverage cap allows.',
+  'Equity required':
+    'The funding requirement less the loan. Equity is the residual, which is why a cost overrun lands on it rather than being shared.',
+  'Leverage, of funding':
+    'Senior debt as a share of everything funded, including construction interest and the reserve, rather than as a share of capex. Lenders measure it this way, and it is the lower of the two ratios.',
+  'Debt sized by':
+    'Which of the two limits actually struck the loan. "Leverage cap" means the cash flow would have carried more debt than the cap permits; "cash flow" means the covenant bound first and the cap was never reached.',
+  'Minimum cover':
+    'The debt service coverage ratio in its worst year: cash available for debt service divided by debt service. 1.40x means the project generates 40% more cash than it owes. Lenders set a floor, typically 1.30 to 1.45x for contracted generation, and breaching it traps distributions.',
+  'Project IRR':
+    'The unlevered return: the whole build funded up front, with no interest deduction. It measures the asset, so financing cannot flatter it.',
+  'Equity NPV':
+    'Equity cash flow discounted at the equity cost of capital, plus terminal value, less the equity drawn during construction. Positive means the deal beats the return equity demanded.',
+};
+
 const say = t => expandSrc('Facts', t);
 
 /* {C5} and {D7:date} become the live formatted value of that cell */
@@ -1457,9 +1490,34 @@ function reveal(el) {
           b.left + b.width / 2, b.top);
 }
 
+/* A definition is not provenance, but a reader asking "what is this" wants the
+   same gesture, so it goes to the same two places a source line does. */
+function revealDef(el) {
+  const term = el.textContent.trim(), prose = DEF[el.dataset.def] || '';
+  if (!prose) return;
+  if (narrow()) {
+    const b = el.getBoundingClientRect();
+    showTip('<b>' + esc(term) + '</b>' + esc(prose), b.left + b.width / 2, b.top);
+    return;
+  }
+  fref.textContent = term;
+  ftext.textContent = '';
+  ftext.appendChild($('span', 'p', prose));
+}
+
 document.addEventListener('pointerover', e => {
   const t = e.target.closest('[data-cell]');
-  if (t) reveal(t);
+  if (t) { reveal(t); return; }
+  const d = e.target.closest('[data-def]');
+  if (d) revealDef(d);
+});
+document.addEventListener('focusin', e => {
+  const d = e.target.closest && e.target.closest('[data-def]');
+  if (d) revealDef(d);
+});
+document.addEventListener('pointerout', e => {
+  if (e.target.closest && e.target.closest('[data-def]')
+      && !e.relatedTarget?.closest?.('[data-def]')) { clearSource(); hideTip(); }
 });
 document.addEventListener('focusin', e => {
   const t = e.target.closest && e.target.closest('[data-cell]');
@@ -1910,12 +1968,38 @@ const BENCH = {
 };
 
 /* "market 90-130 $/MWh" in the cell's own units */
+/* Both capex dials are a price for a given size, so they travel with capacity.
+   Clamped to each slider's own range, and the slider is moved with the value so
+   the control never disagrees with the model. */
+function scaleCapex(k) {
+  ['C22', 'C41'].forEach(ref => {
+    const d = SHEET_BY_NAME['Assumptions'].cells[ref];
+    const next = Math.min(d.max, Math.max(d.min, val('Assumptions', ref) * k));
+    const s = document.getElementById('in-' + ref);
+    /* the slider snaps to its own step, so take the value back off it rather
+       than letting the control and the model hold different numbers */
+    if (s) { s.value = next; overrides['Assumptions!' + ref] = parseFloat(s.value); }
+    else overrides['Assumptions!' + ref] = next;
+  });
+}
+
+/* A published range in $/kW, read against the capacity actually dialled in, so
+   converting capex to millions does not freeze its benchmark to one nameplate. */
+const perKw = (lo, hi) => {
+  const kw = val('Assumptions', 'C45');
+  return kw > 0 ? [lo * kw / 1e6, hi * kw / 1e6] : null;
+};
+
 function marketLine(d) {
   if (!d.mkt && !d.s) return null;
   const w = $('div', 'fmkt');
-  if (d.mkt) {
-    const lo = formatValue(d.mkt[0], d.f), hi = formatValue(d.mkt[1], d.f);
+  const m = typeof d.mkt === 'function' ? d.mkt() : d.mkt;
+  if (m) {
+    const f = d.mf || d.f, pre = d.mpre || '', suf = d.msuf || '';
+    const lo = pre + formatValue(m[0], f) + suf, hi = pre + formatValue(m[1], f) + suf;
     w.append($('b', null, lo + '\u2013' + hi), ' ');
+    /* a computed range moves with its dial, so it is rewritten on recalc */
+    if (typeof d.mkt === 'function') { w.dataset.live = ''; w.__d = d; }
   }
   if (d.s && BENCH[d.s]) {
     const tag = $('i', null, BENCH[d.s][0]);
@@ -2178,7 +2262,19 @@ function secAnalysis(){
         sl.min = def.min; sl.max = def.max; sl.step = def.step; sl.value = def.v;
         sl.dataset.bind = 'Assumptions!' + ref;
         sl.setAttribute('aria-label', def.lbl + (def.u ? ', ' + def.u : ''));
-        sl.addEventListener('input', () => { overrides['Assumptions!' + ref] = parseFloat(sl.value); recalc(); });
+        sl.addEventListener('input', () => {
+          /* Capex is dialled in dollars, so it no longer scales with capacity
+             on its own the way a per-kW rate did. Left alone, dragging the
+             capacity slider would buy revenue for free. Hold the implied unit
+             rate instead and move the two capex dials with it: the sponsor can
+             still overrule either one by dragging it afterwards. */
+          if (ref === 'C9') {
+            const was = val('Assumptions', 'C9'), now = parseFloat(sl.value);
+            if (was > 0 && now > 0) scaleCapex(now / was);
+          }
+          overrides['Assumptions!' + ref] = parseFloat(sl.value);
+          recalc();
+        });
         f.appendChild(sl);
         /* an assumption with no benchmark beside it is an assertion */
         const mk = marketLine(def);
@@ -2622,15 +2718,13 @@ const MID = '#f0efec';
    debt", "\u00a76418 transfer" — so the ones that are really units are named
    here.
 
-   The fourth converts the cell's own value into the figure to show. Capex is
-   dialled in $/kW, because it has to scale when the capacity slider moves,
-   but $/kW is not the number anyone quotes a project in. It is shown as a
-   total instead: dollars per kW, times the plant, in millions. */
-const asTotal = { f:'num1', of:v => v * val('Assumptions', 'C9') / 1000 };
+   The fourth converts the cell's own value into the figure to show, for the
+   dials whose stored unit is not the one worth reading. Capex used to need it,
+   back when it was dialled per kW; it is dialled in millions now. */
 const DRIVERS = [
   ['PPA price, year 1',         'C13', '$/MWh'],
   ['Availability, steady state','C11', ''],
-  ['Capex before contingency',  'C22', '$M', asTotal],
+  ['Capex',                     'C22', '$M'],
   ['Fuel contract ceiling',     'C17', '$/ton'],
   ['Non-fuel opex, year 1',     'C19', '$M'],
   ['Interest rate',             'C25', ''],
@@ -2859,7 +2953,12 @@ function drawTrade() {
    ['Equity NPV',           'npv', 'num1', '$', 'M', false],
   ].forEach(([lbl, k, f, pre, suf, lowerIsBetter]) => {
     const tr2 = $('tr');
-    tr2.appendChild($('td', null, lbl));
+    const lc = $('td');
+    const dfn = $('span', 'def', lbl);
+    if (DEF[lbl]) { dfn.dataset.def = lbl; dfn.tabIndex = 0;
+                    dfn.setAttribute('aria-label', lbl + '. ' + DEF[lbl]); }
+    lc.appendChild(dfn);
+    tr2.appendChild(lc);
     if (f === 'text') {
       /* the punchline of the whole comparison, so it is a row rather than
          something a reader has to infer from the two above it */
@@ -3064,6 +3163,14 @@ function heavy() {
     const b = val('Assumptions', 'C22'), g = val('Assumptions', 'C41');
     en.textContent = (g > 0 && isFinite(b / g)) ? formatValue(b / g, 'pct0') : 'a fraction';
   }
+  /* the two capex benchmarks are quoted per kW, so they move with capacity */
+  document.querySelectorAll('.fmkt[data-live]').forEach(w => {
+    const d = w.__d; if (!d) return;
+    const m = d.mkt(); if (!m) return;
+    const f = d.mf || d.f, pre = d.mpre || '', suf = d.msuf || '';
+    w.firstChild.textContent = pre + formatValue(m[0], f) + suf + '\u2013'
+                             + pre + formatValue(m[1], f) + suf;
+  });
   drawTrade();
   drawStress();      /* writes the headline as well as the table */
   drawTornado();
