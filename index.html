@@ -1239,10 +1239,11 @@ const SITE = {
   to:'Commercial leadership, wholesale power',
   target:'Manager, Origination',
   basis:'Career figures as disclosed on the CV. The deal in 5.0 is a worked example.',
-  headline:'Ten years sourcing, structuring and negotiating energy and commodity contracts. Looking for a bigger platform.',
+  headline:'Eleven years sourcing, structuring and negotiating energy and commodity contracts. Looking for a bigger platform.',
   rec:[
     "I originate, structure and negotiate energy and commodity contracts. I source the counterparties, build the commercial case, and coordinate the legal, technical and market inputs that carry a deal into a model and then through a committee.",
     "Public power buys through governance, not through a pitch. I spent nine years on a governed, member-accountable board, through four mergers, building consensus with no authority to simply decide. That is the closest thing to a cooperative board that anyone outside one can bring, and it is why this seat interests me more than a trading desk would. I have worked with utilities, cooperatives, tribes, developers and power plants, which is most of the table a power deal is decided at.",
+    "I am not arriving with a book of customers and would not trust anyone who claimed one. What I like about this work is the part before the paper: sitting with a counterparty until you understand what they are actually solving for, which is usually not the thing in the RFP. Nine of my last ten years have had a volunteer board seat attached, unpaid, at an organization built on showing up for people. That is the appetite, and it is the reason the seventy-thirty split does not read to me as a demotion.",
     "What I want is the second seat on live deals, paired with a senior originator, with a route to carrying them. Not a title. This page is laid out the way I'd lay out a proposal, because the proposal is the deliverable: mandate first, evidence second, and the risks in 6.0 rather than buried.",
   ],
   terms:[
@@ -1329,15 +1330,24 @@ const SITE = {
   against:"The buyer this is built for is a cooperative or municipal with data-centre load inside its territory: firm, local, low-carbon, and available years before anything else can be. What would kill it is on the dials below, so the disagreement can be priced rather than argued.",
   next:[
     "Thirty minutes, no deck. I'd rather hear which market you're short of coverage in than talk about myself.",
-    "Send me a model and ask me to take it apart. Or use 6.0, which is already open.",
+    "Send me a model and ask me to take it apart. Or use 5.0, which is already open.",
     "References who'll speak to the writing and to nine years of board work, on request.",
+  ],
+
+  outcomes:[
+    ['First 90 days',
+     "The products, the customers, and how a deal moves from first contact to signature. Pipeline and deal records accurate and current, because that is the part nobody notices until it is wrong. In customer meetings, listening."],
+    ['By six months',
+     "RFP responses coordinated end to end, with the narrative drafted rather than assembled. Pricing requests reaching modeling complete the first time. Opportunities surfaced from board agendas and filings, not from a posting everyone already has."],
+    ['Year one',
+     "IC memos that need editing rather than rewriting. Known by name to a defined set of customers. The person a senior originator wants in the room, and ready to take first chair."],
   ],
 
   jobs:[
     { row:7, title:'Origination Manager', co:'Compass International', where:'Denver, CO', span:'March 2024 to present',
       note:'Energy origination: sourcing, structuring, negotiation and execution.',
       bullets:[
-        'Originated end to end on partial power: sourced counterparties, advanced the pipeline, structured and negotiated terms, and carried them through execution.',
+        'Originated end to end on partial power: sourced counterparties, built the relationships behind them, structured and negotiated terms, and carried them through execution.',
         'Negotiated exclusive agreements for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake rights.',
         'Won a proposal by working out what the investment committee required, then benchmarking every figure to the market.',
         'Built a data room per project, so every assumption across markets, engineering and risk has third-party work behind it.',
@@ -1391,8 +1401,8 @@ const SITE = {
    of the name, which needs 849px in a 390px bar */
 const SECTIONS = [
   ['summary',    '1.0', 'Summary',               'What I am proposing, and on what terms', 'Summary'],
-  ['mandate',    '2.0', 'The mandate',           'The five things the second seat owns, and where I map to each', 'Mandate'],
-  ['experience', '3.0', 'Experience',            'Ten years, and what each seat actually taught', 'Experience'],
+  ['mandate',    '2.0', 'The mandate',           'What the seat owns, what I bring to it, and what I would have delivered by when', 'Mandate'],
+  ['experience', '3.0', 'Experience',            'Eleven years, and what each seat actually taught', 'Experience'],
   ['market',     '4.0', 'Market view',           'A view I built on my own time, and can defend in a room', 'Market'],
   ['analysis',   '5.0', 'Supporting analysis',   'A model taken apart, which is what the seat actually does', 'Analysis'],
   ['risk',       '6.0', 'Risks and mitigants',   'The case against hiring me, written by me', 'Risk'],
@@ -1895,6 +1905,18 @@ function secMandate(){
   t.appendChild(tb);
   w.appendChild(t);
 
+
+  /* the spec sets outcomes at ninety days, six months and a year, so answer
+     them here rather than leaving a reader to wonder */
+  w.appendChild($('h3', 'subh', 'What I would have delivered, and by when'));
+  const og = $('div', 'whys');
+  SITE.outcomes.forEach(([k, v]) => {
+    const c = $('div', 'whyc');
+    c.appendChild($('b', null, k));
+    c.appendChild($('p', null, v));
+    og.appendChild(c);
+  });
+  w.appendChild(og);
 }
 
 /* ── §3 background ───────────────────────────────────────────────── */

@@ -626,6 +626,24 @@ paragraph of the summary and to the head of the credentials block: for a seat se
 power, where buying happens through governance rather than through a pitch, it is the closest
 analogue anyone outside a cooperative can offer.
 
+### Answering the role's own outcomes
+
+The spec sets outcomes at ninety days, six months and a year. A proposal that does not answer them
+leaves the reader to guess what the first year buys, so 2.0 now closes with three commitments
+against those marks, sitting under the table that maps the seat's five duties. That makes 2.0 the
+complete answer to "can you do this job" and keeps it to a single screen on a desktop.
+
+Two other corrections from the same read:
+
+- **"Ten years" was claimed twice while the model computed 11.3.** On a page whose entire discipline
+  is that figures come from cells, a hardcoded word disagreeing with a live one is the first thing a
+  careful reader finds. It reads eleven now.
+- **The spec calls a genuine appetite for people a must-have**, and the page had no evidence of it:
+  competent throughout, warm nowhere. The summary now says outright that no book of customers is
+  arriving and would not be believed if it were, names what is actually liked about the work, and
+  points at nine years of unpaid board service as the evidence. Stated with a fact behind it rather
+  than as an adjective.
+
 ### The financing dials explain themselves
 
 Three questions in a row about this model turned out to be missing *explanations* rather than
