@@ -736,11 +736,12 @@ const SHEETS = [
   name:'Career', rows:16, cols:[], cells:{
     D7:{v:'=DATE(2024,3,1)'},  E7:{v:'=TODAY()'},        F7:{v:'=YEARFRAC(D7,E7)',  f:'num1'},
     D8:{v:'=DATE(2018,8,1)'},  E8:{v:'=DATE(2024,3,1)'}, F8:{v:'=YEARFRAC(D8,E8)',  f:'num1'},
-    D9:{v:'=DATE(2017,3,1)'},  E9:{v:'=DATE(2018,8,1)'}, F9:{v:'=YEARFRAC(D9,E9)',  f:'num1'},
+    D9:{v:'=DATE(2017,5,1)'},  E9:{v:'=DATE(2018,8,1)'}, F9:{v:'=YEARFRAC(D9,E9)',  f:'num1'},
     D10:{v:'=DATE(2015,5,1)'}, E10:{v:'=DATE(2017,5,1)'},F10:{v:'=YEARFRAC(D10,E10)',f:'num1'},
     /* The Morgan Stanley years ran alongside the finance degree, so the honest
-       professional clock starts at the first full-time role, and the honest
-       clock for THIS seat starts at the first energy one. */
+       professional clock starts at the first full-time role in May 2017, and the
+       honest clock for THIS seat starts at the first energy one. The roles run
+       end to end: no year is counted twice. */
     F14:{v:'=YEARFRAC(D9,TODAY())',  f:'num1'}, /* post-degree, full time */
     D16:{v:'=DATE(2017,1,1)'}, E16:{v:'=DATE(2026,1,1)'}, F16:{v:'=YEARFRAC(D16,E16)', f:'num0'},
   }
@@ -1361,13 +1362,13 @@ const SITE = {
         'Built the commercial function from zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth across industries.',
         'Raised $1 million; worked with a 10-person team and 40 interns across product, engineering, data, marketing and sales.',
       ] },
-    { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'March 2017 to August 2018',
+    { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'May 2017 to August 2018',
       bullets:[
         'Top trader of cohort; grew book of business past $1 million by building relationships, offering solutions and negotiating deals.',
         'Priced against customer requirements on physical spreads; led a trading-systems rollout for 300+ traders managing $6B in flows.',
       ] },
     { row:10, title:'Financial Analyst', co:'Morgan Stanley', where:'Portsmouth, NH', span:'May 2015 to May 2017',
-      note:'Alongside the finance degree, and counted separately from the full-time clock above.',
+      note:'Alongside the finance degree, so it sits outside the full-time clock.',
       bullets:[
         'Financial statement analysis and investment assessment for institutional and UHNW portfolios; built systems consolidating 18,000 client records.',
       ] },
@@ -1470,7 +1471,7 @@ const SRC = {
 
   'Facts!C7':   ['Rights negotiated', 'Intake of ${C5}M plus offtake of ${C6}M, as exclusive agreements on energy products.', '$', 'M'],
   'Facts!C16':  ['Clients originated', 'The commercial function at Pakira, built from zero. As disclosed on the CV.'],
-  'Career!F14': ['Commercial experience, full time', 'From the first full-time role in March 2017 to today, on an actual/365 basis. The Morgan Stanley years ran alongside the degree and are counted separately.', '', ' yrs'],
+  'Career!F14': ['Commercial experience, full time', 'From the first full-time role in May 2017 to today, on an actual/365 basis. The Morgan Stanley years ran alongside the finance degree and are counted separately, so no year is counted twice.', '', ' yrs'],
   'Facts!C5':   ['Intake rights', 'Exclusive agreements negotiated on energy products, on the intake side. As disclosed on the CV.', '$', 'M'],
   'Facts!C6':   ['Offtake rights', 'The offtake side of the same book of exclusive agreements. As disclosed on the CV.', '$', 'M'],
 

@@ -658,6 +658,21 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### The career is continuous
+
+Forest City was full time and followed Morgan Stanley directly, so the handover is May 2017 and the
+two roles no longer overlap. That single date is what the old reconciliation footnote existed to
+explain — recorded tenure ran 0.2 years ahead of the career span because two months were counted
+twice. With the date right there is nothing to reconcile, and four invariants now hold it that way:
+
+- the roles run end to end, with no overlap and no gap;
+- they add up to exactly the span they cover (11.32 years across 11.32 years);
+- the full-time clock starts at the first full-time role rather than the first job, so it is
+  strictly shorter than the total;
+- and the energy clock is shorter still.
+
+Deleting a footnote and adding a test that makes it impossible to need again is the better trade.
+
 ### Answering the role's own outcomes
 
 The spec sets outcomes at ninety days, six months and a year. A proposal that does not answer them
