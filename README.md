@@ -658,6 +658,33 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### Grids size themselves
+
+Two bugs shipped from one cause: a fixed column count plus `nth-child` rules that assume a specific
+number of items.
+
+- The outcomes grid was `repeat(3,1fr)` with breakpoint overrides at 900px and 560px. Because
+  `.whyc:last-child:nth-child(2n+1)` (specificity 0,3,0) outranks `.whyc:last-child` (0,2,0), the
+  900px "span 2" beat the 560px "one column" on a phone. Computed columns came back
+  `91.125px 263.875px` — a 91px card setting **one word per line**.
+- `.tile:nth-child(1){border-bottom}` drew a rule under the first tile at narrow widths. The market
+  section's tile block holds exactly one tile, so it drew a **half-width rule under a tile with
+  nothing beneath it**.
+
+Both are now `repeat(auto-fit,minmax(Npx,1fr))` with rules drawn as 1px gaps over a ruled
+background. No breakpoints, no `nth-child`, no item-count assumptions: a track is never narrower
+than its content needs, and a cell that is alone in its row has no rule to draw. The card grid
+walks 1 → 2 → 3 → 4 columns as the room appears, at any container width — which matters because
+the artifact viewer renders in an iframe whose width does not match the device.
+
+The transposed basis table in 4.0 had a related fault. It is one header row of crowding levels over
+one body row of figures, and `.sched thead{display:none}` hides headers when the table restacks —
+so a phone got seven bare numbers with nothing naming them. Each figure now carries its own
+`data-l`, so it reads "2 GW 6.34" stacked.
+
+A sweep across fourteen widths now asserts both invariants, on one page resized rather than fourteen
+loaded. Both original bugs were invisible at the widths anyone had tested.
+
 ### The career is continuous
 
 Forest City was full time and followed Morgan Stanley directly, so the handover is May 2017 and the

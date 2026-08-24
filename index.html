@@ -124,9 +124,9 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .legend b{font-weight:700}
 
 /* ── stat tiles ────────────────────────────────────────────────────── */
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule);background:var(--paper)}
-.tile{padding:15px 16px;border-right:1px solid var(--rule)}
-.tile:last-child{border-right:0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+       border:1px solid var(--rule);background:var(--rule)}
+.tile{padding:15px 16px;background:var(--paper)}
 .tile .k{font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
          display:block;margin-bottom:7px}
 .tile .v{font:400 27px/1 var(--serif);letter-spacing:-.01em;display:block}
@@ -179,24 +179,14 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 /* the case, above the model that serves it */
 .why{margin:0 0 26px}
 .why h3{margin:0 0 12px;font:700 12px var(--sans)}
-.whys{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+.whys{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
       background:var(--rule);border:1px solid var(--rule)}
 .whyc{padding:13px 15px;background:var(--paper)}
-/* an odd last card fills its row instead of leaving a hole */
-.whyc:last-child:nth-child(3n+2){grid-column:span 2}
 .whyc b{display:block;font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;
         color:var(--copper);margin-bottom:6px}
 .whyc p{margin:0;font-size:12.5px;line-height:1.55;color:var(--prose)}
 .against{margin:12px 0 0;font:italic 12px var(--sans);line-height:1.6;color:var(--ink-3);max-width:96ch}
-@media (max-width:900px){
-  .whys{grid-template-columns:repeat(2,1fr)}
-  .whyc:last-child:nth-child(3n+2){grid-column:auto}
-  .whyc:last-child:nth-child(2n+1){grid-column:span 2}
-}
-@media (max-width:560px){
-  .whys{grid-template-columns:1fr}
-  .whyc:last-child{grid-column:auto}
-}
+/* no breakpoints: auto-fit collapses the tracks when the room runs out */
 .model{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--rule);background:var(--paper)}
 /* The dials stop where they stop rather than stretching to whichever readout
    is open, which otherwise left a tall empty panel under them, and they stay
@@ -560,9 +550,6 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .hero{grid-template-columns:1fr;gap:30px}
   .model{grid-template-columns:1fr}
   .inputs{border-right:0;border-bottom:1px solid var(--rule)}
-  .tiles{grid-template-columns:repeat(2,1fr)}
-  .tile:nth-child(2){border-right:0}
-  .tile:nth-child(1),.tile:nth-child(2){border-bottom:1px solid var(--rule)}
   .cols,.contact{grid-template-columns:1fr;gap:26px}
 }
 @media (max-width:680px){
@@ -2033,9 +2020,12 @@ function secMarket(){
   ['C','D','E','F','G','H','I'].forEach(c => bh.appendChild($('th', 'n', txt('Research', c + '16') + ' GW')));
   const bthead = $('thead'); bthead.appendChild(bh); bt.appendChild(bthead);
   const br = $('tr');
-  br.appendChild($('td', null, 'Implied basis ($/MWh)'));
+  const bl = $('td', null, 'Implied basis ($/MWh)'); bl.dataset.l = ''; br.appendChild(bl);
   ['C','D','E','F','G','H','I'].forEach(c => {
     const td = $('td', 'n');
+    /* the header carries the crowding level, and headers are hidden when the
+       table restacks, so each figure names its own level instead */
+    td.dataset.l = txt('Research', c + '16') + ' GW';
     td.appendChild(cell('Research', c + '17', { f:'num2' }));
     br.appendChild(td);
   });
