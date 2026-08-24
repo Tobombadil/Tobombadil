@@ -626,6 +626,38 @@ paragraph of the summary and to the head of the credentials block: for a seat se
 power, where buying happens through governance rather than through a pitch, it is the closest
 analogue anyone outside a cooperative can offer.
 
+### The tenure claims were overstated
+
+The page led with eleven years and a career total running from May 2015. Two problems with that.
+The earliest of those years ran alongside the finance degree, and **the energy work is two and a
+half years old** — the rest was a trading desk, a startup and a bank. "Eleven years sourcing,
+structuring and negotiating energy and commodity contracts" was not true of energy.
+
+It also argued the wrong way. The spec asks for **3+ years**, says explicitly that this is *not a
+senior appointment*, and wants somebody "expected to learn by watching, not to arrive with a fixed
+playbook." Overstating seniority was working against the application, not for it.
+
+So the clock the page leads with is the one that counts for the seat:
+
+| | |
+|---|---|
+| **In energy origination** | 2.5 yrs — since March 2024 |
+| **Commercial, full time** | 9.5 yrs — since 2017, after the degree |
+
+`Career!F14` is the new full-time span, starting at the first post-degree role; `F13`, which
+counted the study years, is deleted. The Morgan Stanley entry says on its face that it ran
+alongside the degree.
+
+The first risk row used to read *"I have already had Manager on my card"* — a complaint about being
+too senior. It now says the opposite, because the opposite is true: the title outruns the tenure
+behind it, and that is the argument for the second chair rather than against it.
+
+One consequence worth recording: dropping the two old tiles orphaned `Facts!C16` and `Career!F13`,
+and the dead-cell audit caught both immediately. `C16` turned out to be alive — read by `say()`
+into a resume bullet without ever becoming a `data-cell` — so it is now an explicit root in the
+walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
+are hoverable figures rather than text baked in at build time.
+
 ### Answering the role's own outcomes
 
 The spec sets outcomes at ninety days, six months and a year. A proposal that does not answer them
