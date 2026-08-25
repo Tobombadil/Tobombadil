@@ -658,6 +658,31 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### Written to a kind of desk, not to one employer
+
+The page had been aimed at a single job spec, and it showed: "you asked for three years", "you told
+me this is not that job", "the second chair", "seventy-thirty". Two problems with that. A director
+or VP reading it is told, in the candidate's own words, that he wants a junior seat. And a project
+finance desk at a bank is told that modelling is somebody else's job, which is the opposite of true
+on that side of the market.
+
+So the second person aimed at an employer is gone, and so is any claim about seniority in either
+direction. The terms card reads **Looking for: origination, commercial structuring, or project
+finance** and **Level: open, I care more about the desk than the title**. Markets and counterparties
+are stated broadly rather than shaped to one company's footprint. Products now include project debt.
+
+Section 5 stopped apologising for itself. It used to open with "modelling is not this job"; it now
+opens with what is actually true whoever is reading — the useful skill with a model is knowing which
+assumption is carrying the answer.
+
+The risk register was rewritten around the same problem. It used to answer a spec point by point.
+The four risks now stand on their own: energy experience shorter than the career, never having sold
+full-requirements supply, market work all in one ISO, and never having run a deal team. That last
+one is new and matters most for the roles above manager, where leading people is the job.
+
+Two checks hold it: no second person addressed to an employer and no employer named, and no phrase
+claiming or disclaiming a level.
+
 ### Rewritten in his voice
 
 The prose had a tic. Set up a wrong answer, then correct it: "Not a title." "never on bad math."
