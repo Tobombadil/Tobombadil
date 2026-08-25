@@ -658,6 +658,20 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### A factual correction, and why it is phrased by ISO
+
+The risk register claimed "my market work is all ERCOT". That was wrong. The *published research*
+is ERCOT, because that is where the clean data was, but the deal work has run across MISO and the
+West too, on power offtake, fuel supply and plant acquisition.
+
+The correction is stated by **ISO rather than by state**, deliberately. The origin and destination
+states of a live relocation, named next to a model of a cross-country plant move, point at a real
+transaction even though the model itself names no site. MISO and the West say the same thing
+professionally, without drawing that line. The confidentiality sweep still passes.
+
+The residual risk is real and stays on the page: depth of view on price formation is one market
+deep, whatever the deal work has touched.
+
 ### Written to a kind of desk, not to one employer
 
 The page had been aimed at a single job spec, and it showed: "you asked for three years", "you told
