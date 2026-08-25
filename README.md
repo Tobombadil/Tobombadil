@@ -658,6 +658,25 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### Rewritten in his voice
+
+The prose had a tic. Set up a wrong answer, then correct it: "Not a title." "never on bad math."
+"not through a pitch." "It closes on a desk, not on paper." Eight instances of the same move in one
+document reads as a house style rather than as a person. The card labels had the same problem —
+THE DEMAND, THE ASSET, THE STORY are headings for a slide, not words anyone says out loud. They are
+"Why now", "Why these plants", "Why the fuel is cheap" now.
+
+Everything a reader sees was rewritten as plain speech: say the thing, then stop. Contractions went
+from 6 to 51, which the suite already had a floor for and which is the clearest single measure of
+the change. Writing it out longhand had made it stiffer, not more human.
+
+**One near-miss worth recording.** Typing an apostrophe into a single-quoted JavaScript string ends
+the string. Four of the rewritten lines were single-quoted, so the page script stopped parsing and
+the page went blank. The only symptom was every later check failing at once with `rawOf is not
+defined`, which points nowhere near the actual fault. `node --check` on the extracted script found
+each one in seconds, and there is now a check for the failure as itself: the engine and the view
+must both have loaded before anything else is asserted.
+
 ### Grids size themselves
 
 Two bugs shipped from one cause: a fixed column count plus `nth-child` rules that assume a specific
