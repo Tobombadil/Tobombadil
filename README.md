@@ -658,6 +658,18 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### Pakira is linked on the job, not on the cover
+
+pakira.com is live and substantive: a wood-industry trading platform with 155,000 companies in it
+and real testimonials. It is worth linking, because "Pakira, Inc." on a CV line means nothing to a
+reader and 5.6 years is the longest job on the page.
+
+It is linked on the employer name in 3.0 and deliberately not on the cover. On the cover it would
+sit beside three energy and finance tools and send a reader, on the first screen, to a lumber
+marketplace — which is the same impression the risk register already owns up to, that the longest
+job is not an energy job. In 3.0 it answers a question the reader is already asking. Jobs take an
+optional `url` now, so any employer worth showing can carry one.
+
 ### The cover opens the work
 
 A reader who stopped at the cover never learned that the model, the simulator or Bankable existed:

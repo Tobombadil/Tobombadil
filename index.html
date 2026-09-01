@@ -1246,6 +1246,7 @@ const SITE = {
   /* both are live and both are mine; swap the host here if either moves */
   simulator:'https://ascendthecrowd.andrew-generalemail.workers.dev/',
   bankable:'https://bankablehq.com',
+  pakira:'https://pakira.com',
 
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
@@ -1371,7 +1372,7 @@ const SITE = {
         'Built the technoeconomic models behind pricing: DCF, NPV, IRR and DSCR across sensitivity cases.',
         'Built \u00a745Q, \u00a745Y and voluntary credit mechanics into project economics, and the life cycle analysis that qualifies them.',
       ] },
-    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', where:'Cambridge, MA', span:'August 2018 to March 2024',
+    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', url:'https://pakira.com', where:'Cambridge, MA', span:'August 2018 to March 2024',
       note:'Market intelligence platform for the building materials and forest products industries.',
       bullets:[
         'Built the commercial function from zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth across industries.',
@@ -1429,6 +1430,10 @@ SITE.tools = [
   ['Battery simulator', SITE.simulator,  true],
   ['Bankable',          SITE.bankable,   true],
 ];
+/* Pakira is linked on the job in 3.0 rather than here. It is live and real, but
+   it is a wood-trading marketplace: on the cover, beside three energy and
+   finance tools, it points a reader off the thesis on the first screen. In 3.0
+   it answers the question a reader already has, which is what the company is. */
 
 const SECTIONS = [
   ['summary',    '1.0', 'Summary',               "What I want, and what I'd bring", 'Summary'],
@@ -1986,7 +1991,13 @@ function secExperience(){
     const h = $('div', 'job-h');
     const l = $('div');
     l.appendChild($('h3', null, j.title));
-    l.appendChild($('p', 'co', j.co + ' · ' + j.where));
+    const co = $('p', 'co');
+    if (j.url) {
+      const a = $('a', 'mail', j.co);
+      a.href = j.url; a.target = '_blank'; a.rel = 'noopener';
+      co.appendChild(a); co.append(' · ' + j.where);
+    } else co.textContent = j.co + ' · ' + j.where;
+    l.appendChild(co);
     const r = $('div', 'when');
     const b = $('b'); b.appendChild(cell('Career', 'F' + j.row, { f:'num1' })); b.append(' yrs');
     r.appendChild(b);
