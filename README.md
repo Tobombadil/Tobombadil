@@ -1167,7 +1167,15 @@ would make it a user site at the root, but there is no reason to once the domain
 ### Step two: the domain, which is currently on Wix
 
 The route chosen is A below: andrewtgibson.com itself, served from GitHub, with the DNS moved back
-to GoDaddy. The `CNAME` file in this repo already reads `andrewtgibson.com` to match.
+to GoDaddy.
+
+**The `CNAME` file is parked as `CNAME.pending` until the DNS actually moves.** GitHub reads a
+`CNAME` in the deployed artifact and sets the repository's custom domain from it, and once a custom
+domain is set it 301-redirects `tobombadil.github.io/Tobombadil/` to that domain. Shipping it while
+the domain still resolves to Wix would mean the one URL available for checking the build redirects
+to the Wix site instead — a broken smoke test at the exact moment a working one is needed. So the
+first deploy goes out without it. Rename it back (`git mv CNAME.pending CNAME`) at DNS time and the
+workflow picks it up on the next push.
 
 **GoDaddy is the registrar, but it is not currently the host.** Looked up on 2026-09-01, the
 authoritative nameservers are Wix's:
