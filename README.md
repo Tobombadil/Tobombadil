@@ -1151,9 +1151,18 @@ cannot do it either — *"Create Pages site failed. Resource not accessible by i
 creating a Pages site needs admin rights the workflow token does not carry.
 
 So it is one genuine manual step, once: **Settings → Pages → Build and deployment → Source: GitHub
-Actions.** Re-run the workflow after that and it goes green, serving at `https://tobombadil.github.io`.
-The repo name matches the owner, so it serves at the root rather than under a subpath, and nothing
-in the page uses absolute paths.
+Actions.** Re-run the workflow after that and it goes green.
+
+It serves at **`https://tobombadil.github.io/Tobombadil/`**, under a subpath. A *user site* — one
+that answers at the root — requires the repo to be named `tobombadil.github.io` exactly; owner and
+repo matching is not what GitHub keys on, and `Tobombadil/Tobombadil` is an ordinary project repo.
+So `https://tobombadil.github.io/` returns 404 whether or not Pages is on, and is not a useful
+check.
+
+The subpath does not survive into production and does not need to: a project site attached to a
+custom domain answers at the apex root, so `andrewtgibson.com/` is right. Nothing in the page uses
+an absolute path, so it renders correctly under either. Renaming the repo to `tobombadil.github.io`
+would make it a user site at the root, but there is no reason to once the domain is attached.
 
 ### Step two: the domain, which is currently on Wix
 
