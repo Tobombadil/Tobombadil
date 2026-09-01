@@ -26,7 +26,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Every run since this repo was created failed here with "Get Pages site
+      # failed": Pages had never been switched on, and the action will not turn
+      # it on by default. enablement lets the workflow do it itself, so the site
+      # does not wait on somebody remembering a settings toggle.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       # Publish the site and nothing else. Uploading the repo root would put
       # README.md on the public domain, and the README is a build log: candid
