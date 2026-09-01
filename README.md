@@ -658,6 +658,20 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### The cover opens the work
+
+A reader who stopped at the cover never learned that the model, the simulator or Bankable existed:
+the model sits five sections down and the two applications were only reachable from 4.0.
+
+The cover now carries a second row under the primary actions, labelled **Open**: *The model* (jumps
+to 5.0), *Battery simulator* and *Bankable*. It is deliberately quieter than the first row — the top
+row is what to do about him, this one is what he has made — and the two that leave the page carry a
+↗ and open in a new tab.
+
+`SITE.tools` is built after the `SITE` literal rather than inside it, so the URLs are written once
+and a rehost is a single-line change. A test asserts all three resolve, that the external pair open
+in a new tab with `noopener`, and that no external URL appears twice on the page.
+
 ### The work is linked
 
 4.0 described three projects and linked none of them. Two are live and both are now hyperlinks in

@@ -390,6 +390,17 @@ body.at-cover .ftext{color:#8195a9}
 .cover-cta a.solid{background:var(--copper);border-color:var(--copper);color:#fff}
 .cover-cta a.solid:hover{background:var(--copper-2);border-color:var(--copper-2)}
 
+/* second row: the work, rather than what to do about him. Quieter than the
+   primary actions, and the arrow marks the ones that leave the page. */
+.cover-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.cover-tools .tk{font:700 9.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;
+                 color:rgba(255,255,255,.42);margin-right:2px}
+.cover-tools a{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;
+               font:500 12px var(--sans);text-decoration:none;color:#cfdae6;
+               border:1px solid rgba(255,255,255,.18)}
+.cover-tools a:hover{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.07)}
+.cover-tools a.ext::after{content:'\2197';font-size:11px;opacity:.65}
+
 /* the load shape sits on the cover's floor */
 .cover-load{position:relative;z-index:1;margin-top:auto}
 .cover-load svg{display:block;width:100%;height:clamp(120px,20vh,210px)}
@@ -619,6 +630,8 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
 
   /* thumbs need 44px; these were 36 and 38 */
   .cover-cta a{padding:14px 20px;font-size:13px}
+  .cover-tools a{padding:11px 15px;font-size:12.5px}
+  .cover-tools .tk{width:100%;margin:2px 0 2px}
   .igh{padding:13px 14px}
   .reset{padding:6px 0}
 
@@ -1233,6 +1246,7 @@ const SITE = {
   /* both are live and both are mine; swap the host here if either moves */
   simulator:'https://ascendthecrowd.andrew-generalemail.workers.dev/',
   bankable:'https://bankablehq.com',
+
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
 
@@ -1408,6 +1422,14 @@ const SITE = {
 
 /* id, number, name, thesis, and the short label the phone nav uses in place
    of the name, which needs 849px in a 390px bar */
+/* The cover's second row, built after SITE so the URLs are written once. Label,
+   target, and whether it leaves the page. */
+SITE.tools = [
+  ['The model',        '#analysis',      false],
+  ['Battery simulator', SITE.simulator,  true],
+  ['Bankable',          SITE.bankable,   true],
+];
+
 const SECTIONS = [
   ['summary',    '1.0', 'Summary',               "What I want, and what I'd bring", 'Summary'],
   ['mandate',    '2.0', 'The mandate',           "The five things origination actually owns, and how I handle each", 'Mandate'],
@@ -1784,6 +1806,17 @@ function cover(){
   const a3 = $('a', null, 'LinkedIn'); a3.href = SITE.linkedin; a3.target = '_blank'; a3.rel = 'noopener';
   cta.append(a1, a2, a3);
   inner.appendChild(cta);
+
+  /* the things a reader can open rather than read about */
+  const tools = $('div', 'cover-tools');
+  tools.appendChild($('span', 'tk', 'Open'));
+  SITE.tools.forEach(([label, href, external]) => {
+    const a = $('a', external ? 'ext' : null, label);
+    a.href = href;
+    if (external) { a.target = '_blank'; a.rel = 'noopener'; }
+    tools.appendChild(a);
+  });
+  inner.appendChild(tools);
   mid.appendChild(inner);
   c.appendChild(mid);
 
