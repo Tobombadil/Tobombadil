@@ -28,10 +28,20 @@ jobs:
 
       - uses: actions/configure-pages@v5
 
-      # The site is a single static file at the repo root — nothing to build.
+      # Publish the site and nothing else. Uploading the repo root would put
+      # README.md on the public domain, and the README is a build log: candid
+      # notes on what was cut and why, and the reasoning behind what is held
+      # back from the model. None of that belongs next to the proposal.
+      - name: Stage the public files
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          if [ -f CNAME ]; then cp CNAME _site/; fi
+          ls -la _site
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - id: deployment
         uses: actions/deploy-pages@v4

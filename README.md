@@ -1131,8 +1131,34 @@ could catch, and each got a different treatment rather than a smaller font:
 
 ## Deployment
 
-`.github/workflows/deploy.yml` publishes the repo root to GitHub Pages on every push.
+`.github/workflows/deploy.yml` publishes to GitHub Pages on every push to the default branch.
 
-One manual step is needed first: **Settings → Pages → Source → GitHub Actions**. After that the
-site serves at `https://tobombadil.github.io`. To serve it at `andrewtgibson.com`, add a `CNAME`
-file containing the domain and point a DNS `ALIAS`/`A` record at GitHub Pages.
+**It stages `_site` and copies only `index.html` and `CNAME` into it.** It used to upload the repo
+root, which would have served this README at `andrewtgibson.com/README.md` — 1,100 lines of build
+log, including candid notes on what was cut and the reasoning behind what is deliberately held back
+from the model. That was caught before a domain was pointed at it, and the staging step exists so it
+cannot come back. Anything added to the repo is private unless the workflow copies it explicitly.
+
+### Serving it at andrewtgibson.com
+
+`CNAME` is committed and contains the apex domain. Two things have to happen outside the repo:
+
+**1. DNS at the registrar.** Four `A` records on the apex, and a `CNAME` on `www`:
+
+| Type | Name | Value |
+|---|---|---|
+| A | `@` | `185.199.108.153` |
+| A | `@` | `185.199.109.153` |
+| A | `@` | `185.199.110.153` |
+| A | `@` | `185.199.111.153` |
+| CNAME | `www` | `tobombadil.github.io` |
+
+`AAAA` records (`2606:50c0:8000::153` through `8003::153`) are optional and add IPv6.
+
+**2. Repo settings.** Settings → Pages → **Source: GitHub Actions**, then set **Custom domain** to
+`andrewtgibson.com` and save. Wait for the DNS check to pass, then tick **Enforce HTTPS** — the
+certificate is issued after the domain validates, so that box is greyed out until DNS propagates.
+
+The repo is `Tobombadil/Tobombadil`, where the name matches the owner, so Pages serves it at the
+root (`tobombadil.github.io`) rather than under a subpath. Nothing in the page uses absolute paths,
+and it has been verified rendering over HTTP rather than `file://`.
