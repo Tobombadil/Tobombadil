@@ -658,6 +658,36 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### He sponsors a project, and the page did not say so
+
+Two later resumes carried the strongest fact in the file and the site was missing all of it. He is
+the **sponsor of a 33 MW behind-the-meter generation and CHP project**, holding exclusive rights to
+two 18 MW units, 320,000 tons of biomass and 230 acres of permitted land, on a **$46M structure**
+that relocates two small plants at roughly half the capital cost and half the time to first power
+of a new build. Every role he is aiming at is developer or sponsor side. That belonged at the top.
+
+It also fixes the worst credibility problem on the page. "$1.3B of rights" with no qualifier read
+as puffery. It now reads **$500M of intake and $800M of offtake across twelve projects**, next to a
+sponsored deal with physical rights attached, and the tile is called Contracts originated rather
+than Rights negotiated.
+
+Other gaps the resumes closed:
+
+- **Why he is looking.** The Compass role runs to August 2026. The page never said, and it is the
+  first question anyone asks.
+- **Low carbon.** Section 5 models §45Y, §48E and a §6418 transfer, and the skills list never
+  claimed any of it. There is a Low carbon row now covering §45Q, §45Z, voluntary credits and the
+  life cycle analysis that qualifies them, plus a Development row for the sponsorship work.
+- **Bankable.** The "patent-pending document processor" is a live product at bankablehq.com. It is
+  linked rather than described, and it is honest about where it came from.
+- **Scale of the pipeline.** 100+ prospects developed, twelve projects, the EPC and advisor
+  assembly, the investor data room and diligence with institutional investors.
+
+The risk register was retargeted with it. "I have never sold wholesale power to a utility" was the
+right gap for a wholesale marketing seat; for a developer it is **"I have not closed a utility-scale
+PPA"**, and the mitigant now leans on having sat on the sponsor side, which is what lets him read an
+offtaker's approval chain from the other end.
+
 ### A factual correction, and why it is phrased by ISO
 
 The risk register claimed "my market work is all ERCOT". That was wrong. The *published research*

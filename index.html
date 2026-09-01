@@ -710,11 +710,18 @@ const SHEETS = [
 
 /* Headline figures, as disclosed on the CV. */
 {
-  name:'Facts', rows:20, cols:[], cells:{
+  name:'Facts', rows:30, cols:[], cells:{
     C5:{v:500,  f:'num0'},          /* feedstock agreements structured ($M) */
     C6:{v:800,  f:'num0'},          /* offtake agreements structured   ($M) */
     C7:{v:'=C5+C6', f:'num0'},      /* total agreements structured */
     C16:{v:1000, f:'num0'},         /* enterprise clients originated, Pakira */
+    /* the sponsored project */
+    C20:{v:33,   f:'num0'},         /* nameplate, MW */
+    C21:{v:320,  f:'num0'},         /* biomass under exclusive rights, k tons */
+    C22:{v:230,  f:'num0'},         /* permitted land, acres */
+    C23:{v:46,   f:'num0'},         /* structured deal size, $M */
+    C24:{v:12,   f:'num0'},         /* projects the contracts span */
+    C25:{v:100,  f:'num0'},         /* prospects developed */
   }
 },
 
@@ -1228,14 +1235,14 @@ const SITE = {
 
   rev:4,
   to:'Origination and project finance, energy',
-  target:'Origination \u00b7 Structuring \u00b7 Project finance',
-  basis:'Career figures as disclosed on the CV. The deal in 5.0 is a worked example.',
-  headline:'I source, structure and negotiate energy deals. Two and a half years of that in power, and about a decade of commercial work before it.',
+  target:'Origination \u00b7 Offtake \u00b7 Project development',
+  basis:'Career figures as disclosed on the CV. The model in 5.0 is a generic version of the trade I sponsor, at a round number, with no counterparty or site in it.',
+  headline:'I originate and structure energy deals, and I sponsor one. Two and a half years of that in power, and about a decade of commercial work before it.',
   rec:[
-    "I find counterparties, put deals together with them, and negotiate the contracts. Along the way I pull together the legal, technical and market work a deal needs before anyone will price it or approve it. I've been doing that in energy for two and a half years. Before that I did much the same job in other commodities for about a decade.",
-    "Cooperatives and municipals decide things in board meetings. I spent nine years on a board myself, answerable to members, and we went through four mergers in that time. I had no authority to decide anything on my own, so I learned how to get a room of people with different interests to agree. That's the part of this work I think I'm good at, and it's why I like the counterparty side more than a trading desk. I've also worked with utilities, cooperatives, tribes, developers and power plants, which is most of who sits at the table on a power deal.",
+    "I find counterparties, put deals together with them, and negotiate the contracts. Along the way I pull together the legal, technical, regulatory and finance work a deal needs before anyone will price it or approve it. I've been doing that in energy for two and a half years, most recently as the sponsor of a 33 MW behind-the-meter project rather than only as the person selling it. Before that I did much the same job in other commodities for about a decade.",
+    "Most of the people who buy power decide in a meeting rather than on a call: a co-op board, a municipal council, an investment committee. I spent nine years on a board myself, answerable to members, and we went through four mergers in that time. I had no authority to decide anything on my own, so I learned how to get a room of people with different interests to agree. That's the part of this work I think I'm good at, and it's why I like the counterparty side more than a trading desk. I've also worked with utilities, cooperatives, tribes, developers and power plants, which is most of who sits at the table on a power deal.",
     "I am not bringing a book of customers with me. What I enjoy about this work is the part before anything gets written down, sitting with someone long enough to understand what they're actually worried about. It's usually not what the RFP asks for. I also spent nine of the last ten years on a volunteer board at a mentoring charity, unpaid, which is probably the clearest evidence I like people. Most of origination is that plus the coordination behind it, and I'm happy doing both.",
-    "I'm looking for a bigger platform and better people to learn from, whether that's originating wholesale power, structuring on the sell side, or financing projects from a bank. I've written this page the way I'd write a proposal at work, since that's most of the job anyway. What the work involves comes first, my evidence comes second, and where I fall short is in section 6 rather than buried at the bottom.",
+    "My role at Compass runs to August 2026, so I'm looking now rather than in a hurry. What I want is a bigger platform and better people to learn from, whether that's originating offtake for a developer, low-carbon business development, or financing projects from a bank. I've written this page the way I'd write a proposal at work, since that's most of the job anyway. What the work involves comes first, my evidence comes second, and where I fall short is in section 6 rather than buried at the bottom.",
   ],
   terms:[
     ['Looking for', 'Origination, commercial structuring, or project finance', null],
@@ -1271,9 +1278,9 @@ const SITE = {
     ["My energy experience is shorter than my career",
      "Two and a half of my eleven years are in power. The rest is a trading desk, a startup and a bank, and my earliest job overlapped with finishing my degree. Anyone counting energy years alone will get a smaller number than my title suggests.",
      "Both numbers are on this page because both are true and they answer different questions. The commercial work travels: sourcing, structuring, negotiating and closing are the same motion whatever is being sold. The power-specific knowledge is the part I have been building since 2024, and section 5 is roughly where it has got to."],
-    ["I have never sold wholesale power to a utility",
-     "I've sold partial power and energy products, never a utility's whole load. I haven't priced a full-requirements contract, I haven't worked inside a cooperative's procurement, and all my energy experience is at one company. Those are really three versions of the same gap, so I'd rather say it once.",
-     "The product would be new to me but the work would not. I source, structure, negotiate and close deals now, including exclusive agreements covering \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake. On the governance side, nine years on a board answerable to its members is the nearest thing I've got. It's not the same as sitting through a co-op procurement, but it isn't nothing either. Honestly this gap only closes by doing the job."],
+    ["I have not closed a utility-scale PPA",
+     "My offtake work is behind-the-meter and partial power, on projects I sourced myself. I have not taken a hundred-megawatt wind or solar PPA through a utility's procurement or a corporate's approval chain, and all of my energy experience is at one company. Those are versions of the same gap, so I'd rather say it once.",
+     "The counterparty and the scale would be new. The work would not: I source, structure, negotiate and close now, across \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake on {Facts!C24:num0} projects, and I have taken my own project from an idea to signed rights over two 18 MW units, {Facts!C21:num0}k tons of feedstock and {Facts!C22:num0} acres. Sitting on the sponsor side of that is the reason I can read an offtaker's approval chain from the other end. Honestly though, this gap only closes by doing the job."],
     ['My published research is one market deep',
      "The crowding study is ERCOT because that is where I could get clean data. My deal work has run across MISO and the West as well, but I have not built the same depth of view on price formation in either, and the East I have not worked in at all.",
      "The method carries over even where the price behaviour does not. In a market I have not priced into, I'd spend the first few months learning it properly instead of pretending I already had. I have had to do that once already."],
@@ -1336,13 +1343,16 @@ const SITE = {
 
   jobs:[
     { row:7, title:'Origination Manager', co:'Compass International', where:'Denver, CO', span:'March 2024 to present',
-      note:'Energy origination: sourcing, structuring, negotiation and execution.',
+      note:'Energy origination and project development. Sourcing, structuring, negotiation and execution.',
       bullets:[
-        'Originated end to end on partial power: sourced counterparties, built the relationships behind them, structured and negotiated terms, and carried them through execution.',
-        'Negotiated exclusive agreements for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake rights.',
-        'Won a proposal by working out what the investment committee required, then benchmarking every figure to the market.',
-        'Built a data room per project, so every assumption across markets, engineering and risk has third-party work behind it.',
-        'Worked deals across MISO and the West, on power offtake, fuel supply and plant acquisition.',
+        'Sponsor of a {Facts!C20:num0} MW behind-the-meter generation and CHP project, in development. Secured exclusive rights to two 18 MW units for relocation, {Facts!C21:num0} thousand tons of biomass and {Facts!C22:num0} acres of permitted land.',
+        'Structured a \u0024{Facts!C23:num0}M relocation of two small power plants at roughly half the capital cost and half the time to first power of a new build.',
+        'Originated and structured energy contracts for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake across {Facts!C24:num0} projects.',
+        'Developed {Facts!C25:num0}+ prospects through market analysis and outreach, and kept the pipeline record behind them.',
+        'Assembled the EPC, engineer and finance advisors, built the investor data room across assets, offtake and feedstock, and led diligence with institutional investors.',
+        'Won competitive RFPs by working backwards from what the counterparty\u2019s investment committee needed in order to approve.',
+        'Built the technoeconomic models behind pricing: DCF, NPV, IRR and DSCR across sensitivity cases.',
+        'Built \u00a745Q, \u00a745Y and voluntary credit mechanics into project economics, and the life cycle analysis that qualifies them.',
       ] },
     { row:8, title:'Commercial Manager', co:'Pakira, Inc.', where:'Cambridge, MA', span:'August 2018 to March 2024',
       note:'Market intelligence platform for the building materials and forest products industries.',
@@ -1366,7 +1376,8 @@ const SITE = {
      analytics build were work rather than deals, and listing them diluted
      the four that were signed. */
   deals:[
-    ['Intake & offtake rights','Exclusive agreements on energy products: \u0024{Facts!C5:num0}M intake, \u0024{Facts!C6:num0}M offtake','2024\u2013','$1.3B','Executed',1],
+    ['Behind-the-meter generation','Sponsor. Exclusive rights to two 18 MW units, {Facts!C21:num0}k tons of biomass and {Facts!C22:num0} acres of permitted land','2024\u2013','\u0024{Facts!C23:num0}M','In development',1],
+    ['Intake & offtake contracts','Exclusive agreements on energy products across {Facts!C24:num0} projects: \u0024{Facts!C5:num0}M intake, \u0024{Facts!C6:num0}M offtake','2024\u2013','$1.3B','Executed',1],
     ['Partial power origination','Sourced, structured, negotiated and carried through execution','2024\u2013','Multiple','Ongoing',1],
     ['Investment committee proposal','Won by establishing what the committee required, then benchmarking every figure','2024','Awarded','Won',0],
     ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017\u20132018','$1M','Closed',0],
@@ -1382,12 +1393,14 @@ const SITE = {
     ['Pakira, Inc.','MIT FinTech Grand Prize · MIT Startup Spotlight · FinTech Connect Award'],
   ],
   skills:[
-    ['Origination', 'Counterparty sourcing, structuring, negotiation, RFP coordination, IC materials, execution'],
-    ['Wholesale power', 'PPAs and offtake, supply and feedstock, load and interval data, dispatch economics'],
-    ['Analysis', 'Model interrogation and stress testing, pricing validation, benchmarking. Excel, SQL, Python'],
+    ['Origination', 'Counterparty sourcing, structuring, negotiation, RFP coordination, IC materials, pipeline, execution'],
+    ['Development', 'Project sponsorship, asset sourcing and relocation, behind-the-meter and CHP, PPA and ESA structuring, EPC and advisor selection, data rooms, capital raising'],
+    ['Low carbon', '\u00a745Q, \u00a745Y, \u00a745Z and \u00a748E mechanics, \u00a76418 transfer, voluntary credits, and the life cycle analysis that qualifies them'],
+    ['Markets', 'Power and commodity fundamentals, dispatch economics, load and interval data, benchmarking, competitor and customer intelligence'],
+    ['Analysis', 'Technoeconomic models in DCF, NPV, IRR and DSCR. Stress testing, pricing validation. Excel, SQL, Python'],
   ],
   board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire and Vermont', span:'2017 to 2026',
-          note:'Nine years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
+          note:'{Career!F16:num0} years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
 };
 
 /* id, number, name, thesis, and the short label the phone nav uses in place
@@ -1460,6 +1473,12 @@ const SRC = {
   'Facts!C7':   ['Rights negotiated', 'Intake of ${C5}M plus offtake of ${C6}M, as exclusive agreements on energy products.', '$', 'M'],
   'Facts!C16':  ['Clients originated', 'The commercial function at Pakira, built from zero. As disclosed on the CV.'],
   'Career!F14': ['Commercial experience, full time', 'From the first full-time role in May 2017 to today, on an actual/365 basis. The Morgan Stanley years ran alongside the finance degree and are counted separately, so no year is counted twice.', '', ' yrs'],
+  'Facts!C20':  ['Project sponsored', 'Behind-the-meter generation and CHP, in development. Two 18 MW units under exclusive relocation rights. As disclosed on the CV.', '', '\u2009MW'],
+  'Facts!C23':  ['Deal structured', 'The relocation structure: two small power plants moved rather than built, at roughly half the capital cost and half the time to first power. As disclosed on the CV.', '$', 'M'],
+  'Facts!C21':  ['Biomass secured', 'Feedstock under exclusive rights for the sponsored project, in thousands of green tons. As disclosed on the CV.', '', '\u2009k tons'],
+  'Facts!C22':  ['Land secured', 'Permitted acreage under exclusive rights for the sponsored project. As disclosed on the CV.', '', '\u2009acres'],
+  'Facts!C24':  ['Projects', 'The number of separate projects the intake and offtake contracts span. As disclosed on the CV.'],
+  'Facts!C25':  ['Prospects developed', 'Qualified through market analysis and outreach, and tracked in the pipeline record. As disclosed on the CV.'],
   'Facts!C5':   ['Intake rights', 'Exclusive agreements negotiated on energy products, on the intake side. As disclosed on the CV.', '$', 'M'],
   'Facts!C6':   ['Offtake rights', 'The offtake side of the same book of exclusive agreements. As disclosed on the CV.', '$', 'M'],
 
@@ -1857,8 +1876,8 @@ function secSummary(){
   const g = $('div', 'tiles');
   [['In energy origination', 'Career', 'F7', 'num1', 'Since March 2024, at Compass International', '', ' yrs'],
    ['Commercial, full time', 'Career', 'F14', 'num1', 'Since 2017, after the degree. Trading, then a startup, then energy', '', ' yrs'],
-   ['Rights negotiated', 'Facts', 'C7', 'num0', 'Intake \u0024{Facts!C5:num0}M plus offtake \u0024{Facts!C6:num0}M, exclusive', '$', 'M'],
-   ['On a governed board', 'Career', 'F16', 'num0', 'Four mergers; youngest ever elected', '', ' yrs'],
+   ['Contracts originated', 'Facts', 'C7', 'num0', 'Intake \u0024{Facts!C5:num0}M plus offtake \u0024{Facts!C6:num0}M, across twelve projects', '$', 'M'],
+   ['Project sponsored', 'Facts', 'C20', 'num0', 'Behind-the-meter generation and CHP, in development', '', ' MW'],
   ].forEach(([k, sheet, ref, f, unit, prefix, suffix]) => {
     const t = $('div', 'tile');
     t.appendChild($('span', 'k', k));
@@ -2044,11 +2063,14 @@ function secMarket(){
   b.appendChild($('p', 'cap', '40 MW / 80 MWh on ERCOT North Hub, 87% round trip.'));
 
   const c = $('div', 'paper');
-  c.appendChild($('h3', null, 'Patent-pending financial document processor'));
-  c.appendChild($('p', 'cap', 'Patent application filed · production system deployed'));
-  c.appendChild($('p', null, 'A knowledge graph system that ingests unstructured project finance documents, audits them for structural gaps, drafts what is missing, and assembles lender submission packages.'));
-  c.appendChild($('p', null, "I built it because putting these packages together by hand is where deals quietly lose a week or two, and the missing piece is never the one you went looking for."));
-  c.appendChild($('p', 'cap', 'Built at Compass International. Patent pending, deployed.'));
+  const ch = $('h3'); const cl = $('a', 'mail', 'Bankable');
+  cl.href = 'https://bankablehq.com'; cl.target = '_blank'; cl.rel = 'noopener';
+  ch.appendChild(cl); ch.append(', a deal intelligence platform');
+  c.appendChild(ch);
+  c.appendChild($('p', 'cap', 'Live \u00b7 patent application filed'));
+  c.appendChild($('p', null, 'It reads a project finance data room, scores what is there, finds the gaps across documents with the provenance attached, and routes the package to capital that would actually look at it.'));
+  c.appendChild($('p', null, "I built it because putting these packages together by hand is where deals quietly lose a week or two, and the missing piece is never the one you went looking for. It came out of doing exactly that on my own project."));
+  c.appendChild($('p', 'cap', 'bankablehq.com'))
 
   cols.append(b, c);
   w.appendChild(cols);
@@ -2296,7 +2318,7 @@ function secAnalysis(){
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:78ch;line-height:1.6';
   /* every figure in this sentence is read from the model, because a sentence
      that describes a live model and does not move with it will be wrong */
-  intro.append("The useful skill with a model is knowing which assumption is carrying the answer. So here is a ");
+  intro.append("The useful skill with a model is knowing which assumption is carrying the answer. This is the same kind of trade I sponsor at Compass, rebuilt here at a round number with nothing confidential in it: a ");
   intro.appendChild(cell('Assumptions', 'C9'));
   intro.append(" MW biomass plant, moved rather than built from scratch. Same power contract, same fuel, but the equipment already exists, so it costs about ");
   intro.appendChild($('b', 'em-n', ''));
@@ -2629,7 +2651,7 @@ function credBlock(w){
   const bd = $('div', 'paper');
   bd.appendChild($('h3', null, SITE.board.role));
   bd.appendChild($('p', 'cap', SITE.board.org + ' · ' + SITE.board.span));
-  bd.appendChild($('p', null, SITE.board.note));
+  bd.appendChild($('p', null, say(SITE.board.note)));
   a.appendChild(bd);
 
   const b = $('div', 'blk');
