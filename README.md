@@ -1139,6 +1139,34 @@ log, including candid notes on what was cut and the reasoning behind what is del
 from the model. That was caught before a domain was pointed at it, and the staging step exists so it
 cannot come back. Anything added to the repo is private unless the workflow copies it explicitly.
 
+### Live
+
+**https://andrewtgibson.com** — verified 2026-09-01. The apex and `www` both serve, over HTTP and
+HTTPS, and `tobombadil.github.io/Tobombadil/` redirects to the domain. The bytes served are identical
+to `index.html` in this repo, and `README.md`, `README.html` and `.github/` all return 404, which is
+the staging step doing its job.
+
+The one box still worth ticking is **Settings -> Pages -> Enforce HTTPS**. Plain HTTP currently
+serves the site rather than redirecting to HTTPS, and there is no `Strict-Transport-Security` header.
+Nothing on the page is sensitive and there is no form on it, so this is hygiene rather than a
+vulnerability — but it is a checkbox, and a proposal sent to people who will look closely should not
+be reachable unencrypted.
+
+`/CNAME` is served as a file at `andrewtgibson.com/CNAME`. It contains only the domain name, which is
+not a secret. It could be dropped from the staging step, since GitHub ignores it under an Actions
+source anyway.
+
+The path to get here, for anyone repeating it:
+
+1. Settings -> Pages -> Source: **GitHub Actions**. Nothing builds until this is set; 62 runs failed
+   on it.
+2. Push, and confirm the build at `tobombadil.github.io/Tobombadil/` — the subpath, not the root.
+3. GoDaddy -> Nameservers -> **GoDaddy nameservers (default)**, then immediately author the zone,
+   carrying the `MX` and `TXT` records across.
+4. Settings -> Pages -> **Custom domain** -> save the domain by hand. The `CNAME` file does not do
+   this.
+5. Settings -> Pages -> **Enforce HTTPS**, once the certificate has issued.
+
 ### The CNAME file does not attach the domain
 
 Worth knowing, because it cost a confused half hour. With **Source: GitHub Actions**, a `CNAME` file
