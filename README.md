@@ -1139,6 +1139,20 @@ log, including candid notes on what was cut and the reasoning behind what is del
 from the model. That was caught before a domain was pointed at it, and the staging step exists so it
 cannot come back. Anything added to the repo is private unless the workflow copies it explicitly.
 
+### Do not use the Jekyll starter workflow
+
+The Settings -> Pages screen offers two starter cards, *GitHub Pages Jekyll* and *Static HTML*, each
+with a Configure button that commits a workflow to the repo. The Jekyll one was added by mistake and
+removed again; if the screen is ever revisited, neither button is wanted, because `deploy.yml`
+already does this job.
+
+Jekyll is actively wrong here. Its workflow builds with `source: ./`, the repository root, and Jekyll
+renders every Markdown file it finds into a published HTML page — so this README would have gone up
+as `README.html` on the public domain. That is the same leak the `_site` staging step exists to
+prevent, arriving by a different route. It also declares the same `pages` concurrency group and the
+same branch trigger as `deploy.yml`, so the two would race on every push and the later finisher would
+decide what the domain served.
+
 ### Step one: switch Pages on
 
 **Every workflow run in this repo has failed**, 58 of them, all with the same error:
