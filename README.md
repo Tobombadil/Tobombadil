@@ -658,6 +658,17 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### Compass is named for what it is
+
+The roast landed hardest here: nobody in power has heard of Compass International and the page
+never said what it was, which made the title and the $1.3B impossible to calibrate. compassitg.com
+turns out to corroborate most of 5.0 — Compass turns biomass residuals into woodchips, pellets,
+biochar and SAF, and sells them to **utilities, data centres and industrial buyers**.
+
+That is the whole thesis of 5.0 stated as somebody's actual business, so the job note now says it
+and the company name links. It changes how 5.0 reads: not a developer's daydream about biomass and
+AI load, but a description of the market he works in.
+
 ### Pakira is linked on the job, not on the cover
 
 pakira.com is live and substantive: a wood-industry trading platform with 155,000 companies in it
