@@ -658,6 +658,22 @@ into a resume bullet without ever becoming a `data-cell` — so it is now an exp
 walk. And tile captions can carry live cells now, so the $500M and $800M behind "rights negotiated"
 are hoverable figures rather than text baked in at build time.
 
+### The work is linked
+
+4.0 described three projects and linked none of them. Two are live and both are now hyperlinks in
+the heading, opening in a new tab: the **BESS schedule optimization simulator**, which had been
+"live demo available on request" because the URL was being withheld, and **Bankable**, which is the
+"patent-pending document processor" as a shipped product. Both URLs sit in `SITE` beside the other
+links rather than inline in the view, so moving a host is a one-line change.
+
+Two things the tests caught while doing it. The heading variable collided with the basis table's
+header row, which `node --check` found before it shipped. And renaming the simulator card back to
+"SmartBidder" tripped a check written when that rename was explicitly asked for in the other
+direction — the suite remembered an instruction I had forgotten.
+
+The section header said "two things I built on my own time" over three items, and Bankable came out
+of client work rather than a weekend. Both fixed.
+
 ### He sponsors a project, and the page did not say so
 
 Two later resumes carried the strongest fact in the file and the site was missing all of it. He is

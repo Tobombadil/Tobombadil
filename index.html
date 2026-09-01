@@ -1230,6 +1230,9 @@ const SITE = {
   phone:'+1 (978) 500-9301',
   linkedin:'https://linkedin.com/in/andrewthomasgibson',
   calendly:'https://calendly.com/andrewtgibson',
+  /* both are live and both are mine; swap the host here if either moves */
+  simulator:'https://ascendthecrowd.andrew-generalemail.workers.dev/',
+  bankable:'https://bankablehq.com',
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
 
@@ -1409,7 +1412,7 @@ const SECTIONS = [
   ['summary',    '1.0', 'Summary',               "What I want, and what I'd bring", 'Summary'],
   ['mandate',    '2.0', 'The mandate',           "The five things origination actually owns, and how I handle each", 'Mandate'],
   ['experience', '3.0', 'Experience',            'Four jobs, and what I learned in each', 'Experience'],
-  ['market',     '4.0', 'Market view',           'Two things I built on my own time', 'Market'],
+  ['market',     '4.0', 'Market view',           'What I have built, and what it is for', 'Market'],
   ['analysis',   '5.0', 'Supporting analysis',   'A deal I costed out, and the questions I would ask about it', 'Analysis'],
   ['risk',       '6.0', 'Risks and mitigants',   'Where I am short, and what I would do about it', 'Risk'],
   ['terms',      '7.0', 'Terms and next steps',  "How to reach me, and what I'd suggest next", 'Terms'],
@@ -2016,7 +2019,7 @@ function secMarket(){
   const w = section('market');
   const intro = $('p');
   intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:80ch;line-height:1.6';
-  intro.textContent = "You get asked what you think about a market, and you have to be able to back it up. Here is what I have been working on in my own time.";
+  intro.textContent = "You get asked what you think about a market, and you have to be able to back it up. The research and the simulator below are my own time. Bankable came out of doing the work.";
   w.appendChild(intro);
 
   const a = $('div', 'paper');
@@ -2056,15 +2059,19 @@ function secMarket(){
   const cols = $('div', 'cols'); cols.style.marginTop = '18px';
 
   const b = $('div', 'paper');
-  b.appendChild($('h3', null, 'BESS schedule optimization simulator'));
-  b.appendChild($('p', 'cap', 'Working application · live demo available on request'));
+  const simh = $('h3');
+  const siml = $('a', 'mail', 'BESS schedule optimization simulator');
+  siml.href = SITE.simulator; siml.target = '_blank'; siml.rel = 'noopener';
+  simh.appendChild(siml);
+  b.appendChild(simh);
+  b.appendChild($('p', 'cap', 'Live \u00b7 open it and run it'))
   b.appendChild($('p', null, "I turned the crowding work into something you can actually run: a battery scheduler on ERCOT North Hub, with day-ahead, forecast and real-time curves. You can paint a schedule in fifteen-minute blocks and then let the solver try to beat you."));
   b.appendChild($('p', null, "One of the sliders is crowding, so the coefficient above is doing real work here instead of sitting in a paper. I wanted to see whether the view held up when you had to act on it."));
   b.appendChild($('p', 'cap', '40 MW / 80 MWh on ERCOT North Hub, 87% round trip.'));
 
   const c = $('div', 'paper');
   const ch = $('h3'); const cl = $('a', 'mail', 'Bankable');
-  cl.href = 'https://bankablehq.com'; cl.target = '_blank'; cl.rel = 'noopener';
+  cl.href = SITE.bankable; cl.target = '_blank'; cl.rel = 'noopener';
   ch.appendChild(cl); ch.append(', a deal intelligence platform');
   c.appendChild(ch);
   c.appendChild($('p', 'cap', 'Live \u00b7 patent application filed'));
