@@ -1157,28 +1157,64 @@ in the page uses absolute paths.
 
 ### Step two: the domain, which is currently on Wix
 
-andrewtgibson.com is registered at GoDaddy and currently serves a Wix site, so pointing it at
-GitHub takes the Wix site down. Two routes, and the `CNAME` file has to match whichever is chosen.
+The route chosen is A below: andrewtgibson.com itself, served from GitHub, with the DNS moved back
+to GoDaddy. The `CNAME` file in this repo already reads `andrewtgibson.com` to match.
 
-**Route A — replace the Wix site.** Check the nameservers first, at GoDaddy under
-*My Products → Domain → DNS*. If they read `ns__.domaincontrol.com` the DNS lives at GoDaddy; if
-they read `ns0.wixdns.net` / `ns1.wixdns.net` it lives at Wix and the records have to be edited
-there, or the nameservers pointed back to GoDaddy's defaults first. Then, wherever the DNS lives:
+**GoDaddy is the registrar, but it is not currently the host.** Looked up on 2026-09-01, the
+authoritative nameservers are Wix's:
 
-| Type | Name | Value |
-|---|---|---|
-| A | `@` | `185.199.108.153` |
-| A | `@` | `185.199.109.153` |
-| A | `@` | `185.199.110.153` |
-| A | `@` | `185.199.111.153` |
-| CNAME | `www` | `tobombadil.github.io` |
+```
+NS   andrewtgibson.com        ns10.wixdns.net, ns11.wixdns.net
+SOA  andrewtgibson.com        ns10.wixdns.net support.wix.com
+```
 
-Delete the existing apex `A` record pointing at Wix first, and disconnect the domain inside Wix so
-it stops claiming it. `AAAA` records (`2606:50c0:8000::153` through `8003::153`) are optional IPv6.
+That matters because it means **records typed into GoDaddy's DNS panel do nothing.** Wix took over
+the zone when the site was connected, and Wix answers every query for the domain. The GoDaddy panel
+will accept the edits and show them saved; the internet will keep resolving to Wix.
 
-**Route B — leave Wix alone and use a subdomain.** One `CNAME` record at GoDaddy,
-`proposal` → `tobombadil.github.io`, and change the repo's `CNAME` file to
-`proposal.andrewtgibson.com`. No downtime, nothing to undo if it is not wanted.
+The full zone as it stands, which is the thing that has to survive the move:
+
+| Type | Name | Value | What it does |
+|---|---|---|---|
+| A | `@` | `185.230.63.186`, `185.230.63.107`, `185.230.63.171` | Wix serves the site — replace these |
+| CNAME | `www` | `cdn3.wixdns.net` | Wix CDN — replace this |
+| MX | `@` | `0 andrewtgibson-com.mail.protection.outlook.com` | **Microsoft 365 email — must be recreated** |
+| TXT | `@` | `google-site-verification=b8fD7DMnYnXKg2AgqlguzHjR8-JPiGz7vTdooP8avoM` | Google verification — recreate |
+
+There is no SPF, no DKIM selector, no DMARC, no autodiscover and no CAA record, so those four rows
+are everything.
+
+**The MX record is the hazard.** Moving the nameservers to GoDaddy hands the whole zone to an empty
+GoDaddy zone file, and anything not typed into it stops existing. Email to @andrewtgibson.com would
+bounce from that moment, silently, and nobody tells you. Recreate the MX record at GoDaddy *before*
+switching nameservers, so the new zone is already correct when it takes over.
+
+**Route A — GoDaddy holds the DNS, GitHub serves the site.** In order:
+
+1. GoDaddy → *My Products → Domain → DNS* → build the zone first, while it is still inert:
+
+   | Type | Name | Value | Priority |
+   |---|---|---|---|
+   | A | `@` | `185.199.108.153` | |
+   | A | `@` | `185.199.109.153` | |
+   | A | `@` | `185.199.110.153` | |
+   | A | `@` | `185.199.111.153` | |
+   | CNAME | `www` | `tobombadil.github.io` | |
+   | MX | `@` | `andrewtgibson-com.mail.protection.outlook.com` | `0` |
+   | TXT | `@` | `google-site-verification=b8fD7DMnYnXKg2AgqlguzHjR8-JPiGz7vTdooP8avoM` | |
+
+   The four A records are GitHub's Pages anycast addresses; all four go in, as four separate rows
+   with the same name. `AAAA` records (`2606:50c0:8000::153` through `8003::153`) are optional IPv6.
+
+2. GoDaddy → *Nameservers → Change → GoDaddy nameservers (default)*. This is the switch that makes
+   step 1 real. Propagation is usually under an hour and can take up to 48.
+
+3. In Wix, disconnect the domain from the site, so Wix stops claiming it.
+
+**Route B — leave Wix alone and use a subdomain.** Not chosen, kept because it is the safe fallback:
+one `CNAME`, `proposal` → `tobombadil.github.io`, added wherever the DNS currently lives (Wix), and
+the repo's `CNAME` file changed to `proposal.andrewtgibson.com`. No nameserver move, no email risk,
+nothing to undo.
 
 Either way, finish in **Settings → Pages → Custom domain**: enter the domain, save, wait for the DNS
 check to pass, then tick **Enforce HTTPS**. That box stays greyed out until the certificate is
