@@ -1139,6 +1139,21 @@ log, including candid notes on what was cut and the reasoning behind what is del
 from the model. That was caught before a domain was pointed at it, and the staging step exists so it
 cannot come back. Anything added to the repo is private unless the workflow copies it explicitly.
 
+### The CNAME file does not attach the domain
+
+Worth knowing, because it cost a confused half hour. With **Source: GitHub Actions**, a `CNAME` file
+in the deployed artifact does *not* set the repository's custom domain. That behaviour belongs to
+branch-based publishing, where GitHub reads the file out of the branch. Under Actions the domain has
+to be typed into **Settings -> Pages -> Custom domain** and saved, by hand, once.
+
+The symptom is quiet and easy to misread: the deploy goes green, the artifact plainly contains the
+`CNAME`, `tobombadil.github.io/Tobombadil/` keeps serving normally with no redirect, and the apex
+returns GitHub's own 404 page — DNS is arriving at GitHub, GitHub just has no mapping from the domain
+to this repository. It looks like DNS propagation and is not.
+
+The `CNAME` file is kept anyway. It costs nothing, it documents the intended domain next to the code,
+and it is what GitHub itself writes into the repo when the domain is saved through the UI.
+
 ### Do not use the Jekyll starter workflow
 
 The Settings -> Pages screen offers two starter cards, *GitHub Pages Jekyll* and *Static HTML*, each
