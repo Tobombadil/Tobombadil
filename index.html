@@ -404,7 +404,13 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
                font:500 12px var(--sans);text-decoration:none;color:#cfdae6;
                border:1px solid rgba(255,255,255,.18)}
 .cover-tools a:hover{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.07)}
-.cover-tools a.ext::after{content:'\2197';font-size:11px;opacity:.65}
+/* the ones that leave the page are ruled in the accent, so a reader can see at a
+   glance which of these open something and which move within the document. The
+   brighter copper, not the primary one: the same colour reads muddy against navy,
+   and it is already what the active tab uses over the cover. */
+.cover-tools a.ext{border-color:var(--copper-2);color:#e4c3a2}
+.cover-tools a.ext::after{content:'\2197';font-size:11px;opacity:1;color:var(--copper-2)}
+.cover-tools a.ext:hover{color:#fff;border-color:var(--copper-2);background:rgba(201,118,47,.16)}
 
 /* the load shape sits on the cover's floor */
 .cover-load{position:relative;z-index:1;margin-top:auto}
