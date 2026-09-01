@@ -1139,11 +1139,31 @@ log, including candid notes on what was cut and the reasoning behind what is del
 from the model. That was caught before a domain was pointed at it, and the staging step exists so it
 cannot come back. Anything added to the repo is private unless the workflow copies it explicitly.
 
-### Serving it at andrewtgibson.com
+### Step one: switch Pages on
 
-`CNAME` is committed and contains the apex domain. Two things have to happen outside the repo:
+**Every workflow run in this repo has failed**, 58 of them, all with the same error:
 
-**1. DNS at the registrar.** Four `A` records on the apex, and a `CNAME` on `www`:
+> Get Pages site failed. Please verify that the repository has Pages enabled and configured to
+> build using GitHub Actions.
+
+Pages has never been enabled. `enablement: true` on `configure-pages` was tried and the token
+cannot do it either — *"Create Pages site failed. Resource not accessible by integration"* — because
+creating a Pages site needs admin rights the workflow token does not carry.
+
+So it is one genuine manual step, once: **Settings → Pages → Build and deployment → Source: GitHub
+Actions.** Re-run the workflow after that and it goes green, serving at `https://tobombadil.github.io`.
+The repo name matches the owner, so it serves at the root rather than under a subpath, and nothing
+in the page uses absolute paths.
+
+### Step two: the domain, which is currently on Wix
+
+andrewtgibson.com is registered at GoDaddy and currently serves a Wix site, so pointing it at
+GitHub takes the Wix site down. Two routes, and the `CNAME` file has to match whichever is chosen.
+
+**Route A — replace the Wix site.** Check the nameservers first, at GoDaddy under
+*My Products → Domain → DNS*. If they read `ns__.domaincontrol.com` the DNS lives at GoDaddy; if
+they read `ns0.wixdns.net` / `ns1.wixdns.net` it lives at Wix and the records have to be edited
+there, or the nameservers pointed back to GoDaddy's defaults first. Then, wherever the DNS lives:
 
 | Type | Name | Value |
 |---|---|---|
@@ -1153,12 +1173,13 @@ cannot come back. Anything added to the repo is private unless the workflow copi
 | A | `@` | `185.199.111.153` |
 | CNAME | `www` | `tobombadil.github.io` |
 
-`AAAA` records (`2606:50c0:8000::153` through `8003::153`) are optional and add IPv6.
+Delete the existing apex `A` record pointing at Wix first, and disconnect the domain inside Wix so
+it stops claiming it. `AAAA` records (`2606:50c0:8000::153` through `8003::153`) are optional IPv6.
 
-**2. Repo settings.** Settings → Pages → **Source: GitHub Actions**, then set **Custom domain** to
-`andrewtgibson.com` and save. Wait for the DNS check to pass, then tick **Enforce HTTPS** — the
-certificate is issued after the domain validates, so that box is greyed out until DNS propagates.
+**Route B — leave Wix alone and use a subdomain.** One `CNAME` record at GoDaddy,
+`proposal` → `tobombadil.github.io`, and change the repo's `CNAME` file to
+`proposal.andrewtgibson.com`. No downtime, nothing to undo if it is not wanted.
 
-The repo is `Tobombadil/Tobombadil`, where the name matches the owner, so Pages serves it at the
-root (`tobombadil.github.io`) rather than under a subpath. Nothing in the page uses absolute paths,
-and it has been verified rendering over HTTP rather than `file://`.
+Either way, finish in **Settings → Pages → Custom domain**: enter the domain, save, wait for the DNS
+check to pass, then tick **Enforce HTTPS**. That box stays greyed out until the certificate is
+issued, which happens after DNS validates.

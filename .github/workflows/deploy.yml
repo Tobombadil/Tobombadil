@@ -26,13 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Every run since this repo was created failed here with "Get Pages site
-      # failed": Pages had never been switched on, and the action will not turn
-      # it on by default. enablement lets the workflow do it itself, so the site
-      # does not wait on somebody remembering a settings toggle.
+      # Every run in this repo has failed here with "Get Pages site failed",
+      # because Pages has never been switched on. enablement: true was tried
+      # and the token cannot do it: "Create Pages site failed. Resource not
+      # accessible by integration." Enabling Pages needs admin rights that the
+      # workflow token does not carry, so it is a genuine one-time manual step:
+      # Settings -> Pages -> Source: GitHub Actions. Every run goes green after
+      # that without anything else changing here.
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       # Publish the site and nothing else. Uploading the repo root would put
       # README.md on the public domain, and the README is a build log: candid
