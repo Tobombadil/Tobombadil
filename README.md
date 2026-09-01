@@ -1184,14 +1184,28 @@ The full zone as it stands, which is the thing that has to survive the move:
 There is no SPF, no DKIM selector, no DMARC, no autodiscover and no CAA record, so those four rows
 are everything.
 
-**The MX record is the hazard.** Moving the nameservers to GoDaddy hands the whole zone to an empty
-GoDaddy zone file, and anything not typed into it stops existing. Email to @andrewtgibson.com would
-bounce from that moment, silently, and nobody tells you. Recreate the MX record at GoDaddy *before*
-switching nameservers, so the new zone is already correct when it takes over.
+**The MX record is the hazard.** Moving the nameservers hands the whole zone to a fresh GoDaddy
+zone file, and anything not in it stops existing. Email to @andrewtgibson.com would bounce from that
+moment, silently, and nobody tells you — the sender gets the rejection, not the owner.
 
-**Route A — GoDaddy holds the DNS, GitHub serves the site.** In order:
+The obvious defence, building the GoDaddy zone before switching, **is not available.** With the
+nameservers pointed at Wix, GoDaddy's DNS screen is read-only and says so:
 
-1. GoDaddy → *My Products → Domain → DNS* → build the zone first, while it is still inert:
+> Your domain is registered at GoDaddy, but its DNS is currently managed elsewhere.
+
+So the records cannot be pre-staged. The switch has to come first, and the zone gets authored in the
+window right after it, before resolvers have picked the change up. That window is real but forgiving:
+nameserver changes take tens of minutes to hours to propagate, so a zone finished within a few
+minutes of the switch is corrected long before most of the internet has looked.
+
+**Route A — GoDaddy holds the DNS, GitHub serves the site.** Do steps 1 and 2 back to back, in one
+sitting. Do not switch the nameservers and come back to it tomorrow.
+
+1. GoDaddy → *Nameservers → Change → GoDaddy nameservers (default)*. The DNS screen becomes
+   editable, populated with a default parked zone — usually an `A` record on `@` pointing at a
+   GoDaddy parking address and a `CNAME` on `www`. Both get replaced.
+
+2. GoDaddy → *DNS → Manage Zones*, and make the zone read exactly:
 
    | Type | Name | Value | Priority |
    |---|---|---|---|
@@ -1204,12 +1218,20 @@ switching nameservers, so the new zone is already correct when it takes over.
    | TXT | `@` | `google-site-verification=b8fD7DMnYnXKg2AgqlguzHjR8-JPiGz7vTdooP8avoM` | |
 
    The four A records are GitHub's Pages anycast addresses; all four go in, as four separate rows
-   with the same name. `AAAA` records (`2606:50c0:8000::153` through `8003::153`) are optional IPv6.
-
-2. GoDaddy → *Nameservers → Change → GoDaddy nameservers (default)*. This is the switch that makes
-   step 1 real. Propagation is usually under an hour and can take up to 48.
+   with the same name. Delete the parked `A` and any `CNAME www` GoDaddy created. `AAAA` records
+   (`2606:50c0:8000::153` through `8003::153`) are optional IPv6.
 
 3. In Wix, disconnect the domain from the site, so Wix stops claiming it.
+
+Verify from outside rather than from the GoDaddy panel, which shows intent rather than reality:
+
+```
+dig +short NS  andrewtgibson.com     # want ns__.domaincontrol.com
+dig +short A   andrewtgibson.com     # want the four 185.199.10x.153
+dig +short MX  andrewtgibson.com     # want ...mail.protection.outlook.com — check this one
+```
+
+Send a test email to the domain once MX resolves. That is the check that matters.
 
 **Route B — leave Wix alone and use a subdomain.** Not chosen, kept because it is the safe fallback:
 one `CNAME`, `proposal` → `tobombadil.github.io`, added wherever the DNS currently lives (Wix), and
