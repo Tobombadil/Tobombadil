@@ -1265,9 +1265,11 @@ const SITE = {
 
   rev:4,
   to:'Origination and project finance, energy',
-  target:'Origination \u00b7 Offtake \u00b7 Project development',
-  basis:'Career figures as disclosed on the CV. The model in 5.0 is a generic version of the trade I sponsor, at a round number, with no counterparty or site in it.',
-  headline:'I originate and structure energy deals, and I sponsor one. Two and a half years of that in power, and about a decade of commercial work before it.',
+  target:'Market intelligence \u00b7 Origination \u00b7 Energy development',
+  /* There is no Basis line any more. It told a reader the model in 5.0 was
+     generic before they had seen a model, which is a disclaimer with nothing
+     to disclaim yet, and 5.0 already says it properly where it lands. */
+  headline:"I analyze markets, originate, structure, and sponsor energy deals. Right now I'm the sponsor on one, and being on that side of the table has changed how I approach the other.",
   rec:[
     "I find counterparties, put deals together with them, and negotiate the contracts. Along the way I pull together the legal, technical, regulatory and finance work a deal needs before anyone will price it or approve it. I've been doing that in energy for two and a half years, most recently as the sponsor of a 33 MW behind-the-meter project rather than only as the person selling it. Before that I did much the same job in other commodities for about a decade.",
     "Most of the people who buy power decide in a meeting rather than on a call: a co-op board, a municipal council, an investment committee. I spent nine years on a board myself, answerable to members, and we went through four mergers in that time. I had no authority to decide anything on my own, so I learned how to get a room of people with different interests to agree. That's the part of this work I think I'm good at, and it's why I like the counterparty side more than a trading desk. I've also worked with utilities, cooperatives, tribes, developers and power plants, which is most of who sits at the table on a power deal.",
@@ -1809,7 +1811,7 @@ function cover(){
   inner.appendChild($('p', 'cover-sub', SITE.headline));
 
   const meta = $('div', 'cover-meta');
-  [['From', SITE.location], ['To', SITE.to], ['Basis', SITE.basis]].forEach(([k, v]) => {
+  [['From', SITE.location], ['To', SITE.to]].forEach(([k, v]) => {
     const d = $('div');
     d.appendChild($('b', null, k));
     d.appendChild($('span', null, v));
