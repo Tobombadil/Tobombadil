@@ -26,6 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The gate. It needs no browser and no npm install, so it costs a couple of
+      # seconds and can stand in front of every deploy. If it fails the job stops
+      # here and the domain keeps serving the last good version, which is the
+      # whole point: an edit made in the GitHub web editor cannot blank the live
+      # site, and cannot put anything from the live transaction on it.
+      - name: Guard
+        run: node tests/guard.js
+
       # Every run in this repo has failed here with "Get Pages site failed",
       # because Pages has never been switched on. enablement: true was tried
       # and the token cannot do it: "Create Pages site failed. Resource not

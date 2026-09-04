@@ -1139,6 +1139,44 @@ log, including candid notes on what was cut and the reasoning behind what is del
 from the model. That was caught before a domain was pointed at it, and the staging step exists so it
 cannot come back. Anything added to the repo is private unless the workflow copies it explicitly.
 
+### Editing it
+
+All the prose is in one object, `SITE`, near the top of the script in `index.html`. Nothing else
+needs opening to change wording. Landmarks inside it: `headline` and `target` are the cover, `rec`
+is 1.0, `risks` is 5.0, `terms` and `next` are 6.0, `jobs` and `deals` are 2.0. The model is a
+separate layer, `SHEETS`, and prose never hardcodes a figure the model owns.
+
+**Quick edits: the GitHub web editor.** Open the repo and press `.`, which loads the same file in a
+browser build of VS Code. Edit, commit to the branch, and the workflow deploys in about a minute.
+No clone, no toolchain.
+
+**The one way to break it.** An apostrophe typed inside a `'single quoted'` string closes the string.
+The page then renders nothing at all and the domain serves the blank. The symptom looks nothing like
+the cause. Any text containing an apostrophe belongs in `"double quotes"`, and the guard below
+catches it before it can ship.
+
+### The guard
+
+`node tests/guard.js`, about a second, no browser and no install. It runs in CI ahead of the deploy,
+so a failing edit stops there and the domain keeps serving the last good version. It checks three
+things:
+
+1. the script parses, naming the line when it does not
+2. nothing from the live transaction appears (a blocklist of every party, agency and place named in
+   the source deck; Novo BioPower is the one public comparable and may appear only in a benchmark
+   line)
+3. house style: no em dashes in prose, American spelling, and at least ten contractions, which is
+   the check that catches an edit turning the writing stiff
+
+The fuller suites are in `tests/` and need Playwright. They are not in CI, because they need a
+browser and the guard covers what actually goes wrong:
+
+    node tests/site.js         199 checks: content, provenance, layout, confidentiality
+    node tests/mobile.js       25 checks across a sweep of viewport widths
+    node tests/crosscheck.js   the model against an independent implementation, 250 random vectors
+    node tests/deadcss.js      classes and tokens declared but never used
+    node tests/deadcode.js     cells nothing reads, functions nothing calls
+
 ### Live
 
 **https://andrewtgibson.com** — verified 2026-09-01. The apex and `www` both serve, over HTTP and
