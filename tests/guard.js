@@ -90,6 +90,17 @@ if (firstPerson.length)
     firstPerson.slice(0, 3).map(t => t.slice(0, 70)).join('\n        '));
 else pass('the prose stays in the third person (' + strings.length + ' prose strings)');
 
+/* Third person without naming a subject. The full name belongs on the cover and
+   in the page metadata; the prose describes the work, so it never needs to say
+   who is doing it. That also keeps a pronoun out of a document that has no
+   business assuming one. */
+const named = strings.filter(t => /(?<!Andrew T\. )\bGibson\b/.test(t)
+  || /\b(he|He|him|Him|his|His|she|She|her|Her|hers)\b/.test(t));
+if (named.length)
+  fail('the prose names no subject, and assumes no pronoun',
+    named.slice(0, 3).map(t => t.slice(0, 70)).join('\n        '));
+else pass('the prose names no subject, and assumes no pronoun');
+
 console.log('');
 if (bad) { console.log(bad + ' check' + (bad > 1 ? 's' : '') + ' failed. Do not deploy this.'); process.exit(1); }
 console.log('All guard checks passed.');

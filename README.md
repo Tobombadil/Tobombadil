@@ -1167,10 +1167,12 @@ things:
    line)
 3. house style: no em dashes in prose, American spelling, and no first person
 
-The third-person rule is the one most likely to be broken by accident. The document is written about
-Gibson rather than by him, in the register of a proposal, and a single "I" slipped back into an edit
-makes it half memo and half cover letter. The guard reads quoted prose only, so code comments can say
-what they like.
+Two rules about voice, and they are the ones most likely to be broken by accident. The prose is not
+in the first person: a single "I" slipped back into an edit makes the document half memo and half
+cover letter. And it names no subject. The full name belongs on the cover and in the page metadata,
+while the prose describes the work, so it never has to say who is doing it. That is also what keeps
+a pronoun out of a document that has no business assuming one. The guard reads quoted prose only, so
+code comments can say what they like.
 
 The fuller suites are in `tests/` and need Playwright. They are not in CI, because they need a
 browser and the guard covers what actually goes wrong:
