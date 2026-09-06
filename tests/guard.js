@@ -79,9 +79,16 @@ const brit = [...prose.matchAll(/\b(organis\w*|recognis\w*|amortis\w*|monetis\w*
 if (brit.length) fail('American spelling', [...new Set(brit)].join(', '));
 else pass('American spelling');
 
-const contr = (prose.match(/\b\w+'(s|t|re|ve|ll|d|m)\b/g) || []).length;
-if (contr < 10) fail('it reads like a person, not a filing', contr + ' contractions, want 10+');
-else pass('it reads like a person (' + contr + ' contractions)');
+/* The page is written about Gibson rather than by him, in the register of a
+   proposal. First person is the thing that regresses: one edit slips an "I"
+   back in and the document is half memo, half cover letter. Checked inside
+   quoted prose only, so code comments can say what they like. */
+const strings = [...prose.matchAll(/(["'])((?:\\.|(?!\1).){40,})\1/g)].map(m => m[2]);
+const firstPerson = strings.filter(t => /\b(I|I'm|I'd|I've|I'll|my|My|me|myself|mine)\b/.test(t));
+if (firstPerson.length)
+  fail('the prose stays in the third person',
+    firstPerson.slice(0, 3).map(t => t.slice(0, 70)).join('\n        '));
+else pass('the prose stays in the third person (' + strings.length + ' prose strings)');
 
 console.log('');
 if (bad) { console.log(bad + ' check' + (bad > 1 ? 's' : '') + ' failed. Do not deploy this.'); process.exit(1); }

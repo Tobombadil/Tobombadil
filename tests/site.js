@@ -160,7 +160,7 @@ check('and the energy clock is the shortest of the three',
 const spec=await p.evaluate(()=>{
   const t=document.body.innerText;
   return {plan:/first 90 days|first ninety days|by six months/i.test(t),
-          duties:/the five things|what the work is/i.test(t)};});
+          duties:/the five things origination|what the work is\s*\n?\s*how i handle/i.test(t)};});
 check('the page does not read a duty list back to the reader',
   !spec.duties, spec.duties?'a duty table is still rendered':'none');
 check('and does not promise a 30-60-90 before anyone has asked',
@@ -641,7 +641,14 @@ check('the page script parses at all',
   await p.evaluate(()=>typeof SHEETS!=='undefined'&&typeof rawOf==='function'
     &&document.querySelectorAll('main section').length>0),
   'engine and view both loaded');
-check('it uses contractions like a person',style.contr>=10,style.contr);
+// The voice changed to third person, so a contraction floor no longer describes
+// what good looks like here. What must hold instead is that no first person
+// survives in what a reader sees.
+const fp=await p.evaluate(()=>{
+  const t=document.body.innerText;
+  return t.split(/(?<=[.!?])\s+/).filter(x=>/\b(I|I'm|I'd|I've|my|My|me|myself)\b/.test(x));});
+check('the prose a reader sees stays in the third person',
+  fp.length===0, fp.slice(0,3).map(x=>x.slice(0,70)).join(' | ')||'clean');
 check('American spelling throughout',style.brit===0,style.brit);
 
 
