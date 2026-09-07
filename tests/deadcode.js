@@ -55,7 +55,13 @@ const r=await p.evaluate(()=>{
     .flatMap(r=>r.cssRules?[...r.cssRules]:[r])
     .map(r=>r.selectorText||'').join(',');
   const declared=new Set((css.match(/\.[A-Za-z][\w-]*/g)||[]).map(s=>s.slice(1)));
-  const deadClasses=[...declared].filter(c=>!used.has(c));
+  // A class applied on hover or on scroll is absent from the DOM at load, so the
+  // DOM alone reported .on as dead every run. Anything the script names as a
+  // string is applied at some point; only what neither the DOM nor the source
+  // mentions is really dead.
+  const pageSrc=[...document.querySelectorAll('script')].map(x=>x.textContent).join('\n');
+  const named=c=>new RegExp("['\"`][^'\"`]*\\b"+c.replace(/-/g,'\\-')+"\\b").test(pageSrc);
+  const deadClasses=[...declared].filter(c=>!used.has(c)&&!named(c));
 
   // ---- custom properties never referenced ----
   const root=[...document.styleSheets].filter(s=>!s.href)
@@ -65,7 +71,9 @@ const r=await p.evaluate(()=>{
   const allCss=[...document.styleSheets].filter(s=>!s.href)
     .flatMap(s=>{try{return [...s.cssRules]}catch(e){return []}})
     .map(r=>r.cssText).join('\n');
-  const deadTokens=tokens.filter(t=>!new RegExp('var\\('+t+'\\)').test(allCss));
+  // Tokens are also read from the script, where a chart passes var(--series-2)
+  // as a fill. Checking the stylesheet alone called those dead.
+  const deadTokens=tokens.filter(t=>!new RegExp('var\\('+t+'\\)').test(allCss+'\n'+pageSrc));
 
   return {orphan,fmts:[...fmts],unusedFns,deadClasses,deadTokens,
     cellsTotal:all.length};

@@ -484,7 +484,6 @@ section > .wrap.body{padding-bottom:44px}
 .sched.pairs td:first-child{width:37%}
 .sched.pairs td:last-child{color:var(--prose);line-height:1.6}
 .sched.pairs .own{display:block;font-weight:700}
-.sched.pairs .owd{display:block;margin-top:3px;color:var(--ink-3);font-size:11.5px;line-height:1.5}
 .sched.risk td{vertical-align:top;line-height:1.6;font-size:12.5px;color:var(--prose)}
 .sched.risk td:first-child{width:24%;font-weight:700;color:var(--ink)}
 .sched.risk td:nth-child(2){width:33%;color:var(--ink-2)}
@@ -605,8 +604,7 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .sched.risk td:nth-child(2){width:auto}
   .sched.pairs td,.sched.risk td{padding:2px 0}
   .sched.pairs tr,.sched.risk tr{padding:14px 0}
-  .sched.pairs .owd{margin-bottom:7px}
-  .sched.risk td:nth-child(2),.sched.risk td:nth-child(3){margin-top:6px;display:block}
+    .sched.risk td:nth-child(2),.sched.risk td:nth-child(3){margin-top:6px;display:block}
   .crow{flex-direction:column;gap:2px}
   .crow dd{text-align:left}
   /* Auto layout ignored the percentages here: the numeric columns and the
@@ -658,8 +656,7 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
   .cover-eyebrow{font-size:12px}
   .cover-cap{font-size:11px}
   .toc .tnum{font-size:12px}
-  .sched.pairs .owd{font-size:12.5px}
-  .torn{font-size:12px}
+    .torn{font-size:12px}
   .viz .cap{font-size:12px}
   .legend li{font-size:12px}
   .tile .u,.otile .n{font-size:11.5px}
@@ -732,10 +729,217 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
 "use strict";
 
 /* ═══════════════════════════════════════════════════════════════════════
-   1. THE WORKBOOK — the data layer.
-   Numbers that are calculated live here as formulas, exactly as they would
-   in a real model. The page above is a view onto it; every figure the site
-   renders from these cells can show its own formula.
+   EVERYTHING WRITTEN IS IN THIS FIRST BLOCK.
+
+   Three layers, in this order:
+
+     1. CONTENT   the words. SITE and SECTIONS, immediately below. Edit here.
+     2. WORKBOOK  the numbers, as live formulas. SHEETS, further down.
+     3. VIEW      the code that draws one from the other. Below that again.
+
+   Prose never hardcodes a figure the workbook owns. {C5:num0} inside a
+   string is read from the Facts sheet when the page renders, so a number
+   changes in one place and every sentence quoting it follows.
+
+   The one way to break the page: an apostrophe inside a 'single quoted'
+   string closes the string and nothing renders. Put any text containing
+   an apostrophe in "double quotes". Run `node tests/guard.js` before
+   pushing, or let CI do it, which it does on every commit.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+const SITE = {
+  name:'Andrew T. Gibson',
+  location:'Denver, CO',
+  email:'hello@andrewtgibson.com',
+  phone:'+1 (978) 500-9301',
+  linkedin:'https://linkedin.com/in/andrewthomasgibson',
+  calendly:'https://calendly.com/andrewtgibson',
+  /* both are live and both are mine; swap the host here if either moves */
+  simulator:'https://ascendthecrowd.andrew-generalemail.workers.dev/',
+  bankable:'https://bankablehq.com',
+  pakira:'https://pakira.com',
+  compass:'https://compassitg.com',
+
+  site:'https://andrewtgibson.com',
+  repo:'https://github.com/Tobombadil/Tobombadil',
+
+  rev:4,
+  to:'Origination and project finance, energy',
+  target:'MARKET INTELLIGENCE · ORIGINATION · PROJECT DEVELOPMENT',
+  headline:'Sourcing, structuring, and sponsoring energy projects',
+  /* Written against the shape of a low-carbon commercial development seat:
+     tax credit monetization first, because that is where such a posting spends
+     most of its words, then the fuels and products markets, then the modelling,
+     then the room a deal is actually approved in. It names no company and no
+     role, so it reads the same to a developer, a bank or a midstream desk, but
+     a reader from any of them finds their own job described. */
+  /* Ordered by what a low-carbon commercial posting spends its words on:
+     credit monetization first, then the fuels and products, then the modelling,
+     then the room a deal is approved in. First person where it carries weight,
+     which is roughly once a paragraph. Facts and figures stay impersonal, since
+     a number does not need a narrator. */
+  /* Ordered by what a low-carbon commercial posting spends its words on:
+     credit monetization, then the fuels and products, then the modelling, then
+     the room a deal is approved in. Written short on purpose. The version
+     before this one carried sentences of 36, 32 and 27 words, which is where
+     the reader stops following and starts scanning. */
+  rec:[
+    "Commercial development in low-carbon energy. I source the counterparties, structure the agreements, and build the economics that decide whether a project clears. Two and a half years of that at a company making woodchips, pellets, biochar and SAF out of biomass residuals. A decade in commodities before it.",
+    "Credit mechanics are the part most people have read about and few have priced. I have built §45Q, §45Y, §45Z and §48E into live project economics. §6418 transfer sits in there too, with the lifecycle analysis that qualifies a credit at all. Section 4 has the whole of it in a working model. The transfer discount is a dial, not an assumption.",
+    "The analysis is on the page rather than described. Section 4 is a full project model: discounted cash flow, NPV, IRR, coverage. Every input is sourced. Take it apart. Before energy I spent six years building a market intelligence platform, from nothing to {C16:num0} enterprise clients. The ERCOT study in section 3 is that habit turned on price formation.",
+    "Deals like these get approved in a room. A board, an investment committee, a joint venture partner. I sat on a board for nine years, elected and accountable to members, through four mergers. So far I have structured ${C5:num0}M of intake and ${C6:num0}M of offtake across {C24:num0} projects. The counterparties were utilities, cooperatives, tribes, developers and power plants. Where I am thin is CO2 itself. Section 5 says so first.",
+  ],
+  terms:[
+    ['Looking for', 'Origination, commercial structuring, or project finance', null],
+    ['Level', 'Open. The desk matters more than the title', null],
+    ['Based', 'Denver, Colorado', null],
+    ['Travel', 'To 50%', null],
+    ['Markets', 'US power. ERCOT in the research, MISO and the West in the deal work', null],
+    ['Counterparties', 'Utilities, cooperatives, municipals, developers, large loads', null],
+    ['Products', 'Wholesale power, PPAs and offtake, feedstock and supply, project debt', null],
+    /* a fourth field names the SITE link the row's value points at */
+    ['Status', 'Open · book thirty minutes', null, 'calendly'],
+  ],
+
+
+  risks:[
+    ["My energy experience is shorter than my career",
+     "Two and a half of my eleven years are in power. The rest is a trading desk, a startup and a bank, and the earliest overlapped with my finance degree. Anyone counting energy years alone gets a smaller number than my title suggests.",
+     "Both numbers are on this page. Sourcing, structuring, negotiating and closing are the same motion whatever is being sold. The power-specific knowledge dates from 2024, and section 4 is where I have got to."],
+    ["I have not closed a utility-scale PPA",
+     "My offtake work is behind-the-meter and partial power, on projects I sourced myself. I have not taken a hundred-megawatt wind or solar PPA through a utility procurement or a corporate approval chain. All of my energy experience is at one company.",
+     "The counterparty and the scale would be new. The job would not. I source, structure, negotiate and close today, across ${Facts!C5:num0}M of intake and ${Facts!C6:num0}M of offtake on {Facts!C24:num0} projects. I have also taken my own project from an idea to signed rights: two 18 MW units, {Facts!C21:num0}k tons of feedstock, {Facts!C22:num0} acres. The sponsor side is where you learn to read an approval chain from the other end. The gap closes by doing the job."],
+    ['My published research is one market deep',
+     "The crowding study is ERCOT, where the data is clean. My deal work runs across MISO and the West without the same depth on price formation. The East I have not worked in at all.",
+     "The method carries where the price behavior does not. In a market I have not priced into I would spend the first months learning it properly, which I have had to do once already."],
+    ['I have not run a deal team',
+     "I have carried deals and built the material behind them. I have not managed a group of people doing it, which above manager is part of the job.",
+     "Chairing board committees for nine years is the closest I have. Building the commercial function at Pakira from nothing to a thousand clients is next. Neither is leading originators."],
+  ],
+
+  diligence:[
+    ['PPA price and escalation',
+     "Their own load forecast, and the last three contracts they signed. A price nobody else is printing is a price to be nervous about."],
+    ['Availability',
+     "The OEM, the operator's fleet history on the same equipment, and the IE. The most reliably optimistic number in any model."],
+    ['Capex',
+     "A Class-3 estimate with a real basis, not a developer budget, with contingency priced as its own line."],
+    ['Fuel',
+     "Term, ceiling, indexation, and what happens the year the ceiling binds. Here that outranks the interest rate."],
+  ],
+
+  /* the argument the model is evidence for. Four moves, then the buyer */
+  thesis:[
+    ['Why now',
+     "Data centres have money and no quick way to get power. Turbine order books are years deep and the interconnection queue is longer than that. Firm, clean power on a short timeline is close to unbuyable."],
+    ['Why these plants',
+     "Small biomass plants sit idle across the country, most of them shut when a PPA expired or the mill next door closed. The boiler, turbine and generator are usually still sound. What you're buying is the equipment, not the site."],
+    ['Why the fuel is cheap',
+     "Sawmill residuals and forest thinnings are a disposal cost to whoever holds them. Where someone is already paying a tipping fee, the fuel price is the trucking."],
+    ['Why it is not stranded',
+     "Behind the meter to the data centre, with a utility interconnection alongside it. The plant earns from day one instead of idling against someone else's construction schedule."],
+  ],
+  /* The screen, not the risk register: these either hold or there is no deal.
+     One line each, because a reader checking a screen is scanning it. */
+  musts:[
+    ['Both sites reachable by heavy haul',
+     "if you can't get the plant out, nothing else matters."],
+    ['A utility connection as well as the host',
+     "so the plant earns while the data centre is still being built."],
+    ['An air permit you can actually get in time',
+     'the slowest item, and neighbours can object.'],
+    ['Fuel close enough to truck',
+     "past a certain distance the free wood isn't free."],
+    ['Equipment that passes inspection',
+     "a coin flip. Inspect before buying."],
+  ],
+  against:"I built this around a cooperative or municipal with a data centre arriving in its territory. Firm local power years before they could build it themselves. Everything that could sink the deal is a dial below. Change any number that looks wrong.",
+  next:[
+    "Half an hour, no slides. I would rather hear what you are trying to get done.",
+    "Send me a model and ask me to pull it apart, or use section 4, which is already open.",
+    "References who can speak to the writing and to the board work, whenever they are useful.",
+  ],
+
+
+  jobs:[
+    { row:7, title:'Origination Manager', co:'Compass International', url:'https://compassitg.com', where:'Denver, CO', span:'March 2024 to present',
+      note:'Compass turns biomass residuals into woodchips, pellets, biochar and SAF, and sells them to utilities, data centres and industrial buyers. My work there is origination and project development: sourcing, structuring, negotiation and execution.',
+      bullets:[
+        'Sponsor of a {Facts!C20:num0} MW behind-the-meter generation and CHP project, in development. Secured exclusive rights to two 18 MW units for relocation, {Facts!C21:num0} thousand tons of biomass and {Facts!C22:num0} acres of permitted land.',
+        'Structured a ${Facts!C23:num0}M relocation of two small power plants at roughly half the capital cost and half the time to first power of a new build.',
+        'Originated and structured energy contracts for ${Facts!C5:num0}M of intake and ${Facts!C6:num0}M of offtake across {Facts!C24:num0} projects.',
+        'Developed {Facts!C25:num0}+ prospects through market analysis and outreach, and kept the pipeline record behind them.',
+        'Assembled the EPC, engineer and finance advisors, built the investor data room across assets, offtake and feedstock, and led diligence with institutional investors.',
+        'Won competitive RFPs by working backwards from what the counterparty’s investment committee needed in order to approve.',
+        'Built the technoeconomic models behind pricing: DCF, NPV, IRR and DSCR across sensitivity cases.',
+        'Built §45Q, §45Y and voluntary credit mechanics into project economics, and the life cycle analysis that qualifies them.',
+      ] },
+    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', url:'https://pakira.com', where:'Cambridge, MA', span:'August 2018 to March 2024',
+      note:'Market intelligence platform for the building materials and forest products industries.',
+      bullets:[
+        'Built the commercial function from zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth across industries.',
+        'Raised $1 million; worked with a 10-person team and 40 interns across product, engineering, data, marketing and sales.',
+      ] },
+    { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'May 2017 to August 2018',
+      bullets:[
+        'Top trader of cohort; grew book of business past $1 million by building relationships, offering solutions and negotiating deals.',
+        'Priced against customer requirements on physical spreads; led a trading-systems rollout for 300+ traders managing $6B in flows.',
+      ] },
+    { row:10, title:'Financial Analyst', co:'Morgan Stanley', where:'Portsmouth, NH', span:'May 2015 to May 2017',
+      note:'Alongside the finance degree, so it sits outside the full-time clock.',
+      bullets:[
+        'Financial statement analysis and investment assessment for institutional and UHNW portfolios; built systems consolidating 18,000 client records.',
+      ] },
+  ],
+
+  /* Only transactions belong here. A systems rollout and a portfolio
+     analytics build were work rather than deals, and listing them diluted
+     the four that were signed. */
+  deals:[
+    ['Behind-the-meter generation','Sponsor. Exclusive rights to two 18 MW units, {Facts!C21:num0}k tons of biomass and {Facts!C22:num0} acres of permitted land','2024–','${Facts!C23:num0}M','In development',1],
+    ['Intake & offtake contracts','Exclusive agreements on energy products across {Facts!C24:num0} projects: ${Facts!C5:num0}M intake, ${Facts!C6:num0}M offtake','2024–','$1.3B','Executed',1],
+    ['Partial power origination','Sourced, structured, negotiated and carried through execution','2024–','Multiple','Ongoing',1],
+    ['Investment committee proposal','Won by establishing what the committee required, then benchmarking every figure','2024','Awarded','Won',0],
+    ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017–2018','$1M','Closed',0],
+    ['Venture raise','Capital raised to build the platform and the team behind it','2018','$1.0M','Closed',0],
+  ],
+
+  education:[
+    ['University of New Hampshire','B.S. Finance, Quantitative Finance and Business Analytics'],
+    ['MIT','AI Venture Studio · Startup Sandbox · Venture Mentoring Services'],
+    ['MassChallenge','Accelerator, two cohorts'],
+  ],
+  awards:[
+    ['Pakira, Inc.','MIT FinTech Grand Prize · MIT Startup Spotlight · FinTech Connect Award'],
+  ],
+  skills:[
+    ['Origination', 'Counterparty sourcing, structuring, negotiation, RFP coordination, IC materials, pipeline, execution'],
+    ['Development', 'Project sponsorship, asset sourcing and relocation, behind-the-meter and CHP, PPA and ESA structuring, EPC and advisor selection, data rooms, capital raising'],
+    ['Low carbon', '§45Q, §45Y, §45Z and §48E mechanics, §6418 transfer, voluntary credits, and the life cycle analysis that qualifies them'],
+    ['Markets', 'Power and commodity fundamentals, dispatch economics, load and interval data, benchmarking, competitor and customer intelligence'],
+    ['Analysis', 'Technoeconomic models in DCF, NPV, IRR and DSCR. Stress testing, pricing validation. Excel, SQL, Python'],
+  ],
+  board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire and Vermont', span:'2017 to 2026',
+          note:'{Career!F16:num0} years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
+};
+
+/* Pakira is linked on the job in 2.0 rather than here. It is live and real, but
+   it is a wood-trading marketplace: on the cover, beside three energy and
+   finance tools, it points a reader off the thesis on the first screen. In 3.0
+   it answers the question a reader already has, which is what the company is. */
+
+const SECTIONS = [
+  ['summary',    '1.0', 'Summary',               'What the job asks for, and where I already meet it', 'Summary'],
+  ['experience', '2.0', 'Experience',            'Four roles, and what I built in each', 'Experience'],
+  ['market',     '3.0', 'Market view',           'What I have built, and what it is for', 'Market'],
+  ['analysis',   '4.0', 'Supporting analysis',   'A deal I costed out, and the questions I would ask', 'Analysis'],
+  ['risk',       '5.0', 'Risks and mitigants',   'Where I am short, and what closes it', 'Risk'],
+  ['terms',      '6.0', 'Terms and next steps',  'How to reach me, and what I would suggest next', 'Terms'],
+];
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2. THE WORKBOOK — the numbers, as a real model would hold them.
+   Every figure the page renders from these cells can show its own source.
    ═══════════════════════════════════════════════════════════════════════ */
 
 const SHEETS = [
@@ -811,11 +1015,6 @@ const SHEETS = [
     C20:{v:0.025, f:'pct1', input:true, min:0,    max:0.05, step:0.005,lbl:'Opex escalation', u:'p.a.', grp:'Costs & capital',
          mkt:[0.02,0.03],   s:'CPI'},
     C21:{v:25,    f:'num0', mkt:[20,30], s:'IND'},
-    /* Capex is no longer typed in as a lump. It is what the four things below
-       add up to, so a reader can argue with the acquisition or the haul
-       separately instead of having to accept one number. */
-    /* not an input any more, but the stress and sensitivity panes move capex
-       as one quantity, so it still needs a band to be moved within */
     C22:{v:'=C64+C71+C65+C67+C68+C73+C72', f:'num1', min:15, max:300,
          mkt:() => perKw(4000, 5000), mpre:'$', msuf:'M', mf:'num0',
          s:'ATB', note:'the greenfield cost of the same plant'},
@@ -905,7 +1104,7 @@ const SHEETS = [
     C31:{v:0.02,  f:'pct1', s:'IRC45Y'},
     C32:{v:0.10,  f:'pct0', s:'IRC45Y'},
     C33:{v:0.30,  f:'pct0', s:'IRC48E'},
-    C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetization', u:'\u00a76418 transfer', grp:'Tax & incentives',
+    C34:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.0,  step:0.01, lbl:'Credit monetization', u:'§6418 transfer', grp:'Tax & incentives',
          mkt:[0.90,0.95],   s:'X6418', note:'the buyer takes the discount'},
     C35:{v:0.21,  f:'pct0', s:'IRC'},
     C36:{v:0.049, f:'pct1', s:'AZ'},
@@ -1251,188 +1450,6 @@ function formatValue(v, f) {
 const val = (sheet, ref) => readCell(sheet, ref);
 const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_NAME[sheet].cells[ref] || {}).f);
 
-/* ═══════════════════════════════════════════════════════════════════════
-   3. CONTENT — the prose the workbook has no opinion about.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-const SITE = {
-  name:'Andrew T. Gibson',
-  location:'Denver, CO',
-  email:'hello@andrewtgibson.com',
-  phone:'+1 (978) 500-9301',
-  linkedin:'https://linkedin.com/in/andrewthomasgibson',
-  calendly:'https://calendly.com/andrewtgibson',
-  /* both are live and both are mine; swap the host here if either moves */
-  simulator:'https://ascendthecrowd.andrew-generalemail.workers.dev/',
-  bankable:'https://bankablehq.com',
-  pakira:'https://pakira.com',
-  compass:'https://compassitg.com',
-
-  site:'https://andrewtgibson.com',
-  repo:'https://github.com/Tobombadil/Tobombadil',
-
-  rev:4,
-  to:'Origination and project finance, energy',
-  target:'MARKET INTELLIGENCE · ORIGINATION · PROJECT DEVELOPMENT',
-  /* There is no Basis line any more. It told a reader the model in 4.0 was
-     generic before they had seen a model, which is a disclaimer with nothing
-     to disclaim yet, and 5.0 already says it properly where it lands. */
-  headline:'Sourcing, structuring, and sponsoring energy projects',
-  /* Written against the shape of a low-carbon commercial development seat:
-     tax credit monetization first, because that is where such a posting spends
-     most of its words, then the fuels and products markets, then the modelling,
-     then the room a deal is actually approved in. It names no company and no
-     role, so it reads the same to a developer, a bank or a midstream desk, but
-     a reader from any of them finds their own job described. */
-  /* Ordered by what a low-carbon commercial posting spends its words on:
-     credit monetization first, then the fuels and products, then the modelling,
-     then the room a deal is approved in. First person where it carries weight,
-     which is roughly once a paragraph. Facts and figures stay impersonal, since
-     a number does not need a narrator. */
-  /* Ordered by what a low-carbon commercial posting spends its words on:
-     credit monetization, then the fuels and products, then the modelling, then
-     the room a deal is approved in. Written short on purpose. The version
-     before this one carried sentences of 36, 32 and 27 words, which is where
-     the reader stops following and starts scanning. */
-  rec:[
-    "Commercial development in low-carbon energy. I source the counterparties, structure the agreements, and build the economics that decide whether a project clears. Two and a half years of that at a company making woodchips, pellets, biochar and SAF out of biomass residuals. A decade in commodities before it.",
-    "Credit mechanics are the part most people have read about and few have priced. I have built §45Q, §45Y, §45Z and §48E into live project economics. §6418 transfer sits in there too, with the lifecycle analysis that qualifies a credit at all. Section 4 has the whole of it in a working model. The transfer discount is a dial, not an assumption.",
-    "The analysis is on the page rather than described. Section 4 is a full project model: discounted cash flow, NPV, IRR, coverage. Every input is sourced. Take it apart. Before energy I spent six years building a market intelligence platform, from nothing to {C16:num0} enterprise clients. The ERCOT study in section 3 is that habit turned on price formation.",
-    "Deals like these get approved in a room. A board, an investment committee, a joint venture partner. I sat on a board for nine years, elected and accountable to members, through four mergers. So far I have structured ${C5:num0}M of intake and ${C6:num0}M of offtake across {C24:num0} projects. The counterparties were utilities, cooperatives, tribes, developers and power plants. Where I am thin is CO2 itself. Section 5 says so first.",
-  ],
-  terms:[
-    ['Looking for', 'Origination, commercial structuring, or project finance', null],
-    ['Level', 'Open. The desk matters more than the title', null],
-    ['Based', 'Denver, Colorado', null],
-    ['Travel', 'To 50%', null],
-    ['Markets', 'US power. ERCOT in the research, MISO and the West in the deal work', null],
-    ['Counterparties', 'Utilities, cooperatives, municipals, developers, large loads', null],
-    ['Products', 'Wholesale power, PPAs and offtake, feedstock and supply, project debt', null],
-    /* a fourth field names the SITE link the row's value points at */
-    ['Status', 'Open · book thirty minutes', null, 'calendly'],
-  ],
-
-
-  risks:[
-    ["My energy experience is shorter than my career",
-     "Two and a half of my eleven years are in power. The rest is a trading desk, a startup and a bank, and the earliest overlapped with my finance degree. Anyone counting energy years alone gets a smaller number than my title suggests.",
-     "Both numbers are on this page. Sourcing, structuring, negotiating and closing are the same motion whatever is being sold. The power-specific knowledge dates from 2024, and section 4 is where I have got to."],
-    ["I have not closed a utility-scale PPA",
-     "My offtake work is behind-the-meter and partial power, on projects I sourced myself. I have not taken a hundred-megawatt wind or solar PPA through a utility procurement or a corporate approval chain. All of my energy experience is at one company.",
-     "The counterparty and the scale would be new. The job would not. I source, structure, negotiate and close today, across \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake on {Facts!C24:num0} projects. I have also taken my own project from an idea to signed rights: two 18 MW units, {Facts!C21:num0}k tons of feedstock, {Facts!C22:num0} acres. The sponsor side is where you learn to read an approval chain from the other end. The gap closes by doing the job."],
-    ['My published research is one market deep',
-     "The crowding study is ERCOT, where the data is clean. My deal work runs across MISO and the West without the same depth on price formation. The East I have not worked in at all.",
-     "The method carries where the price behavior does not. In a market I have not priced into I would spend the first months learning it properly, which I have had to do once already."],
-    ['I have not run a deal team',
-     "I have carried deals and built the material behind them. I have not managed a group of people doing it, which above manager is part of the job.",
-     "Chairing board committees for nine years is the closest I have. Building the commercial function at Pakira from nothing to a thousand clients is next. Neither is leading originators."],
-  ],
-
-  diligence:[
-    ['PPA price and escalation',
-     "Their own load forecast, and the last three contracts they signed. A price nobody else is printing is a price to be nervous about."],
-    ['Availability',
-     "The OEM, the operator's fleet history on the same equipment, and the IE. The most reliably optimistic number in any model."],
-    ['Capex',
-     "A Class-3 estimate with a real basis, not a developer budget, with contingency priced as its own line."],
-    ['Fuel',
-     "Term, ceiling, indexation, and what happens the year the ceiling binds. Here that outranks the interest rate."],
-  ],
-
-  /* the argument the model is evidence for. Four moves, then the buyer */
-  thesis:[
-    ['Why now',
-     "Data centres have money and no quick way to get power. Turbine order books are years deep and the interconnection queue is longer than that. Firm, clean power on a short timeline is close to unbuyable."],
-    ['Why these plants',
-     "Small biomass plants sit idle across the country, most of them shut when a PPA expired or the mill next door closed. The boiler, turbine and generator are usually still sound. What you're buying is the equipment, not the site."],
-    ['Why the fuel is cheap',
-     "Sawmill residuals and forest thinnings are a disposal cost to whoever holds them. Where someone is already paying a tipping fee, the fuel price is the trucking."],
-    ['Why it is not stranded',
-     "Behind the meter to the data centre, with a utility interconnection alongside it. The plant earns from day one instead of idling against someone else's construction schedule."],
-  ],
-  /* The screen, not the risk register: these either hold or there is no deal.
-     One line each, because a reader checking a screen is scanning it. */
-  musts:[
-    ['Both sites reachable by heavy haul',
-     "if you can't get the plant out, nothing else matters."],
-    ['A utility connection as well as the host',
-     "so the plant earns while the data centre is still being built."],
-    ['An air permit you can actually get in time',
-     'the slowest item, and neighbours can object.'],
-    ['Fuel close enough to truck',
-     "past a certain distance the free wood isn't free."],
-    ['Equipment that passes inspection',
-     "a coin flip. Inspect before buying."],
-  ],
-  against:"I built this around a cooperative or municipal with a data centre arriving in its territory. Firm local power years before they could build it themselves. Everything that could sink the deal is a dial below. Change any number that looks wrong.",
-  next:[
-    "Half an hour, no slides. I would rather hear what you are trying to get done.",
-    "Send me a model and ask me to pull it apart, or use section 4, which is already open.",
-    "References who can speak to the writing and to the board work, whenever they are useful.",
-  ],
-
-
-  jobs:[
-    { row:7, title:'Origination Manager', co:'Compass International', url:'https://compassitg.com', where:'Denver, CO', span:'March 2024 to present',
-      note:'Compass turns biomass residuals into woodchips, pellets, biochar and SAF, and sells them to utilities, data centres and industrial buyers. My work there is origination and project development: sourcing, structuring, negotiation and execution.',
-      bullets:[
-        'Sponsor of a {Facts!C20:num0} MW behind-the-meter generation and CHP project, in development. Secured exclusive rights to two 18 MW units for relocation, {Facts!C21:num0} thousand tons of biomass and {Facts!C22:num0} acres of permitted land.',
-        'Structured a \u0024{Facts!C23:num0}M relocation of two small power plants at roughly half the capital cost and half the time to first power of a new build.',
-        'Originated and structured energy contracts for \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake across {Facts!C24:num0} projects.',
-        'Developed {Facts!C25:num0}+ prospects through market analysis and outreach, and kept the pipeline record behind them.',
-        'Assembled the EPC, engineer and finance advisors, built the investor data room across assets, offtake and feedstock, and led diligence with institutional investors.',
-        'Won competitive RFPs by working backwards from what the counterparty\u2019s investment committee needed in order to approve.',
-        'Built the technoeconomic models behind pricing: DCF, NPV, IRR and DSCR across sensitivity cases.',
-        'Built \u00a745Q, \u00a745Y and voluntary credit mechanics into project economics, and the life cycle analysis that qualifies them.',
-      ] },
-    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', url:'https://pakira.com', where:'Cambridge, MA', span:'August 2018 to March 2024',
-      note:'Market intelligence platform for the building materials and forest products industries.',
-      bullets:[
-        'Built the commercial function from zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth across industries.',
-        'Raised $1 million; worked with a 10-person team and 40 interns across product, engineering, data, marketing and sales.',
-      ] },
-    { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'May 2017 to August 2018',
-      bullets:[
-        'Top trader of cohort; grew book of business past $1 million by building relationships, offering solutions and negotiating deals.',
-        'Priced against customer requirements on physical spreads; led a trading-systems rollout for 300+ traders managing $6B in flows.',
-      ] },
-    { row:10, title:'Financial Analyst', co:'Morgan Stanley', where:'Portsmouth, NH', span:'May 2015 to May 2017',
-      note:'Alongside the finance degree, so it sits outside the full-time clock.',
-      bullets:[
-        'Financial statement analysis and investment assessment for institutional and UHNW portfolios; built systems consolidating 18,000 client records.',
-      ] },
-  ],
-
-  /* Only transactions belong here. A systems rollout and a portfolio
-     analytics build were work rather than deals, and listing them diluted
-     the four that were signed. */
-  deals:[
-    ['Behind-the-meter generation','Sponsor. Exclusive rights to two 18 MW units, {Facts!C21:num0}k tons of biomass and {Facts!C22:num0} acres of permitted land','2024\u2013','\u0024{Facts!C23:num0}M','In development',1],
-    ['Intake & offtake contracts','Exclusive agreements on energy products across {Facts!C24:num0} projects: \u0024{Facts!C5:num0}M intake, \u0024{Facts!C6:num0}M offtake','2024\u2013','$1.3B','Executed',1],
-    ['Partial power origination','Sourced, structured, negotiated and carried through execution','2024\u2013','Multiple','Ongoing',1],
-    ['Investment committee proposal','Won by establishing what the committee required, then benchmarking every figure','2024','Awarded','Won',0],
-    ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017\u20132018','$1M','Closed',0],
-    ['Venture raise','Capital raised to build the platform and the team behind it','2018','$1.0M','Closed',0],
-  ],
-
-  education:[
-    ['University of New Hampshire','B.S. Finance, Quantitative Finance and Business Analytics'],
-    ['MIT','AI Venture Studio · Startup Sandbox · Venture Mentoring Services'],
-    ['MassChallenge','Accelerator, two cohorts'],
-  ],
-  awards:[
-    ['Pakira, Inc.','MIT FinTech Grand Prize · MIT Startup Spotlight · FinTech Connect Award'],
-  ],
-  skills:[
-    ['Origination', 'Counterparty sourcing, structuring, negotiation, RFP coordination, IC materials, pipeline, execution'],
-    ['Development', 'Project sponsorship, asset sourcing and relocation, behind-the-meter and CHP, PPA and ESA structuring, EPC and advisor selection, data rooms, capital raising'],
-    ['Low carbon', '\u00a745Q, \u00a745Y, \u00a745Z and \u00a748E mechanics, \u00a76418 transfer, voluntary credits, and the life cycle analysis that qualifies them'],
-    ['Markets', 'Power and commodity fundamentals, dispatch economics, load and interval data, benchmarking, competitor and customer intelligence'],
-    ['Analysis', 'Technoeconomic models in DCF, NPV, IRR and DSCR. Stress testing, pricing validation. Excel, SQL, Python'],
-  ],
-  board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire and Vermont', span:'2017 to 2026',
-          note:'{Career!F16:num0} years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
-};
 
 /* id, number, name, thesis, and the short label the phone nav uses in place
    of the name, which needs 849px in a 390px bar */
@@ -1442,19 +1459,6 @@ SITE.tools = [
   ['The model',        '#analysis',      false],
   ['Battery simulator', SITE.simulator,  true],
   ['Bankable',          SITE.bankable,   true],
-];
-/* Pakira is linked on the job in 2.0 rather than here. It is live and real, but
-   it is a wood-trading marketplace: on the cover, beside three energy and
-   finance tools, it points a reader off the thesis on the first screen. In 3.0
-   it answers the question a reader already has, which is what the company is. */
-
-const SECTIONS = [
-  ['summary',    '1.0', 'Summary',               'What the job asks for, and where I already meet it', 'Summary'],
-  ['experience', '2.0', 'Experience',            'Four roles, and what I built in each', 'Experience'],
-  ['market',     '3.0', 'Market view',           'What I have built, and what it is for', 'Market'],
-  ['analysis',   '4.0', 'Supporting analysis',   'A deal I costed out, and the questions I would ask', 'Analysis'],
-  ['risk',       '5.0', 'Risks and mitigants',   'Where I am short, and what closes it', 'Risk'],
-  ['terms',      '6.0', 'Terms and next steps',  'How to reach me, and what I would suggest next', 'Terms'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1501,12 +1505,6 @@ function paintCells(root = document) {
   });
 }
 
-/* ── where every figure comes from ───────────────────────────────────
-   The page used to reveal the raw formula behind a cell. That worked when
-   this was a grid you could read the references against; it is now a
-   proposal, and "=C5+C6" names two cells nobody can see. Each displayed
-   figure carries a name and a sentence instead, with {REF} substituted
-   live so the sentence cannot drift from the arithmetic. */
 const SRC = {
   'Assumptions!C9': ['Nameplate capacity', "Two units of the size a relocated biomass plant is usually built in. It sets generation, capex and the maintenance reserve, so it scales the whole model.", '', ' MW'],
   'Career!E7':  ['Document date', 'Today. The page re-dates itself on every visit, so this is never a stale draft.'],
@@ -1515,10 +1513,10 @@ const SRC = {
   'Facts!C7':   ['Rights negotiated', 'Intake of ${C5}M plus offtake of ${C6}M, as exclusive agreements on energy products.', '$', 'M'],
   'Facts!C16':  ['Clients originated', 'The commercial function at Pakira, built from zero. As disclosed on the CV.'],
   'Career!F14': ['Commercial experience, full time', 'From the first full-time role in May 2017 to today, on an actual/365 basis. The Morgan Stanley years ran alongside the finance degree and are counted separately, so no year is counted twice.', '', ' yrs'],
-  'Facts!C20':  ['Project sponsored', 'Behind-the-meter generation and CHP, in development. Two 18 MW units under exclusive relocation rights. As disclosed on the CV.', '', '\u2009MW'],
+  'Facts!C20':  ['Project sponsored', 'Behind-the-meter generation and CHP, in development. Two 18 MW units under exclusive relocation rights. As disclosed on the CV.', '', ' MW'],
   'Facts!C23':  ['Deal structured', 'The relocation structure: two small power plants moved rather than built, at roughly half the capital cost and half the time to first power. As disclosed on the CV.', '$', 'M'],
-  'Facts!C21':  ['Biomass secured', 'Feedstock under exclusive rights for the sponsored project, in thousands of green tons. As disclosed on the CV.', '', '\u2009k tons'],
-  'Facts!C22':  ['Land secured', 'Permitted acreage under exclusive rights for the sponsored project. As disclosed on the CV.', '', '\u2009acres'],
+  'Facts!C21':  ['Biomass secured', 'Feedstock under exclusive rights for the sponsored project, in thousands of green tons. As disclosed on the CV.', '', ' k tons'],
+  'Facts!C22':  ['Land secured', 'Permitted acreage under exclusive rights for the sponsored project. As disclosed on the CV.', '', ' acres'],
   'Facts!C24':  ['Projects', 'The number of separate projects the intake and offtake contracts span. As disclosed on the CV.'],
   'Facts!C25':  ['Prospects developed', 'Qualified through market analysis and outreach, and tracked in the pipeline record. As disclosed on the CV.'],
   'Facts!C5':   ['Intake rights', 'Exclusive agreements negotiated on energy products, on the intake side. As disclosed on the CV.', '$', 'M'],
@@ -1563,11 +1561,11 @@ const SRC = {
 };
 ['C','D','E','F','G','H','I'].forEach(c => {
   SRC['Research!' + c + '17'] = ['Implied basis',
-    'Zone crowding of {' + c + '16} GW times the fitted coefficient of {C10}.', '', '\u2009$/MWh'];
+    'Zone crowding of {' + c + '16} GW times the fitted coefficient of {C10}.', '', ' $/MWh'];
 });
 [[7,'Compass International'],[8,'Pakira'],[9,'Forest City'],[10,'Morgan Stanley']].forEach(([r, co]) => {
   SRC['Career!F' + r] = ['Tenure, ' + co,
-    'From {D' + r + ':date} to {E' + r + ':date}, on an actual/365 basis.', '', '\u2009yrs'];
+    'From {D' + r + ':date} to {E' + r + ':date}, on an actual/365 basis.', '', ' yrs'];
 });
 
 /* SITE prose may template the workbook the same way a source line does, so a
@@ -1935,7 +1933,7 @@ function secSummary(){
   const g = $('div', 'tiles');
   [['In energy origination', 'Career', 'F7', 'num1', 'Since March 2024, at Compass International', '', ' yrs'],
    ['Commercial, full time', 'Career', 'F14', 'num1', 'Since 2017, after the degree. Trading, then a startup, then energy', '', ' yrs'],
-   ['Contracts originated', 'Facts', 'C7', 'num0', 'Intake \u0024{Facts!C5:num0}M plus offtake \u0024{Facts!C6:num0}M, across twelve projects', '$', 'M'],
+   ['Contracts originated', 'Facts', 'C7', 'num0', 'Intake ${Facts!C5:num0}M plus offtake ${Facts!C6:num0}M, across twelve projects', '$', 'M'],
    ['Project sponsored', 'Facts', 'C20', 'num0', 'Behind-the-meter generation and CHP, in development', '', ' MW'],
   ].forEach(([k, sheet, ref, f, unit, prefix, suffix]) => {
     const t = $('div', 'tile');
@@ -2086,7 +2084,7 @@ function secMarket(){
   siml.href = SITE.simulator; siml.target = '_blank'; siml.rel = 'noopener';
   simh.appendChild(siml);
   b.appendChild(simh);
-  b.appendChild($('p', 'cap', 'Live \u00b7 open it and run it'))
+  b.appendChild($('p', 'cap', 'Live · open it and run it'))
   b.appendChild($('p', null, "I turned the crowding work into something runnable: a battery scheduler on ERCOT North Hub, with day-ahead, forecast and real-time curves. Paint a schedule in fifteen-minute blocks, then let the solver try to beat it."));
   b.appendChild($('p', null, "One of the sliders is crowding, so the coefficient above does real work here rather than sitting in a paper. The test is whether the view holds up when you have to act on it."));
   b.appendChild($('p', 'cap', '40 MW / 80 MWh on ERCOT North Hub, 87% round trip.'));
@@ -2096,7 +2094,7 @@ function secMarket(){
   cl.href = SITE.bankable; cl.target = '_blank'; cl.rel = 'noopener';
   ch.appendChild(cl); ch.append(', a deal intelligence platform');
   c.appendChild(ch);
-  c.appendChild($('p', 'cap', 'Live \u00b7 patent application filed'));
+  c.appendChild($('p', 'cap', 'Live · patent application filed'));
   c.appendChild($('p', null, 'It reads a project finance data room and scores what is there. It finds the gaps across documents, with the provenance attached. Then it routes the package to capital that would actually look at it.'));
   c.appendChild($('p', null, "Assembling these packages by hand is where deals quietly lose a week, and the missing piece is never the one you went looking for. I built it after doing exactly that on my own project."));
   c.appendChild($('p', 'cap', 'bankablehq.com'))
@@ -2121,12 +2119,12 @@ const BENCH = {
   AACE:   ['AACE Class 5',     'AACE International 18R-97: a Class 5 estimate carries a wide accuracy range, and contingency is set against it.'],
   NOVO:   ['Novo BioPower',    'The Snowflake, Arizona biomass plant contracts at a published $110/MWh, the nearest public comparable.'],
   CPI:    ['CPI',              'General cost inflation; operating contracts are usually indexed to it.'],
-  X6418:  ['\u00a76418 market','Transferable credits sell at a discount to face; 90 to 95 cents is the convention.'],
-  IRC45Y: ['IRC \u00a745Y',   'Clean electricity production credit, statutory rate and indexation.'],
-  IRC48E: ['IRC \u00a748E',   'Clean electricity investment credit, statutory rate.'],
-  IRC172: ['IRC \u00a7172',   'Statutory cap on how much income a carried-forward loss may offset.'],
+  X6418:  ['§6418 market','Transferable credits sell at a discount to face; 90 to 95 cents is the convention.'],
+  IRC45Y: ['IRC §45Y',   'Clean electricity production credit, statutory rate and indexation.'],
+  IRC48E: ['IRC §48E',   'Clean electricity investment credit, statutory rate.'],
+  IRC172: ['IRC §172',   'Statutory cap on how much income a carried-forward loss may offset.'],
   IRC:    ['IRC',              'US statutory federal corporate rate.'],
-  AZ:     ['A.R.S. \u00a743-1111', 'Arizona statutory corporate rate, deductible against federal.'],
+  AZ:     ['A.R.S. §43-1111', 'Arizona statutory corporate rate, deductible against federal.'],
 };
 
 /* "market 90-130 $/MWh" in the cell's own units */
@@ -2162,7 +2160,7 @@ function marketLine(d) {
   if (m) {
     const f = d.mf || d.f, pre = d.mpre || '', suf = d.msuf || '';
     const lo = pre + formatValue(m[0], f) + suf, hi = pre + formatValue(m[1], f) + suf;
-    w.append($('b', null, lo + '\u2013' + hi), ' ');
+    w.append($('b', null, lo + '–' + hi), ' ');
     /* a computed range moves with its dial, so it is rewritten on recalc */
     if (typeof d.mkt === 'function') { w.dataset.live = ''; w.__d = d; }
   }
@@ -2171,7 +2169,7 @@ function marketLine(d) {
     tag.title = BENCH[d.s][1];
     w.appendChild(tag);
   }
-  if (d.note) w.append(' \u00b7 ' + d.note);
+  if (d.note) w.append(' · ' + d.note);
   return w;
 }
 
@@ -2209,16 +2207,6 @@ const RESULT = () => ({
   dscr:val('Model', 'C57'), debt:val('Model', 'C45'), equity:val('Model', 'C50'),
 });
 
-/* ── how much room each assumption has ───────────────────────────────
-   The old pane shocked seven inputs by fixed amounts — capex +25%, price
-   −15% — and printed the NPV that fell out. Nothing said whether 25% was
-   a lot, so the figures had no reference. These answer the question those
-   shocks were reaching for: how far can this move before equity is worth
-   nothing, and what move is that.
-
-   Every solve re-runs the whole model, debt included: a worse assumption
-   is a differently-sized loan, because you would have underwritten it
-   that way. That keeps one basis across every row. */
 
 const NPV = () => val('Model', 'C55');
 
@@ -2634,7 +2622,6 @@ function secAnalysis(){
 
   const v4 = $('div', 'viz');
   v4.appendChild($('h4', null, "How I would test the top four"));
-  /* carried over when 2.0 was cut; it belongs beside the model it describes */
   const dnote = $('p', 'cap');
   dnote.style.cssText = 'margin:-4px 0 10px';
   dnote.textContent = 'Every model I have worked on broke on a bad input rather than bad arithmetic.';
@@ -2902,7 +2889,7 @@ const MID = '#f0efec';
    unfinanceable corner shows up as itself instead of as a smooth line. */
 /* The third field is the unit to print beside the value. The cells carry a
    `u` of their own, but it is a slider hint as often as a unit — "sizes the
-   debt", "\u00a76418 transfer" — so the ones that are really units are named
+   debt", "§6418 transfer" — so the ones that are really units are named
    here.
 
    The fourth converts the cell's own value into the figure to show, for the
@@ -2996,8 +2983,6 @@ function drawTornado() {
       const i = $('i', d >= 0 ? 'up' : 'dn');
       i.style.left = (d >= 0 ? 50 : 50 - wpc) + '%';
       i.style.width = wpc + '%';
-      /* the exact figures used to be two columns beside the bar, which said
-         them twice once the axis could be read. They live on the bar now. */
       i.dataset.side = side;
       i.dataset.d = d.toFixed(4);
       i.tabIndex = 0;
@@ -3067,7 +3052,7 @@ function drawTimeline() {
     track.appendChild(fill);
     r.appendChild(track);
     r.appendChild($('span', 'v', formatValue(v, 'num0') + ' mo'));
-    r.appendChild($('span', 'p', band ? band[0] + '\u2013' + band[1] : 'this model'));
+    r.appendChild($('span', 'p', band ? band[0] + '–' + band[1] : 'this model'));
     wrap.appendChild(r);
   });
   host.appendChild(wrap);
@@ -3150,8 +3135,8 @@ function drawTrade() {
     const dc = $('td', 'n ' + (good !== null && isFinite(d) && d !== 0
       ? (good ? 'good' : 'bad') : 'muted'));
     /* a difference of two percentages is points, not percent */
-    dc.textContent = !isFinite(d) ? '\u2014'
-      : (d >= 0 ? '+' : '\u2212') + (f.startsWith('pct')
+    dc.textContent = !isFinite(d) ? '—'
+      : (d >= 0 ? '+' : '−') + (f.startsWith('pct')
           ? formatValue(Math.abs(d), f).replace('%', '') + ' pts'
           : num(Math.abs(d), f, pre, suf));
     tr2.appendChild(dc);
@@ -3342,7 +3327,7 @@ function heavy() {
     const d = w.__d; if (!d) return;
     const m = d.mkt(); if (!m) return;
     const f = d.mf || d.f, pre = d.mpre || '', suf = d.msuf || '';
-    w.firstChild.textContent = pre + formatValue(m[0], f) + suf + '\u2013'
+    w.firstChild.textContent = pre + formatValue(m[0], f) + suf + '–'
                              + pre + formatValue(m[1], f) + suf;
   });
   drawTrade();

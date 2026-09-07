@@ -1141,10 +1141,26 @@ cannot come back. Anything added to the repo is private unless the workflow copi
 
 ### Editing it
 
-All the prose is in one object, `SITE`, near the top of the script in `index.html`. Nothing else
-needs opening to change wording. Landmarks inside it: `headline` and `target` are the cover, `rec`
-is 1.0, `risks` is 5.0, `terms` and `next` are 6.0, `jobs` and `deals` are 2.0. The model is a
-separate layer, `SHEETS`, and prose never hardcodes a figure the model owns.
+All the prose lives in one object, `SITE`, and it is now the **first thing in the script**, at line
+750 of 3,346. Open the file, scroll past the styles, and everything written is in front of you before
+any code. `SECTIONS` follows it with the section numbers and subtitles. The workbook and the drawing
+code sit below, and neither needs opening to change a word.
+
+| line | what |
+|---|---|
+| 750 | `SITE` begins |
+| 768 | the copper kicker line on the cover |
+| 769 | the standfirst under the name |
+| 786 | 1.0 Summary, four paragraphs |
+| 792 | Terms at a glance |
+| 805 | 5.0 Risks, four entries |
+| 820 / 832 / 844 | 4.0 diligence, thesis cards, what must be true |
+| 857 | 6.0 next steps |
+| 864 / 898 | 2.0 roles, transactions |
+| 922 | board and governance |
+| 931 | `SECTIONS`, the section names and subtitles |
+| 945 | `SHEETS`, the workbook |
+| 1508 | `SRC`, what each figure is sourced to |
 
 **Quick edits: the GitHub web editor.** Open the repo and press `.`, which loads the same file in a
 browser build of VS Code. Edit, commit to the branch, and the workflow deploys in about a minute.
