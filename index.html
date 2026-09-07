@@ -176,6 +176,15 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .def[data-def]:hover,.def[data-def]:focus{border-bottom-color:var(--copper);color:var(--ink);outline:0}
 
 /* the case, above the model that serves it */
+.qbox{margin:-4px 0 24px;padding:0 0 20px;border-bottom:1px solid var(--rule)}
+.qlab{margin:0 0 8px;font:700 9.5px var(--sans);letter-spacing:.14em;
+      text-transform:uppercase;color:var(--copper)}
+.qline{margin:0;font:400 clamp(19px,2.4vw,26px)/1.32 var(--serif);color:var(--ink);
+       max-width:34ch;text-wrap:pretty}
+.qans{margin:14px 0 0;font-size:13.5px;line-height:1.6;color:var(--prose);max-width:78ch}
+.qans .qverdict{font-weight:700;color:var(--ink)}
+.qsrc{margin:8px 0 0;font:italic 11.5px var(--sans);line-height:1.6;color:var(--ink-3);max-width:78ch}
+@media (max-width:680px){.qline{max-width:none}}
 .why{margin:0 0 26px}
 .why h3{margin:0 0 12px;font:700 12px var(--sans)}
 .whys{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
@@ -816,7 +825,7 @@ const SITE = {
     ['Why these plants',
      "Small biomass plants sit idle across the country, most of them shut when a PPA expired or the mill next door closed. The boiler, turbine and generator are usually still sound. What you're buying is the equipment, not the site."],
     ['Why the fuel is cheap',
-     "Sawmill residuals and forest thinnings are a disposal cost to whoever holds them. Where someone is already paying a tipping fee, the fuel price is the trucking."],
+     "Restoration thinning produces small-diameter wood nobody has a market for. Sawmill residuals are the same. Both are a disposal cost to whoever holds them, so where a tipping fee is already being paid, the fuel price is the trucking."],
     ['Why it is not stranded',
      "Behind the meter to the data centre, with a utility interconnection alongside it. The plant earns from day one instead of idling against someone else's construction schedule."],
   ],
@@ -2050,7 +2059,16 @@ const TRADE = () => {
   });
   const brown = read();
   /* greenfield moves both what it costs and how long it takes */
-  const green = underScenario({ 'Assumptions!C22':val('Assumptions', 'C41') }, read);
+  /* The greenfield column also zeroes the contingency, and that is a correction
+     rather than a convenience. Contingency here is a Class 5 allowance carried
+     against a bottom-up conceptual estimate, which is what the relocation is.
+     The greenfield figure is a published per-kW installed cost derived from
+     plants that were actually built, so it already carries the cost growth a
+     contingency is there to cover. Running it through the same 35% put the
+     comparison at $6,076/kW against a benchmark topping out at $5,000, and it
+     flattered the relocation, which is the direction a reader would suspect. */
+  const green = underScenario({ 'Assumptions!C22':val('Assumptions', 'C41'),
+                                'Assumptions!C23':0 }, read);
   green.months = val('Assumptions', 'C61');
   return { brown, green };
 };
@@ -2157,20 +2175,35 @@ const PANES = [
 
 function secAnalysis(){
   const w = section('analysis');
-  const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:78ch;line-height:1.6';
-  /* every figure in this sentence is read from the model, because a sentence
-     that describes a live model and does not move with it will be wrong */
-  intro.append("The useful skill with a model is knowing which assumption carries the answer. This is the kind of trade I sponsor at Compass, rebuilt at a round number with nothing confidential in it: a ");
-  intro.appendChild(cell('Assumptions', 'C9'));
-  intro.append(" MW biomass plant, moved rather than built. Same power contract, same fuel, existing equipment, at about ");
-  intro.appendChild($('b', 'em-n', ''));
-  intro.append(" of what a new one costs. Every input sits in a published or industry range, the tax numbers come straight from the statute, and you can move any of them. No client, counterparty, site or transaction term appears anywhere in it.");
-  w.appendChild(intro);
+  /* The section opens on the question the model was built to answer, because a
+     model with no question in front of it is a spreadsheet. The verdict and
+     every figure below are read from the model itself and move with the dials,
+     so the answer cannot drift away from what the arithmetic says. */
+  const q = $('div', 'qbox');
+  q.appendChild($('p', 'qlab', 'The question'));
+  q.appendChild($('p', 'qline',
+    'Is relocated biopower that supports forest restoration a competitive low-carbon baseload power solution?'));
+
+  const ans = $('p', 'qans');
+  ans.appendChild($('b', 'qverdict', ''));
+  ans.append(' A ');
+  ans.appendChild(cell('Assumptions', 'C9'));
+  ans.append(' MW plant, moved rather than built, at about ');
+  ans.appendChild($('b', 'em-n', ''));
+  ans.append(' of what a new one costs. Equity value of $');
+  ans.appendChild(cell('Model', 'C55'));
+  ans.append('M at a worst-year cover ratio of ');
+  ans.appendChild(cell('Model', 'C57'));
+  ans.append('. Every input below moves, and the answer moves with it.');
+  q.appendChild(ans);
+
+  q.appendChild($('p', 'qsrc',
+    'A generic version of a trade I sponsor at Compass, rebuilt at a round number. Every input sits in a published or industry range and the tax numbers come straight from the statute. No client, counterparty, site or transaction term appears anywhere in it.'));
+  w.appendChild(q);
 
   /* the argument, before the arithmetic that serves it */
   const why = $('div', 'why');
-  why.appendChild($('h3', null, 'Why this trade, now'));
+  why.appendChild($('h3', null, 'What the answer rests on'));
   const wg = $('div', 'whys');
   SITE.thesis.forEach(([k, v]) => {
     const c = $('div', 'whyc');
@@ -3086,6 +3119,14 @@ function heavy() {
   if (en) {
     const b = val('Assumptions', 'C22'), g = val('Assumptions', 'C41');
     en.textContent = (g > 0 && isFinite(b / g)) ? formatValue(b / g, 'pct0') : 'a fraction';
+  }
+  /* the answer to the question at the top of 3.0 is the model's to give. Drag a
+     dial until the equity value goes negative or the cover breaks its covenant
+     and the word has to change with it. */
+  const qv = document.querySelector('#analysis .qverdict');
+  if (qv) {
+    const npv = val('Model', 'C55'), dscr = val('Model', 'C57'), floor = val('Assumptions', 'C24');
+    qv.textContent = (npv > 0 && dscr >= floor) ? 'On these inputs, yes.' : 'On these inputs, no.';
   }
   /* the two capex benchmarks are quoted per kW, so they move with capacity */
   document.querySelectorAll('.fmkt[data-live]').forEach(w => {

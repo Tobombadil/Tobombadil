@@ -771,7 +771,10 @@ const trade=await p.evaluate(()=>{
     return (neg?-1:1)*parseFloat(x.replace(/[$M(),x%−+]/g,''));};
   const cell=(lbl,c)=>by[lbl][c];
   // recompute the greenfield column independently, from the model
-  const green=underScenario({'Assumptions!C22':readCell('Assumptions','C41')},
+  // contingency off, as the page does: it is a Class 5 allowance against a
+  // bottom-up estimate, and the greenfield figure is a published installed cost
+  const green=underScenario({'Assumptions!C22':readCell('Assumptions','C41'),
+                             'Assumptions!C23':0},
     ()=>({capex:readCell('Assumptions','C46'),proj:readCell('Model','C63'),
           npv:readCell('Model','C55'),debt:readCell('Model','C45'),
           sculpt:readCell('Model','C42'),cap:readCell('Model','C44')}));
@@ -978,7 +981,7 @@ check('and the table explains it rather than leaving it to be inferred',
 
 // ---- nothing in the prose asserts a number the model owns ----
 const live=await p.evaluate(()=>{
-  const intro=document.querySelector('#analysis .body p');
+  const intro=document.querySelector('#analysis .qans');
   return {intro:intro.innerText,
     mw:intro.querySelector('[data-cell="Assumptions!C9"]')?.textContent,
     cellMw:String(readCell('Assumptions','C9')),
