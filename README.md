@@ -1163,9 +1163,33 @@ opening to change a word.
 | 908 | `SHEETS`, the workbook |
 | 1454 | `SRC`, provenance |
 
-The page is four sections: 1.0 Summary, 2.0 Experience, 3.0 Supporting analysis, 4.0 Terms. Market
-view, the risk register and the credentials block were cut back to a skeleton on 2026-09-07 and are
-recoverable from the commit before that one.
+The page is four sections: 1.0 Summary, 2.0 Experience, 3.0 Supporting analysis, 4.0 Terms.
+
+### Parked, to come back
+
+Cut back to a skeleton on 2026-09-07. Everything below is recoverable from `git show 58d85b8:index.html`,
+the state immediately before the first cut.
+
+| what | where it went | still on the page? |
+|---|---|---|
+| 3.0 Market view | the ERCOT crowding model, the basis table, and the cards for the simulator and Bankable | the two links survive on the cover row; the study and the coefficient do not |
+| 5.0 Risks and mitigants | four risks, each with why it is fair and what closes it | no. Nothing on the page now names a gap |
+| Credentials, foot of 2.0 | board and governance, technical skills, education, recognition | no |
+| What was signed, foot of 2.0 | the six-row transaction table | mostly, see below |
+| Terms at a glance | trimmed from eight rows to four | Looking for, Based and Status were cut as duplicates of the cover and of 4.0 |
+
+**What was signed** was the one worth checking, and almost all of it is duplicated in the job bullets
+directly above it: the sponsored project and its acreage, the $46M relocation, the intake and offtake
+figures, the IC proposal, the commodity book, the venture raise. Three things are not, and are gone
+until it comes back:
+
+- **the status column.** Executed, In development, Won, Ongoing, Closed. It was the only place a
+  reader could tell a signed deal from one still moving, and the bullets do not say.
+- **Partial power origination** as a named mandate.
+- the note that terms are omitted where they are confidential.
+
+The figures themselves are still in the workbook and still read by the bullets, so nothing was
+orphaned by the removal: the audit reports the same 13 cells before and after.
 
 **Quick edits: the GitHub web editor.** Open the repo and press `.`, which loads the same file in a
 browser build of VS Code. Edit, commit to the branch, and the workflow deploys in about a minute.

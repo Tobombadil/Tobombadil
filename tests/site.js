@@ -128,7 +128,7 @@ check('the contents page does not repeat the thesis lines',
   await p.evaluate(()=>document.querySelectorAll('.toc .tthesis').length===0));
 check('nav carries names, not numbers',
   memo.navLabels.length===4&&memo.navLabels.every(l=>!/^\d\.\d$/.test(l)),memo.navLabels.join(', '));
-check('terms at a glance is populated',memo.terms>=6,memo.terms+' rows');
+check('terms at a glance is populated',memo.terms>=4,memo.terms+' rows');
 // ---- the career is continuous: no year counted twice, no year unexplained ----
 // This is what let a reconciliation footnote exist at all; with the dates right
 // there is nothing to reconcile, and the invariant should hold it that way.
@@ -1063,12 +1063,14 @@ check('no bracketed placeholder is left on the page',ph.length===0,ph.join(', ')
 // ---- the availability link is live, and reachable from both places ----
 const cal=await p.evaluate(()=>[...document.querySelectorAll('a[href*="calendly.com"]')]
   .map(a=>({href:a.href,text:a.textContent.trim(),sec:a.closest('section')?.id||'cover'})));
+// The booking link used to sit in the summary card as well as in 4.0. Reading
+// the same offer twice inside one screen is what the card was tightened to stop,
+// so one live link is the assertion now, not two.
 check('availability points at the calendly link',
-  cal.length===2&&cal.every(a=>a.href==='https://calendly.com/andrewtgibson'),
+  cal.length===1&&cal.every(a=>a.href==='https://calendly.com/andrewtgibson'),
   cal.map(a=>a.sec+': '+a.text).join(' | ')||'absent');
-check('availability is offered in the terms card and in 6.0',
-  cal.some(a=>a.sec==='summary')&&cal.some(a=>a.sec==='terms'),
-  cal.map(a=>a.sec).join(', '));
+check('and it is offered where a reader goes to make contact',
+  cal.some(a=>a.sec==='terms'), cal.map(a=>a.sec).join(', ')||'nowhere');
 // 3.0 and 5.0 are gone for now, so the checks that policed them went with them.
 // Both projects are still reachable, from the cover row, and a link that 404s on
 // a page sent to a hiring manager is worse than no link, so the row's own checks

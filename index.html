@@ -787,16 +787,14 @@ const SITE = {
     "I source counterparties, structure agreements, and build the economics and proposals behind commercial developments in low-carbon energy. Two and a half years of that has been in biomass, pellets, SAF, biopower and carbon credits. A decade in commodities and market intelligence before it.",
     "Section 2 covers my experience in more detail. Section 3 is an example project model, with dynamic inputs for projecting the financials and testing the assumptions.",
   ],
+  /* Four rows. Looking for and Based repeated the cover's To and From, and
+     Status repeated the booking link in 4.0, so a reader met each of them
+     twice within one screen. What is left is the part the cover does not say. */
   terms:[
-    ['Looking for', 'Origination, commercial structuring, or project finance', null],
     ['Level', 'Open. The desk matters more than the title', null],
-    ['Based', 'Denver, Colorado', null],
     ['Travel', 'To 50%', null],
-    ['Markets', 'US power. ERCOT in the research, MISO and the West in the deal work', null],
+    ['Markets', 'US power. MISO, the West and ERCOT', null],
     ['Counterparties', 'Utilities, cooperatives, municipals, developers, large loads', null],
-    ['Products', 'Wholesale power, PPAs and offtake, feedstock and supply, project debt', null],
-    /* a fourth field names the SITE link the row's value points at */
-    ['Status', 'Open · book thirty minutes', null, 'calendly'],
   ],
 
 
@@ -874,17 +872,7 @@ const SITE = {
       ] },
   ],
 
-  /* Only transactions belong here. A systems rollout and a portfolio
-     analytics build were work rather than deals, and listing them diluted
-     the four that were signed. */
-  deals:[
-    ['Behind-the-meter generation','Sponsor. Exclusive rights to two 18 MW units, {Facts!C21:num0}k tons of biomass and {Facts!C22:num0} acres of permitted land','2024–','${Facts!C23:num0}M','In development',1],
-    ['Intake & offtake contracts','Exclusive agreements on energy products across {Facts!C24:num0} projects: ${Facts!C5:num0}M intake, ${Facts!C6:num0}M offtake','2024–','$1.3B','Executed',1],
-    ['Partial power origination','Sourced, structured, negotiated and carried through execution','2024–','Multiple','Ongoing',1],
-    ['Investment committee proposal','Won by establishing what the committee required, then benchmarking every figure','2024','Awarded','Won',0],
-    ['Commodity book','Physical spreads and real-time pricing; top trader of cohort','2017–2018','$1M','Closed',0],
-    ['Venture raise','Capital raised to build the platform and the team behind it','2018','$1.0M','Closed',0],
-  ],
+
 
 };
 
@@ -1939,38 +1927,8 @@ function secExperience(){
   w.appendChild(roles);
 
   /* the deals, where the career that produced them already is */
-  w.appendChild($('h3', 'subh', 'What was signed'));
-  dealTable(w);
 }
 
-/* ── the deals table, drawn into §3 ─────────────────────── */
-/* the deals themselves, at the foot of the career that produced them */
-function dealTable(w){
-  const t = $('table', 'sched');
-  const thead = $('thead'), htr = $('tr');
-  ['Mandate','Description','Period','Size','Status'].forEach((h, i) => {
-    const th = $('th', i === 3 ? 'n' : null, h); htr.appendChild(th);
-  });
-  thead.appendChild(htr); t.appendChild(thead);
-  const tb = $('tbody');
-  SITE.deals.forEach(([name, desc, period, size, status, isLive]) => {
-    const tr = $('tr');
-    const c1 = $('td'); c1.appendChild($('strong', null, name)); tr.appendChild(c1);
-    const c2 = $('td', 'desc', say(desc)); c2.dataset.l = ''; tr.appendChild(c2);
-    const c3 = $('td', null, period); c3.dataset.l = 'Period'; tr.appendChild(c3);
-    const c4 = $('td', 'n', say(size)); c4.dataset.l = 'Size'; tr.appendChild(c4);
-    const c5 = $('td'); c5.dataset.l = '';
-    c5.appendChild($('span', 'chip' + (isLive ? ' live' : ''), status));
-    tr.appendChild(c5);
-    tb.appendChild(tr);
-  });
-  t.appendChild(tb);
-  w.appendChild(t);
-  const n = $('p');
-  n.style.cssText = 'margin:12px 0 0;font:italic 11px var(--sans);color:var(--ink-3)';
-  n.textContent = "Terms are omitted where they are confidential.";
-  w.appendChild(n);
-}
 
 /* ── the live deal model ─────────────────────────────────────────── */
 

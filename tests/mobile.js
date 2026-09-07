@@ -118,9 +118,20 @@ for(const vp of [{w:390,h:800,n:'phone'},{w:768,h:1024,n:'tablet'}]){
     check(`${vp.n}: sticky chrome stays under 8% of the viewport`,
       chrome/vp_h<0.08,chrome+'px');
 
-    // the transaction schedule becomes stacked rows on a phone
-    const st=await p.evaluate(()=>getComputedStyle(document.querySelector('.sched thead')).display);
-    check('phone: schedule table restacks',st==='none',st);
+    // The plain .sched table was the transaction schedule, and it is gone. What
+    // is left are two comparison tables that deliberately keep their headers on
+    // a phone, because a column of figures with no header on it says nothing.
+    // Assert the exception rather than the rule it is an exception to.
+    const st=await p.evaluate(()=>[...document.querySelectorAll('table.sched')]
+      .map(t=>({cls:t.className,
+                head:t.querySelector('thead')
+                  ?getComputedStyle(t.querySelector('thead')).display:'none'})));
+    check('phone: the comparison tables keep their headers',
+      st.filter(x=>/trade-t|stress/.test(x.cls)).every(x=>x.head!=='none'),
+      st.map(x=>x.cls.replace('sched ','')+' '+x.head).join(', '));
+    check('phone: and a stacking table hides its header',
+      st.filter(x=>!/trade-t|stress/.test(x.cls)).every(x=>x.head==='none'),
+      st.filter(x=>!/trade-t|stress/.test(x.cls)).map(x=>x.cls).join(', ')||'none present');
     // sliders still drive the model on touch
     const n0=await p.evaluate(()=>readCell('Model','C55'));
     await p.evaluate(()=>{const s=document.querySelector('input[data-bind="Assumptions!C13"]');
