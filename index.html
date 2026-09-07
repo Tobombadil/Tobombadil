@@ -379,8 +379,17 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
 .cover h1{margin:0;font:300 clamp(46px,8.2vw,104px)/1.02 var(--serif);
           letter-spacing:-.022em;color:#fff;text-wrap:balance}
 .cover-rule{width:78px;height:2px;background:var(--copper);margin:28px 0 22px}
-.cover-sub{margin:0;max-width:34ch;font:400 clamp(17px,2.1vw,23px)/1.42 var(--serif);
-           font-style:italic;color:#c3d2e0;text-wrap:balance}
+/* The measure tracks the name above it. At 34ch this ran to 391px under a 680px
+   h1, so a wide title sat on a narrow column and the block read as smooshed.
+   58ch collapses to the full column on a phone, where the name is the column.
+
+   Widening alone did nothing, which is the part worth remembering: text-wrap
+   balance equalises line lengths, so it held the text to 462px inside a 667px
+   measure however wide the measure got. pretty fills the measure and only
+   guards the last line, taking the block to 620px against a 680px name. Where
+   it is unsupported the text simply fills, which is the same answer. */
+.cover-sub{margin:0;max-width:min(58ch,100%);font:400 clamp(17px,2.1vw,23px)/1.45 var(--serif);
+           font-style:italic;color:#c3d2e0;text-wrap:pretty}
 .cover-meta{display:flex;gap:34px;flex-wrap:wrap;margin-top:30px;
             font:400 12.5px var(--sans);color:#9db2c6}
 .cover-meta b{display:block;font:500 10px var(--sans);letter-spacing:.15em;
@@ -703,7 +712,7 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
 
 <div class="bar">
   <div class="bar-in">
-    <span class="fname">GIBSON · ORIGINATION <span>· proposal rev 4</span></span>
+    <span class="fname">ANDREW T. GIBSON · ORIGINATION <span>· proposal rev 4</span></span>
     <nav id="nav" aria-label="Sections"></nav>
   </div>
 </div>
@@ -1270,10 +1279,10 @@ const SITE = {
      to disclaim yet, and 5.0 already says it properly where it lands. */
   headline:'Sourcing, structuring, and sponsoring energy projects',
   rec:[
-    "My work involves finding best combination of intake, offtake, and assets across counterparties to minimize time, cost, risk, and emissions while maximizing value to stakeholders and supporting the energy transition. sourcing counterparties, structuring transactions and negotiating them to signature, along with the legal, technical, regulatory and finance material that has to exist before anything can be priced or approved. Two and a half years of it in energy, most recently on the sponsor side of a 33 MW behind-the-meter project rather than selling into one. A decade in other commodities before that.",
-    "Power is bought in meetings: a cooperative board, a municipal council, an investment committee. Nine years on a board, elected and accountable to members, through four mergers, with no authority to decide anything alone. Counterparties to date run to utilities, cooperatives, tribes, developers and power plants, which is most of who sits at that table.",
-    "There is no book of customers to transfer. The work sits before anything is written down, in establishing what a counterparty is actually concerned with. By the time an RFP is public the winner has usually known the customer for some time.",
-    "This document is laid out as a proposal. What the work involves comes first, the evidence second, and the gaps in section 5 rather than at the bottom.",
+    "Finding the best combination of intake, offtake and assets across counterparties, to minimize time, cost, risk and emissions while maximizing value to stakeholders and supporting the energy transition. That means sourcing counterparties, structuring transactions and negotiating them to signature, along with the legal, technical, regulatory and finance material that has to exist before anything can be priced or approved. Two and a half years of it in energy, most recently on the sponsor side of a 33 MW behind-the-meter project rather than selling into one. A decade in other commodities before it.",
+    "Power is bought in meetings: a cooperative board, a municipal council, an investment committee. Nine years on a board, elected and accountable to members, through four mergers, with no authority to decide anything alone. Counterparties so far are utilities, cooperatives, tribes, developers and power plants, which is most of who sits at that table.",
+    "No book of customers comes with this. The useful part happens before anything is written down, working out what a counterparty is actually worried about. By the time an RFP is public the winner has usually known the customer for months.",
+    "Laid out as a proposal: what the job involves first, the evidence second, and the gaps in section 5 rather than buried at the end.",
   ],
   terms:[
     ['Looking for', 'Origination, commercial structuring, or project finance', null],
@@ -1294,7 +1303,7 @@ const SITE = {
      "Both numbers are on this page. Sourcing, structuring, negotiating and closing are the same motion whatever is being sold. The power-specific knowledge dates from 2024, and section 4 is where it has reached."],
     ["No utility-scale PPA closed",
      "The offtake work is behind-the-meter and partial power, on projects sourced in house. No hundred-megawatt wind or solar PPA has gone through a utility procurement or a corporate approval chain, and the energy experience sits at one company.",
-     "The counterparty and the scale would be new. The work would not. Sourcing, structuring, negotiation and closing run today across \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake on {Facts!C24:num0} projects, and one project has gone from an idea to signed rights over two 18 MW units, {Facts!C21:num0}k tons of feedstock and {Facts!C22:num0} acres. The sponsor side is where an approval chain is read from the other end. The gap closes by doing the job."],
+     "The counterparty and the scale would be new. The job would not. Sourcing, structuring, negotiation and closing run today across \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake on {Facts!C24:num0} projects, and one project has gone from an idea to signed rights over two 18 MW units, {Facts!C21:num0}k tons of feedstock and {Facts!C22:num0} acres. The sponsor side is where an approval chain is read from the other end. The gap closes by doing the job."],
     ['Published research is one market deep',
      "The crowding study is ERCOT, where the data is clean. The deal work runs across MISO and the West without the same depth on price formation. The East, not at all.",
      "The method carries where the price behavior does not. An unfamiliar market takes a few months to learn properly, which has been done once already."],
@@ -1424,7 +1433,7 @@ SITE.tools = [
    it answers the question a reader already has, which is what the company is. */
 
 const SECTIONS = [
-  ['summary',    '1.0', 'Summary',               'What the work is, and how it is run', 'Summary'],
+  ['summary',    '1.0', 'Summary',               'What the job involves, and the record behind it', 'Summary'],
   ['experience', '2.0', 'Experience',            'Four roles, and what each one built', 'Experience'],
   ['market',     '3.0', 'Market view',           'What has been built, and what it is for', 'Market'],
   ['analysis',   '4.0', 'Supporting analysis',   'A deal costed out, and the questions it raises', 'Analysis'],
