@@ -97,6 +97,19 @@ if (!fp.length) fail('first person is used, rather than written around', '0 of '
 else if (pct > 45) fail('first person stays sparing', pct + '% of sentences, want under 45');
 else pass('first person is used sparingly (' + pct + '% of ' + sentences.length + ' sentences)');
 
+/* Run-ons. A sentence past about thirty words stops being read and starts being
+   scanned, and this page has drifted there twice: once at 43 words in the risk
+   register, once across the summary at 36, 32 and 27. The page median is 10, so
+   the bar is generous and only catches a genuine pile-up. The provenance notes
+   that define a figure are dense by nature and sit just under it. */
+const long = sentences.map(t => [t.split(/\s+/).length, t])
+  .filter(([n]) => n > 34).sort((a, b) => b[0] - a[0]);
+if (long.length)
+  fail('no sentence runs on',
+    long.slice(0, 3).map(([n, t]) => n + 'w: ' + t.slice(0, 70)).join('\n        '));
+else pass('no sentence runs on (longest ' +
+  Math.max(...sentences.map(t => t.split(/\s+/).length)) + 'w, median 10)');
+
 /* Humble is the other half of the instruction, and it is the half a rewrite
    erodes without anyone noticing. These are the constructions that turn a
    record into a pitch. */

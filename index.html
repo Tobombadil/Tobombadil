@@ -1289,11 +1289,16 @@ const SITE = {
      then the room a deal is approved in. First person where it carries weight,
      which is roughly once a paragraph. Facts and figures stay impersonal, since
      a number does not need a narrator. */
+  /* Ordered by what a low-carbon commercial posting spends its words on:
+     credit monetization, then the fuels and products, then the modelling, then
+     the room a deal is approved in. Written short on purpose. The version
+     before this one carried sentences of 36, 32 and 27 words, which is where
+     the reader stops following and starts scanning. */
   rec:[
-    "Commercial development in low-carbon energy: sourcing counterparties, structuring the agreements, and building the economics that decide whether a project clears. I have spent two and a half years on it at a company turning biomass residuals into woodchips, pellets, biochar and SAF for utilities, data centres and industrial buyers, and a decade in commodities before that.",
-    "Credit mechanics are the part of this most people have read about and few have priced. I have built §45Q, §45Y, §45Z and §48E into live project economics, with §6418 transfer and the lifecycle analysis that qualifies a credit in the first place. Section 4 carries them in a working model, transfer discount included as a dial rather than an assumption.",
-    "The analysis is on the page rather than described. Section 4 is a full project model, discounted cash flow through NPV, IRR and coverage, every input sourced and open to be taken apart. Before energy I spent six years building a market intelligence platform from nothing to {C16:num0} enterprise clients, and the ERCOT study in section 3 is the same habit turned on price formation.",
-    "Deals like these are approved in a room: a board, an investment committee, a joint venture partner. I sat on a board for nine years, elected and accountable to members, through four mergers. ${C5:num0}M of intake and ${C6:num0}M of offtake structured across {C24:num0} projects, with counterparties from utilities and cooperatives to tribes, developers and power plants. Where I am thin is CO2 itself, and section 5 says so first.",
+    "Commercial development in low-carbon energy. I source the counterparties, structure the agreements, and build the economics that decide whether a project clears. Two and a half years of that at a company making woodchips, pellets, biochar and SAF out of biomass residuals. A decade in commodities before it.",
+    "Credit mechanics are the part most people have read about and few have priced. I have built §45Q, §45Y, §45Z and §48E into live project economics. §6418 transfer sits in there too, with the lifecycle analysis that qualifies a credit at all. Section 4 has the whole of it in a working model. The transfer discount is a dial, not an assumption.",
+    "The analysis is on the page rather than described. Section 4 is a full project model: discounted cash flow, NPV, IRR, coverage. Every input is sourced. Take it apart. Before energy I spent six years building a market intelligence platform, from nothing to {C16:num0} enterprise clients. The ERCOT study in section 3 is that habit turned on price formation.",
+    "Deals like these get approved in a room. A board, an investment committee, a joint venture partner. I sat on a board for nine years, elected and accountable to members, through four mergers. So far I have structured ${C5:num0}M of intake and ${C6:num0}M of offtake across {C24:num0} projects. The counterparties were utilities, cooperatives, tribes, developers and power plants. Where I am thin is CO2 itself. Section 5 says so first.",
   ],
   terms:[
     ['Looking for', 'Origination, commercial structuring, or project finance', null],
@@ -1313,8 +1318,8 @@ const SITE = {
      "Two and a half of my eleven years are in power. The rest is a trading desk, a startup and a bank, and the earliest overlapped with my finance degree. Anyone counting energy years alone gets a smaller number than my title suggests.",
      "Both numbers are on this page. Sourcing, structuring, negotiating and closing are the same motion whatever is being sold. The power-specific knowledge dates from 2024, and section 4 is where I have got to."],
     ["I have not closed a utility-scale PPA",
-     "My offtake work is behind-the-meter and partial power, on projects I sourced myself. I have not taken a hundred-megawatt wind or solar PPA through a utility procurement or a corporate approval chain, and all of my energy experience is at one company.",
-     "The counterparty and the scale would be new. The job would not. I source, structure, negotiate and close today across \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake on {Facts!C24:num0} projects, and I have taken my own project from an idea to signed rights over two 18 MW units, {Facts!C21:num0}k tons of feedstock and {Facts!C22:num0} acres. The sponsor side is where you learn to read an approval chain from the other end. The gap closes by doing the job."],
+     "My offtake work is behind-the-meter and partial power, on projects I sourced myself. I have not taken a hundred-megawatt wind or solar PPA through a utility procurement or a corporate approval chain. All of my energy experience is at one company.",
+     "The counterparty and the scale would be new. The job would not. I source, structure, negotiate and close today, across \u0024{Facts!C5:num0}M of intake and \u0024{Facts!C6:num0}M of offtake on {Facts!C24:num0} projects. I have also taken my own project from an idea to signed rights: two 18 MW units, {Facts!C21:num0}k tons of feedstock, {Facts!C22:num0} acres. The sponsor side is where you learn to read an approval chain from the other end. The gap closes by doing the job."],
     ['My published research is one market deep',
      "The crowding study is ERCOT, where the data is clean. My deal work runs across MISO and the West without the same depth on price formation. The East I have not worked in at all.",
      "The method carries where the price behavior does not. In a market I have not priced into I would spend the first months learning it properly, which I have had to do once already."],
@@ -1531,10 +1536,10 @@ const SRC = {
   'Assumptions!C40': ['Project life', 'The economic life used to value the years after the PPA expires.', '', ' yrs'],
   'Assumptions!C47': ['Blended tax rate', 'Federal at {C35} plus state at {C36}, with the state charge deductible federally.'],
 
-  'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, ${C71}M of development and permitting, ${C65}M to take it down and crate it, ${C67}M of haul, ${C68}M to put it back up and commission it, ${C73}M to connect it, and ${C72}M of boiler refurbishment.', '$', 'M'],
+  'Assumptions!C22': ['Capex, before contingency', 'Acquisition of ${C64}M, plus ${C71}M of development and permitting. ${C65}M to take it down and crate it, ${C67}M of haul, ${C68}M to put it back up and commission it. Then ${C73}M to connect it and ${C72}M of boiler refurbishment.', '$', 'M'],
   /* The financing dials are the ones whose effect is not readable off the
      label. Each says what it does to the answer, with the live operands in it. */
-  'Assumptions!C24': ['Target minimum DSCR', 'The covenant the loan is sized to. In any year the plant may owe its cash available for debt service divided by this figure, and the loan is the present value of that stream at the debt rate, which comes to ${Model!C42}M. But it only reaches the answer when it is the limit that binds: the leverage cap allows ${Model!C44}M, and the loan is the smaller of the two.'],
+  'Assumptions!C24': ['Target minimum DSCR', 'The covenant the loan is sized to. In any year the plant may owe its cash available for debt service divided by this figure. The loan is the present value of that stream at the debt rate, which comes to ${Model!C42}M. But it only reaches the answer when it is the limit that binds: the leverage cap allows ${Model!C44}M, and the loan is the smaller of the two.'],
   'Assumptions!C25': ['Interest rate', 'The senior rate. It discounts the allowable debt service stream, so a higher rate supports a smaller loan on the same cash flow, and it is also what accrues on the drawn balance through construction.'],
   'Assumptions!C26': ['Debt tenor', 'The years the loan is sized over. Only cash flow inside the tenor counts toward it, so a shorter tenor supports less debt even where the plant runs for decades longer.', '', ' yrs'],
   'Assumptions!C27': ['Maximum leverage', 'The cap on debt as a share of funded cost rather than of capex. Interest during construction and the reserve are themselves funded by the loan, so the cap solves rather than multiplies, and lands at ${Model!C44}M.'],
@@ -2092,7 +2097,7 @@ function secMarket(){
   ch.appendChild(cl); ch.append(', a deal intelligence platform');
   c.appendChild(ch);
   c.appendChild($('p', 'cap', 'Live \u00b7 patent application filed'));
-  c.appendChild($('p', null, 'It reads a project finance data room, scores what is there, finds the gaps across documents with the provenance attached, and routes the package to capital that would actually look at it.'));
+  c.appendChild($('p', null, 'It reads a project finance data room and scores what is there. It finds the gaps across documents, with the provenance attached. Then it routes the package to capital that would actually look at it.'));
   c.appendChild($('p', null, "Assembling these packages by hand is where deals quietly lose a week, and the missing piece is never the one you went looking for. I built it after doing exactly that on my own project."));
   c.appendChild($('p', 'cap', 'bankablehq.com'))
 
@@ -2110,7 +2115,7 @@ const BENCH = {
   IND:    ['industry range',   'Ranges a biomass developer, lender or IE would recognize. Not a published figure.'],
   TERM:   ['contract term',    'Set by the supply agreement rather than by a market: how long the price has to climb from today to its ceiling.'],
   BLEND:  ['IRC + A.R.S.',     'The two statutory rates combined: state tax is deductible against federal, so the blend is less than their sum.'],
-  EST:    ['relocation estimate', 'Proportions taken from a bottom-up relocation budget: roughly ninety line items across financing, permitting, decommissioning, transport, re-erection and commissioning, each with crew counts, hours, rates and a fixed-against-variable split, built off a contractor conceptual estimate. What is used here is that budget\'s shape applied to this plant, not its figures, and no line of it names a party, a site or a price.'],
+  EST:    ['relocation estimate', 'Proportions taken from a bottom-up relocation budget built off a contractor conceptual estimate. Roughly ninety line items across financing, permitting, decommissioning, transport, re-erection and commissioning. Each carries crew counts, hours, rates and a fixed-against-variable split. What is used here is that budget\'s shape applied to this plant, not its figures, and no line of it names a party, a site or a price.'],
   USED:   ['used-plant range', 'What idle thermal generating equipment changes hands for, per kW of nameplate, when it is bought to be moved rather than run in place. A range, not a quote: the figure here is illustrative and is not any actual asking price.'],
   ATB:    ['NREL ATB',         'National Renewable Energy Laboratory, Annual Technology Baseline: dedicated biomass.'],
   AACE:   ['AACE Class 5',     'AACE International 18R-97: a Class 5 estimate carries a wide accuracy range, and contingency is set against it.'],

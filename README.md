@@ -1167,6 +1167,10 @@ things:
    line)
 3. house style: no em dashes in prose, American spelling, and no first person
 
+Sentence length. Nothing past 34 words. The page median is 10, so the bar only catches a genuine
+pile-up, and it has caught two: a 43-word sentence in the risk register, and a summary carrying 36,
+32 and 27. Past about thirty words a reader stops reading and starts scanning.
+
 Voice. First person is used, sparingly: for what was actually done and for what is missing, roughly a
 quarter of the sentences. Both directions are checked, because both have gone wrong here. Writing
 around the absence of a subject produced "the work is sourcing" and "the work sits before anything is
