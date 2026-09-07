@@ -79,27 +79,31 @@ const brit = [...prose.matchAll(/\b(organis\w*|recognis\w*|amortis\w*|monetis\w*
 if (brit.length) fail('American spelling', [...new Set(brit)].join(', '));
 else pass('American spelling');
 
-/* The page is written about Gibson rather than by him, in the register of a
-   proposal. First person is the thing that regresses: one edit slips an "I"
-   back in and the document is half memo, half cover letter. Checked inside
-   quoted prose only, so code comments can say what they like. */
-const strings = [...prose.matchAll(/(["'])((?:\\.|(?!\1).){40,})\1/g)].map(m => m[2]);
-const firstPerson = strings.filter(t => /\b(I|I'm|I'd|I've|I'll|my|My|me|myself|mine)\b/.test(t));
-if (firstPerson.length)
-  fail('the prose stays in the third person',
-    firstPerson.slice(0, 3).map(t => t.slice(0, 70)).join('\n        '));
-else pass('the prose stays in the third person (' + strings.length + ' prose strings)');
+/* Voice. First person is allowed and wanted, used sparingly: for what was
+   actually done, and for what is missing. The two failure modes are opposite,
+   so both are checked.
 
-/* Third person without naming a subject. The full name belongs on the cover and
-   in the page metadata; the prose describes the work, so it never needs to say
-   who is doing it. That also keeps a pronoun out of a document that has no
-   business assuming one. */
-const named = strings.filter(t => /(?<!Andrew T\. )\bGibson\b/.test(t)
-  || /\b(he|He|him|Him|his|His|she|She|her|Her|hers)\b/.test(t));
-if (named.length)
-  fail('the prose names no subject, and assumes no pronoun',
-    named.slice(0, 3).map(t => t.slice(0, 70)).join('\n        '));
-else pass('the prose names no subject, and assumes no pronoun');
+   Too little, and the prose contorts around the absence of a subject. That is
+   what produced "the work is sourcing", "the work sits before anything is
+   written down" and a page that read like a reference written by a stranger.
+
+   Too much, and it is a cover letter. Roughly a quarter of sentences carrying
+   an I is the register; half of them is not. */
+const strings = [...prose.matchAll(/(["'])((?:\\.|(?!\1).){40,})\1/g)].map(m => m[2]);
+const sentences = strings.flatMap(t => t.split(/(?<=[.!?])\s+/)).filter(x => x.split(' ').length > 4);
+const fp = sentences.filter(t => /\b(I|I'm|I'd|I've|I'll|my|My|me|myself)\b/.test(t));
+const pct = Math.round(100 * fp.length / Math.max(sentences.length, 1));
+if (!fp.length) fail('first person is used, rather than written around', '0 of ' + sentences.length + ' sentences');
+else if (pct > 45) fail('first person stays sparing', pct + '% of sentences, want under 45');
+else pass('first person is used sparingly (' + pct + '% of ' + sentences.length + ' sentences)');
+
+/* Humble is the other half of the instruction, and it is the half a rewrite
+   erodes without anyone noticing. These are the constructions that turn a
+   record into a pitch. */
+const BRAG = /\bI (?:am|'m) (?:passionate|confident|excited|a proven|an? (?:strong|natural|highly))\b|\bI believe\b|\bI (?:successfully|spearheaded|excel|thrive|pride myself)\b|\bproven track record\b|\bresults[- ]driven\b|\bworld[- ]class\b|\bself[- ]starter\b|\bwear many hats\b/i;
+const brag = strings.filter(t => BRAG.test(t));
+if (brag.length) fail('it states the record without selling it', brag.slice(0, 2).map(t => t.slice(0, 70)).join('\n        '));
+else pass('it states the record without selling it');
 
 console.log('');
 if (bad) { console.log(bad + ' check' + (bad > 1 ? 's' : '') + ' failed. Do not deploy this.'); process.exit(1); }

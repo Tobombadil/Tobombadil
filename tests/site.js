@@ -641,14 +641,18 @@ check('the page script parses at all',
   await p.evaluate(()=>typeof SHEETS!=='undefined'&&typeof rawOf==='function'
     &&document.querySelectorAll('main section').length>0),
   'engine and view both loaded');
-// The voice changed to third person, so a contraction floor no longer describes
-// what good looks like here. What must hold instead is that no first person
-// survives in what a reader sees.
-const fp=await p.evaluate(()=>{
+// Voice, measured on what a reader actually sees rather than on the source.
+// First person is wanted, sparingly: too little and the prose contorts around
+// having no subject, too much and it is a cover letter.
+const voice=await p.evaluate(()=>{
   const t=document.body.innerText;
-  return t.split(/(?<=[.!?])\s+/).filter(x=>/\b(I|I'm|I'd|I've|my|My|me|myself)\b/.test(x));});
-check('the prose a reader sees stays in the third person',
-  fp.length===0, fp.slice(0,3).map(x=>x.slice(0,70)).join(' | ')||'clean');
+  const sents=t.split(/(?<=[.!?])\s+/).map(x=>x.replace(/\s+/g,' ').trim())
+    .filter(x=>x.split(' ').length>4);
+  const fp=sents.filter(x=>/\b(I|I'm|I'd|I've|my|My|me|myself)\b/.test(x));
+  return {n:sents.length, fp:fp.length, pct:Math.round(100*fp.length/sents.length)};});
+check('the reader hears a person, sparingly',
+  voice.fp>0&&voice.pct<=45,
+  voice.pct+'% of '+voice.n+' sentences carry first person');
 check('American spelling throughout',style.brit===0,style.brit);
 
 

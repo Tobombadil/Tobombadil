@@ -1167,12 +1167,12 @@ things:
    line)
 3. house style: no em dashes in prose, American spelling, and no first person
 
-Two rules about voice, and they are the ones most likely to be broken by accident. The prose is not
-in the first person: a single "I" slipped back into an edit makes the document half memo and half
-cover letter. And it names no subject. The full name belongs on the cover and in the page metadata,
-while the prose describes the work, so it never has to say who is doing it. That is also what keeps
-a pronoun out of a document that has no business assuming one. The guard reads quoted prose only, so
-code comments can say what they like.
+Voice. First person is used, sparingly: for what was actually done and for what is missing, roughly a
+quarter of the sentences. Both directions are checked, because both have gone wrong here. Writing
+around the absence of a subject produced "the work is sourcing" and "the work sits before anything is
+written down", which reads like a reference written by a stranger. Going the other way makes it a
+cover letter. The guard also refuses the constructions that turn a record into a pitch: passionate,
+proven track record, results-driven, spearheaded, self-starter.
 
 The fuller suites are in `tests/` and need Playwright. They are not in CI, because they need a
 browser and the guard covers what actually goes wrong:
