@@ -785,7 +785,7 @@ const SITE = {
      the reader stops following and starts scanning. */
   rec:[
     "I source counterparties, structure agreements, and build the economics and proposals behind commercial developments in low-carbon energy. Two and a half years of that has been in biomass, pellets, SAF, biopower and carbon credits. A decade in commodities and market intelligence before it.",
-    "Section 2 covers my experience in more detail. Section 4 is an example project model, with dynamic inputs for projecting the financials and testing the assumptions.",
+    "Section 2 covers my experience in more detail. Section 3 is an example project model, with dynamic inputs for projecting the financials and testing the assumptions.",
   ],
   terms:[
     ['Looking for', 'Origination, commercial structuring, or project finance', null],
@@ -799,21 +799,6 @@ const SITE = {
     ['Status', 'Open · book thirty minutes', null, 'calendly'],
   ],
 
-
-  risks:[
-    ["My energy experience is shorter than my career",
-     "Two and a half of my eleven years are in power. The rest is a trading desk, a startup and a bank, and the earliest overlapped with my finance degree. Anyone counting energy years alone gets a smaller number than my title suggests.",
-     "Both numbers are on this page. Sourcing, structuring, negotiating and closing are the same motion whatever is being sold. The power-specific knowledge dates from 2024, and section 4 is where I have got to."],
-    ["I have not closed a utility-scale PPA",
-     "My offtake work is behind-the-meter and partial power, on projects I sourced myself. I have not taken a hundred-megawatt wind or solar PPA through a utility procurement or a corporate approval chain. All of my energy experience is at one company.",
-     "The counterparty and the scale would be new. The job would not. I source, structure, negotiate and close today, across ${Facts!C5:num0}M of intake and ${Facts!C6:num0}M of offtake on {Facts!C24:num0} projects. I have also taken my own project from an idea to signed rights: two 18 MW units, {Facts!C21:num0}k tons of feedstock, {Facts!C22:num0} acres. The sponsor side is where you learn to read an approval chain from the other end. The gap closes by doing the job."],
-    ['My published research is one market deep',
-     "The crowding study is ERCOT, where the data is clean. My deal work runs across MISO and the West without the same depth on price formation. The East I have not worked in at all.",
-     "The method carries where the price behavior does not. In a market I have not priced into I would spend the first months learning it properly, which I have had to do once already."],
-    ['I have not run a deal team',
-     "I have carried deals and built the material behind them. I have not managed a group of people doing it, which above manager is part of the job.",
-     "Chairing board committees for nine years is the closest I have. Building the commercial function at Pakira from nothing to a thousand clients is next. Neither is leading originators."],
-  ],
 
   diligence:[
     ['PPA price and escalation',
@@ -854,10 +839,9 @@ const SITE = {
   against:"I built this around a cooperative or municipal with a data centre arriving in its territory. Firm local power years before they could build it themselves. Everything that could sink the deal is a dial below. Change any number that looks wrong.",
   next:[
     "Half an hour, no slides. I would rather hear what you are trying to get done.",
-    "Send me a model and ask me to pull it apart, or use section 4, which is already open.",
+    "Send me a model and ask me to pull it apart, or use section 3, which is already open.",
     "References who can speak to the writing and to the board work, whenever they are useful.",
   ],
-
 
   jobs:[
     { row:7, title:'Origination Manager', co:'Compass International', url:'https://compassitg.com', where:'Denver, CO', span:'March 2024 to present',
@@ -902,23 +886,6 @@ const SITE = {
     ['Venture raise','Capital raised to build the platform and the team behind it','2018','$1.0M','Closed',0],
   ],
 
-  education:[
-    ['University of New Hampshire','B.S. Finance, Quantitative Finance and Business Analytics'],
-    ['MIT','AI Venture Studio · Startup Sandbox · Venture Mentoring Services'],
-    ['MassChallenge','Accelerator, two cohorts'],
-  ],
-  awards:[
-    ['Pakira, Inc.','MIT FinTech Grand Prize · MIT Startup Spotlight · FinTech Connect Award'],
-  ],
-  skills:[
-    ['Origination', 'Counterparty sourcing, structuring, negotiation, RFP coordination, IC materials, pipeline, execution'],
-    ['Development', 'Project sponsorship, asset sourcing and relocation, behind-the-meter and CHP, PPA and ESA structuring, EPC and advisor selection, data rooms, capital raising'],
-    ['Low carbon', '§45Q, §45Y, §45Z and §48E mechanics, §6418 transfer, voluntary credits, and the life cycle analysis that qualifies them'],
-    ['Markets', 'Power and commodity fundamentals, dispatch economics, load and interval data, benchmarking, competitor and customer intelligence'],
-    ['Analysis', 'Technoeconomic models in DCF, NPV, IRR and DSCR. Stress testing, pricing validation. Excel, SQL, Python'],
-  ],
-  board:{ role:'Board Member, Vice President & Stewardship Chair', org:'Big Brothers Big Sisters of New Hampshire and Vermont', span:'2017 to 2026',
-          note:'{Career!F16:num0} years inside a governed, member-accountable organization; navigated four mergers and built consensus across competing constituencies; youngest board member ever elected.' },
 };
 
 /* Pakira is linked on the job in 2.0 rather than here. It is live and real, but
@@ -929,10 +896,8 @@ const SITE = {
 const SECTIONS = [
   ['summary',    '1.0', 'Summary',               'What the job asks for, and where I already meet it', 'Summary'],
   ['experience', '2.0', 'Experience',            'Four roles, and what I built in each', 'Experience'],
-  ['market',     '3.0', 'Market view',           'What I have built, and what it is for', 'Market'],
-  ['analysis',   '4.0', 'Supporting analysis',   'A deal I costed out, and the questions I would ask', 'Analysis'],
-  ['risk',       '5.0', 'Risks and mitigants',   'Where I am short, and what closes it', 'Risk'],
-  ['terms',      '6.0', 'Terms and next steps',  'How to reach me, and what I would suggest next', 'Terms'],
+  ['analysis',   '3.0', 'Supporting analysis',   'A deal I costed out, and the questions I would ask', 'Analysis'],
+  ['terms',      '4.0', 'Terms and next steps',  'How to reach me, and what I would suggest next', 'Terms'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -972,13 +937,6 @@ const SHEETS = [
        end to end: no year is counted twice. */
     F14:{v:'=YEARFRAC(D9,TODAY())',  f:'num1'}, /* post-degree, full time */
     D16:{v:'=DATE(2017,1,1)'}, E16:{v:'=DATE(2026,1,1)'}, F16:{v:'=YEARFRAC(D16,E16)', f:'num0'},
-  }
-},
-
-/* ERCOT crowding coefficient — the author's own published result. */
-{
-  name:'Research', rows:20, cols:[], cells:{
-    C10:{v:3.17, f:'num2'},
   }
 },
 
@@ -1253,15 +1211,6 @@ const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','
   });
 })();
 
-/* ---- the ERCOT basis row ---- */
-(function buildBasis(){
-  const s = SHEETS.find(x => x.name === 'Research');
-  ['C','D','E','F','G','H','I'].forEach((cl, i) => {
-    s.cells[cl+'16'] = { v:(i + 1) * 2, f:'num0' };
-    s.cells[cl+'17'] = { v:`=${cl}16*$C$10`, f:'num2' };
-  });
-})();
-
 /* ═══════════════════════════════════════════════════════════════════════
    2. FORMULA ENGINE
    Recursive-descent parser, no eval. Lazy evaluation with memoisation and
@@ -1448,7 +1397,6 @@ function formatValue(v, f) {
 const val = (sheet, ref) => readCell(sheet, ref);
 const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_NAME[sheet].cells[ref] || {}).f);
 
-
 /* id, number, name, thesis, and the short label the phone nav uses in place
    of the name, which needs 849px in a 390px bar */
 /* The cover's second row, built after SITE so the URLs are written once. Label,
@@ -1520,8 +1468,6 @@ const SRC = {
   'Facts!C5':   ['Intake rights', 'Exclusive agreements negotiated on energy products, on the intake side. As disclosed on the CV.', '$', 'M'],
   'Facts!C6':   ['Offtake rights', 'The offtake side of the same book of exclusive agreements. As disclosed on the CV.', '$', 'M'],
 
-  'Research!C10': ['Crowding coefficient', 'The fitted result of my own ERCOT study. Ask for the working paper and you get the period, the sample and the specification.', '', ' $/MWh per GW'],
-
   'Assumptions!C10': ['Derate', 'Auxiliary load and losses. Net output as a share of nameplate.'],
   'Assumptions!C15': ['Fuel use', 'Green tons burned per MWh generated.', '', ' GT/MWh'],
   'Assumptions!C21': ['Maintenance reserve', 'Annual major-maintenance accrual, per kW of net capacity.', '', ' $/kW-yr'],
@@ -1557,10 +1503,6 @@ const SRC = {
   'Model!C63': ['Project IRR', 'The unlevered return: the whole build funded up front, and tax carrying no interest shield. The spread against the levered return is what the financing contributes.'],
   'Model!C57': ['DSCR, worst year', 'The lowest cover ratio inside the tenor. Debt service is sculpted to hold the ratio at its target, so it lands there in every year rather than sagging in one.'],
 };
-['C','D','E','F','G','H','I'].forEach(c => {
-  SRC['Research!' + c + '17'] = ['Implied basis',
-    'Zone crowding of {' + c + '16} GW times the fitted coefficient of {C10}.', '', ' $/MWh'];
-});
 [[7,'Compass International'],[8,'Pakira'],[9,'Forest City'],[10,'Morgan Stanley']].forEach(([r, co]) => {
   SRC['Career!F' + r] = ['Tenure, ' + co,
     'From {D' + r + ':date} to {E' + r + ':date}, on an actual/365 basis.', '', ' yrs'];
@@ -1844,7 +1786,7 @@ function cover(){
     s.append(sw, lbl);
     cap.appendChild(s);
   });
-  cap.appendChild($('i', null, 'Illustrative, on a two-hour battery. The simulator behind it is in 3.0.'));
+  cap.appendChild($('i', null, 'Illustrative, on a two-hour battery.'));
   c.appendChild(cap);
 
   main.appendChild(c);
@@ -1999,8 +1941,6 @@ function secExperience(){
   /* the deals, where the career that produced them already is */
   w.appendChild($('h3', 'subh', 'What was signed'));
   dealTable(w);
-
-  credBlock(w);
 }
 
 /* ── the deals table, drawn into §3 ─────────────────────── */
@@ -2030,75 +1970,6 @@ function dealTable(w){
   n.style.cssText = 'margin:12px 0 0;font:italic 11px var(--sans);color:var(--ink-3)';
   n.textContent = "Terms are omitted where they are confidential.";
   w.appendChild(n);
-}
-
-/* ── §5 market view ──────────────────────────────────────────────── */
-function secMarket(){
-  const w = section('market');
-  const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:80ch;line-height:1.6';
-  intro.textContent = "A view on a market has to be backed. The research and the simulator below are my own time. Bankable came out of the work itself.";
-  w.appendChild(intro);
-
-  const a = $('div', 'paper');
-  a.appendChild($('h3', null, 'ERCOT crowding coefficient model'));
-  a.appendChild($('p', 'cap', 'Original quantitative framework · supported by an agent-based market simulation in Python'));
-  a.appendChild($('p', null, "It explains the gap between day-ahead and real-time prices using how crowded a generator's zone is. That gap is most of what a shaped contract sells. Buy at one node, settle at another, and you hold the basis whether anyone priced it or not. Crowding is one of the few parts of it you can see coming. Ask for the paper and you get the period, the sample and the specification."));
-
-  const stat = $('div', 'tiles'); stat.style.marginBottom = '14px';
-  [['Coefficient (α)', 'Research', 'C10', 'num2', '$/MWh per GW of zone crowding']].forEach(([k, s, r, f, u]) => {
-    const t = $('div', 'tile');
-    t.appendChild($('span', 'k', k));
-    const v = $('span', 'v'); v.appendChild(cell(s, r, { f })); t.appendChild(v);
-    t.appendChild($('span', 'u', u));
-    stat.appendChild(t);
-  });
-  a.appendChild(stat);
-
-  const bt = $('table', 'sched'); bt.style.fontSize = '12px';
-  const bh = $('tr');
-  bh.appendChild($('th', null, 'Zone crowding'));
-  ['C','D','E','F','G','H','I'].forEach(c => bh.appendChild($('th', 'n', txt('Research', c + '16') + ' GW')));
-  const bthead = $('thead'); bthead.appendChild(bh); bt.appendChild(bthead);
-  const br = $('tr');
-  const bl = $('td', null, 'Implied basis ($/MWh)'); bl.dataset.l = ''; br.appendChild(bl);
-  ['C','D','E','F','G','H','I'].forEach(c => {
-    const td = $('td', 'n');
-    /* the header carries the crowding level, and headers are hidden when the
-       table restacks, so each figure names its own level instead */
-    td.dataset.l = txt('Research', c + '16') + ' GW';
-    td.appendChild(cell('Research', c + '17', { f:'num2' }));
-    br.appendChild(td);
-  });
-  const btb = $('tbody'); btb.appendChild(br); bt.appendChild(btb);
-  a.appendChild(bt);
-  w.appendChild(a);
-
-  const cols = $('div', 'cols'); cols.style.marginTop = '18px';
-
-  const b = $('div', 'paper');
-  const simh = $('h3');
-  const siml = $('a', 'mail', 'BESS schedule optimization simulator');
-  siml.href = SITE.simulator; siml.target = '_blank'; siml.rel = 'noopener';
-  simh.appendChild(siml);
-  b.appendChild(simh);
-  b.appendChild($('p', 'cap', 'Live · open it and run it'))
-  b.appendChild($('p', null, "I turned the crowding work into something runnable: a battery scheduler on ERCOT North Hub, with day-ahead, forecast and real-time curves. Paint a schedule in fifteen-minute blocks, then let the solver try to beat it."));
-  b.appendChild($('p', null, "One of the sliders is crowding, so the coefficient above does real work here rather than sitting in a paper. The test is whether the view holds up when you have to act on it."));
-  b.appendChild($('p', 'cap', '40 MW / 80 MWh on ERCOT North Hub, 87% round trip.'));
-
-  const c = $('div', 'paper');
-  const ch = $('h3'); const cl = $('a', 'mail', 'Bankable');
-  cl.href = SITE.bankable; cl.target = '_blank'; cl.rel = 'noopener';
-  ch.appendChild(cl); ch.append(', a deal intelligence platform');
-  c.appendChild(ch);
-  c.appendChild($('p', 'cap', 'Live · patent application filed'));
-  c.appendChild($('p', null, 'It reads a project finance data room and scores what is there. It finds the gaps across documents, with the provenance attached. Then it routes the package to capital that would actually look at it.'));
-  c.appendChild($('p', null, "Assembling these packages by hand is where deals quietly lose a week, and the missing piece is never the one you went looking for. I built it after doing exactly that on my own project."));
-  c.appendChild($('p', 'cap', 'bankablehq.com'))
-
-  cols.append(b, c);
-  w.appendChild(cols);
 }
 
 /* ── the live deal model ─────────────────────────────────────────── */
@@ -2204,7 +2075,6 @@ const RESULT = () => ({
   npv:val('Model', 'C55'), irr:val('Model', 'C56'),
   dscr:val('Model', 'C57'), debt:val('Model', 'C45'), equity:val('Model', 'C50'),
 });
-
 
 const NPV = () => val('Model', 'C55');
 
@@ -2658,66 +2528,6 @@ function secAnalysis(){
   w.appendChild(box);
 }
 
-function credBlock(w){
-  const hr = $('p');
-  hr.style.cssText = 'margin:30px 0 14px;font:700 10px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:14px';
-  hr.textContent = 'Credentials';
-  w.appendChild(hr);
-
-  const cols = $('div', 'cols');
-  const a = $('div', 'blk');
-  a.appendChild($('h3', null, 'Board and governance'));
-  const bd = $('div', 'paper');
-  bd.appendChild($('h3', null, SITE.board.role));
-  bd.appendChild($('p', 'cap', SITE.board.org + ' · ' + SITE.board.span));
-  bd.appendChild($('p', null, say(SITE.board.note)));
-  a.appendChild(bd);
-
-  const b = $('div', 'blk');
-  const dl = (title, rows, top) => {
-    const h = $('h3', null, title); if (top) h.style.marginTop = '22px';
-    b.appendChild(h);
-    const d = $('dl', 'deflist');
-    rows.forEach(([k, v]) => { const x = $('div'); x.appendChild($('dt', null, k)); x.appendChild($('dd', null, v)); d.appendChild(x); });
-    b.appendChild(d);
-  };
-  dl('Technical skills', SITE.skills, false);
-  dl('Education', SITE.education, true);
-  dl('Recognition', SITE.awards, true);
-
-  cols.append(a, b);
-  w.appendChild(cols);
-}
-
-/* ── §7 risks and mitigants ──────────────────────────────────────── */
-function secRisk(){
-  const w = section('risk');
-  const intro = $('p');
-  intro.style.cssText = 'margin:-8px 0 20px;font-size:13.5px;color:var(--prose);max-width:80ch;line-height:1.6';
-  intro.textContent = "Every memo I write has a risks section. These are the things I would want to know before deciding.";
-  w.appendChild(intro);
-
-  const t = $('table', 'sched risk');
-  const thead = $('thead'), htr = $('tr');
-  ['Risk', "Why it's fair", 'Mitigant'].forEach(h => htr.appendChild($('th', null, h)));
-  thead.appendChild(htr); t.appendChild(thead);
-  const tb = $('tbody');
-  SITE.risks.forEach(([risk, fair, mit]) => {
-    const tr = $('tr');
-    const a = $('td', null, say(risk)); a.dataset.l = ''; tr.appendChild(a);
-    const b = $('td', null, say(fair)); b.dataset.l = 'Why'; tr.appendChild(b);
-    const c = $('td', null, say(mit)); c.dataset.l = 'Mitigant'; tr.appendChild(c);
-    tb.appendChild(tr);
-  });
-  t.appendChild(tb);
-  w.appendChild(t);
-
-  const n = $('p');
-  n.style.cssText = 'margin:16px 0 0;font:italic 11px var(--sans);color:var(--ink-3);max-width:80ch;line-height:1.6';
-  n.textContent = "The second row is the one that matters. The rest of this page is the case that everything around it is already there.";
-  w.appendChild(n);
-}
-
 /* ── §8 terms and next steps ─────────────────────────────────────── */
 function secTerms(){
   const w = section('terms');
@@ -2747,15 +2557,14 @@ function secTerms(){
 }
 
 /* ── the document, in order ──────────────────────────────────────── */
-[cover, contents, secSummary, secExperience,
- secMarket, secAnalysis, secRisk, secTerms].forEach(f => f());
+[cover, contents, secSummary, secExperience, secAnalysis, secTerms].forEach(f => f());
 
 /* ── footer ──────────────────────────────────────────────────────── */
 (function footer(){
   const f = $('footer');
   const w = $('div', 'wrap');
   const p = $('p');
-  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV; the deal in section 4 is invented and describes no live transaction. Source at ');
+  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV; the deal in section 3 is invented and describes no live transaction. Source at ');
   const a = $('a', 'mail', 'github.com/Tobombadil/Tobombadil'); a.href = SITE.repo; a.target = '_blank'; a.rel = 'noopener';
   p.append(a, '.');
   w.appendChild(p);

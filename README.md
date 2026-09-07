@@ -1141,26 +1141,31 @@ cannot come back. Anything added to the repo is private unless the workflow copi
 
 ### Editing it
 
-All the prose lives in one object, `SITE`, and it is now the **first thing in the script**, at line
-750 of 3,346. Open the file, scroll past the styles, and everything written is in front of you before
-any code. `SECTIONS` follows it with the section numbers and subtitles. The workbook and the drawing
-code sit below, and neither needs opening to change a word.
+All the prose lives in one object, `SITE`, and it is the **first thing in the script**. Open the file,
+scroll past the styles, and everything written is in front of you before any code. `SECTIONS` follows
+with the section numbers and subtitles. The workbook and the drawing code sit below, and neither needs
+opening to change a word.
 
 | line | what |
 |---|---|
 | 750 | `SITE` begins |
-| 768 | the copper kicker line on the cover |
+| 768 | the copper kicker on the cover |
 | 769 | the standfirst under the name |
-| 786 | 1.0 Summary, four paragraphs |
-| 792 | Terms at a glance |
-| 805 | 5.0 Risks, four entries |
-| 820 / 832 / 844 | 4.0 diligence, thesis cards, what must be true |
-| 857 | 6.0 next steps |
-| 864 / 898 | 2.0 roles, transactions |
-| 922 | board and governance |
-| 931 | `SECTIONS`, the section names and subtitles |
-| 945 | `SHEETS`, the workbook |
-| 1508 | `SRC`, what each figure is sourced to |
+| 786 | 1.0 Summary |
+| 790 | Terms at a glance |
+| 803 | 3.0 diligence |
+| 815 | 3.0 thesis cards |
+| 827 | 3.0 what must be true |
+| 840 | 4.0 next steps |
+| 846 | 2.0 roles |
+| 880 | 2.0 transactions |
+| 896 | `SECTIONS`, names and subtitles |
+| 908 | `SHEETS`, the workbook |
+| 1454 | `SRC`, provenance |
+
+The page is four sections: 1.0 Summary, 2.0 Experience, 3.0 Supporting analysis, 4.0 Terms. Market
+view, the risk register and the credentials block were cut back to a skeleton on 2026-09-07 and are
+recoverable from the commit before that one.
 
 **Quick edits: the GitHub web editor.** Open the repo and press `.`, which loads the same file in a
 browser build of VS Code. Edit, commit to the branch, and the workflow deploys in about a minute.

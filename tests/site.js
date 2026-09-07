@@ -20,7 +20,7 @@ check('every face declares a real fallback',await p.evaluate(()=>{
 
 const nav=await p.evaluate(()=>({secs:[...document.querySelectorAll('main section')].map(s=>s.id),
   links:[...document.querySelectorAll('nav a')].map(a=>a.getAttribute('href'))}));
-const WANT=['summary','experience','market','analysis','risk','terms'];
+const WANT=['summary','experience','analysis','terms'];
 check('the proposal runs in order, no method essay',nav.secs.join()===WANT.join(),nav.secs.join(', '));
 check('nav matches the sections',nav.links.join()==='#'+nav.secs.join(',#'));
 
@@ -110,25 +110,24 @@ const memo=await p.evaluate(()=>{
     navLabels:[...document.querySelectorAll('#nav a')].map(a=>a.textContent),
     thesis:[...document.querySelectorAll('.divider .thesis')].map(e=>e.textContent),
     terms:document.querySelectorAll('.covercard .crow').length,
-    risks:document.querySelectorAll('#risk tbody tr').length,
     dilig:document.querySelectorAll('#pane-sensitivity table.pairs tbody tr').length,
     steps:document.querySelectorAll('#terms .steps li').length};});
 check('the cover leads with the name',memo.cover&&memo.coverName==='Andrew T. Gibson',memo.coverName);
 check('the cover draws its load shape',memo.coverLoad>=2,memo.coverLoad+' polylines');
-check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0,5.0,6.0',memo.idx.join(' '));
+check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0',memo.idx.join(' '));
 // the contents page and the dividers read the same array, so they cannot disagree
 check('contents matches the dividers',
   memo.toc.map(t=>t.num).join()===memo.idx.join()
   &&memo.toc.map(t=>t.href).join()==='#'+WANT.join(',#'),
   memo.toc.map(t=>t.num+' '+t.name).join(' · '));
 check('every section states why it is in the document',
-  memo.thesis.length===6&&memo.thesis.every(t=>t.trim().length>18),memo.thesis.length);
+  memo.thesis.length===4&&memo.thesis.every(t=>t.trim().length>18),memo.thesis.length);
 // the thesis belongs on the divider only; printing it on the contents page too
 // made every reader read the same sentence twice
 check('the contents page does not repeat the thesis lines',
   await p.evaluate(()=>document.querySelectorAll('.toc .tthesis').length===0));
 check('nav carries names, not numbers',
-  memo.navLabels.length===6&&memo.navLabels.every(l=>!/^\d\.\d$/.test(l)),memo.navLabels.join(', '));
+  memo.navLabels.length===4&&memo.navLabels.every(l=>!/^\d\.\d$/.test(l)),memo.navLabels.join(', '));
 check('terms at a glance is populated',memo.terms>=6,memo.terms+' rows');
 // ---- the career is continuous: no year counted twice, no year unexplained ----
 // This is what let a reconciliation footnote exist at all; with the dates right
@@ -166,7 +165,6 @@ check('the page does not read a duty list back to the reader',
 check('and does not promise a 30-60-90 before anyone has asked',
   !spec.plan, spec.plan?'an onboarding plan is still rendered':'none');
 // four real risks beat six where three are the same one in different clothes
-check('the risk register is not decorative',memo.risks>=4,memo.risks+' risks');
 // The page goes to several kinds of desk now, so it must not be written to one
 // of them. No second person aimed at an employer, and no claim about seniority
 // in either direction: state the experience, let the reader place it.
@@ -1071,23 +1069,10 @@ check('availability points at the calendly link',
 check('availability is offered in the terms card and in 6.0',
   cal.some(a=>a.sec==='summary')&&cal.some(a=>a.sec==='terms'),
   cal.map(a=>a.sec).join(', '));
-const bess=await p.evaluate(()=>({
-  named:[...document.querySelectorAll('h3')].some(h=>h.textContent==='BESS schedule optimization simulator'),
-  old:/SmartBidder/i.test(document.body.innerText)}));
-// Both projects are live and linked. A link that 404s on a page sent to a
-// hiring manager is worse than no link, so assert they are real and external.
-const links=await p.evaluate(()=>[...document.querySelectorAll('#market a[href^="http"]')]
-  .map(a=>({t:a.textContent.trim(),h:a.getAttribute('href'),
-            blank:a.target==='_blank',rel:/noopener/.test(a.rel||'')})));
-check('the work in 3.0 is linked, not just described',
-  links.length>=2&&links.every(l=>l.blank&&l.rel),
-  links.map(l=>l.t+' \u2192 '+l.h).join('  |  '));
-check('and both links are named for what they are',
-  links.some(l=>/BESS|simulator/i.test(l.t))&&links.some(l=>/Bankable/i.test(l.t)),
-  links.map(l=>l.t).join(', '));
-
-// The cover points at the work, since a reader who stops at the cover otherwise
-// never learns the model or either application exists.
+// 3.0 and 5.0 are gone for now, so the checks that policed them went with them.
+// Both projects are still reachable, from the cover row, and a link that 404s on
+// a page sent to a hiring manager is worse than no link, so the row's own checks
+// are what hold them.
 const cov=await p.evaluate(()=>({
   tools:[...document.querySelectorAll('.cover-tools a')].map(a=>({
     t:a.textContent.trim(), h:a.getAttribute('href'),
@@ -1137,8 +1122,6 @@ check('and the current employer says what it does',
   /biomass/i.test(cur)&&/data centre|data center/i.test(cur),
   'biomass and data centres named in 2.0');
 
-check('the simulator card carries its new name',bess.named&&!bess.old,
-  bess.named?(bess.old?'old name survives':'ok'):'not found');
 
 for(const [y,n] of [[0,'w-hero'],[2650,'w-method'],[3400,'w-model'],[4150,'w-model2'],[4900,'w-model3']]){
   await p.evaluate(v=>{document.documentElement.style.scrollBehavior='auto';scrollTo(0,v);},y);
