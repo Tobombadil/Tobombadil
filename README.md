@@ -5,6 +5,11 @@ HTML file: no framework, no build step, no server, no analytics.
 
 Open `index.html` in a browser. That's the whole toolchain.
 
+**Publishing.** `main` is the live branch and the repository default. Every push to `main` runs
+`.github/workflows/deploy.yml`, which runs `tests/guard.js` first and publishes only `index.html`
+and `CNAME` to andrewtgibson.com. No other branch deploys. The browser suites in `tests/` are
+run locally before pushing.
+
 ## The idea
 
 It is a **proposal, laid out the way a power-sector filing is laid out**, because the proposal is
