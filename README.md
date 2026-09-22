@@ -33,18 +33,19 @@ machinery kept and pointed at interrogation instead.
 - **Type.** Newsreader for display, IBM Plex Sans for body, UI and the provenance bar, IBM Plex
   Mono for the document reference and the contents leaders. Institutional-technical, with real
   fallback stacks behind each, which the test suite asserts.
-- **The cover.** Thirty strands along the cover's floor, driven by the reader. On arrival there
-  are only loose ends on the left: partial lines, each starting in its own place, tangled and out
-  of order. Every strand is one unbroken line. Scrolling carries them right,
-  where they weave into one braid and close into a near-solid, rising ribbon, each strand in its
-  own place. One copper strand runs unbroken through all of it. The idea is origination:
-  disconnected pieces made into one project. A cursor or finger tidies the strands it passes
-  and draws them toward it. It is complete a little over half a screen down, well before
-  the cover leaves. It carries no data, so there is no caption, and it is hidden from screen
-  readers. It replaced a battery load shape, which put storage on the first screen of a
-  low-carbon page. It is seeded, so it draws the same way on every visit. With reduced motion it
-  is drawn once, complete, and never moves, and it stops whenever the cover is off screen.
-  Tests check that it draws, moves, advances on scroll, and holds still under reduced motion.
+- **The cover.** Thirty strands along the cover's floor. On arrival it plays out once: loose
+  ends on the left, partial lines each starting in its own place, tangled and out of order, are
+  carried right, where they weave into a braid and close into a near-solid, rising ribbon. After
+  that it keeps flowing, and scrolling into the document tightens all of it: the loose ends
+  straighten, the braid calms and the ribbon closes, complete a little over half a screen down.
+  One copper strand runs unbroken through it. The idea is origination: disconnected pieces made
+  into one project. A cursor or finger tidies the strands it passes and draws them toward it.
+  Every strand is one unbroken line. It carries no data, so there is no caption, and it is
+  hidden from screen readers. It replaced a battery load shape, which put storage on the first
+  screen of a low-carbon page. It is seeded, so it draws the same way on every visit. With
+  reduced motion it is drawn once, complete, and never moves, and it stops whenever the cover is
+  off screen. Tests check that it draws, completes on its own, keeps moving, tightens on
+  scroll, and holds still under reduced motion.
 - **The ground.** The document is a sheet on a desk: a cool grey ground, a centred white sheet at
   1240px carrying the contents, the sections and the footer, and the running header sized to
   match. The cover bleeds past the sheet on purpose, so the document begins when the sheet does.

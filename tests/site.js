@@ -134,15 +134,22 @@ check('the strands are decoration, and say so',memo.coverHidden==='true'&&memo.c
   await still.goto('file://'+require('path').join(__dirname,'..','index.html'));await still.waitForTimeout(700);
   const s1=await lit(still);await still.mouse.move(600,900);await still.waitForTimeout(500);const s2=await lit(still);
   check('with reduced motion they are drawn once and hold still',s1===s2&&s1!==0,s1+' / '+s2);
-  // the reader drives it: scrolling carries the strands further right
-  const count=pg=>pg.evaluate(()=>{const c=document.querySelector('.cover-load canvas');
-    const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;
-    for(let i=3;i<d.length;i+=4)if(d[i])n++;return n;});
-  const before=await count(p);
+  // the opening completes on its own, across the whole cover
+  const cols=pg=>pg.evaluate(()=>{const c=document.querySelector('.cover-load canvas');
+    const w=c.width,h=c.height,d=c.getContext('2d').getImageData(0,0,w,h).data;
+    const lit=(x0,x1)=>{const rows=new Set();for(let y=0;y<h;y++)for(let x=x0;x<x1;x+=3)
+      if(d[(y*w+x)*4+3]>40){rows.add(y);break;}return rows.size/h;};
+    return {left:lit(0,Math.floor(w/3)),right:lit(Math.floor(w*0.92),w)};});
+  await p.waitForTimeout(3000);
+  const open=await cols(p);
+  check('the opening plays out across the whole cover on its own',open.right>0.05,
+        (open.right*100).toFixed(0)+'% of rows lit at the right edge');
+  // and scrolling tightens it: the loose third pulls into a narrower band
   await p.evaluate(()=>scrollTo(0,innerHeight*0.6));await p.waitForTimeout(1600);
-  const after=await count(p);
+  const tight=await cols(p);
   await p.evaluate(()=>scrollTo(0,0));await p.waitForTimeout(300);
-  check('scrolling weaves the strands further across the cover',after>before*1.5,before+' → '+after+' pixels');
+  check('scrolling tightens the strands',tight.left<open.left*0.8,
+        (open.left*100).toFixed(0)+'% → '+(tight.left*100).toFixed(0)+'% of the height in use');
   await still.close();
 }
 check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0,5.0',memo.idx.join(' '));
