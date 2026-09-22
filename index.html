@@ -1792,18 +1792,17 @@ function section(id) {
 }
 
 /* ── the cover ───────────────────────────────────────────────────── */
-/* The cover's one moving thing: order out of disorder. Thirty strands come in
-   from the left broken, tangled and out of sequence. As they are drawn
-   together their pieces join up, each finds its own place in one bundle, and
-   the bundle rises as it goes. A single copper strand runs unbroken through
-   all of it, the thread that connects the rest. That is origination: pieces
-   that belong to no one project, connected into one, sorted, and moving. On load it
-   starts in disorder and resolves; scrolling into the document tightens it
-   further, and it leans toward a cursor or a finger. It carries no data, so
-   it needs no caption, and nothing on the page depends on it.
+/* The cover's one moving thing, and it is driven by the reader. On arrival
+   there are only loose ends on the left: thirty strands, each starting in
+   its own place, tangled and out of order. Scrolling carries them to the right, where they weave into one
+   braid and close into a near-solid ribbon, each strand in its own place and
+   rising as it goes. One copper strand runs unbroken through all of it, the
+   thread that connects the rest. That is origination: disconnected pieces
+   made into one project. A cursor or finger tidies the strands it passes
+   and draws them toward it. Every strand is one unbroken line. It carries no data, so it has no caption.
 
-   Seeded, so it is the same drawing on every visit. With reduced motion it is
-   drawn once, already settled, and never animates. Off screen it stops. */
+   Seeded, so it draws the same way on every visit. With reduced motion it is
+   drawn once, complete, and never moves. Off screen it stops. */
 function drawStrands(host) {
   const cv = document.createElement('canvas');
   cv.setAttribute('aria-hidden', 'true');
@@ -1816,12 +1815,12 @@ function drawStrands(host) {
   const lines = Array.from({ length:N }, (_, i) => ({
     y0:0.08 + rnd() * 0.84, ph:rnd() * 6.283, amp:0.06 + rnd() * 0.1,
     f:0.002 + rnd() * 0.003, off:i - (N - 1) / 2,
-    a:0.1 + rnd() * 0.3,                       /* out of order where it is loose */
-    b:0.12 + 0.36 * i / (N - 1),               /* in order once it is bundled */
-    g:0.012 + rnd() * 0.02, gp:rnd() * 6.283 }));  /* where it is broken */
+    a:0.12 + rnd() * 0.28,                      /* out of order while loose */
+    b:0.3 + 0.4 * i / (N - 1),                  /* a clean ramp once woven */
+    s:i === MID ? 0 : rnd() * 0.3 }));          /* where it begins: loose ends, not one edge */
   const smooth = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
   const cover = host.parentElement;
-  let W = 0, H = 0, px = -1e4, py = -1e4, raf = 0, vis = true;
+  let W = 0, H = 0, px = -1e4, py = -1e4, raf = 0, vis = true, shown = still ? 1 : 0;
   const t0 = performance.now();
 
   const size = () => {
@@ -1830,46 +1829,59 @@ function drawStrands(host) {
     cv.width = Math.round(W * d); cv.height = Math.round(H * d);
     cx.setTransform(d, 0, 0, d, 0, 0);
   };
+  /* how far the reader has taken it: a little on arrival, the rest on scroll,
+     complete a little over half a screen down, well before the cover leaves */
+  const target = time => still ? 1 : Math.max(0.16 * Math.min(1, time / 1.6),
+    Math.min(1, scrollY / Math.max(1, innerHeight * 0.55)));
+
   const frame = now => {
     const time = still ? 0 : (now - t0) / 1000;
-    const intro = still ? 1 : 1 - Math.pow(1 - Math.min(1, time / 2.6), 3);
-    const scroll = still ? 0 : Math.min(1, Math.max(0, scrollY / Math.max(1, cover.offsetHeight * 0.6)));
-    const gather = 0.04 + 0.52 * intro + 0.16 * scroll;     /* how far left the bundle reaches */
-    const spacing = Math.max(1.2, H * 0.0095 * (1 - 0.45 * scroll));
+    shown += (target(time) - shown) * (still ? 1 : 0.1);   /* eased, so a flick of the wheel glides */
+    const front = W * (0.34 + 0.72 * shown);                /* where the drawing has reached */
     cx.clearRect(0, 0, W, H);
     lines.forEach((l, i) => {
       cx.beginPath();
-      let pen = false;
-      for (let x = -10; x <= W + 10; x += 8) {
-        /* a short, definite resolution rather than a slow drift into line */
-        const k = smooth((x / W - (1 - gather)) / (gather * 0.6));
-        /* two waves at unrelated frequencies, so the loose end tangles */
+      const x0 = l.s * W - 10;
+      for (let x = x0; x <= Math.min(W + 10, front + 10); x += 6) {
+        const u = x / W;
+        /* the cursor joins what it passes, as well as drawing it in */
+        const dx = x - px, near = Math.exp(-(dx * dx) / 12000);
+        const k = Math.max(smooth((u - 0.28) / 0.5), near * 0.8);   /* 0 loose, 1 woven */
+        const solid = smooth((u - 0.62) / 0.34);                   /* the ribbon closing */
         const loose = l.y0 * H + (Math.sin(x * l.f + l.ph + time * 0.2)
           + 0.5 * Math.sin(x * l.f * 2.7 + l.ph * 1.3 - time * 0.13)) * l.amp * H;
-        /* the bundle climbs as it goes: progress, not only order */
-        const tight = H * (0.72 - 0.36 * x / W) + l.off * spacing + Math.sin(x * 0.004 + time * 0.3) * H * 0.015;
+        /* the braid: strands cross over one another in the middle, and the
+           crossing dies away as the ribbon closes */
+        const spacing = H * 0.02 * (1 - solid) + 1.2 * solid;
+        const braid = Math.sin(x * 0.018 + l.off * 0.55 - time * 0.4) * H * 0.07 * (1 - solid) * smooth((u - 0.3) / 0.25);
+        const tight = H * (0.7 - 0.34 * u) + l.off * spacing + braid;
         let y = loose + (tight - loose) * k;
-        const dx = x - px, dy = y - py;
-        y += (py - y) * Math.exp(-(dx * dx + dy * dy) / 9800) * 0.5;
-        /* loose, a strand is fragments; bundled, it is whole. The copper one
-           is never broken: it is what connects the others */
-        const piece = 0.5 + 0.5 * Math.sin(x * l.g + l.gp + time * 0.1);
-        const on = i === MID || piece < 0.5 + 0.7 * k;
-        if (!on) pen = false;
-        else if (pen) cx.lineTo(x, y);
-        else { cx.moveTo(x, y); pen = true; }
+        const dy = y - py;
+        y += (py - y) * Math.exp(-(dx * dx + dy * dy) / 9800) * 0.45;
+        if (x === x0) cx.moveTo(x, y); else cx.lineTo(x, y);
       }
-      if (i === MID) cx.strokeStyle = '#e08a44';
+      if (i === MID) { cx.strokeStyle = '#e08a44'; cx.lineWidth = 2; }
       else {
-        /* the shading sorts itself too: random while loose, a clean ramp once bundled */
-        const g = cx.createLinearGradient(W * (1 - gather), 0, W, 0);
-        g.addColorStop(0, 'rgba(207,224,240,' + l.a + ')');
+        /* each line fades in from its own loose end */
+        const g = cx.createLinearGradient(x0, 0, W, 0);
+        g.addColorStop(0, 'rgba(207,224,240,0)');
+        g.addColorStop(Math.min(0.5, 60 / Math.max(1, W - x0)), 'rgba(207,224,240,' + l.a + ')');
         g.addColorStop(1, 'rgba(207,224,240,' + l.b + ')');
-        cx.strokeStyle = g;
+        cx.strokeStyle = g; cx.lineWidth = 1.2;
       }
-      cx.lineWidth = i === MID ? 2 : 1;
       cx.stroke();
     });
+    /* the leading edge fades rather than stopping on a hard line */
+    if (front < W) {
+      cx.save();
+      cx.globalCompositeOperation = 'destination-out';
+      const fade = cx.createLinearGradient(front - 90, 0, front, 0);
+      fade.addColorStop(0, 'rgba(0,0,0,0)');
+      fade.addColorStop(1, 'rgba(0,0,0,1)');
+      cx.fillStyle = fade;
+      cx.fillRect(front - 90, 0, W - front + 90, H);
+      cx.restore();
+    }
   };
   const loop = now => {
     raf = 0;

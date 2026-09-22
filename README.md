@@ -33,16 +33,18 @@ machinery kept and pointed at interrogation instead.
 - **Type.** Newsreader for display, IBM Plex Sans for body, UI and the provenance bar, IBM Plex
   Mono for the document reference and the contents leaders. Institutional-technical, with real
   fallback stacks behind each, which the test suite asserts.
-- **The cover.** Thirty strands along the cover's floor. On the left they are broken, tangled
-  and out of order; moving right, their pieces join up, each strand takes its own place in one
-  bundle, and the bundle rises. One copper strand runs unbroken through all of it. The idea is
-  origination: disconnected pieces pulled into one project, put in order, and moving. It plays
-  out on load, tightens as the reader scrolls into the document, and leans toward a cursor or
-  finger. It carries no data, so there is no caption, and it is hidden from screen readers.
-  It replaced a battery load shape, which put storage on the first screen of a low-carbon
-  page. It is seeded, so it draws the same way on every visit. With reduced motion it is drawn
-  once, settled, and never moves, and it stops animating whenever the cover is off screen.
-  Tests check that it draws, that it moves, and that it holds still under reduced motion.
+- **The cover.** Thirty strands along the cover's floor, driven by the reader. On arrival there
+  are only loose ends on the left: partial lines, each starting in its own place, tangled and out
+  of order. Every strand is one unbroken line. Scrolling carries them right,
+  where they weave into one braid and close into a near-solid, rising ribbon, each strand in its
+  own place. One copper strand runs unbroken through all of it. The idea is origination:
+  disconnected pieces made into one project. A cursor or finger tidies the strands it passes
+  and draws them toward it. It is complete a little over half a screen down, well before
+  the cover leaves. It carries no data, so there is no caption, and it is hidden from screen
+  readers. It replaced a battery load shape, which put storage on the first screen of a
+  low-carbon page. It is seeded, so it draws the same way on every visit. With reduced motion it
+  is drawn once, complete, and never moves, and it stops whenever the cover is off screen.
+  Tests check that it draws, moves, advances on scroll, and holds still under reduced motion.
 - **The ground.** The document is a sheet on a desk: a cool grey ground, a centred white sheet at
   1240px carrying the contents, the sections and the footer, and the running header sized to
   match. The cover bleeds past the sheet on purpose, so the document begins when the sheet does.
