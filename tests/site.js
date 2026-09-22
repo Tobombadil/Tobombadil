@@ -20,7 +20,7 @@ check('every face declares a real fallback',await p.evaluate(()=>{
 
 const nav=await p.evaluate(()=>({secs:[...document.querySelectorAll('main section')].map(s=>s.id),
   links:[...document.querySelectorAll('nav a')].map(a=>a.getAttribute('href'))}));
-const WANT=['summary','experience','analysis','terms'];
+const WANT=['summary','experience','analysis','capture','terms'];
 check('the proposal runs in order, no method essay',nav.secs.join()===WANT.join(),nav.secs.join(', '));
 check('nav matches the sections',nav.links.join()==='#'+nav.secs.join(',#'));
 
@@ -114,20 +114,20 @@ const memo=await p.evaluate(()=>{
     steps:document.querySelectorAll('#terms .steps li').length};});
 check('the cover leads with the name',memo.cover&&memo.coverName==='Andrew T. Gibson',memo.coverName);
 check('the cover draws its load shape',memo.coverLoad>=2,memo.coverLoad+' polylines');
-check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0',memo.idx.join(' '));
+check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0,5.0',memo.idx.join(' '));
 // the contents page and the dividers read the same array, so they cannot disagree
 check('contents matches the dividers',
   memo.toc.map(t=>t.num).join()===memo.idx.join()
   &&memo.toc.map(t=>t.href).join()==='#'+WANT.join(',#'),
   memo.toc.map(t=>t.num+' '+t.name).join(' · '));
 check('every section states why it is in the document',
-  memo.thesis.length===4&&memo.thesis.every(t=>t.trim().length>18),memo.thesis.length);
+  memo.thesis.length===5&&memo.thesis.every(t=>t.trim().length>18),memo.thesis.length);
 // the thesis belongs on the divider only; printing it on the contents page too
 // made every reader read the same sentence twice
 check('the contents page does not repeat the thesis lines',
   await p.evaluate(()=>document.querySelectorAll('.toc .tthesis').length===0));
 check('nav carries names, not numbers',
-  memo.navLabels.length===4&&memo.navLabels.every(l=>!/^\d\.\d$/.test(l)),memo.navLabels.join(', '));
+  memo.navLabels.length===5&&memo.navLabels.every(l=>!/^\d\.\d$/.test(l)),memo.navLabels.join(', '));
 check('terms at a glance is populated',memo.terms>=4,memo.terms+' rows');
 // ---- the career is continuous: no year counted twice, no year unexplained ----
 // This is what let a reconciliation footnote exist at all; with the dates right

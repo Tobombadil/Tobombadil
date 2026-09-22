@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Andrew T. Gibson — Origination Proposal</title>
+<title>Andrew T. Gibson — Low-Carbon Origination</title>
 <meta name="description" content="Andrew T. Gibson — origination, structuring and project finance in wholesale power and energy infrastructure. Denver, CO. Laid out the way a power-sector filing is, with a live model you can take apart.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -255,15 +255,17 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .mfoot b{color:var(--ink);font-weight:700}
 .mfoot .tie{border-top:1px solid var(--rule-2);background:none;flex-wrap:wrap}
 .otiles{display:grid;grid-template-columns:repeat(4,1fr)}
-.otile{padding:14px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.otile:nth-child(4){border-right:0}
-.otile .k{font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:block}
-.otile .v{font:400 26px/1.15 var(--serif);display:block;margin-top:6px}
-.otile .n{font-size:10.5px;color:var(--ink-3);display:block;margin-top:3px}
+.otile,.ctile{padding:14px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.otile:nth-child(4),.ctile:nth-child(4){border-right:0}
+.otile .k,.ctile .k{font:700 9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:block}
+.otile .v,.ctile .v{font:400 26px/1.15 var(--serif);display:block;margin-top:6px}
+.otile .n,.ctile .n{font-size:10.5px;color:var(--ink-3);display:block;margin-top:3px}
 /* the same benchmark line the dials use, so one reading rule covers the box */
 .otile .fmkt,.sitem .fmkt{margin-top:5px;padding-top:5px;border-top:1px solid var(--rule-2);font-size:10px}
 .sitem .fmkt{margin-top:4px}
-.otile .v.neg{color:var(--bad)}
+.otile .v.neg,.ctile .v.neg{color:var(--bad)}
+.trade-t tr.sum td{font-weight:700;color:var(--ink);border-top:1px solid var(--rule)}
+.qans [hidden]{display:none}
 .viz{padding:16px 14px 6px}
 .viz + .viz{border-top:1px solid var(--rule)}
 .opane > .viz:first-of-type{padding-top:14px}
@@ -314,6 +316,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .breakeven-line{margin:0 0 10px;font-size:13px;line-height:1.55;color:var(--prose)}
 .breakeven-line b{color:var(--ink);font-weight:700;white-space:nowrap}
 svg.chart{display:block;min-width:440px;width:100%;height:auto}
+/* the band is drawn to its box's own width, so it never needs to scroll */
+svg.chart.zone{min-width:0}
 .tick{font:10px var(--sans);fill:var(--ink-3)}
 .axis{stroke:var(--rule);stroke-width:1}
 .gridline{stroke:var(--rule-2);stroke-width:1}
@@ -597,7 +601,7 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   h1{font-size:33px}
   section{padding:38px 0 4px}
   .otiles{grid-template-columns:repeat(2,1fr)}
-  .otile:nth-child(2){border-right:0}
+  .otile:nth-child(2),.ctile:nth-child(2){border-right:0}
   .fref{flex-basis:74px;font-size:10px}
   .job-h{grid-template-columns:1fr}
   .job .when{text-align:left}
@@ -773,9 +777,9 @@ const SITE = {
   repo:'https://github.com/Tobombadil/Tobombadil',
 
   rev:4,
-  to:'Origination and project finance, energy',
-  target:'MARKET INTELLIGENCE · ORIGINATION · PROJECT DEVELOPMENT',
-  headline:'Sourcing, structuring, and sponsoring energy projects',
+  to:'Low-carbon commercial development',
+  target:'LOW-CARBON ORIGINATION · CARBON CAPTURE · PROJECT DEVELOPMENT',
+  headline:'Originating and structuring low-carbon energy projects',
   /* Written against the shape of a low-carbon commercial development seat:
      tax credit monetization first, because that is where such a posting spends
      most of its words, then the fuels and products markets, then the modelling,
@@ -793,8 +797,8 @@ const SITE = {
      before this one carried sentences of 36, 32 and 27 words, which is where
      the reader stops following and starts scanning. */
   rec:[
-    "I source counterparties, structure agreements, and build the economics and proposals behind commercial developments in low-carbon energy. Two and a half years of that has been in biomass, pellets, SAF, biopower and carbon credits. A decade in commodities and market intelligence before it.",
-    "Section 2 covers my experience in more detail. Section 3 is an example project model, with dynamic inputs for projecting the financials and testing the assumptions.",
+    "I originate and structure low-carbon energy projects. That means sourcing the counterparties, negotiating the agreements, and building the economics that get a project approved. Two and a half years of it has been in biomass, pellets, SAF, biopower and carbon credits, with §45Q, §45Y and life cycle analysis inside the models. A decade in commodities and market intelligence came before it.",
+    "Section 2 covers my experience. Sections 3 and 4 are two worked cases with live inputs: a biopower relocation, and ethanol plants sharing a CO₂ pipeline and store.",
   ],
   /* Four rows. Looking for and Based repeated the cover's To and From, and
      Status repeated the booking link in 4.0, so a reader met each of them
@@ -802,8 +806,8 @@ const SITE = {
   terms:[
     ['Level', 'Open. The desk matters more than the title', null],
     ['Travel', 'To 50%', null],
-    ['Markets', 'US power. MISO, the West and ERCOT', null],
-    ['Counterparties', 'Utilities, cooperatives, municipals, developers, large loads', null],
+    ['Markets', 'US low-carbon: carbon capture, biofuels, biopower, clean power', null],
+    ['Counterparties', 'Emitters, fuel producers, midstream, utilities, developers, large loads', null],
   ],
 
 
@@ -844,6 +848,35 @@ const SITE = {
      "a coin flip. Inspect before buying."],
   ],
   against:"I built this around a cooperative or municipal with a data centre arriving in its territory. Firm local power years before they could build it themselves. Everything that could sink the deal is a dial below. Change any number that looks wrong.",
+  /* 4.0, the capture case. The same shape as 3.0: the case, the counterweight,
+     the screen, then the model. Figures the workbook owns are templated. */
+  capture:{
+    question:"Can an ethanol plant pay enough to ship and store its CO₂ for the pipe to get built, on §45Q alone?",
+    source:"Not a deal I have worked on. It is the midstream side of the credit I price into biomass projects, built from the statute and public ranges.",
+    thesis:[
+      ['Why ethanol first',
+       "Fermentation gives off CO₂ that is nearly pure, so capture is drying and compression rather than a chemical plant. It is the cheapest industrial tonne there is, and the US has close to two hundred of these plants."],
+      ['Why the credit is the deal',
+       "§45Q pays ${Capture!C18:num0} a tonne stored, for {Capture!C19:num0} years. At an ethanol plant, capture costs a fraction of that. The spread is real, and the negotiation is over how it is split."],
+      ['Why the pipe is the risk',
+       "The large new-build CO₂ pipelines proposed across the upper Midwest stalled on route permits and landowner opposition, not on price. An existing line or right of way cuts the capital and the permitting risk together."],
+      ['Why the tariff is the deal',
+       "Everything between what the pipe needs and what the plant can afford is value to divide. Long-term ship-or-pay contracts with the plants are what finance the pipe."],
+    ],
+    against:"I built this from the midstream side: a pipe and a store that need enough plants signed to be worth building. The answer is most sensitive to plants signed and to the cost of the line, so start there. Change any number that looks wrong.",
+    musts:[
+      ['A Class VI permit for the store',
+       'injection permits are slow, and only a handful of states issue their own.'],
+      ['A route that can be permitted',
+       'the large new-build lines stalled here, not on economics.'],
+      ['Signed ship-or-pay volume',
+       'the pipe is financed on contracts, not on a forecast.'],
+      ['A monitoring plan the IRS accepts',
+       'no approved plan for measuring what stays stored, no credit.'],
+    ],
+    leaves:"Credit indexing for inflation, the years it takes to build, income tax on the margin, CO₂ from other sources on the same line, and any value after year twelve. They cut both ways. The largest, the pipe's life after the credit ends, would help the pipe.",
+  },
+
   next:[
     "Half an hour, no slides. I would rather hear what you are trying to get done.",
     "Send me a model and ask me to pull it apart, or use section 3, which is already open.",
@@ -894,7 +927,8 @@ const SECTIONS = [
   ['summary',    '1.0', 'Summary',               'What the job asks for, and where I already meet it', 'Summary'],
   ['experience', '2.0', 'Experience',            'Four roles, and what I built in each', 'Experience'],
   ['analysis',   '3.0', 'Supporting analysis',   'A deal I costed out, and the questions I would ask', 'Analysis'],
-  ['terms',      '4.0', 'Terms and next steps',  'How to reach me, and what I would suggest next', 'Terms'],
+  ['capture',    '4.0', 'Capture case',          'What an ethanol plant can pay to store its CO₂, and what a pipe needs', 'Capture'],
+  ['terms',      '5.0', 'Terms and next steps',  'How to reach me, and what I would suggest next', 'Terms'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1138,7 +1172,92 @@ const SHEETS = [
     C63:{v:'=IRR(B62:W62)', f:'pct1'},
   }
 },
+
+/* The capture case: ethanol plants that capture their fermentation CO2, and a
+   pipe and a store that take it. Both sides are valued over the twelve years
+   of the credit, before income tax, with nothing after. The credit is
+   statute; everything else is an industry range. The question is the tariff:
+   the most a plant can pay and still clear its hurdle, against the least the
+   pipe needs to clear its own. Every figure is levelized at the payer's own
+   hurdle, so the two sides can be read on one axis. */
+{
+  name:'Capture', rows:52, cols:[], cells:{
+    C5: {v:120,   f:'num0', input:true, min:40,   max:300,  step:5,    lbl:'Ethanol plant size', u:'M gal/yr', grp:'The plant',
+         mkt:[50,150],      s:'CIND', note:'where most US plants sit'},
+    /* stoichiometry, not an assumption: one molecule of CO2 for every one of
+       ethanol, at the mass ratio 44.01 to 46.07, over a gallon of ethanol */
+    C6: {v:'=44.01/46.07*0.7893*3.78541', f:'num2', mkt:[2.8,3.0], s:'STOICH'},
+    C7: {v:0.92,  f:'pct0', input:true, min:0.60, max:0.99, step:0.01, lbl:'Share of CO₂ captured', u:'', grp:'The plant',
+         mkt:[0.85,0.95],   s:'CIND', note:'the compressor has to be running'},
+    C8: {v:'=C5*C6*C7', f:'num0'},                        /* thousand tonnes a year, per plant */
+    C10:{v:30,    f:'num0', input:true, min:10,   max:80,   step:1,    lbl:'Capture capex', u:'$M', grp:'The plant',
+         mkt:[20,45], mpre:'$', msuf:'M', mf:'num0', s:'CIND', note:'drying, compression, metering'},
+    C11:{v:10,    f:'num1', input:true, min:4,    max:25,   step:0.5,  lbl:'Capture operating cost', u:'$/t', grp:'The plant',
+         mkt:[7,15],        s:'CIND', note:'mostly the power to compress it'},
+    C12:{v:0.12,  f:'pct1', input:true, min:0.08, max:0.18, step:0.005,lbl:'Plant hurdle rate', u:'p.a.', grp:'The plant',
+         mkt:[0.10,0.15],   s:'CIND'},
+
+    C14:{v:35,    f:'num0', input:true, min:5,    max:90,   step:1,    lbl:'Transport and storage tariff', u:'$/t', grp:'The deal',
+         mkt:[20,45],       s:'CIND', note:'what the plant pays the pipe'},
+    C15:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.00, step:0.01, lbl:'Credit transfer price', u:'after direct pay', grp:'The deal',
+         mkt:[0.90,0.95],   s:'X6418', note:'the buyer takes the discount'},
+    C16:{v:0,     f:'num2', input:true, min:0,    max:0.30, step:0.01, lbl:'Low-carbon fuel premium', u:'$/gal', grp:'The deal',
+         mkt:[0.05,0.25],   s:'CIF', note:'time-limited, so off in the base case'},
+
+    C18:{v:85,    f:'num0', s:'IRC45Q'},                  /* $/t, geologic storage */
+    C19:{v:12,    f:'num0', s:'IRC45Q'},                  /* years of credit */
+    C20:{v:5,     f:'num0', s:'X6417'},                   /* years of direct pay */
+
+    C22:{v:0,     f:'num0'},                              /* 0 new build, 1 converted line */
+    C23:{v:300,   f:'num0', input:true, min:50,   max:800,  step:10,   lbl:'Route length', u:'miles', grp:'The pipe and the store',
+         mkt:[100,500],     s:'CIND', note:'trunk and laterals, plants to the store'},
+    C24:{v:1.6,   f:'num2', input:true, min:0.8,  max:3.5,  step:0.05, lbl:'New pipe', u:'$M per mile', grp:'The pipe and the store',
+         mkt:[1.0,2.5], mpre:'$', msuf:'M', mf:'num1', s:'CIND', note:'rural, 8 to 12 inch'},
+    C25:{v:0.4,   f:'num2', input:true, min:0.1,  max:1.2,  step:0.05, lbl:'Converting an existing line', u:'$M per mile', grp:'The pipe and the store',
+         mkt:[0.2,0.8], mpre:'$', msuf:'M', mf:'num1', s:'CIND', note:'inspection, valves, compression'},
+    C26:{v:120,   f:'num0', input:true, min:40,   max:300,  step:5,    lbl:'Storage hub', u:'$M', grp:'The pipe and the store',
+         mkt:[80,200], mpre:'$', msuf:'M', mf:'num0', s:'CIND', note:'characterization, Class VI wells, monitoring'},
+    C27:{v:10,    f:'num0', input:true, min:1,    max:30,   step:1,    lbl:'Plants signed', u:'on the system', grp:'The pipe and the store',
+         mkt:[5,15],        s:'CIND', note:'the pipe is sized to its contracts'},
+    C28:{v:6,     f:'num1', input:true, min:2,    max:15,   step:0.5,  lbl:'Pipe and store operating cost', u:'$/t', grp:'The pipe and the store',
+         mkt:[4,10],        s:'CIND'},
+    C29:{v:0.09,  f:'pct1', input:true, min:0.06, max:0.14, step:0.005,lbl:'Pipe hurdle rate', u:'p.a.', grp:'The pipe and the store',
+         mkt:[0.08,0.11],   s:'CIND'},
+
+    C30:{v:'=C26+C23*IF(C22=1,C25,C24)', f:'num0'},       /* pipe and store capex, $M */
+    C31:{v:'=C8*C27/1000', f:'num2'},                     /* system throughput, Mt a year */
+    C32:{v:'=(1-(1+C12)^(0-C19))/C12', f:'num3'},         /* plant annuity over the credit */
+    C33:{v:'=(1-(1+C12)^(0-MIN(C20,C19)))/C12', f:'num3'},/* ...over the direct-pay years */
+    C34:{v:'=(1-(1+C29)^(0-C19))/C29', f:'num3'},         /* pipe annuity over the credit */
+    /* per tonne, levelized at the plant's hurdle */
+    C35:{v:'=C18*(C33+C15*(C32-C33))/C32', f:'num1'},     /* the credit, after monetization */
+    C36:{v:'=C16*1000/(C6*C7)', f:'num1'},                /* fuel premium, per tonne captured */
+    C37:{v:'=C10/(C8/1000*C32)', f:'num1'},               /* capture capital, recovered */
+    C38:{v:'=C35+C36-C11-C37', f:'num1'},                 /* the most the plant can pay */
+    C39:{v:'=C30/(C31*C34)+C28', f:'num1'},               /* the least the pipe needs */
+    C40:{v:'=C38-C39', f:'num1'},                         /* room to negotiate */
+    C41:{v:'=(C38-C14)*C8/1000*C32', f:'num1'},           /* plant NPV at its hurdle, $M */
+    C42:{v:'=(C14-C39)*C31*C34', f:'num1'},               /* pipe NPV at its hurdle, $M */
+    C43:{v:'=IF(C40>0,MAX(0,MIN(1,(C38-C14)/C40)),0)', f:'pct0'},
+    C44:{v:'=C38-C14', f:'num1'},                         /* left to the plant, per tonne */
+    C45:{v:'=IRR(B50:N50)', f:'pct1'},
+    C46:{v:'=IRR(B51:N51)', f:'pct1'},
+
+    B50:{v:'=0-C10', f:'num1'},
+    B51:{v:'=0-C30', f:'num1'},
+  }
+},
 ];
+
+/* ---- the twelve credit years, one plant and the whole pipe ---- */
+(function buildCapture(){
+  const s = SHEETS.find(x => x.name === 'Capture');
+  ['C','D','E','F','G','H','I','J','K','L','M','N'].forEach((c, i) => {
+    s.cells[c+'49'] = { v:i + 1, f:'num0' };
+    s.cells[c+'50'] = { v:`=IF(${c}49<=C$19,C$8/1000*(IF(${c}49<=C$20,C$18,C$18*C$15)+C$36-C$11-C$14),0)`, f:'num1' };
+    s.cells[c+'51'] = { v:`=IF(${c}49<=C$19,C$31*(C$14-C$28),0)`, f:'num1' };
+  });
+})();
 
 /* ---- the twenty operating years, built in a loop ---- */
 const YCOLS = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W'];
@@ -1399,7 +1518,8 @@ const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_
 /* The cover's second row, built after SITE so the URLs are written once. Label,
    target, and whether it leaves the page. */
 SITE.tools = [
-  ['The model',        '#analysis',      false],
+  ['Biopower model',   '#analysis',      false],
+  ['Capture model',    '#capture',       false],
   ['Battery simulator', SITE.simulator,  true],
   ['Bankable',          SITE.bankable,   true],
 ];
@@ -1499,6 +1619,29 @@ const SRC = {
   'Model!C56': ['Levered equity IRR', 'The return on the equity alone, after debt service and tax, with the construction draw counted at the front.'],
   'Model!C63': ['Project IRR', 'The unlevered return: the whole build funded up front, and tax carrying no interest shield. The spread against the levered return is what the financing contributes.'],
   'Model!C57': ['DSCR, worst year', 'The lowest cover ratio inside the tenor. Debt service is sculpted to hold the ratio at its target, so it lands there in every year rather than sagging in one.'],
+
+  /* 4.0, the capture case */
+  'Capture!C6':  ['CO₂ per gallon', 'Chemistry rather than an assumption. Fermentation releases one molecule of CO₂ per molecule of ethanol, at a mass ratio of 44 to 46, over the 2.99 kg a gallon of ethanol weighs.', '', ' kg'],
+  'Capture!C8':  ['CO₂ captured, per plant', 'A {C5} million gallon plant makes {C6} kg of CO₂ per gallon, and {C7} of it is captured. In thousands of metric tonnes a year.', '', 'k t/yr'],
+  'Capture!C18': ['§45Q rate', 'The credit per metric tonne for CO₂ captured and put into secure geologic storage, with prevailing wage met. Public law, not an assumption of this model.', '$', '/t'],
+  'Capture!C19': ['Credit period', 'The credit runs for twelve years from when the capture equipment is placed in service. Both sides are valued over those years and nothing after.', '', ' yrs'],
+  'Capture!C20': ['Direct-pay years', 'For the first five years the credit can be taken as cash under §6417, at face. After that it is sold to a taxpayer at the transfer price.', '', ' yrs'],
+  'Capture!C11': ['Capture operating cost', 'Mostly the electricity to compress the gas to pipeline pressure, plus drying, maintenance and monitoring at the plant.', '$', '/t'],
+  'Capture!C14': ['Transport and storage tariff', 'What the plant pays the pipe per tonne delivered. It moves value from one side to the other and changes nothing about the size of the pie.', '$', '/t'],
+  'Capture!C35': ['§45Q, as the plant receives it', 'The ${C18} credit at face for {C20} years of direct pay, then at the {C15} transfer price. Levelized over the credit period at the plant hurdle of {C12}.', '$', '/t'],
+  'Capture!C36': ['Low-carbon fuel premium', 'A premium of ${C16} a gallon on every gallon the plant sells, spread over the tonnes it captures: about {C6} kg of CO₂ comes with each gallon.', '$', '/t'],
+  'Capture!C37': ['Capture capital, recovered', 'The ${C10}M of capture equipment, recovered over the credit period at the plant hurdle and spread over {C8} thousand tonnes a year.', '$', '/t'],
+  'Capture!C38': ['Most the plant can pay', 'The credit as received, plus any fuel premium, less the cost of capturing the tonne and recovering the equipment at the plant hurdle. Pay more than this and the capture project destroys value.', '$', '/t'],
+  'Capture!C39': ['Least the pipe needs', 'The ${C30}M line and store recovered at the pipe hurdle of {C29} over {C31} million tonnes a year, plus ${C28} a tonne to run it.', '$', '/t'],
+  'Capture!C40': ['Room to negotiate', 'The most the plant can pay less the least the pipe needs. Any tariff inside the band leaves both sides above their hurdle. Below zero, no tariff does.', '$', '/t'],
+  'Capture!C43': ['Plant share of the band', 'Where the tariff sits in the band. At 100% the plant keeps all of it and the pipe only just clears its hurdle.'],
+  'Capture!C44': ['Left to the plant', 'The most the plant can pay, less the tariff it actually pays. Value above its hurdle, per tonne.', '$', '/t'],
+  'Capture!C41': ['Plant NPV', 'What is left to the plant per tonne, over {C8} thousand tonnes a year for the credit period, discounted at its hurdle.', '$', 'M'],
+  'Capture!C42': ['Pipe NPV', 'The tariff less the least the pipe needs, over {C31} million tonnes a year for the credit period, discounted at its hurdle.', '$', 'M'],
+  'Capture!C45': ['Plant IRR', 'The capture equipment against twelve years of credit and premium, less operating cost and tariff. Before income tax.'],
+  'Capture!C46': ['Pipe IRR', 'The line and the store against twelve years of tariff, less operating cost. Before income tax.'],
+  'Capture!C30': ['Pipe and store capex', 'A ${C26}M storage hub plus {C23} miles of line, new or converted as configured.', '$', 'M'],
+  'Capture!C31': ['System throughput', '{C27} plants at {C8} thousand tonnes a year each.', '', ' Mt/yr'],
 };
 [[7,'Compass International'],[8,'Pakira'],[9,'Forest City'],[10,'Morgan Stanley']].forEach(([r, co]) => {
   SRC['Career!F' + r] = ['Tenure, ' + co,
@@ -1960,6 +2103,11 @@ const BENCH = {
   IRC48E: ['IRC §48E',   'Clean electricity investment credit, statutory rate.'],
   IRC172: ['IRC §172',   'Statutory cap on how much income a carried-forward loss may offset.'],
   IRC:    ['IRC',              'US statutory federal corporate rate.'],
+  CIND:   ['industry range',   'Ranges a capture developer, midstream operator or lender would recognize. Not a published figure.'],
+  STOICH: ['stoichiometry',    'Fermentation makes one molecule of carbon dioxide for every molecule of ethanol, so the mass per gallon follows from chemistry.'],
+  IRC45Q: ['IRC §45Q',   'Carbon oxide sequestration credit: the rate for secure geologic storage, and the twelve years it runs.'],
+  X6417:  ['IRC §6417',  'Elective payment: a §45Q credit can be taken as cash for the first five years, even without a tax bill to offset.'],
+  CIF:    ['§45Z or LCFS', 'What a lower carbon-intensity score earns per gallon of fuel, whether from the federal clean fuel credit or a state program. Both are time-limited or volatile.'],
   AZ:     ['A.R.S. §43-1111', 'Arizona statutory corporate rate, deductible against federal.'],
 };
 
@@ -2143,17 +2291,37 @@ function uniformBreakeven(dirs) {
   return { t:(a + b) / 2 };
 }
 
-function picker(ref, label, opts) {
+function picker(ref, label, opts, sheet = 'Assumptions') {
+  const id = (sheet === 'Assumptions' ? '' : sheet + '-') + ref;
   const f = $('div', 'fld');
   const h = $('div', 'fld-h');
-  const l = $('label', null, label); l.htmlFor = 'sel-' + ref;
+  const l = $('label', null, label); l.htmlFor = 'sel-' + id;
   h.appendChild(l); f.appendChild(h);
-  const sel = $('select'); sel.id = 'sel-' + ref; sel.dataset.bind = 'Assumptions!' + ref;
+  const sel = $('select'); sel.id = 'sel-' + id; sel.dataset.bind = sheet + '!' + ref;
   opts.forEach(([v, t]) => { const o = $('option', null, t); o.value = v; sel.appendChild(o); });
-  sel.value = SHEET_BY_NAME['Assumptions'].cells[ref].v;
-  sel.addEventListener('change', () => { overrides['Assumptions!' + ref] = parseFloat(sel.value); recalc(); });
+  sel.value = SHEET_BY_NAME[sheet].cells[ref].v;
+  sel.addEventListener('change', () => { overrides[sheet + '!' + ref] = parseFloat(sel.value); recalc(); });
   f.appendChild(sel);
   return f;
+}
+
+/* a collapsible group of dials, or of figures that do not move */
+function inputGroup(parent, title, open, fill) {
+  const sec = $('div', 'igrp');
+  sec.dataset.open = open ? '1' : '0';
+  const hd = $('button', 'igh'); hd.type = 'button';
+  hd.setAttribute('aria-expanded', String(open));
+  hd.append($('span', null, title), $('span', 'chev', '▾'));
+  hd.addEventListener('click', () => {
+    const isOpen = sec.dataset.open !== '0';
+    sec.dataset.open = isOpen ? '0' : '1';
+    hd.setAttribute('aria-expanded', String(!isOpen));
+  });
+  sec.appendChild(hd);
+  const body = $('div', 'igb');
+  fill(body);
+  sec.appendChild(body);
+  parent.appendChild(sec);
 }
 
 function syncControls() {
@@ -2244,24 +2412,7 @@ function secAnalysis(){
   ih.appendChild(rb);
   inp.appendChild(ih);
 
-  /* a collapsible group of dials, or of figures that do not move */
-  function group(title, open, fill) {
-    const sec = $('div', 'igrp');
-    sec.dataset.open = open ? '1' : '0';
-    const hd = $('button', 'igh'); hd.type = 'button';
-    hd.setAttribute('aria-expanded', String(open));
-    hd.append($('span', null, title), $('span', 'chev', '▾'));
-    hd.addEventListener('click', () => {
-      const isOpen = sec.dataset.open !== '0';
-      sec.dataset.open = isOpen ? '0' : '1';
-      hd.setAttribute('aria-expanded', String(!isOpen));
-    });
-    sec.appendChild(hd);
-    const body = $('div', 'igb');
-    fill(body);
-    sec.appendChild(body);
-    inp.appendChild(sec);
-  }
+  const group = (title, open, fill) => inputGroup(inp, title, open, fill);
 
   /* Three groups open ran this column to 1,181px against a 461px pane, which
      left most of the box empty. One group is 558px and lines up with the
@@ -2519,6 +2670,313 @@ function secAnalysis(){
   w.appendChild(box);
 }
 
+/* ── 4.0 the capture case ────────────────────────────────────────── */
+/* A second instrument, smaller than the first, and deliberately about the
+   other side of the table: not whether one project clears its hurdle, but
+   whether two parties with different hurdles can both clear theirs at one
+   price. Everything below reads the Capture sheet. */
+function captureDial(ref, def) {
+  const id = 'Capture-' + ref;
+  const f = $('div', 'fld');
+  const h = $('div', 'fld-h');
+  const l = $('label', null, def.lbl); l.htmlFor = 'in-' + id;
+  const o = $('output'); o.id = 'out-' + id; o.dataset.out = 'Capture!' + ref;
+  if (def.u) o.dataset.unit = def.u;
+  h.append(l, o); f.appendChild(h);
+  const sl = $('input'); sl.type = 'range'; sl.id = 'in-' + id;
+  sl.min = def.min; sl.max = def.max; sl.step = def.step; sl.value = def.v;
+  sl.dataset.bind = 'Capture!' + ref;
+  sl.setAttribute('aria-label', def.lbl + (def.u ? ', ' + def.u : ''));
+  sl.addEventListener('input', () => { overrides['Capture!' + ref] = parseFloat(sl.value); recalc(); });
+  f.appendChild(sl);
+  const mk = marketLine(def);
+  if (mk) f.appendChild(mk);
+  return f;
+}
+
+function secCapture(){
+  const w = section('capture');
+  const C = SITE.capture;
+  const cc = (ref, pre, suf) => {
+    const s = $('span');
+    if (pre) s.append(pre);
+    s.appendChild(cell('Capture', ref));
+    if (suf) s.append(suf);
+    return s;
+  };
+
+  const q = $('div', 'qbox');
+  q.appendChild($('p', 'qlab', 'The question'));
+  q.appendChild($('p', 'qline', C.question));
+  /* the verdict and the tail are the model's to give, so both are rewritten
+     at recalc: a band below zero has no share to quote */
+  const ans = $('p', 'qans'); ans.id = 'cc-ans';
+  ans.appendChild($('b', 'qverdict', ''));
+  ans.append(' A plant can pay up to ', cc('C38', '$', ' a tonne'), ' and still clear its hurdle. ');
+  ans.appendChild($('span', null, '')).id = 'cc-pipe';
+  ans.append(' needs ', cc('C39', '$'), ' to clear its own.');
+  const yes = $('span'); yes.id = 'cc-yes';
+  yes.append(' That leaves ', cc('C40', '$'), ' a tonne to negotiate, and at a ',
+    cc('C14', '$'), ' tariff the plant keeps ', cc('C43'), ' of it.');
+  const no = $('span', null, ' No tariff leaves both sides above their hurdle.'); no.id = 'cc-no';
+  ans.append(yes, no);
+  q.appendChild(ans);
+  q.appendChild($('p', 'qsrc', C.source));
+  w.appendChild(q);
+
+  const why = $('div', 'why');
+  why.appendChild($('h3', null, 'What the answer rests on'));
+  const wg = $('div', 'whys');
+  C.thesis.forEach(([k, v]) => {
+    const c = $('div', 'whyc');
+    c.appendChild($('b', null, k));
+    c.appendChild($('p', null, say(v)));
+    wg.appendChild(c);
+  });
+  why.appendChild(wg);
+  why.appendChild($('p', 'against', C.against));
+  why.appendChild($('h4', 'mustsh', 'What has to be true first'));
+  const ml = $('ul', 'musts');
+  C.musts.forEach(([k, v]) => {
+    const li = $('li');
+    li.appendChild($('b', null, k));
+    li.append(' ' + v);
+    ml.appendChild(li);
+  });
+  why.appendChild(ml);
+  w.appendChild(why);
+
+  const box = $('div', 'model');
+  const inp = $('div', 'inputs');
+  const ih = $('h3');
+  ih.append('Assumptions');
+  const rb = $('button', 'reset', 'Reset'); rb.type = 'button';
+  /* resets this model only; 3.0 keeps whatever its reader has dialled */
+  rb.addEventListener('click', () => {
+    Object.keys(overrides).filter(k => k.startsWith('Capture!')).forEach(k => delete overrides[k]);
+    document.querySelectorAll('[data-bind^="Capture!"]').forEach(el => {
+      el.value = SHEET_BY_NAME['Capture'].cells[el.dataset.bind.split('!')[1]].v;
+    });
+    recalc();
+  });
+  ih.appendChild(rb);
+  inp.appendChild(ih);
+
+  const groups = new Map();
+  const cells = SHEET_BY_NAME['Capture'].cells;
+  for (const ref in cells) {
+    const d = cells[ref];
+    if (!d.input) continue;
+    if (!groups.has(d.grp)) groups.set(d.grp, []);
+    groups.get(d.grp).push(ref);
+  }
+  /* the tariff first, because it is the number the negotiation is about */
+  const startClosed = matchMedia('(max-width:680px)').matches;
+  ['The deal', 'The plant', 'The pipe and the store'].forEach(grp => {
+    inputGroup(inp, grp, !startClosed && grp === 'The deal', body => {
+      if (grp === 'The pipe and the store')
+        body.appendChild(picker('C22', 'The line',
+          [[0, 'Built new'], [1, 'An existing line, converted']], 'Capture'));
+      groups.get(grp).forEach(ref => body.appendChild(captureDial(ref, cells[ref])));
+    });
+  });
+  inputGroup(inp, 'Held constant', false, body => {
+    const ul = $('ul', 'hfld');
+    [['§45Q rate, geologic storage', 'C18', '$', '/t'], ['Credit period', 'C19', '', ' yrs'],
+     ['Direct pay (§6417)', 'C20', '', ' yrs'], ['CO₂ per gallon', 'C6', '', ' kg']].forEach(([k, ref, pre, suf]) => {
+      const li = $('li');
+      li.append($('span', 'k', k));
+      const v = $('span', 'v');
+      v.appendChild(cc(ref, pre, suf));
+      li.appendChild(v);
+      const mk = marketLine(cells[ref]);
+      if (mk) li.appendChild(mk);
+      ul.appendChild(li);
+    });
+    body.appendChild(ul);
+  });
+  const key = $('p', 'bkey');
+  key.append('Grey figures are the range the market would expect, with its source. ',
+    $('i', null, 'Hover a source to see what it is.'));
+  inp.appendChild(key);
+
+  const out = $('div', 'outputs');
+  out.appendChild($('h3', null, 'The deal zone'));
+  const tiles = $('div', 'otiles');
+  [['Most the plant can pay', 'C38', '$', '/t', 'Its hurdle, met exactly'],
+   ['Least the pipe needs', 'C39', '$', '/t', 'Its hurdle, met exactly'],
+   ['Room to negotiate', 'C40', '$', '/t', 'Per tonne, across the band'],
+   ['Plant share', 'C43', '', '', 'Of the band, at the tariff']].forEach(([k, ref, pre, suf, n]) => {
+    const t = $('div', 'ctile');
+    t.appendChild($('span', 'k', k));
+    const v = $('span', 'v');
+    v.dataset.ctile = ref;
+    v.appendChild(cc(ref, pre, suf));
+    t.appendChild(v);
+    t.appendChild($('span', 'n', n));
+    tiles.appendChild(t);
+  });
+  out.appendChild(tiles);
+
+  const vz = $('div', 'viz');
+  vz.appendChild($('h4', null, 'Where the tariff can land'));
+  const zc = $('p', 'cap');
+  zc.append('In $ per tonne. Any tariff inside the band leaves both sides above their hurdle, and the marker is the one dialled. ');
+  zc.appendChild($('span', null, '')).id = 'cc-alt';
+  vz.appendChild(zc);
+  const zb = $('div', 'chartbox'); zb.id = 'zone';
+  vz.appendChild(zb);
+  out.appendChild(vz);
+
+  const vt = $('div', 'viz');
+  vt.appendChild($('h4', null, 'Where a tonne of CO₂ goes'));
+  vt.appendChild($('p', 'cap', 'Per tonne, levelized over the credit period at the plant hurdle, so each line is directly comparable.'));
+  const tb = $('table', 'trade-t'); tb.id = 'tonne';
+  const tbody = $('tbody');
+  [['§45Q, as the plant receives it', 'C35', ''], ['Low-carbon fuel premium', 'C36', ''],
+   ['Less capture operating cost', 'C11', 'less'], ['Less capture capital, recovered', 'C37', 'less'],
+   ['Most the plant can pay', 'C38', 'sum'], ['Less the tariff', 'C14', 'less'],
+   ['Left to the plant', 'C44', 'sum']].forEach(([k, ref, kind]) => {
+    const tr = $('tr');
+    if (kind === 'sum') tr.className = 'sum';
+    tr.appendChild($('td', null, k));
+    const td = $('td', 'n');
+    td.appendChild(cc(ref, kind === 'less' ? '−$' : '$'));
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+  tb.appendChild(tbody);
+  vt.appendChild(tb);
+  out.appendChild(vt);
+
+  const st = $('div', 'stack');
+  [['Plant NPV', 'C41', '$', 'M'], ['Pipe NPV', 'C42', '$', 'M'],
+   ['Plant IRR', 'C45', '', ''], ['Pipe IRR', 'C46', '', '']].forEach(([k, ref, pre, suf]) => {
+    const d = $('div', 'sitem');
+    d.appendChild($('span', 'k', k));
+    const v = $('span', 'v');
+    v.appendChild(cc(ref, pre, suf));
+    d.appendChild(v);
+    st.appendChild(d);
+  });
+  out.appendChild(st);
+
+  const foot = $('div', 'mfoot');
+  const gp = $('p');
+  gp.append($('b', null, 'What this leaves out. '), C.leaves);
+  foot.appendChild(gp);
+  box.append(inp, out, foot);
+  w.appendChild(box);
+}
+
+/* The band as a number line: the pipe's floor, the plant's ceiling, and the
+   tariff between them. One axis, one unit, so the two parties can be read
+   against each other without a second scale. */
+function drawZone() {
+  const host = document.getElementById('zone');
+  if (!host) return;
+  host.textContent = '';
+  const floor = val('Capture', 'C39'), ceil = val('Capture', 'C38'), t = val('Capture', 'C14');
+  const conv = val('Capture', 'C22') === 1;
+  const alt = underScenario({ 'Capture!C22':conv ? 0 : 1 }, () => val('Capture', 'C39'));
+  /* drawn at the width it is shown at, so the labels stay at reading size on
+     a phone instead of shrinking with a fixed viewBox */
+  const W = Math.max(300, Math.round(host.clientWidth) || 760), H = 124, ml = 16, mr = 16, iw = W - ml - mr;
+  const { top, ticks } = niceScale(Math.max(ceil, floor, t, alt, 10) * 1.08, 6);
+  const x = v => ml + Math.max(0, Math.min(top, v)) / top * iw;
+  const $$ = v => '$' + formatValue(v, 'num1');
+  const ok = ceil > floor;
+  const svg = svgEl('svg', { class:'chart zone', viewBox:'0 0 ' + W + ' ' + H, role:'img',
+    'aria-label':'The pipe needs at least ' + $$(floor) + ' a tonne and the plant can pay at most ' +
+      $$(ceil) + '. ' + (ok ? 'The band between them is ' + $$(ceil - floor) + ' wide' : 'There is no band') +
+      ', and the tariff is set at ' + $$(t) + '.' });
+  const tipOn = (el, html) => {
+    const on = ev => showTip(html(), ev.clientX, ev.clientY);
+    el.addEventListener('pointerenter', on);
+    el.addEventListener('pointermove', on);
+    el.addEventListener('pointerleave', hideTip);
+  };
+
+  const yA = 76, yB = 48;
+  ticks.forEach(v => {
+    const tk = svgEl('text', { class:'tick', x:x(v), y:yA + 16, 'text-anchor':'middle' });
+    tk.textContent = '$' + v;
+    svg.appendChild(tk);
+    svg.appendChild(svgEl('line', { class:'gridline', x1:x(v), x2:x(v), y1:yB - 4, y2:yA }));
+  });
+  svg.appendChild(svgEl('line', { class:'axis', x1:ml, x2:W - mr, y1:yA, y2:yA }));
+
+  const lo = Math.min(floor, ceil), hi = Math.max(floor, ceil);
+  const band = svgEl('rect', { x:x(lo), y:yB, width:Math.max(1, x(hi) - x(lo)), height:yA - yB,
+    fill:ok ? 'var(--good)' : 'var(--bad)', 'fill-opacity':0.16 });
+  band.dataset.band = ok ? 'deal' : 'none';
+  tipOn(band, () => ok
+    ? '<b>Room to negotiate</b>' + $$(floor) + ' to ' + $$(ceil) + ' <i>' + $$(ceil - floor) + ' a tonne</i>'
+    : '<b>No deal</b>The pipe needs <i>' + $$(floor - ceil) + '</i> a tonne more than the plant can pay');
+  svg.appendChild(band);
+
+  /* the two ends, each in its party's series color; the text stays in ink */
+  const end = (v, color, label, anchorLeft) => {
+    const ln = svgEl('line', { x1:x(v), x2:x(v), y1:yB - 4, y2:yA, stroke:color, 'stroke-width':3 });
+    ln.dataset.end = label;
+    tipOn(ln, () => '<b>' + label + '</b><i>' + $$(v) + '</i> a tonne');
+    /* a label that would run off the frame flips to the other side of its line */
+    const text = label + ' ' + $$(v), wide = text.length * 5.8;
+    if (anchorLeft && x(v) - 6 - wide < 0) anchorLeft = false;
+    else if (!anchorLeft && x(v) + 6 + wide > W) anchorLeft = true;
+    const tx = svgEl('text', { class:'tick', x:x(v) + (anchorLeft ? -6 : 6), y:yB - 10,
+      'text-anchor':anchorLeft ? 'end' : 'start' });
+    tx.setAttribute('fill', 'var(--ink-2)');
+    tx.setAttribute('font-weight', '700');
+    tx.textContent = text;
+    svg.append(ln, tx);
+    const x0 = anchorLeft ? x(v) - 6 - wide : x(v) + 6;
+    return { tx, x0, x1:x0 + wide };
+  };
+  /* anchored away from each other, so the labels cannot collide */
+  const a = end(floor, 'var(--series-2)', 'Pipe needs', floor <= ceil);
+  const b = end(ceil, 'var(--series-1)', 'Plant can pay', ceil < floor);
+  /* and when a narrow band still puts them on top of each other, one steps up */
+  if (a.x0 < b.x1 + 4 && b.x0 < a.x1 + 4) b.tx.setAttribute('y', yB - 24);
+
+  /* the other line, for comparison: dotted, and named in the caption */
+  const al = svgEl('line', { x1:x(alt), x2:x(alt), y1:yB, y2:yA, stroke:'var(--series-2)',
+    'stroke-width':2, 'stroke-dasharray':'2 3' });
+  al.dataset.end = 'alt';
+  tipOn(al, () => '<b>' + (conv ? 'A new-build line' : 'A converted line') + ' would need</b><i>' + $$(alt) + '</i> a tonne');
+  svg.appendChild(al);
+
+  const mk = svgEl('path', { d:`M${x(t)},${yA + 2} l-6,10 h12 z`, fill:'var(--ink)' });
+  mk.dataset.tariff = String(t);
+  tipOn(mk, () => '<b>Tariff</b><i>' + $$(t) + '</i> a tonne');
+  const ml2 = svgEl('text', { class:'tick', x:Math.min(W - mr - 40, Math.max(ml + 40, x(t))), y:H - 4, 'text-anchor':'middle' });
+  ml2.setAttribute('fill', 'var(--ink)');
+  ml2.setAttribute('font-weight', '700');
+  ml2.textContent = 'Tariff ' + $$(t);
+  svg.append(mk, ml2);
+  host.appendChild(svg);
+
+  const ac = document.getElementById('cc-alt');
+  if (ac) ac.textContent = 'The dotted line is what ' + (conv ? 'a new-build line' : 'a converted line') +
+    ' would need: ' + $$(alt) + ' a tonne.';
+}
+
+let zoneTimer;
+addEventListener('resize', () => { clearTimeout(zoneTimer); zoneTimer = setTimeout(drawZone, 120); });
+
+function updateCapture() {
+  const zone = val('Capture', 'C40');
+  const qv = document.querySelector('#capture .qverdict');
+  if (qv) qv.textContent = zone > 0 ? 'On these inputs, yes.' : 'On these inputs, no.';
+  const pw = document.getElementById('cc-pipe');
+  if (pw) pw.textContent = val('Capture', 'C22') === 1 ? 'A converted line' : 'A new-build line';
+  const y = document.getElementById('cc-yes'), n = document.getElementById('cc-no');
+  if (y && n) { y.hidden = !(zone > 0); n.hidden = zone > 0; }
+  document.querySelectorAll('[data-ctile]').forEach(v =>
+    v.classList.toggle('neg', v.dataset.ctile === 'C40' && zone <= 0));
+  drawZone();
+}
+
 /* ── §8 terms and next steps ─────────────────────────────────────── */
 function secTerms(){
   const w = section('terms');
@@ -2548,14 +3006,14 @@ function secTerms(){
 }
 
 /* ── the document, in order ──────────────────────────────────────── */
-[cover, contents, secSummary, secExperience, secAnalysis, secTerms].forEach(f => f());
+[cover, contents, secSummary, secExperience, secAnalysis, secCapture, secTerms].forEach(f => f());
 
 /* ── footer ──────────────────────────────────────────────────────── */
 (function footer(){
   const f = $('footer');
   const w = $('div', 'wrap');
   const p = $('p');
-  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV; the deal in section 3 is invented and describes no live transaction. Source at ');
+  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV. The deal in section 3 is invented and describes no live transaction, and the capture network in section 4 is illustrative. Source at ');
   const a = $('a', 'mail', 'github.com/Tobombadil/Tobombadil'); a.href = SITE.repo; a.target = '_blank'; a.rel = 'noopener';
   p.append(a, '.');
   w.appendChild(p);
@@ -3108,6 +3566,7 @@ function recalc() {
   }
 
   drawCashflow();
+  updateCapture();
 
   clearTimeout(heavyTimer);
   heavyTimer = setTimeout(heavy, 130);

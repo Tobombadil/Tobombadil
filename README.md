@@ -116,6 +116,49 @@ only because the first version of this page was a spreadsheet — `REPT` drew in
 `COUNTIF` counted shipped projects, `SUMPRODUCT` built a weighted capability index, and none of
 those things exist any more. A test now fails if the engine grows a function no formula calls.
 
+## The low-carbon rebrand, and 4.0, the capture case
+
+The page is now positioned as low-carbon origination rather than origination in energy
+generally: cover, title, summary and the terms card lead with carbon capture, biofuels,
+biopower and the credits that pay for them. The word *expert* is deliberately not used. The
+record is two and a half years in low-carbon on a decade of commercial work, and a claim the
+experience section cannot back is a debate the page does not need to start. The page names no
+prospective employer, so it reads the same to every reader in the sector.
+
+The biopower model proved one kind of low-carbon deal. Carbon capture is where much of the
+sector's commercial work now sits, and the 3.0 model did not touch it, so 4.0 adds a second,
+smaller instrument on its own `Capture` sheet. It asks the question a midstream originator
+actually negotiates: **can ethanol plants pay enough to ship and store their CO₂ for a pipe to
+get built, on §45Q alone?**
+
+- **Why ethanol.** Fermentation CO₂ is nearly pure, so capture is drying and compression. CO₂
+  per gallon is computed from the stoichiometry (2.85 kg), not typed.
+- **Two parties, two hurdles, one axis.** The plant's ceiling is the credit as received (face
+  value for the five years of §6417 direct pay, then the transfer price), plus any fuel premium,
+  less capture opex and capture capital recovered at the plant's hurdle. The pipe's floor is
+  the line and store recovered at the pipe's hurdle over system throughput, plus opex. Both are
+  levelized in $/t over the twelve-year credit, so they sit on one number line and the gap
+  between them is the band to negotiate in.
+- **The tariff divides the band and does not change its size.** A test asserts that for five
+  tariffs.
+- **New-build or converted line** is a picker. At the base case a new-build line needs
+  $32.6/t and a converted one $16.6/t, which is the whole case for reusing an existing line or
+  right of way. The chart marks the other configuration's floor as a dotted line.
+- **Base case:** plant ceiling $56.8/t, pipe floor $32.6/t, a $24.2/t band. At a $35 tariff the
+  plant keeps 90% of it: plant NPV $42.5M, pipe NPV $54.4M. With two plants signed instead of
+  ten the verdict flips to no.
+- **Left out, and said so:** credit inflation indexing, build time, income tax, other CO₂ sources
+  on the line, and any value after year twelve.
+
+`tests/capture.js` recomputes the whole model in plain JavaScript and requires agreement across
+60 random settings of every dial. It also checks the closed-form NPVs against the year-by-year
+cash-flow rows, the verdict flip, the chart geometry against the cells, and that the capture
+reset leaves 3.0 alone.
+
+Statutory figures to re-verify if the law moves: §45Q at $85/t for geologic storage for twelve
+years, and §6417 direct pay for the first five. The low-carbon fuel premium (§45Z or a state
+LCFS) is set to zero in the base case because it is time-limited.
+
 ## 6.0, the supporting analysis
 
 The appendix is a working project finance model: a **50 MW biomass relocation**, at the
