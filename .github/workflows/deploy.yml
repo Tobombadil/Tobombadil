@@ -3,8 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
+      # main is the live site. One branch deploys, so an older branch can never
+      # overwrite the domain with a stale version.
       - main
-      - claude/personal-website-financial-model-5jniwn
   workflow_dispatch:
 
 permissions:
