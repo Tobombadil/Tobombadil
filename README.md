@@ -33,10 +33,16 @@ machinery kept and pointed at interrogation instead.
 - **Type.** Newsreader for display, IBM Plex Sans for body, UI and the provenance bar, IBM Plex
   Mono for the document reference and the contents leaders. Institutional-technical, with real
   fallback stacks behind each, which the test suite asserts.
-- **The cover.** A 24-hour summer load shape with the charge and discharge windows tinted under
-  the curve. It is the one graphic everyone in this industry reads without a legend, and it points
-  at the storage simulator in 5.0 rather than decorating. It is captioned as illustrative and
-  nothing on the page depends on it.
+- **The cover.** Thirty strands along the cover's floor. On the left they are broken, tangled
+  and out of order; moving right, their pieces join up, each strand takes its own place in one
+  bundle, and the bundle rises. One copper strand runs unbroken through all of it. The idea is
+  origination: disconnected pieces pulled into one project, put in order, and moving. It plays
+  out on load, tightens as the reader scrolls into the document, and leans toward a cursor or
+  finger. It carries no data, so there is no caption, and it is hidden from screen readers.
+  It replaced a battery load shape, which put storage on the first screen of a low-carbon
+  page. It is seeded, so it draws the same way on every visit. With reduced motion it is drawn
+  once, settled, and never moves, and it stops animating whenever the cover is off screen.
+  Tests check that it draws, that it moves, and that it holds still under reduced motion.
 - **The ground.** The document is a sheet on a desk: a cool grey ground, a centred white sheet at
   1240px carrying the contents, the sections and the footer, and the running header sized to
   match. The cover bleeds past the sheet on purpose, so the document begins when the sheet does.

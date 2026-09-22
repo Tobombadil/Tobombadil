@@ -105,7 +105,12 @@ const memo=await p.evaluate(()=>{
     href:li.querySelector('a').getAttribute('href')}));
   return {idx,toc,
     cover:!!document.querySelector('.cover h1'),
-    coverLoad:document.querySelectorAll('.cover-load svg polyline').length,
+    // the strands draw into a canvas, so count the pixels they actually lit
+    coverLoad:(()=>{const c=document.querySelector('.cover-load canvas');if(!c)return 0;
+      const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;
+      for(let i=3;i<d.length;i+=4)if(d[i])n++;return n;})(),
+    coverHidden:document.querySelector('.cover-load canvas')?.getAttribute('aria-hidden'),
+    coverCap:document.querySelectorAll('.cover-cap').length,
     coverName:(document.querySelector('.cover h1')||{}).textContent,
     navLabels:[...document.querySelectorAll('#nav a')].map(a=>a.textContent),
     thesis:[...document.querySelectorAll('.divider .thesis')].map(e=>e.textContent),
@@ -113,7 +118,24 @@ const memo=await p.evaluate(()=>{
     dilig:document.querySelectorAll('#pane-sensitivity table.pairs tbody tr').length,
     steps:document.querySelectorAll('#terms .steps li').length};});
 check('the cover leads with the name',memo.cover&&memo.coverName==='Andrew T. Gibson',memo.coverName);
-check('the cover draws its load shape',memo.coverLoad>=2,memo.coverLoad+' polylines');
+check('the cover draws its strands',memo.coverLoad>5000,memo.coverLoad+' pixels lit');
+// it carries no data, so it is hidden from a screen reader and needs no caption
+check('the strands are decoration, and say so',memo.coverHidden==='true'&&memo.coverCap===0,
+      'aria-hidden '+memo.coverHidden+', '+memo.coverCap+' captions');
+
+// it moves, and it stops moving for a reader who has asked for less motion
+{
+  const lit=pg=>pg.evaluate(()=>{const c=document.querySelector('.cover-load canvas');
+    const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let h=0;
+    for(let i=3;i<d.length;i+=16)h=(h*31+d[i])>>>0;return h;});
+  const a1=await lit(p);await p.waitForTimeout(400);const a2=await lit(p);
+  check('the strands animate',a1!==a2,a1+' → '+a2);
+  const still=await b.newPage({viewport:{width:1280,height:1000},reducedMotion:'reduce'});
+  await still.goto('file://'+require('path').join(__dirname,'..','index.html'));await still.waitForTimeout(700);
+  const s1=await lit(still);await still.mouse.move(600,900);await still.waitForTimeout(500);const s2=await lit(still);
+  check('with reduced motion they are drawn once and hold still',s1===s2&&s1!==0,s1+' / '+s2);
+  await still.close();
+}
 check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0,5.0',memo.idx.join(' '));
 // the contents page and the dividers read the same array, so they cannot disagree
 check('contents matches the dividers',
@@ -1093,7 +1115,7 @@ check('the cover opens the work, not only the document',
   cov.tools.length>=3&&cov.tools.every(t=>t.h&&(!t.ext||t.rel)),
   cov.tools.map(t=>t.t).join(' \u00b7 '));
 check('and its external links leave the page properly',
-  cov.tools.filter(t=>t.ext).length>=2&&cov.tools.filter(t=>t.ext).every(t=>/^https/.test(t.h)),
+  cov.tools.filter(t=>t.ext).length>=1&&cov.tools.filter(t=>t.ext).every(t=>/^https/.test(t.h)),
   cov.tools.filter(t=>t.ext).map(t=>t.h).join(', '));
 // The row mixes a jump within the document with links that open something else.
 // The accent rule is what tells them apart before the click, so it has to stay on
@@ -1103,7 +1125,7 @@ check('and its external links leave the page properly',
     return !!m && +m[1] > 150 && +m[2] > 80 && +m[2] < 170 && +m[3] < 90; };
   const ext = cov.tools.filter(t => t.ext), inn = cov.tools.filter(t => !t.ext);
   check('the links that leave the page are ruled in the accent',
-    ext.length >= 2 && ext.every(t => copper(t.rule)),
+    ext.length >= 1 && ext.every(t => copper(t.rule)),
     ext.map(t => t.t + ' ' + t.rule).join(', '));
   check('and the one that stays in the document is not',
     inn.length >= 1 && inn.every(t => !copper(t.rule)),

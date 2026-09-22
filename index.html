@@ -433,14 +433,9 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
 .cover-tools a.ext::after{content:'\2197';font-size:11px;opacity:1;color:var(--copper-2)}
 .cover-tools a.ext:hover{color:#fff;border-color:var(--copper-2);background:rgba(201,118,47,.16)}
 
-/* the load shape sits on the cover's floor */
-.cover-load{position:relative;z-index:1;margin-top:auto}
-.cover-load svg{display:block;width:100%;height:clamp(120px,20vh,210px)}
-.cover-cap{padding-bottom:20px;font:400 10.5px var(--sans);color:#7f96ac;
-           display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
-.cover-cap i{font-style:normal;color:#5f7a94}
-.cover-cap .key{display:inline-flex;align-items:center;gap:6px;color:#9db2c6}
-.cover-cap .sw{width:9px;height:9px;display:inline-block;border-radius:1px}
+/* the strands sit on the cover's floor, under the text rather than behind it */
+.cover-load{position:relative;z-index:1;margin-top:auto;height:clamp(150px,27vh,270px)}
+.cover-load canvas{display:block;width:100%;height:100%}
 
 /* contents, set the way a filing sets one */
 .toc{background:var(--paper-2);border-bottom:1px solid var(--rule)}
@@ -667,7 +662,6 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
 
   /* labels that had dropped under 12px */
   .cover-eyebrow{font-size:12px}
-  .cover-cap{font-size:11px}
   .toc .tnum{font-size:12px}
     .torn{font-size:12px}
   .viz .cap{font-size:12px}
@@ -767,8 +761,7 @@ const SITE = {
   phone:'+1 (978) 500-9301',
   linkedin:'https://linkedin.com/in/andrewthomasgibson',
   calendly:'https://calendly.com/andrewtgibson',
-  /* both are live and both are mine; swap the host here if either moves */
-  simulator:'https://ascendthecrowd.andrew-generalemail.workers.dev/',
+  /* live and mine; swap the host here if it moves */
   bankable:'https://bankablehq.com',
   pakira:'https://pakira.com',
   compass:'https://compassitg.com',
@@ -1520,7 +1513,6 @@ const txt = (sheet, ref, f) => formatValue(readCell(sheet, ref), f || (SHEET_BY_
 SITE.tools = [
   ['Biopower model',   '#analysis',      false],
   ['Capture model',    '#capture',       false],
-  ['Battery simulator', SITE.simulator,  true],
   ['Bankable',          SITE.bankable,   true],
 ];
 
@@ -1800,68 +1792,105 @@ function section(id) {
 }
 
 /* ── the cover ───────────────────────────────────────────────────── */
-/* A summer weekday load shape with a storage dispatch overlay. It is on the
-   cover because it is the one graphic everyone in this industry reads without
-   a legend, and because the simulator behind it is his own work (5.0). The
-   shape is illustrative and says so; nothing on the page depends on it. */
-const LOAD = [42,39,37,36,36,38,43,50,57,63,68,73,79,85,91,96,100,97,88,78,69,60,52,46];
-const DISPATCH = ['c','c','c','c','c','c','','','','','','','','','d','d','d','d','d','','','','',''];
+/* The cover's one moving thing: order out of disorder. Thirty strands come in
+   from the left broken, tangled and out of sequence. As they are drawn
+   together their pieces join up, each finds its own place in one bundle, and
+   the bundle rises as it goes. A single copper strand runs unbroken through
+   all of it, the thread that connects the rest. That is origination: pieces
+   that belong to no one project, connected into one, sorted, and moving. On load it
+   starts in disorder and resolves; scrolling into the document tightens it
+   further, and it leans toward a cursor or a finger. It carries no data, so
+   it needs no caption, and nothing on the page depends on it.
 
-function drawCover(host){
-  const W = 1200, H = 220, pad = 8;
-  const svg = svgEl('svg', { viewBox:`0 0 ${W} ${H}`, preserveAspectRatio:'none',
-                             'aria-hidden':'true', focusable:'false' });
-  const n = LOAD.length;
-  const x = i => (i / (n - 1)) * W;
-  const lo = Math.min(...LOAD), hi = Math.max(...LOAD);
-  const y = v => H - pad - ((v - lo) / (hi - lo)) * (H - pad * 2 - 26);
+   Seeded, so it is the same drawing on every visit. With reduced motion it is
+   drawn once, already settled, and never animates. Off screen it stops. */
+function drawStrands(host) {
+  const cv = document.createElement('canvas');
+  cv.setAttribute('aria-hidden', 'true');
+  host.appendChild(cv);
+  const cx = cv.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let seed = 11;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const N = 30, MID = Math.floor(N / 2);
+  const lines = Array.from({ length:N }, (_, i) => ({
+    y0:0.08 + rnd() * 0.84, ph:rnd() * 6.283, amp:0.06 + rnd() * 0.1,
+    f:0.002 + rnd() * 0.003, off:i - (N - 1) / 2,
+    a:0.1 + rnd() * 0.3,                       /* out of order where it is loose */
+    b:0.12 + 0.36 * i / (N - 1),               /* in order once it is bundled */
+    g:0.012 + rnd() * 0.02, gp:rnd() * 6.283 }));  /* where it is broken */
+  const smooth = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+  const cover = host.parentElement;
+  let W = 0, H = 0, px = -1e4, py = -1e4, raf = 0, vis = true;
+  const t0 = performance.now();
 
-  const pts = LOAD.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
-  svg.appendChild(svgEl('polygon', {
-    points:`0,${H} ` + pts.join(' ') + ` ${W},${H}`, fill:'rgba(255,255,255,.05)' }));
-
-  /* the dispatch windows are tinted area under the curve, not bands over it:
-     charging in the trough, discharging into the peak */
-  const runs = kind => {
-    const out = []; let s = null;
-    DISPATCH.forEach((d, i) => {
-      if (d === kind) { if (s === null) s = i; }
-      else if (s !== null) { out.push([s, i - 1]); s = null; }
-    });
-    if (s !== null) out.push([s, DISPATCH.length - 1]);
-    return out;
+  const size = () => {
+    const d = devicePixelRatio || 1, r = host.getBoundingClientRect();
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * d); cv.height = Math.round(H * d);
+    cx.setTransform(d, 0, 0, d, 0, 0);
   };
-  /* the fill is a tint; the signal is the curve segment sitting on top of it,
-     so a tall peak does not turn into a slab of color */
-  [['c', 'rgba(84,158,232,.11)', '#63a8ee'], ['d', 'rgba(232,140,60,.13)', '#ef9a52']]
-    .forEach(([k, fill, stroke]) => {
-    runs(k).forEach(([a, b]) => {
-      const seg = [];
-      for (let i = a; i <= b; i++) seg.push(pts[i]);
-      svg.appendChild(svgEl('polygon', {
-        points:`${x(a).toFixed(1)},${H} ` + seg.join(' ') + ` ${x(b).toFixed(1)},${H}`, fill }));
-      svg.appendChild(svgEl('polyline', { points:seg.join(' '), fill:'none',
-        stroke, 'stroke-width':'3.5', 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+  const frame = now => {
+    const time = still ? 0 : (now - t0) / 1000;
+    const intro = still ? 1 : 1 - Math.pow(1 - Math.min(1, time / 2.6), 3);
+    const scroll = still ? 0 : Math.min(1, Math.max(0, scrollY / Math.max(1, cover.offsetHeight * 0.6)));
+    const gather = 0.04 + 0.52 * intro + 0.16 * scroll;     /* how far left the bundle reaches */
+    const spacing = Math.max(1.2, H * 0.0095 * (1 - 0.45 * scroll));
+    cx.clearRect(0, 0, W, H);
+    lines.forEach((l, i) => {
+      cx.beginPath();
+      let pen = false;
+      for (let x = -10; x <= W + 10; x += 8) {
+        /* a short, definite resolution rather than a slow drift into line */
+        const k = smooth((x / W - (1 - gather)) / (gather * 0.6));
+        /* two waves at unrelated frequencies, so the loose end tangles */
+        const loose = l.y0 * H + (Math.sin(x * l.f + l.ph + time * 0.2)
+          + 0.5 * Math.sin(x * l.f * 2.7 + l.ph * 1.3 - time * 0.13)) * l.amp * H;
+        /* the bundle climbs as it goes: progress, not only order */
+        const tight = H * (0.72 - 0.36 * x / W) + l.off * spacing + Math.sin(x * 0.004 + time * 0.3) * H * 0.015;
+        let y = loose + (tight - loose) * k;
+        const dx = x - px, dy = y - py;
+        y += (py - y) * Math.exp(-(dx * dx + dy * dy) / 9800) * 0.5;
+        /* loose, a strand is fragments; bundled, it is whole. The copper one
+           is never broken: it is what connects the others */
+        const piece = 0.5 + 0.5 * Math.sin(x * l.g + l.gp + time * 0.1);
+        const on = i === MID || piece < 0.5 + 0.7 * k;
+        if (!on) pen = false;
+        else if (pen) cx.lineTo(x, y);
+        else { cx.moveTo(x, y); pen = true; }
+      }
+      if (i === MID) cx.strokeStyle = '#e08a44';
+      else {
+        /* the shading sorts itself too: random while loose, a clean ramp once bundled */
+        const g = cx.createLinearGradient(W * (1 - gather), 0, W, 0);
+        g.addColorStop(0, 'rgba(207,224,240,' + l.a + ')');
+        g.addColorStop(1, 'rgba(207,224,240,' + l.b + ')');
+        cx.strokeStyle = g;
+      }
+      cx.lineWidth = i === MID ? 2 : 1;
+      cx.stroke();
     });
-  });
+  };
+  const loop = now => {
+    raf = 0;
+    if (!vis) return;
+    frame(now);
+    if (!still) raf = requestAnimationFrame(loop);
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
 
-  const line = svgEl('polyline', { points:pts.join(' '), fill:'none',
-    stroke:'#cfe0f0', 'stroke-width':'2', 'stroke-linejoin':'round', 'stroke-linecap':'round' });
-  svg.appendChild(line);
-
-  /* the peak needs no marker: the copper segment already sits on it */
-  host.appendChild(svg);
-
-  /* one orchestrated moment: the curve draws itself in on load */
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    try {
-      const len = line.getTotalLength();
-      line.style.strokeDasharray = len;
-      line.style.strokeDashoffset = len;
-      line.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)';
-      requestAnimationFrame(() => { line.style.strokeDashoffset = '0'; });
-    } catch (e) { /* getTotalLength is unsupported somewhere: leave it drawn */ }
+  /* measured when laid out rather than when built: the cover is not in the
+     document yet at this point, so a size taken now would be zero */
+  new ResizeObserver(() => { size(); frame(performance.now()); kick(); }).observe(host);
+  if (!still) {
+    cover.addEventListener('pointermove', e => {
+      const r = cv.getBoundingClientRect();
+      px = e.clientX - r.left; py = e.clientY - r.top;
+    });
+    cover.addEventListener('pointerleave', () => { px = py = -1e4; });
   }
+  /* entries can arrive batched, stale first, so the last one is the state */
+  new IntersectionObserver(es => { vis = es[es.length - 1].isIntersecting; if (vis) kick(); }).observe(host);
 }
 
 function cover(){
@@ -1915,19 +1944,9 @@ function cover(){
   mid.appendChild(inner);
   c.appendChild(mid);
 
-  const load = $('div', 'cover-load');
-  drawCover(load);
-  c.appendChild(load);
-  const cap = $('div', 'wrap cover-cap');
-  cap.appendChild($('span', null, 'Summer weekday load shape.'));
-  [['#549ee8', 'charge'], ['#e88c3c', 'discharge']].forEach(([col, lbl]) => {
-    const s = $('span', 'key');
-    const sw = $('i', 'sw'); sw.style.background = col;
-    s.append(sw, lbl);
-    cap.appendChild(s);
-  });
-  cap.appendChild($('i', null, 'Illustrative, on a two-hour battery.'));
-  c.appendChild(cap);
+  const strands = $('div', 'cover-load');
+  c.appendChild(strands);
+  drawStrands(strands);
 
   main.appendChild(c);
 
