@@ -394,7 +394,6 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
 .cover-ref{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
            font:400 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;
            color:#8fa8c0;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.16)}
-.cover-ref .dot{color:var(--copper-2)}
 .cover-ref .rt{margin-left:auto}
 .cover-mid{flex:1 1 auto;display:flex;align-items:center;padding:44px 0 34px}
 .cover-eyebrow{font:500 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;
@@ -726,7 +725,7 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
 
 <div class="bar">
   <div class="bar-in">
-    <span class="fname">ANDREW T. GIBSON · ORIGINATION <span>· proposal rev 4</span></span>
+    <span class="fname">ANDREW T. GIBSON <span>· low-carbon origination</span></span>
     <nav id="nav" aria-label="Sections"></nav>
   </div>
 </div>
@@ -779,7 +778,6 @@ const SITE = {
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
 
-  rev:4,
   to:'Low-carbon commercial development',
   target:'LOW-CARBON ORIGINATION · CARBON CREDITS · PROJECT DEVELOPMENT',
   headline:'Originating and structuring low-carbon energy projects',
@@ -2053,11 +2051,8 @@ function cover(){
 
   const top = $('div', 'wrap cover-top');
   const ref = $('div', 'cover-ref');
-  ref.appendChild($('span', null, 'Proposal'));
-  ref.appendChild($('span', 'dot', '·'));
   ref.appendChild($('span', null, 'Origination'));
   const rt = $('span', 'rt');
-  rt.append('Rev ' + SITE.rev + ' · ');
   rt.appendChild(cell('Career', 'E7', { f:'date' }));
   ref.appendChild(rt);
   top.appendChild(ref);
@@ -2080,7 +2075,7 @@ function cover(){
   inner.appendChild(meta);
 
   const cta = $('div', 'cover-cta');
-  const a1 = $('a', 'solid', 'Read the proposal'); a1.href = '#summary';
+  const a1 = $('a', 'solid', 'Read the summary'); a1.href = '#summary';
   const a2 = $('a', null, 'Email'); a2.href = 'mailto:' + SITE.email;
   const a3 = $('a', null, 'LinkedIn'); a3.href = SITE.linkedin; a3.target = '_blank'; a3.rel = 'noopener';
   cta.append(a1, a2, a3);
