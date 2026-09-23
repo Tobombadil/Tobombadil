@@ -266,6 +266,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .otile .v.neg,.ctile .v.neg{color:var(--bad)}
 .trade-t tr.sum td{font-weight:700;color:var(--ink);border-top:1px solid var(--rule)}
 .qans [hidden]{display:none}
+/* the §45Z dials count only when §45Z is the credit claimed */
+.ccz.off{opacity:.45}
 .viz{padding:16px 14px 6px}
 .viz + .viz{border-top:1px solid var(--rule)}
 .opane > .viz:first-of-type{padding-top:14px}
@@ -844,13 +846,13 @@ const SITE = {
   /* 4.0, the capture case. The same shape as 3.0: the case, the counterweight,
      the screen, then the model. Figures the workbook owns are templated. */
   capture:{
-    question:"Can an ethanol plant pay enough to ship and store its CO₂ for the pipe to get built, on §45Q alone?",
+    question:"Can an ethanol plant pay enough to ship and store its CO₂ for the pipe to get built, on federal credits alone?",
     source:"Not a deal I have worked on. It is the midstream side of the credit I price into biomass projects, built from the statute and public ranges.",
     thesis:[
       ['Why ethanol first',
        "Fermentation gives off CO₂ that is nearly pure, so capture is drying and compression rather than a chemical plant. It is the cheapest industrial tonne there is, and the US has close to two hundred of these plants."],
       ['Why the credit is the deal',
-       "§45Q pays ${Capture!C18:num0} a tonne stored, for {Capture!C19:num0} years. At an ethanol plant, capture costs a fraction of that. The spread is real, and the negotiation is over how it is split."],
+       "§45Q pays ${Capture!C18:num0} a tonne stored, for {Capture!C19:num0} years. §45Z pays on the fuel's carbon score instead, and the two cannot be claimed in the same year. Capture costs a fraction of either, so the spread is real. The negotiation is over how it is split."],
       ['Why the pipe is the risk',
        "The large new-build CO₂ pipelines proposed across the upper Midwest stalled on route permits and landowner opposition, not on price. An existing line or right of way cuts the capital and the permitting risk together."],
       ['Why the tariff is the deal',
@@ -867,7 +869,7 @@ const SITE = {
       ['A monitoring plan the IRS accepts',
        'no approved plan for measuring what stays stored, no credit.'],
     ],
-    leaves:"Credit indexing for inflation, the years it takes to build, income tax on the margin, CO₂ from other sources on the same line, and any value after year twelve. They cut both ways. The largest, the pipe's life after the credit ends, would help the pipe.",
+    leaves:"Credit indexing for inflation, state low-carbon fuel credits, the years it takes to build, income tax on the margin, CO₂ from other sources on the same line, and any value after year twelve. They cut both ways. The largest, the pipe's life after the credit ends, would help the pipe.",
   },
 
   next:[
@@ -1174,7 +1176,7 @@ const SHEETS = [
    pipe needs to clear its own. Every figure is levelized at the payer's own
    hurdle, so the two sides can be read on one axis. */
 {
-  name:'Capture', rows:52, cols:[], cells:{
+  name:'Capture', rows:66, cols:[], cells:{
     C5: {v:120,   f:'num0', input:true, min:40,   max:300,  step:5,    lbl:'Ethanol plant size', u:'M gal/yr', grp:'The plant',
          mkt:[50,150],      s:'CIND', note:'where most US plants sit'},
     /* stoichiometry, not an assumption: one molecule of CO2 for every one of
@@ -1192,10 +1194,29 @@ const SHEETS = [
 
     C14:{v:35,    f:'num0', input:true, min:5,    max:90,   step:1,    lbl:'Transport and storage tariff', u:'$/t', grp:'The deal',
          mkt:[20,45],       s:'CIND', note:'what the plant pays the pipe'},
-    C15:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.00, step:0.01, lbl:'Credit transfer price', u:'after direct pay', grp:'The deal',
+    C15:{v:0.92,  f:'pct0', input:true, min:0.80, max:1.00, step:0.01, lbl:'Credit transfer price', u:'when not direct pay', grp:'The deal',
          mkt:[0.90,0.95],   s:'X6418', note:'the buyer takes the discount'},
-    C16:{v:0,     f:'num2', input:true, min:0,    max:0.30, step:0.01, lbl:'Low-carbon fuel premium', u:'$/gal', grp:'The deal',
-         mkt:[0.05,0.25],   s:'CIF', note:'time-limited, so off in the base case'},
+
+    /* The credit election. §45Q and §45Z cannot both be claimed for the same
+       facility in the same year, so the plant picks one each year. §45Z pays
+       on the fuel's carbon score and ends with 2029; §45Q pays on tonnes stored
+       and runs twelve years. So the live choice is §45Q throughout, or §45Z
+       while it lasts and §45Q for the years after it, never both at once. */
+    C17:{v:0,     f:'num0'},                              /* 0 §45Q only, 1 §45Z then §45Q */
+    C56:{v:1.00,  f:'num2', s:'IRC45Z'},                  /* §45Z rate, $/gal at an emissions factor of 1 */
+    C57:{v:50,    f:'num0', s:'IRC45Z'},                  /* §45Z baseline, kg CO2e per mmBtu */
+    C58:{v:0.07633, f:'num3', s:'LHV'},                   /* ethanol energy, mmBtu per gallon */
+    C59:{v:52,    f:'num0', input:true, min:40,   max:62,   step:1,    lbl:'Carbon score before capture', u:'kg CO₂e/mmBtu', grp:'The credit',
+         mkt:[45,58],       s:'GREET', note:'counts under §45Z only'},
+    C60:{v:'=C6*C7/C58', f:'num1'},                       /* what capture takes off the score */
+    C61:{v:0,     f:'num0', input:true, min:0,    max:30,   step:1,    lbl:'Further emissions avoided', u:'kg CO₂e/mmBtu', grp:'The credit',
+         mkt:[5,20],        s:'GREET', note:'farming practice, process energy; §45Z only'},
+    C62:{v:'=C59-C60-C61', f:'num1'},                     /* score after capture */
+    C63:{v:'=MAX(0,MIN(1,(C57-C62)/C57))', f:'num2'},     /* emissions factor */
+    C64:{v:'=C56*C63', f:'num2'},                         /* §45Z, $ per gallon */
+    C65:{v:'=C64*1000/(C6*C7)', f:'num1'},                /* §45Z, $ per tonne captured */
+    C66:{v:3,     f:'num0', input:true, min:0,    max:6,    step:1,    lbl:'Years of §45Z left', u:'yrs', grp:'The credit',
+         mkt:[2,4],         s:'IRC45Z', note:'it ends with 2029 under current law'},
 
     C18:{v:85,    f:'num0', s:'IRC45Q'},                  /* $/t, geologic storage */
     C19:{v:12,    f:'num0', s:'IRC45Q'},                  /* years of credit */
@@ -1220,13 +1241,11 @@ const SHEETS = [
     C30:{v:'=C26+C23*IF(C22=1,C25,C24)', f:'num0'},       /* pipe and store capex, $M */
     C31:{v:'=C8*C27/1000', f:'num2'},                     /* system throughput, Mt a year */
     C32:{v:'=(1-(1+C12)^(0-C19))/C12', f:'num3'},         /* plant annuity over the credit */
-    C33:{v:'=(1-(1+C12)^(0-MIN(C20,C19)))/C12', f:'num3'},/* ...over the direct-pay years */
     C34:{v:'=(1-(1+C29)^(0-C19))/C29', f:'num3'},         /* pipe annuity over the credit */
     /* per tonne, levelized at the plant's hurdle */
-    C35:{v:'=C18*(C33+C15*(C32-C33))/C32', f:'num1'},     /* the credit, after monetization */
-    C36:{v:'=C16*1000/(C6*C7)', f:'num1'},                /* fuel premium, per tonne captured */
+    C35:{v:'=SUM(C54:N54)/C32', f:'num1'},                /* the credits as received, levelized */
     C37:{v:'=C10/(C8/1000*C32)', f:'num1'},               /* capture capital, recovered */
-    C38:{v:'=C35+C36-C11-C37', f:'num1'},                 /* the most the plant can pay */
+    C38:{v:'=C35-C11-C37', f:'num1'},                     /* the most the plant can pay */
     C39:{v:'=C30/(C31*C34)+C28', f:'num1'},               /* the least the pipe needs */
     C40:{v:'=C38-C39', f:'num1'},                         /* room to negotiate */
     C41:{v:'=(C38-C14)*C8/1000*C32', f:'num1'},           /* plant NPV at its hurdle, $M */
@@ -1247,7 +1266,14 @@ const SHEETS = [
   const s = SHEETS.find(x => x.name === 'Capture');
   ['C','D','E','F','G','H','I','J','K','L','M','N'].forEach((c, i) => {
     s.cells[c+'49'] = { v:i + 1, f:'num0' };
-    s.cells[c+'50'] = { v:`=IF(${c}49<=C$19,C$8/1000*(IF(${c}49<=C$20,C$18,C$18*C$15)+C$36-C$11-C$14),0)`, f:'num1' };
+    /* one credit a year, never both: §45Z while elected and available, at the
+       transfer price, since only tax-exempt owners can take it as cash; §45Q
+       otherwise, at face during the five years of direct pay */
+    const q = `IF(${c}49<=C$20,C$18,C$18*C$15)`;
+    s.cells[c+'52'] = { v:`=IF(${c}49<=C$19,IF(C$17=1,IF(${c}49<=C$66,C$65*C$15,${q}),${q}),0)`, f:'num1' };
+    s.cells[c+'53'] = { v:`=1/(1+C$12)^${c}49`, f:'num3' };
+    s.cells[c+'54'] = { v:`=${c}52*${c}53`, f:'num1' };
+    s.cells[c+'50'] = { v:`=IF(${c}49<=C$19,C$8/1000*(${c}52-C$11-C$14),0)`, f:'num1' };
     s.cells[c+'51'] = { v:`=IF(${c}49<=C$19,C$31*(C$14-C$28),0)`, f:'num1' };
   });
 })();
@@ -1620,8 +1646,14 @@ const SRC = {
   'Capture!C20': ['Direct-pay years', 'For the first five years the credit can be taken as cash under §6417, at face. After that it is sold to a taxpayer at the transfer price.', '', ' yrs'],
   'Capture!C11': ['Capture operating cost', 'Mostly the electricity to compress the gas to pipeline pressure, plus drying, maintenance and monitoring at the plant.', '$', '/t'],
   'Capture!C14': ['Transport and storage tariff', 'What the plant pays the pipe per tonne delivered. It moves value from one side to the other and changes nothing about the size of the pie.', '$', '/t'],
-  'Capture!C35': ['§45Q, as the plant receives it', 'The ${C18} credit at face for {C20} years of direct pay, then at the {C15} transfer price. Levelized over the credit period at the plant hurdle of {C12}.', '$', '/t'],
-  'Capture!C36': ['Low-carbon fuel premium', 'A premium of ${C16} a gallon on every gallon the plant sells, spread over the tonnes it captures: about {C6} kg of CO₂ comes with each gallon.', '$', '/t'],
+  'Capture!C35': ['Credits, as the plant receives them', 'One credit a year, never both. §45Q is ${C18} a tonne, at face for {C20} years of direct pay and then at the {C15} transfer price. Where §45Z is elected it pays ${C65} a tonne at the transfer price for {C66} years, then §45Q takes over. Levelized over the credit period at the plant hurdle of {C12}.', '$', '/t'],
+  'Capture!C60': ['What capture takes off the score', 'The {C6} kg of CO₂ in each gallon, {C7} of it captured, over the {C58} mmBtu of energy the gallon holds.', '', ' kg/mmBtu'],
+  'Capture!C62': ['Carbon score after capture', 'A score of {C59} before capture, less {C60} taken off by capture and {C61} avoided elsewhere, in kg CO₂e per mmBtu.', '', ' kg/mmBtu'],
+  'Capture!C64': ['§45Z, per gallon', 'The ${C56} rate scaled by how far the score sits below the {C57} kg baseline: an emissions factor of {C63}, capped at the full rate.', '$', '/gal'],
+  'Capture!C65': ['§45Z, per tonne captured', 'The ${C64} a gallon spread over the tonnes captured, since each gallon carries {C6} kg of CO₂ and {C7} of it is captured.', '$', '/t'],
+  'Capture!C56': ['§45Z rate', 'The most §45Z pays a gallon of non-aviation fuel, with prevailing wage met. Public law.', '$', '/gal'],
+  'Capture!C57': ['§45Z baseline', 'The carbon score at which §45Z pays nothing. Every point below it earns a fiftieth of the rate. Public law.', '', ' kg/mmBtu'],
+  'Capture!C58': ['Energy per gallon', 'The lower heating value of a gallon of ethanol, in million Btu.', '', ' mmBtu'],
   'Capture!C37': ['Capture capital, recovered', 'The ${C10}M of capture equipment, recovered over the credit period at the plant hurdle and spread over {C8} thousand tonnes a year.', '$', '/t'],
   'Capture!C38': ['Most the plant can pay', 'The credit as received, plus any fuel premium, less the cost of capturing the tonne and recovering the equipment at the plant hurdle. Pay more than this and the capture project destroys value.', '$', '/t'],
   'Capture!C39': ['Least the pipe needs', 'The ${C30}M line and store recovered at the pipe hurdle of {C29} over {C31} million tonnes a year, plus ${C28} a tonne to run it.', '$', '/t'],
@@ -2145,7 +2177,9 @@ const BENCH = {
   STOICH: ['stoichiometry',    'Fermentation makes one molecule of carbon dioxide for every molecule of ethanol, so the mass per gallon follows from chemistry.'],
   IRC45Q: ['IRC §45Q',   'Carbon oxide sequestration credit: the rate for secure geologic storage, and the twelve years it runs.'],
   X6417:  ['IRC §6417',  'Elective payment: a §45Q credit can be taken as cash for the first five years, even without a tax bill to offset.'],
-  CIF:    ['§45Z or LCFS', 'What a lower carbon-intensity score earns per gallon of fuel, whether from the federal clean fuel credit or a state program. Both are time-limited or volatile.'],
+  IRC45Z: ['IRC §45Z',   'Clean fuel production credit: up to $1.00 a gallon, scaled by how far the fuel scores below 50 kg CO₂e per mmBtu. Ends with 2029 under current law, and cannot be claimed in the same year as §45Q.'],
+  GREET:  ['45ZCF-GREET', 'The model Treasury uses to score fuels for §45Z. A plant gets its own score from its own inputs; this is a range, not a plant.'],
+  LHV:    ['GREET',       'The lower heating value of ethanol, about 76,330 Btu a gallon, from Argonne National Laboratory.'],
   AZ:     ['A.R.S. §43-1111', 'Arizona statutory corporate rate, deductible against federal.'],
 };
 
@@ -2810,18 +2844,42 @@ function secCapture(){
   }
   /* the tariff first, because it is the number the negotiation is about */
   const startClosed = matchMedia('(max-width:680px)').matches;
-  ['The deal', 'The plant', 'The pipe and the store'].forEach(grp => {
+  ['The deal', 'The credit', 'The plant', 'The pipe and the store'].forEach(grp => {
     inputGroup(inp, grp, !startClosed && grp === 'The deal', body => {
       if (grp === 'The pipe and the store')
         body.appendChild(picker('C22', 'The line',
           [[0, 'Built new'], [1, 'An existing line, converted']], 'Capture'));
-      groups.get(grp).forEach(ref => body.appendChild(captureDial(ref, cells[ref])));
+      /* one credit a year, never both, so the election comes first and the
+         §45Z dials below it only count when §45Z is chosen */
+      if (grp === 'The credit')
+        body.appendChild(picker('C17', 'Credit claimed',
+          [[0, '§45Q, all twelve years'], [1, '§45Z while it lasts, then §45Q']], 'Capture'));
+      groups.get(grp).forEach(ref => {
+        const f = captureDial(ref, cells[ref]);
+        if (grp === 'The credit') f.classList.add('ccz');
+        body.appendChild(f);
+      });
+      if (grp === 'The credit') {
+        const ul = $('ul', 'hfld ccz');
+        [['Capture takes off', 'C60', '', ' kg/mmBtu'], ['Score after capture', 'C62', '', ' kg/mmBtu'],
+         ['§45Z per gallon', 'C64', '$', ''], ['§45Z per tonne captured', 'C65', '$', '']].forEach(([k, ref, pre, suf]) => {
+          const li = $('li');
+          li.append($('span', 'k', k));
+          const v = $('span', 'v');
+          v.appendChild(cc(ref, pre, suf));
+          li.appendChild(v);
+          ul.appendChild(li);
+        });
+        body.appendChild(ul);
+      }
     });
   });
   inputGroup(inp, 'Held constant', false, body => {
     const ul = $('ul', 'hfld');
     [['§45Q rate, geologic storage', 'C18', '$', '/t'], ['Credit period', 'C19', '', ' yrs'],
-     ['Direct pay (§6417)', 'C20', '', ' yrs'], ['CO₂ per gallon', 'C6', '', ' kg']].forEach(([k, ref, pre, suf]) => {
+     ['Direct pay (§6417)', 'C20', '', ' yrs'], ['§45Z rate', 'C56', '$', '/gal'],
+     ['§45Z baseline', 'C57', '', ' kg/mmBtu'], ['Energy per gallon', 'C58', '', ' mmBtu'],
+     ['CO₂ per gallon', 'C6', '', ' kg']].forEach(([k, ref, pre, suf]) => {
       const li = $('li');
       li.append($('span', 'k', k));
       const v = $('span', 'v');
@@ -2871,7 +2929,7 @@ function secCapture(){
   vt.appendChild($('p', 'cap', 'Per tonne, levelized over the credit period at the plant hurdle, so each line is directly comparable.'));
   const tb = $('table', 'trade-t'); tb.id = 'tonne';
   const tbody = $('tbody');
-  [['§45Q, as the plant receives it', 'C35', ''], ['Low-carbon fuel premium', 'C36', ''],
+  [['Credits, as the plant receives them', 'C35', ''],
    ['Less capture operating cost', 'C11', 'less'], ['Less capture capital, recovered', 'C37', 'less'],
    ['Most the plant can pay', 'C38', 'sum'], ['Less the tariff', 'C14', 'less'],
    ['Left to the plant', 'C44', 'sum']].forEach(([k, ref, kind]) => {
@@ -3004,6 +3062,16 @@ addEventListener('resize', () => { clearTimeout(zoneTimer); zoneTimer = setTimeo
 
 function updateCapture() {
   const zone = val('Capture', 'C40');
+  const z = val('Capture', 'C17') === 1;
+  document.querySelectorAll('#capture .ccz').forEach(e => e.classList.toggle('off', !z));
+  /* the same rule 3.0 uses: past 100% a return is arithmetic, not information */
+  ['C45', 'C46'].forEach(ref => {
+    const el = document.querySelector('[data-cell="Capture!' + ref + '"]');
+    if (!el) return;
+    const v = val('Capture', ref);
+    el.dataset.override = !isFinite(v) ? 'n.m.' : v > 1 ? 'over 100%' : '';
+    el.textContent = el.dataset.override || formatValue(v, 'pct1');
+  });
   const qv = document.querySelector('#capture .qverdict');
   if (qv) qv.textContent = zone > 0 ? 'On these inputs, yes.' : 'On these inputs, no.';
   const pw = document.getElementById('cc-pipe');

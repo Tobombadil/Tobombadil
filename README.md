@@ -159,6 +159,17 @@ get built, on §45Q alone?**
 - **New-build or converted line** is a picker. At the base case a new-build line needs
   $32.6/t and a converted one $16.6/t, which is the whole case for reusing an existing line or
   right of way. The chart marks the other configuration's floor as a dotted line.
+- **One credit a year, never both.** §45Q and §45Z cannot be claimed for the same facility in the
+  same year, so a picker elects **§45Q for all twelve years** (the base case) or **§45Z while it
+  lasts, then §45Q**. §45Z runs to the end of 2029 under current law, three years by default, and
+  pays up to $1.00 a gallon scaled by how far the fuel's score sits below 50 kg CO₂e/mmBtu. The
+  score before capture is a dial. What capture takes off it is computed from the CO₂ captured per
+  gallon over the energy in a gallon, about 34 points at base. A second dial adds further
+  emissions avoided, from farming practice or process energy. §45Z has no five-year direct pay for
+  a taxable owner, so it is valued at the transfer price. The §45Z dials dim when §45Q alone is
+  elected. At base, §45Z is worth $0.65 a gallon, or $247 a tonne, and lifts the plant's ceiling
+  from $56.8/t to $111.9/t. An earlier version added a fuel premium on top of §45Q, which the
+  2026 proposed rules do not allow. Tests now check that no year ever carries both credits.
 - **Base case:** plant ceiling $56.8/t, pipe floor $32.6/t, a $24.2/t band. At a $35 tariff the
   plant keeps 90% of it: plant NPV $42.5M, pipe NPV $54.4M. With two plants signed instead of
   ten the verdict flips to no.
@@ -171,8 +182,9 @@ cash-flow rows, the verdict flip, the chart geometry against the cells, and that
 reset leaves 3.0 alone.
 
 Statutory figures to re-verify if the law moves: §45Q at $85/t for geologic storage for twelve
-years, and §6417 direct pay for the first five. The low-carbon fuel premium (§45Z or a state
-LCFS) is set to zero in the base case because it is time-limited.
+years, §6417 direct pay for the first five, and §45Z at $1.00 a gallon against a 50 kg baseline
+through 2029. The no-stacking rule is in the February 2026 proposed §45Z regulations, which are
+not final. State low-carbon fuel credits can stack with the federal ones and are left out.
 
 ## 6.0, the supporting analysis
 

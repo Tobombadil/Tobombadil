@@ -27,16 +27,21 @@ function reference(a) {
   const kt = a.C5 * kgPerGal * a.C7;                       // thousand tonnes a year, one plant
   const mt = kt * a.C27 / 1000;                            // system, million tonnes a year
   const n = 12, dp = 5, credit = 85;
-  const aP = ann(a.C12, n), aD = ann(a.C12, dp), aQ = ann(a.C29, n);
-  const creditT = credit * (aD + a.C15 * (aP - aD)) / aP;
-  const fuelT = a.C16 * 1000 / (kgPerGal * a.C7);
+  const aP = ann(a.C12, n), aQ = ann(a.C29, n);
+  /* §45Z: $1.00 a gallon scaled by the score's distance below 50 kg/mmBtu */
+  const after = a.C59 - kgPerGal * a.C7 / 0.07633 - a.C61;
+  const zT = Math.max(0, Math.min(1, (50 - after) / 50)) * 1000 / (kgPerGal * a.C7);
+  /* one credit a year, never both */
+  const creditY = y => a.C17 === 1 && y <= a.C66 ? zT * a.C15 : (y <= dp ? credit : credit * a.C15);
+  let pv = 0; for (let y = 1; y <= n; y++) pv += creditY(y) / Math.pow(1 + a.C12, y);
+  const creditT = pv / aP;
   const capT = a.C10 / (kt / 1000 * aP);
-  const ceil = creditT + fuelT - a.C11 - capT;
+  const ceil = creditT - a.C11 - capT;
   const pipeCapex = a.C26 + a.C23 * (a.C22 === 1 ? a.C25 : a.C24);
   const floor = pipeCapex / (mt * aQ) + a.C28;
   const plantCf = [-a.C10], pipeCf = [-pipeCapex];
   for (let y = 1; y <= n; y++) {
-    plantCf.push(kt / 1000 * ((y <= dp ? credit : credit * a.C15) + fuelT - a.C11 - a.C14));
+    plantCf.push(kt / 1000 * (creditY(y) - a.C11 - a.C14));
     pipeCf.push(mt * (a.C14 - a.C28));
   }
   const zone = ceil - floor;
@@ -63,9 +68,10 @@ function reference(a) {
     const out = [];
     for (let i = 0; i < n; i++) {
       const ov = {};
-      if (i > 0) { ins.forEach(([k, d]) => ov['Capture!' + k] = rnd(d)); ov['Capture!C22'] = i % 2; }
+      if (i > 0) { ins.forEach(([k, d]) => ov['Capture!' + k] = rnd(d));
+        ov['Capture!C22'] = i % 2; ov['Capture!C17'] = (i >> 1) % 2; }
       const C = r => readCell('Capture', r);
-      const a = {}; ins.concat([['C22']]).forEach(([k]) => a[k] = ov['Capture!' + k] ?? C(k));
+      const a = {}; ins.concat([['C22'], ['C17']]).forEach(([k]) => a[k] = ov['Capture!' + k] ?? C(k));
       out.push({ a, got:underScenario(ov, () => ({
         ceil:C('C38'), floor:C('C39'), zone:C('C40'), plantNpv:C('C41'), pipeNpv:C('C42'),
         share:C('C43'), plantIrr:C('C45'), pipeIrr:C('C46'),
@@ -106,10 +112,39 @@ function reference(a) {
         split.every(s => near(s.parts, s.zone, 1e-9) && near(s.zone, split[0].zone, 1e-9)),
         split.map(s => s.zone.toFixed(2)).join(', '));
 
+  /* ---- the credits never stack ------------------------------------------ */
+  const stack = await p.evaluate(() => [0, 1].map(el => underScenario({ 'Capture!C17':el }, () => {
+    const C = r => readCell('Capture', r);
+    const cols = ['C','D','E','F','G','H','I','J','K','L','M','N'];
+    const z = C('C65') * C('C15'), qd = C('C18'), qt = C('C18') * C('C15');
+    return cols.map((c, i) => { const v = C(c + '52'), y = i + 1;
+      const want = el === 1 && y <= C('C66') ? z : (y <= C('C20') ? qd : qt);
+      return { y, v, want }; });
+  })));
+  check('each year carries exactly one credit, never both',
+        stack.every(run => run.every(r => near(r.v, r.want, 1e-9))),
+        stack.map((run, el) => (el ? '§45Z then §45Q: ' : '§45Q: ') + run.map(r => r.v.toFixed(0)).join('/')).join(' · '));
+  const zs = await p.evaluate(() => {
+    const at = (el, more) => underScenario({ 'Capture!C17':el, 'Capture!C61':more }, () => readCell('Capture', 'C38'));
+    return { q0:at(0, 0), q20:at(0, 20), z0:at(1, 0), z20:at(1, 20) };
+  });
+  check('avoided emissions pay only under §45Z',
+        near(zs.q0, zs.q20, 1e-12) && zs.z20 > zs.z0,
+        `§45Q ${zs.q0.toFixed(1)} → ${zs.q20.toFixed(1)}, §45Z ${zs.z0.toFixed(1)} → ${zs.z20.toFixed(1)} $/t`);
+  const dim = await p.evaluate(async () => {
+    const n = () => document.querySelectorAll('#capture .ccz.off').length;
+    const before = n();
+    overrides['Capture!C17'] = 1; recalc(); const after = n();
+    delete overrides['Capture!C17']; recalc();
+    return { before, after };
+  });
+  check('the §45Z dials read as inactive unless §45Z is claimed', dim.before > 0 && dim.after === 0,
+        `${dim.before} dimmed under §45Q, ${dim.after} under §45Z`);
+
   /* ---- statute stays statute ------------------------------------------ */
-  const law = await p.evaluate(() => ['C18', 'C19', 'C20'].map(r => [r, rawOf('Capture', r)]));
-  check('the credit, its period and direct pay are stated, not derived',
-        law.map(([, v]) => v).join() === '85,12,5', law.map(x => x.join('=')).join(' '));
+  const law = await p.evaluate(() => ['C18', 'C19', 'C20', 'C56', 'C57'].map(r => [r, rawOf('Capture', r)]));
+  check('the credits, their periods and direct pay are stated, not derived',
+        law.map(([, v]) => v).join() === '85,12,5,1,50', law.map(x => x.join('=')).join(' '));
   const co2 = await p.evaluate(() => [rawOf('Capture', 'C6'), readCell('Capture', 'C6')]);
   check('CO₂ per gallon is chemistry, computed rather than typed',
         /^=/.test(co2[0]) && co2[1] > 2.8 && co2[1] < 2.9, co2[1].toFixed(3) + ' kg');
@@ -120,7 +155,7 @@ function reference(a) {
     const bare = Object.entries(A).filter(([, d]) => d.input && !(d.mkt && d.s)).map(([k]) => k);
     const unknown = Object.entries(A).filter(([, d]) => d.s && !BENCH[d.s]).map(([k]) => k);
     const bad = Object.entries(A).filter(([, d]) => d.mkt && !(d.mkt[0] < d.mkt[1])).map(([k]) => k);
-    const held = ['C6', 'C18', 'C19', 'C20'].filter(k => !A[k].s);
+    const held = ['C6', 'C18', 'C19', 'C20', 'C56', 'C57', 'C58'].filter(k => !A[k].s);
     return { bare, unknown, bad, held };
   });
   check('every capture dial carries a range and a source', bench.bare.length === 0, bench.bare.join(', ') || 'all');
