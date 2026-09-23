@@ -7,7 +7,8 @@ Open `index.html` in a browser. That's the whole toolchain.
 
 **Publishing.** `main` is the live branch and the repository default. Every push to `main` runs
 `.github/workflows/deploy.yml`, which runs `tests/guard.js` first and publishes only `index.html`
-and `CNAME` to andrewtgibson.com. No other branch deploys. The browser suites in `tests/` are
+and `CNAME` to andrewtgibson.com. No other branch deploys: the `github-pages` environment
+allows `main` by name, so a new live branch needs a rule there as well as in the workflow. The browser suites in `tests/` are
 run locally before pushing.
 
 ## The idea
