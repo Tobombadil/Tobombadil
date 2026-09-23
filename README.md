@@ -185,6 +185,12 @@ get built, on §45Q alone?**
   clear its hurdle, 36% at base. Both partnership structures have the same total; only who pays
   and who keeps moves. Tests check that each split adds up, and that at the maximum share the
   developer's value is exactly zero.
+- **Alternatives and levers.** Under the model, two lists set the negotiation in context. One is
+  what the plant could do instead: its own injection well, rail to a hub, a rival line, oil
+  recovery or merchant sales, or waiting. The other is where the developer's value comes from:
+  scale, reusing a line, negotiating the credit as well as the tariff, staying under the sharing
+  ceiling, services on top, owning the store, and paying landowners. The wording is generic and
+  names no counterparty.
 - **Puro is named.** It was on the confidentiality ban list, because the deal behind 3.0 names it.
   It is a public registry, and the owner cleared naming it on 2026-09-23. The rest of the list
   stands.

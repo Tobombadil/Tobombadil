@@ -268,6 +268,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .qans [hidden]{display:none}
 /* the §45Z dials count only when §45Z is the credit claimed */
 .ccz.off,.ccv.off,.ccl.off,.ccj.off,.ccu.off,.cch.off{opacity:.45}
+/* the alternatives and levers sit below the model, clear of its border */
+.capalt{margin-top:30px}
 #cc-jvsplit[hidden],#cc-upsplit[hidden],#cc-jvwhy[hidden],#cc-upwhy[hidden]{display:none}
 #paths tbody tr{cursor:pointer}
 #paths tbody tr:hover td{color:var(--ink)}
@@ -868,6 +870,24 @@ const SITE = {
        'Traded as compliance credits.', 'Stacks with any of the others.'],
     ],
     excluded:"The pathways follow three rules. One federal credit a year, so never §45Q and §45Z together. Puro CORCs never beside a federal credit, so a tonne sold as a removal earns no tax credit. A state LCFS stacks with any of them.",
+    /* what the plant can do instead, which sets its walk-away point, and what
+       the developer can do about it. Generic on purpose: no counterparty */
+    alternatives:[
+      ['Its own injection well', 'where the geology and a state permit allow it, a plant stores on site and keeps every credit.'],
+      ['Rail to a storage hub', 'slower and dearer per tonne than a pipe, but it needs no right of way.'],
+      ['A rival line', 'fewer than there were, since several large proposals stalled or turned to oil recovery.'],
+      ['Oil recovery or merchant sales', '§45Q now pays the same for oil recovery, so the tonne has a second buyer.'],
+      ['Waiting', "without capture a plant's §45Z value is small, which is the developer's strongest argument."],
+    ],
+    levers:[
+      ['Sign more plants', "the pipe's floor falls with every plant signed, and nothing else in this model moves it as far."],
+      ['Reuse a line and its right of way', 'a converted line needs a fraction of the capital, and most of the permitting risk goes with it.'],
+      ['Negotiate the credit, not only the tariff', 'price the plant\'s §45Z years into the terms, and own the capture equipment so §45Q is the developer\'s once §45Z ends.'],
+      ['Stay under the ceiling', 'in a developer-funded deal, share less than the most shown above, and put a ship-or-pay floor under it.'],
+      ['Sell services on top', 'marketing CORCs and LCFS credits, a credit transfer desk and tax equity all earn fees without commodity risk.'],
+      ['Own the store, fill it widely', 'storage is the moat, and other CO₂ sources or oil recovery fill what the plants do not.'],
+      ['Pay the landowners', 'a small payment per tonne is cheap insurance against the permit fights that stopped other lines.'],
+    ],
     uplift:"This is the model the largest ethanol pipeline developers used: the developer pays for capture, pipe and store, and the plant puts in no capital. The plant takes a share of the uplift, the credits less operating cost. The developer's lever is that share, and the tile shows the most it can give and still clear its hurdle.",
     venture:"In a joint venture the tariff is an internal transfer. It moves money between two pockets of the same project, so it changes neither the total nor anyone's return. What decides each partner's return is its share of the venture.",
     source:"Not a deal I have worked on. It is the midstream side of the credit I price into biomass projects, built from the statute and public ranges.",
@@ -3164,6 +3184,24 @@ function secCapture(){
   foot.appendChild(gp);
   box.append(inp, out, foot);
   w.appendChild(box);
+
+  /* the plant's walk-away point, and the developer's answer to it */
+  const alt = $('div', 'cols capalt');
+  [['What the plant could do instead', C.alternatives], ["Where the developer's value comes from", C.levers]]
+    .forEach(([h, rows]) => {
+      const b = $('div', 'blk');
+      b.appendChild($('h4', 'mustsh', h));
+      const ul = $('ul', 'musts');
+      rows.forEach(([k, v]) => {
+        const li = $('li');
+        li.appendChild($('b', null, k));
+        li.append(' ' + v);
+        ul.appendChild(li);
+      });
+      b.appendChild(ul);
+      alt.appendChild(b);
+    });
+  w.appendChild(alt);
 }
 
 /* Only combinations that claim each tonne once. The order is the order the
