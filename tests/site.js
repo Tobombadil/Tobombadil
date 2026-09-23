@@ -150,6 +150,20 @@ check('the strands are decoration, and say so',memo.coverHidden==='true'&&memo.c
   await p.evaluate(()=>scrollTo(0,0));await p.waitForTimeout(300);
   check('scrolling tightens the strands',tight.left<open.left*0.8,
         (open.left*100).toFixed(0)+'% → '+(tight.left*100).toFixed(0)+'% of the height in use');
+  // a cursor at the band's edge used to push strands past it, where the canvas
+  // cut them off. They bend back softly instead, so nothing touches an edge.
+  {
+    const r=await p.evaluate(()=>{const b=document.querySelector('.cover-load').getBoundingClientRect();return {y:b.top,h:b.height};});
+    for(let k=0;k<=24;k++){await p.mouse.move(250+k*30,r.y+6);await p.waitForTimeout(25);}
+    await p.waitForTimeout(500);
+    const edges=await p.evaluate(()=>{const c=document.querySelector('.cover-load canvas');const w=c.width,h=c.height;
+      const d=c.getContext('2d').getImageData(0,0,w,h).data;
+      const row=y=>{let n=0;for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>20)n++;return n;};
+      return {top:row(0)+row(1),bottom:row(h-1)+row(h-2)};});
+    await p.mouse.move(5,5);
+    check('no strand is cut off at the edge of its band, even with the cursor on it',
+          edges.top===0&&edges.bottom===0,JSON.stringify(edges));
+  }
   await still.close();
 }
 check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0,5.0',memo.idx.join(' '));

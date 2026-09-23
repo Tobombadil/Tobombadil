@@ -185,12 +185,13 @@ get built, on §45Q alone?**
   clear its hurdle, 36% at base. Both partnership structures have the same total; only who pays
   and who keeps moves. Tests check that each split adds up, and that at the maximum share the
   developer's value is exactly zero.
-- **Alternatives and levers.** Under the model, two lists set the negotiation in context. One is
-  what the plant could do instead: its own injection well, rail to a hub, a rival line, oil
-  recovery or merchant sales, or waiting. The other is where the developer's value comes from:
-  scale, reusing a line, negotiating the credit as well as the tariff, staying under the sharing
-  ceiling, services on top, owning the store, and paying landowners. The wording is generic and
-  names no counterparty.
+- **Written as a learner.** Section 4 was cut back after reading it the way a hiring manager at
+  a capture developer would. It no longer argues the developer's own business back to them: no
+  thesis cards, no checklist of preconditions, no list of the developer's levers. What is left
+  is the question, one paragraph on why it was built, the credits stated as plain facts, and a
+  line saying that how they combine is this model's assumption, not a ruling. The source line
+  calls it a learning model and invites corrections. The cover and the terms card no longer
+  list carbon capture or midstream as markets worked in.
 - **Puro is named.** It was on the confidentiality ban list, because the deal behind 3.0 names it.
   It is a public registry, and the owner cleared naming it on 2026-09-23. The rest of the list
   stands.
