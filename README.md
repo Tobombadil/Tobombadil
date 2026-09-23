@@ -171,18 +171,20 @@ get built, on §45Q alone?**
   elected. At base, §45Z is worth $0.65 a gallon, or $247 a tonne, and lifts the plant's ceiling
   from $56.8/t to $111.9/t. An earlier version added a fuel premium on top of §45Q, which the
   2026 proposed rules do not allow. Tests now check that no year ever carries both credits.
-- **Credit pathways, and only clean ones.** A primer sets out what each credit is paid on, what it
-  pays, how it is monetized and what it may stack with: §45Q, §45Z, Puro CORCs (durable removal
-  certificates) and state LCFS credits. The picker offers five pathways: §45Q only; §45Z then
-  §45Q; §45Q + Puro CORCs; §45Q + state LCFS; and §45Z then §45Q + state LCFS. Two combinations
-  are deliberately not offered, because each would claim the same tonne twice: CORCs beside §45Z,
-  and CORCs beside a state LCFS. Both of those have already used the captured tonne to lower the
-  fuel's score. A table runs the whole model on every pathway side by side, and selecting a row
-  adopts it. Dials that do not count under the chosen pathway are dimmed.
-- **Two structures.** *Tariff contract* is the negotiation described above. *Joint venture* puts
-  capture, pipe and store under one owner at one hurdle. The tariff becomes an internal transfer
-  that moves nothing, and the venture's value is split by the producer's ownership share. Tests
-  check that the tariff changes nothing inside a venture and that the shares add up.
+- **Credit pathways, under three rules.** One federal credit a year, so never §45Q and §45Z
+  together. Puro CORCs never beside a federal credit, so a tonne sold as a removal earns no tax
+  credit. A state LCFS stacks with anything (owner's ruling, 2026-09-23). That gives six pathways:
+  §45Q; §45Z then §45Q; CORCs; §45Q + LCFS; §45Z then §45Q + LCFS; and CORCs + LCFS. A primer
+  sets out what each credit is paid on, pays, is monetized as and stacks with. A table runs the
+  whole model on every pathway, and selecting a row adopts it. Dials that do not count are dimmed.
+- **Three structures.** *Tariff contract* is the arm's-length negotiation. *Joint venture* puts
+  capture, pipe and store under one owner, with capital in pro rata; the tariff becomes an internal
+  transfer. *Developer-funded, uplift share* is the model the large ethanol pipeline developers
+  used: the developer pays for everything, the plant puts in no capital and takes a share of the
+  uplift (credits less operating cost). The page shows the most the developer can share and still
+  clear its hurdle, 36% at base. Both partnership structures have the same total; only who pays
+  and who keeps moves. Tests check that each split adds up, and that at the maximum share the
+  developer's value is exactly zero.
 - **Puro is named.** It was on the confidentiality ban list, because the deal behind 3.0 names it.
   It is a public registry, and the owner cleared naming it on 2026-09-23. The rest of the list
   stands.
