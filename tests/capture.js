@@ -31,8 +31,11 @@ function reference(a) {
   /* §45Z: $1.00 a gallon scaled by the score's distance below 50 kg/mmBtu */
   const after = a.C59 - kgPerGal * a.C7 / 0.07633 - a.C61;
   const zT = Math.max(0, Math.min(1, (50 - after) / 50)) * 1000 / (kgPerGal * a.C7);
-  /* one credit a year, never both */
-  const creditY = y => a.C17 === 1 && y <= a.C66 ? zT * a.C15 : (y <= dp ? credit : credit * a.C15);
+  /* one federal credit a year, never both, plus what the pathway adds:
+     0 §45Q · 1 §45Z then §45Q · 2 §45Q + CORCs · 3 §45Q + LCFS · 4 §45Z then §45Q + LCFS */
+  const z = a.C17 === 1 || a.C17 === 4;
+  const add = a.C17 === 2 ? a.C67 * a.C68 : (a.C17 === 3 || a.C17 === 4) ? a.C69 * a.C71 : 0;
+  const creditY = y => (z && y <= a.C66 ? zT * a.C15 : (y <= dp ? credit : credit * a.C15)) + add;
   let pv = 0; for (let y = 1; y <= n; y++) pv += creditY(y) / Math.pow(1 + a.C12, y);
   const creditT = pv / aP;
   const capT = a.C10 / (kt / 1000 * aP);
@@ -45,7 +48,12 @@ function reference(a) {
     pipeCf.push(mt * (a.C14 - a.C28));
   }
   const zone = ceil - floor;
-  return { ceil, floor, zone,
+  /* the joint venture: one owner, one hurdle, and no tariff between them */
+  const aJ = ann(a.C73, n);
+  let pvJ = 0; for (let y = 1; y <= n; y++) pvJ += creditY(y) / Math.pow(1 + a.C73, y);
+  const jvT = pvJ / aJ - a.C11 - a.C10 / (kt / 1000 * aJ) - pipeCapex / (mt * aJ) - a.C28;
+  const jvNpv = jvT * kt / 1000 * aJ;
+  return { ceil, floor, zone, jvT, jvNpv, prod:jvNpv * a.C74, dev:jvNpv * (1 - a.C74),
     plantNpv:(ceil - a.C14) * kt / 1000 * aP, pipeNpv:(a.C14 - floor) * mt * aQ,
     share:zone > 0 ? Math.max(0, Math.min(1, (ceil - a.C14) / zone)) : 0,
     plantIrr:irr(plantCf), pipeIrr:irr(pipeCf) };
@@ -69,12 +77,13 @@ function reference(a) {
     for (let i = 0; i < n; i++) {
       const ov = {};
       if (i > 0) { ins.forEach(([k, d]) => ov['Capture!' + k] = rnd(d));
-        ov['Capture!C22'] = i % 2; ov['Capture!C17'] = (i >> 1) % 2; }
+        ov['Capture!C22'] = i % 2; ov['Capture!C17'] = i % 5; ov['Capture!C72'] = (i >> 2) % 2; }
       const C = r => readCell('Capture', r);
       const a = {}; ins.concat([['C22'], ['C17']]).forEach(([k]) => a[k] = ov['Capture!' + k] ?? C(k));
       out.push({ a, got:underScenario(ov, () => ({
         ceil:C('C38'), floor:C('C39'), zone:C('C40'), plantNpv:C('C41'), pipeNpv:C('C42'),
         share:C('C43'), plantIrr:C('C45'), pipeIrr:C('C46'),
+        jvT:C('C76'), jvNpv:C('C77'), prod:C('C78'), dev:C('C79'),
         /* the same NPVs, discounted from the year-by-year rows instead */
         rowPlant:['B','C','D','E','F','G','H','I','J','K','L','M','N']
           .reduce((s, c, y) => s + C(c + '50') / Math.pow(1 + C('C12'), y), 0),
@@ -84,7 +93,7 @@ function reference(a) {
     }
     return out;
   }, 60);
-  const keys = ['ceil', 'floor', 'zone', 'plantNpv', 'pipeNpv', 'share'];
+  const keys = ['ceil', 'floor', 'zone', 'plantNpv', 'pipeNpv', 'share', 'jvT', 'jvNpv', 'prod', 'dev'];
   const drift = [];
   runs.forEach(({ a, got }, i) => {
     const want = reference(a);
@@ -95,7 +104,7 @@ function reference(a) {
         drift.push(`run ${i} ${k}: ${g} vs ${w}`);
     });
   });
-  check('the capture model matches an independent one across 60 settings', drift.length === 0,
+  check('the capture model matches an independent one across 60 settings, every pathway and both structures', drift.length === 0,
         drift.slice(0, 3).join(' | ') || runs.length + ' runs');
   check('the closed-form NPVs equal the year-by-year cash flows',
         runs.every(({ got }) => near(got.rowPlant, got.plantNpv, 1e-9) && near(got.rowPipe, got.pipeNpv, 1e-9)),
@@ -140,6 +149,47 @@ function reference(a) {
   });
   check('the §45Z dials read as inactive unless §45Z is claimed', dim.before > 0 && dim.after === 0,
         `${dim.before} dimmed under §45Q, ${dim.after} under §45Z`);
+
+  /* ---- only clean pathways are offered ----------------------------------- */
+  const offered = await p.evaluate(() => [...document.querySelectorAll('#sel-Capture-C17 option')].map(o => o.textContent));
+  check('no pathway pairs CORCs with §45Z or a state LCFS',
+        offered.length === 5 && offered.every(t => !(/CORC/.test(t) && /45Z|LCFS/.test(t))), offered.join(' | '));
+  const addOn = await p.evaluate(() => [2, 3, 4].map(k => underScenario({ 'Capture!C17':k }, () => {
+    const y1 = readCell('Capture', 'C52'), q = readCell('Capture', 'C18'), zz = readCell('Capture', 'C65') * readCell('Capture', 'C15');
+    const corc = readCell('Capture', 'C67') * readCell('Capture', 'C68'), lcfs = readCell('Capture', 'C69') * readCell('Capture', 'C71');
+    return { k, y1, want:k === 2 ? q + corc : k === 3 ? q + lcfs : zz + lcfs }; })));
+  check('each add-on sits on the federal credit it is allowed to stack with',
+        addOn.every(r => near(r.y1, r.want, 1e-9)), addOn.map(r => r.k + ':' + r.y1.toFixed(1)).join(' '));
+
+  /* ---- the joint venture ------------------------------------------------- */
+  const jv = await p.evaluate(() => [5, 35, 90].map(t => underScenario({ 'Capture!C72':1, 'Capture!C14':t }, () => ({
+    npv:readCell('Capture', 'C77'), parts:readCell('Capture', 'C78') + readCell('Capture', 'C79') }))));
+  check('in a venture the tariff moves nothing, and the shares add up',
+        jv.every(r => near(r.npv, jv[0].npv, 1e-9) && near(r.parts, r.npv, 1e-9)), jv.map(r => r.npv.toFixed(1)).join(', '));
+  const flip = await p.evaluate(() => {
+    const vis = id => !document.getElementById(id).hidden;
+    const before = [vis('cc-tariff'), vis('cc-jv'), vis('cc-ans'), vis('cc-ansj')];
+    overrides['Capture!C72'] = 1; recalc();
+    const after = [vis('cc-tariff'), vis('cc-jv'), vis('cc-ans'), vis('cc-ansj'), document.getElementById('cc-head').textContent];
+    delete overrides['Capture!C72']; recalc();
+    return { before, after };
+  });
+  check('the structure decides which readouts and answer are shown',
+        flip.before.join() === 'true,false,true,false' && flip.after.slice(0, 4).join() === 'false,true,false,true'
+        && flip.after[4] === 'The venture', JSON.stringify(flip.after));
+  const table = await p.evaluate(() => {
+    const rows = [...document.querySelectorAll('#paths tbody tr')];
+    const shown = rows.map(r => r.children[3].textContent);
+    const want = [0, 1, 2, 3, 4].map(k => underScenario({ 'Capture!C17':k }, () => readCell('Capture', 'C41')));
+    rows[2].click();
+    const adopted = readCell('Capture', 'C17'), sel = document.getElementById('sel-Capture-C17').value,
+          marked = [...document.querySelectorAll('#paths tbody tr')].findIndex(r => r.classList.contains('sel'));
+    delete overrides['Capture!C17']; document.getElementById('sel-Capture-C17').value = 0; recalc();
+    return { shown, want:want.map(v => (v < 0 ? '−$' : '$') + formatValue(Math.abs(v), 'num1') + 'M'), adopted, sel, marked };
+  });
+  check('the pathway table is the model run on each pathway', table.shown.join() === table.want.join(), table.shown.join(' '));
+  check('selecting a row adopts that pathway', table.adopted === 2 && table.sel === '2' && table.marked === 2,
+        `adopted ${table.adopted}, picker ${table.sel}, marked row ${table.marked}`);
 
   /* ---- statute stays statute ------------------------------------------ */
   const law = await p.evaluate(() => ['C18', 'C19', 'C20', 'C56', 'C57'].map(r => [r, rawOf('Capture', r)]));

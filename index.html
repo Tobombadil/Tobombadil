@@ -267,7 +267,14 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:2px solid var(
 .trade-t tr.sum td{font-weight:700;color:var(--ink);border-top:1px solid var(--rule)}
 .qans [hidden]{display:none}
 /* the §45Z dials count only when §45Z is the credit claimed */
-.ccz.off{opacity:.45}
+.ccz.off,.ccv.off,.ccl.off,.ccj.off{opacity:.45}
+#paths tbody tr{cursor:pointer}
+#paths tbody tr:hover td{color:var(--ink)}
+#paths tr.sel td{font-weight:700;color:var(--ink)}
+#paths .best{font-weight:400;color:var(--good)}
+.credits .whyc p{margin:0 0 5px}
+.credits .whyc i{font-style:normal;color:var(--ink-3)}
+#cc-jv[hidden],#cc-tariff[hidden]{display:none}
 .viz{padding:16px 14px 6px}
 .viz + .viz{border-top:1px solid var(--rule)}
 .opane > .viz:first-of-type{padding-top:14px}
@@ -846,7 +853,21 @@ const SITE = {
   /* 4.0, the capture case. The same shape as 3.0: the case, the counterweight,
      the screen, then the model. Figures the workbook owns are templated. */
   capture:{
-    question:"Can an ethanol plant pay enough to ship and store its CO₂ for the pipe to get built, on federal credits alone?",
+    question:"Can an ethanol plant pay enough to ship and store its CO₂ for the pipe to get built, on the value of its credits?",
+    /* the credits a captured tonne can earn, side by side. Rates the workbook
+       owns are templated, so the primer cannot drift from the model */
+    credits:[
+      ['§45Q', 'Tonnes of CO₂ stored underground.', '${Capture!C18:num0} a tonne for {Capture!C19:num0} years.',
+       'Cash for five years, then sold to a taxpayer.', 'Stacks with Puro CORCs or a state LCFS.'],
+      ['§45Z', "The fuel's carbon score, per gallon.", 'Up to ${Capture!C56:num2} a gallon, through 2029.',
+       'Sold to a taxpayer.', 'Stacks with a state LCFS. Never with §45Q in the same year.'],
+      ['Puro CORCs', 'Tonnes removed and stored, bought by a voluntary buyer.', 'A market price, dialled below.',
+       'Sold under offtake contracts.', 'Stacks with §45Q only, since §45Z and LCFS already use the tonne.'],
+      ['State LCFS', 'The score of fuel sold into California, Oregon or Washington.', 'A market price, dialled below.',
+       'Traded as compliance credits.', 'Stacks with §45Q or §45Z.'],
+    ],
+    excluded:"Two combinations are not offered, because each would claim the same tonne twice. Puro CORCs cannot sit beside §45Z or a state LCFS: both have already used the captured tonne to lower the fuel's score.",
+    venture:"In a joint venture the tariff is an internal transfer. It moves money between two pockets of the same project, so it changes neither the total nor anyone's return. What decides each partner's return is its share of the venture.",
     source:"Not a deal I have worked on. It is the midstream side of the credit I price into biomass projects, built from the statute and public ranges.",
     thesis:[
       ['Why ethanol first',
@@ -869,7 +890,7 @@ const SITE = {
       ['A monitoring plan the IRS accepts',
        'no approved plan for measuring what stays stored, no credit.'],
     ],
-    leaves:"Credit indexing for inflation, state low-carbon fuel credits, the years it takes to build, income tax on the margin, CO₂ from other sources on the same line, and any value after year twelve. They cut both ways. The largest, the pipe's life after the credit ends, would help the pipe.",
+    leaves:"Credit indexing for inflation, registry and verification fees, the years it takes to build, income tax on the margin, CO₂ from other sources on the same line, and any value after year twelve. They cut both ways. The largest, the pipe's life after the credit ends, would help the pipe.",
   },
 
   next:[
@@ -1176,7 +1197,7 @@ const SHEETS = [
    pipe needs to clear its own. Every figure is levelized at the payer's own
    hurdle, so the two sides can be read on one axis. */
 {
-  name:'Capture', rows:66, cols:[], cells:{
+  name:'Capture', rows:92, cols:[], cells:{
     C5: {v:120,   f:'num0', input:true, min:40,   max:300,  step:5,    lbl:'Ethanol plant size', u:'M gal/yr', grp:'The plant',
          mkt:[50,150],      s:'CIND', note:'where most US plants sit'},
     /* stoichiometry, not an assumption: one molecule of CO2 for every one of
@@ -1202,7 +1223,36 @@ const SHEETS = [
        on the fuel's carbon score and ends with 2029; §45Q pays on tonnes stored
        and runs twelve years. So the live choice is §45Q throughout, or §45Z
        while it lasts and §45Q for the years after it, never both at once. */
-    C17:{v:0,     f:'num0'},                              /* 0 §45Q only, 1 §45Z then §45Q */
+    /* The pathway: which credits the captured tonne earns. Only combinations
+       that claim each tonne once are offered. Puro CORCs sell the tonne as a
+       removal, so they cannot sit beside §45Z or a state LCFS, both of which
+       have already used the same tonne to lower the fuel's score.
+         0 §45Q · 1 §45Z then §45Q · 2 §45Q + CORCs · 3 §45Q + LCFS
+         4 §45Z then §45Q + LCFS */
+    C17:{v:0,     f:'num0'},
+    C67:{v:100,   f:'num0', input:true, min:0,    max:400,  step:5,    lbl:'CORC price', u:'$/t', grp:'The credit',
+         mkt:[50,150],      s:'CDR', note:'Puro CORCs; §45Q pathway only'},
+    C68:{v:0.5,   f:'pct0', input:true, min:0,    max:1,    step:0.05, lbl:'Share of tonnes sold as CORCs', u:'', grp:'The credit',
+         mkt:[0.25,0.75],   s:'CDR', note:'buyers take what they contract'},
+    C69:{v:60,    f:'num0', input:true, min:0,    max:150,  step:5,    lbl:'LCFS credit price', u:'$/t', grp:'The credit',
+         mkt:[45,80],       s:'LCFS', note:'LCFS pathways only'},
+    C71:{v:0.3,   f:'pct0', input:true, min:0,    max:1,    step:0.05, lbl:'Share of fuel sold into LCFS states', u:'', grp:'The credit',
+         mkt:[0.1,0.5],     s:'LCFS', note:'California, Oregon, Washington'},
+
+    /* Structure: a tariff contract between two companies, or one joint venture
+       that owns capture, pipe and store together. In the venture the tariff is
+       an internal transfer, so what sets each partner's return is its share. */
+    C72:{v:0,     f:'num0'},                              /* 0 tariff contract, 1 joint venture */
+    C73:{v:0.10,  f:'pct1', input:true, min:0.06, max:0.16, step:0.005,lbl:'Venture hurdle rate', u:'p.a.', grp:'The structure',
+         mkt:[0.08,0.12],   s:'CIND', note:'joint venture only'},
+    C74:{v:0.5,   f:'pct0', input:true, min:0,    max:1,    step:0.05, lbl:"Ethanol producer's share", u:'of the venture', grp:'The structure',
+         mkt:[0.3,0.6],     s:'CIND', note:'the developer holds the rest'},
+    C80:{v:'=(1-(1+C73)^(0-C19))/C73', f:'num3'},         /* venture annuity over the credit */
+    C75:{v:'=SUM(C91:N91)/C80', f:'num1'},                /* credits, levelized at the venture hurdle */
+    C76:{v:'=C75-C11-C10/(C8/1000*C80)-C30/(C31*C80)-C28', f:'num1'},  /* venture value per tonne */
+    C77:{v:'=C76*C8/1000*C80', f:'num1'},                 /* venture NPV, per plant, $M */
+    C78:{v:'=C77*C74', f:'num1'},                         /* the producer's share */
+    C79:{v:'=C77*(1-C74)', f:'num1'},                     /* the developer's share */
     C56:{v:1.00,  f:'num2', s:'IRC45Z'},                  /* §45Z rate, $/gal at an emissions factor of 1 */
     C57:{v:50,    f:'num0', s:'IRC45Z'},                  /* §45Z baseline, kg CO2e per mmBtu */
     C58:{v:0.07633, f:'num3', s:'LHV'},                   /* ethanol energy, mmBtu per gallon */
@@ -1264,17 +1314,31 @@ const SHEETS = [
 /* ---- the twelve credit years, one plant and the whole pipe ---- */
 (function buildCapture(){
   const s = SHEETS.find(x => x.name === 'Capture');
+  /* a year row that lands on a single figure overwrites it silently, which
+     is how the §45Z rate was once lost, so refuse to build rather than draw */
+  const taken = new Set(Object.keys(s.cells));
   ['C','D','E','F','G','H','I','J','K','L','M','N'].forEach((c, i) => {
     s.cells[c+'49'] = { v:i + 1, f:'num0' };
-    /* one credit a year, never both: §45Z while elected and available, at the
-       transfer price, since only tax-exempt owners can take it as cash; §45Q
-       otherwise, at face during the five years of direct pay */
+    /* one federal credit a year, never both: §45Z while elected and
+       available, at the transfer price, since only tax-exempt owners can take
+       it as cash; §45Q otherwise, at face during the five years of direct pay.
+       Then whatever the pathway adds on top: CORCs on the share sold, or LCFS
+       credits on the share of fuel sold into those states */
     const q = `IF(${c}49<=C$20,C$18,C$18*C$15)`;
-    s.cells[c+'52'] = { v:`=IF(${c}49<=C$19,IF(C$17=1,IF(${c}49<=C$66,C$65*C$15,${q}),${q}),0)`, f:'num1' };
+    const z = `IF(C$17=1,1,IF(C$17=4,1,0))`;
+    const add = `IF(C$17=2,C$67*C$68,IF(C$17=3,C$69*C$71,IF(C$17=4,C$69*C$71,0)))`;
+    s.cells[c+'52'] = { v:`=IF(${c}49<=C$19,IF(${z}=1,IF(${c}49<=C$66,C$65*C$15,${q}),${q})+${add},0)`, f:'num1' };
+    /* the venture's discounting, in rows of their own: column C also holds
+       single figures, so a year row must never share a row number with one */
+    s.cells[c+'90'] = { v:`=1/(1+C$73)^${c}49`, f:'num3' };
+    s.cells[c+'91'] = { v:`=${c}52*${c}90`, f:'num1' };
     s.cells[c+'53'] = { v:`=1/(1+C$12)^${c}49`, f:'num3' };
     s.cells[c+'54'] = { v:`=${c}52*${c}53`, f:'num1' };
     s.cells[c+'50'] = { v:`=IF(${c}49<=C$19,C$8/1000*(${c}52-C$11-C$14),0)`, f:'num1' };
     s.cells[c+'51'] = { v:`=IF(${c}49<=C$19,C$31*(C$14-C$28),0)`, f:'num1' };
+  });
+  ['49', '50', '51', '52', '53', '54', '90', '91'].forEach(r => {
+    if (taken.has('C' + r)) throw new Error('Capture!C' + r + ' is both a figure and a year row');
   });
 })();
 
@@ -1646,7 +1710,7 @@ const SRC = {
   'Capture!C20': ['Direct-pay years', 'For the first five years the credit can be taken as cash under §6417, at face. After that it is sold to a taxpayer at the transfer price.', '', ' yrs'],
   'Capture!C11': ['Capture operating cost', 'Mostly the electricity to compress the gas to pipeline pressure, plus drying, maintenance and monitoring at the plant.', '$', '/t'],
   'Capture!C14': ['Transport and storage tariff', 'What the plant pays the pipe per tonne delivered. It moves value from one side to the other and changes nothing about the size of the pie.', '$', '/t'],
-  'Capture!C35': ['Credits, as the plant receives them', 'One credit a year, never both. §45Q is ${C18} a tonne, at face for {C20} years of direct pay and then at the {C15} transfer price. Where §45Z is elected it pays ${C65} a tonne at the transfer price for {C66} years, then §45Q takes over. Levelized over the credit period at the plant hurdle of {C12}.', '$', '/t'],
+  'Capture!C35': ['Credits, as the plant receives them', 'One federal credit a year, never both. §45Q is ${C18} a tonne, at face for {C20} years of direct pay and then at the {C15} transfer price. Where §45Z is elected it pays ${C65} a tonne at the transfer price for {C66} years, then §45Q takes over. CORCs or LCFS credits are added where the pathway includes them. Levelized over the credit period at the plant hurdle of {C12}.', '$', '/t'],
   'Capture!C60': ['What capture takes off the score', 'The {C6} kg of CO₂ in each gallon, {C7} of it captured, over the {C58} mmBtu of energy the gallon holds.', '', ' kg/mmBtu'],
   'Capture!C62': ['Carbon score after capture', 'A score of {C59} before capture, less {C60} taken off by capture and {C61} avoided elsewhere, in kg CO₂e per mmBtu.', '', ' kg/mmBtu'],
   'Capture!C64': ['§45Z, per gallon', 'The ${C56} rate scaled by how far the score sits below the {C57} kg baseline: an emissions factor of {C63}, capped at the full rate.', '$', '/gal'],
@@ -1664,6 +1728,10 @@ const SRC = {
   'Capture!C42': ['Pipe NPV', 'The tariff less the least the pipe needs, over {C31} million tonnes a year for the credit period, discounted at its hurdle.', '$', 'M'],
   'Capture!C45': ['Plant IRR', 'The capture equipment against twelve years of credit and premium, less operating cost and tariff. Before income tax.'],
   'Capture!C46': ['Pipe IRR', 'The line and the store against twelve years of tariff, less operating cost. Before income tax.'],
+  'Capture!C76': ['Venture value, per tonne', 'The credits as the venture receives them, less capture operating cost, capture capital and the pipe and store, all recovered at the venture hurdle of {C73}.', '$', '/t'],
+  'Capture!C77': ['Venture NPV, per plant', 'The venture value per tonne over {C8} thousand tonnes a year for the credit period, discounted at the venture hurdle.', '$', 'M'],
+  'Capture!C78': ["Producer's share", "The ethanol producer's {C74} of the venture's value.", '$', 'M'],
+  'Capture!C79': ["Developer's share", "The capture and pipeline developer's share of the venture's value.", '$', 'M'],
   'Capture!C30': ['Pipe and store capex', 'A ${C26}M storage hub plus {C23} miles of line, new or converted as configured.', '$', 'M'],
   'Capture!C31': ['System throughput', '{C27} plants at {C8} thousand tonnes a year each.', '', ' Mt/yr'],
 };
@@ -2213,6 +2281,8 @@ const BENCH = {
   IRC45Z: ['IRC §45Z',   'Clean fuel production credit: up to $1.00 a gallon, scaled by how far the fuel scores below 50 kg CO₂e per mmBtu. Ends with 2029 under current law, and cannot be claimed in the same year as §45Q.'],
   GREET:  ['45ZCF-GREET', 'The model Treasury uses to score fuels for §45Z. A plant gets its own score from its own inputs; this is a range, not a plant.'],
   LHV:    ['GREET',       'The lower heating value of ethanol, about 76,330 Btu a gallon, from Argonne National Laboratory.'],
+  CDR:    ['durable CDR market', 'Puro.earth issues CO2 Removal Certificates under its Geologically Stored Carbon methodology, and the first ethanol plant issued them in 2024. Durable removal credits for ethanol capture have been modeled at $50 to $150 a tonne. Newer BECCS offtakes have priced far higher, and buyers are thin.'],
+  LCFS:   ['state LCFS',  'California Low Carbon Fuel Standard credit prices, with Oregon and Washington trading similarly. Paid only on fuel sold into those states.'],
   AZ:     ['A.R.S. §43-1111', 'Arizona statutory corporate rate, deductible against federal.'],
 };
 
@@ -2826,6 +2896,13 @@ function secCapture(){
   const no = $('span', null, ' No tariff leaves both sides above their hurdle.'); no.id = 'cc-no';
   ans.append(yes, no);
   q.appendChild(ans);
+  /* the same question answered for a joint venture, where no tariff is set */
+  const ansj = $('p', 'qans'); ansj.id = 'cc-ansj'; ansj.hidden = true;
+  ansj.appendChild($('b', 'jverdict', ''));
+  ansj.append(' As one venture, capture, pipe and store earn ', cc('C76', '$'),
+    ' a tonne above the venture hurdle. That is ', cc('C77', '$', 'M'), ' a plant, with ',
+    cc('C78', '$', 'M'), ' to the ethanol producer and ', cc('C79', '$', 'M'), ' to the developer.');
+  q.appendChild(ansj);
   q.appendChild($('p', 'qsrc', C.source));
   w.appendChild(q);
 
@@ -2849,6 +2926,21 @@ function secCapture(){
     ml.appendChild(li);
   });
   why.appendChild(ml);
+  /* what each credit is, before the model asks the reader to choose */
+  why.appendChild($('h4', 'mustsh', 'The credits a captured tonne can earn'));
+  const cg = $('div', 'whys credits');
+  C.credits.forEach(([k, on, rate, how, stacks]) => {
+    const c = $('div', 'whyc');
+    c.appendChild($('b', null, k));
+    [['Paid on', on], ['Pays', say(rate)], ['Taken as', how], ['Stacking', stacks]].forEach(([h, v]) => {
+      const pp = $('p');
+      pp.append($('i', null, h + ' '), v);
+      c.appendChild(pp);
+    });
+    cg.appendChild(c);
+  });
+  why.appendChild(cg);
+  why.appendChild($('p', 'against', C.excluded));
   w.appendChild(why);
 
   const box = $('div', 'model');
@@ -2877,19 +2969,26 @@ function secCapture(){
   }
   /* the tariff first, because it is the number the negotiation is about */
   const startClosed = matchMedia('(max-width:680px)').matches;
-  ['The deal', 'The credit', 'The plant', 'The pipe and the store'].forEach(grp => {
+  /* which dials count under which pathway or structure, so the ones that do
+     not can be dimmed rather than hidden */
+  const ROLE = { C59:'ccz', C61:'ccz', C66:'ccz', C67:'ccv', C68:'ccv', C69:'ccl', C71:'ccl',
+                 C73:'ccj', C74:'ccj' };
+  const ORDER = { 'The credit':['C59', 'C61', 'C66', 'C67', 'C68', 'C69', 'C71'] };
+  ['The deal', 'The credit', 'The structure', 'The plant', 'The pipe and the store'].forEach(grp => {
     inputGroup(inp, grp, !startClosed && grp === 'The deal', body => {
       if (grp === 'The pipe and the store')
         body.appendChild(picker('C22', 'The line',
           [[0, 'Built new'], [1, 'An existing line, converted']], 'Capture'));
-      /* one credit a year, never both, so the election comes first and the
-         §45Z dials below it only count when §45Z is chosen */
+      /* one federal credit a year, never both, and nothing that claims the
+         same tonne twice, so the pathway comes first */
       if (grp === 'The credit')
-        body.appendChild(picker('C17', 'Credit claimed',
-          [[0, '§45Q, all twelve years'], [1, '§45Z while it lasts, then §45Q']], 'Capture'));
-      groups.get(grp).forEach(ref => {
+        body.appendChild(picker('C17', 'Credit pathway', PATHS, 'Capture'));
+      if (grp === 'The structure')
+        body.appendChild(picker('C72', 'Structure',
+          [[0, 'Tariff contract'], [1, 'Joint venture']], 'Capture'));
+      (ORDER[grp] || groups.get(grp)).forEach(ref => {
         const f = captureDial(ref, cells[ref]);
-        if (grp === 'The credit') f.classList.add('ccz');
+        if (ROLE[ref]) f.classList.add(ROLE[ref]);
         body.appendChild(f);
       });
       if (grp === 'The credit') {
@@ -2930,7 +3029,10 @@ function secCapture(){
   inp.appendChild(key);
 
   const out = $('div', 'outputs');
-  out.appendChild($('h3', null, 'The deal zone'));
+  const oh = $('h3', null, 'The deal zone'); oh.id = 'cc-head';
+  out.appendChild(oh);
+  /* the tariff readouts, shown when the two sides contract at arm's length */
+  const tariff = $('div'); tariff.id = 'cc-tariff';
   const tiles = $('div', 'otiles');
   [['Most the plant can pay', 'C38', '$', '/t', 'Its hurdle, met exactly'],
    ['Least the pipe needs', 'C39', '$', '/t', 'Its hurdle, met exactly'],
@@ -2945,7 +3047,7 @@ function secCapture(){
     t.appendChild($('span', 'n', n));
     tiles.appendChild(t);
   });
-  out.appendChild(tiles);
+  tariff.appendChild(tiles);
 
   const vz = $('div', 'viz');
   vz.appendChild($('h4', null, 'Where the tariff can land'));
@@ -2955,7 +3057,7 @@ function secCapture(){
   vz.appendChild(zc);
   const zb = $('div', 'chartbox'); zb.id = 'zone';
   vz.appendChild(zb);
-  out.appendChild(vz);
+  tariff.appendChild(vz);
 
   const vt = $('div', 'viz');
   vt.appendChild($('h4', null, 'Where a tonne of CO₂ goes'));
@@ -2976,7 +3078,7 @@ function secCapture(){
   });
   tb.appendChild(tbody);
   vt.appendChild(tb);
-  out.appendChild(vt);
+  tariff.appendChild(vt);
 
   const st = $('div', 'stack');
   [['Plant NPV', 'C41', '$', 'M'], ['Pipe NPV', 'C42', '$', 'M'],
@@ -2988,7 +3090,38 @@ function secCapture(){
     d.appendChild(v);
     st.appendChild(d);
   });
-  out.appendChild(st);
+  tariff.appendChild(st);
+  out.appendChild(tariff);
+
+  /* the venture readouts, shown instead when one venture owns it all */
+  const jv = $('div'); jv.id = 'cc-jv'; jv.hidden = true;
+  const jt = $('div', 'otiles');
+  [['Venture value', 'C76', '$', '/t', 'Above the venture hurdle'],
+   ['Venture NPV', 'C77', '$', 'M', 'Per plant signed'],
+   ["Producer's share", 'C78', '$', 'M', 'At the dialled ownership'],
+   ["Developer's share", 'C79', '$', 'M', 'The rest of the venture']].forEach(([k, ref, pre, suf, n]) => {
+    const t = $('div', 'ctile');
+    t.appendChild($('span', 'k', k));
+    const v = $('span', 'v');
+    v.appendChild(cc(ref, pre, suf));
+    t.appendChild(v);
+    t.appendChild($('span', 'n', n));
+    jt.appendChild(t);
+  });
+  jv.appendChild(jt);
+  const jc = $('div', 'viz');
+  jc.appendChild($('h4', null, 'Why the tariff drops out'));
+  jc.appendChild($('p', 'cap', C.venture));
+  jv.appendChild(jc);
+  out.appendChild(jv);
+
+  /* every clean pathway, run through the whole model, side by side */
+  const pv = $('div', 'viz');
+  pv.appendChild($('h4', null, 'What each pathway yields'));
+  pv.appendChild($('p', 'cap', 'Each row is the whole model run again on that pathway, levelized per tonne captured. Select a row to adopt it.'));
+  const pt = $('table', 'trade-t'); pt.id = 'paths';
+  pv.appendChild(pt);
+  out.appendChild(pv);
 
   const foot = $('div', 'mfoot');
   const gp = $('p');
@@ -2996,6 +3129,50 @@ function secCapture(){
   foot.appendChild(gp);
   box.append(inp, out, foot);
   w.appendChild(box);
+}
+
+/* Only combinations that claim each tonne once. The order is the order the
+   reader meets them in the primer. */
+const PATHS = [[0, '§45Q only'], [1, '§45Z, then §45Q'], [2, '§45Q + Puro CORCs'],
+               [3, '§45Q + state LCFS'], [4, '§45Z, then §45Q + state LCFS']];
+
+function drawPaths() {
+  const t = document.getElementById('paths');
+  if (!t) return;
+  const jv = val('Capture', 'C72') === 1, cur = val('Capture', 'C17');
+  const rows = PATHS.map(([k, name]) => underScenario({ 'Capture!C17':k }, () => ({
+    k, name, credit:val('Capture', 'C35'),
+    per:val('Capture', jv ? 'C76' : 'C38'), npv:val('Capture', jv ? 'C77' : 'C41') })));
+  const best = Math.max(...rows.map(r => r.npv));
+  t.textContent = '';
+  const th = $('thead'), hr = $('tr');
+  ['Pathway', 'Credits', jv ? 'Venture value' : 'Plant can pay', jv ? 'Venture NPV' : 'Plant NPV']
+    .forEach((h, i) => hr.appendChild($('th', i ? 'n' : null, h)));
+  th.appendChild(hr); t.appendChild(th);
+  const tb = $('tbody');
+  const $$ = (v, suf) => (v < 0 ? '−$' : '$') + formatValue(Math.abs(v), 'num1') + suf;
+  rows.forEach(r => {
+    const tr = $('tr');
+    if (r.k === cur) tr.className = 'sel';
+    const n = $('td', null, r.name);
+    if (r.npv === best) n.append($('span', 'best', ' · highest'));
+    tr.appendChild(n);
+    tr.appendChild($('td', 'n', $$(r.credit, '/t')));
+    tr.appendChild($('td', 'n', $$(r.per, '/t')));
+    tr.appendChild($('td', 'n', $$(r.npv, 'M')));
+    tr.tabIndex = 0;
+    tr.setAttribute('aria-label', 'Adopt ' + r.name);
+    const pick = () => {
+      overrides['Capture!C17'] = r.k;
+      const sel = document.getElementById('sel-Capture-C17');
+      if (sel) sel.value = r.k;
+      recalc();
+    };
+    tr.addEventListener('click', pick);
+    tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
 }
 
 /* The band as a number line: the pipe's floor, the plant's ceiling, and the
@@ -3095,8 +3272,18 @@ addEventListener('resize', () => { clearTimeout(zoneTimer); zoneTimer = setTimeo
 
 function updateCapture() {
   const zone = val('Capture', 'C40');
-  const z = val('Capture', 'C17') === 1;
-  document.querySelectorAll('#capture .ccz').forEach(e => e.classList.toggle('off', !z));
+  const path = val('Capture', 'C17'), jv = val('Capture', 'C72') === 1;
+  const live = { ccz:path === 1 || path === 4, ccv:path === 2, ccl:path === 3 || path === 4, ccj:jv };
+  Object.entries(live).forEach(([cls, on]) =>
+    document.querySelectorAll('#capture .' + cls).forEach(e => e.classList.toggle('off', !on)));
+  /* the structure decides which readouts and which answer are shown */
+  const show = (id, on) => { const e = document.getElementById(id); if (e) e.hidden = !on; };
+  show('cc-tariff', !jv); show('cc-jv', jv); show('cc-ans', !jv); show('cc-ansj', jv);
+  const head = document.getElementById('cc-head');
+  if (head) head.textContent = jv ? 'The venture' : 'The deal zone';
+  const jvv = document.querySelector('#capture .jverdict');
+  if (jvv) jvv.textContent = val('Capture', 'C76') > 0 ? 'On these inputs, yes.' : 'On these inputs, no.';
+  drawPaths();
   /* the same rule 3.0 uses: past 100% a return is arithmetic, not information */
   ['C45', 'C46'].forEach(ref => {
     const el = document.querySelector('[data-cell="Capture!' + ref + '"]');

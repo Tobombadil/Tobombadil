@@ -45,11 +45,13 @@ else {
 
 /* ---- 2. nothing from the live transaction ---------------------------- */
 /* The deck this model was abstracted from is a live raise under NDA. Every
-   party, agency and place it names stays off the page. Novo BioPower is the
+   party, agency and place it names stays off the page. Puro is the exception:
+   it is a public registry, and the owner cleared naming it for the 4.0 credit
+   primer on 2026-09-23. Novo BioPower is the
    one public comparable and may appear only inside a benchmark line. */
 const BANNED = ['Revi', 'Winslow', 'Lincoln', 'McBain', 'Atlas', 'National Salvage', 'Nexus',
   'BNP', 'Mammoet', 'seller ask', 'I-40', 'Zurn', 'RFOR', 'Interlink', 'M3 Construction',
-  'Riffel', 'ADG', 'Puro Earth', 'APS', 'Navajo', 'ADEQ', 'ADWR', '4FRI', 'Michigan'];
+  'Riffel', 'ADG', 'APS', 'Navajo', 'ADEQ', 'ADWR', '4FRI', 'Michigan'];
 const leaks = BANNED.filter(w => new RegExp('\\b' + w.replace(/-/g, '\\-') + '\\b', 'i').test(html));
 if (leaks.length) fail('nothing from the live deal appears', leaks.join(', '));
 else pass('nothing from the live deal appears');
