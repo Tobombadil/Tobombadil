@@ -44,8 +44,9 @@ machinery kept and pointed at interrogation instead.
   carried right, where they weave into a braid and close into a near-solid, rising ribbon. After
   that it keeps flowing, and scrolling into the document tightens all of it: the loose ends
   straighten, the braid calms and the ribbon closes, complete a little over half a screen down.
-  One copper strand runs unbroken through it. The idea is origination: disconnected pieces made
-  into one project. A cursor or finger tidies the strands it passes and draws them toward it.
+  One copper strand runs unbroken through it, drawn in front of the rest. The idea is origination: disconnected pieces made
+  into one project. A cursor or finger parts the strands near it the way a hand parts reeds.
+  The effect is round, eases in and out, and adds to the flow rather than stopping it.
   Every strand is one unbroken line. It carries no data, so there is no caption, and it is
   hidden from screen readers. It replaced a battery load shape, which put storage on the first
   screen of a low-carbon page. It is seeded, so it draws the same way on every visit. With
