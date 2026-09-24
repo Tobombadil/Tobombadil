@@ -760,33 +760,20 @@ check('the public comparable is cited, and only as a benchmark',
       novo.inBench&&novo.loose.length===0,
       novo.loose.join(' | ')||'in the benchmark line only');
 
-// ---- the case the model is evidence for ----
+// ---- the context the model is evidence for ----
+// One paragraph, as in the capture case: no argued case or checklist in front
+// of a reader who may know the business better.
 const why=await p.evaluate(()=>{
   const w=document.querySelector('#analysis .why');
-  return {cards:[...w.querySelectorAll('.whyc')].map(c=>({
-      k:c.querySelector('b').textContent, body:c.querySelector('p').textContent,
-      n:c.querySelector('p').textContent.split(/\s+/).length})),
-    against:w.querySelector('.against').textContent,
+  return {cards:w.querySelectorAll('.whyc').length, lists:w.querySelectorAll('ul,ol').length,
+    intro:w.querySelector('.against').textContent,
     beforeModel:w.compareDocumentPosition(document.querySelector('#analysis .model'))
       &Node.DOCUMENT_POSITION_FOLLOWING};});
-check('the section states its case before its arithmetic',
-  why.cards.length>=4&&!!why.beforeModel,
-  why.cards.map(c=>c.k).join(' · '));
-// the plan is behind the meter; the grid tie is what keeps that from being a
-// single point of failure, so the case has to say so and the model has to price it
-check('the case answers the schedule risk in the plan it proposes',
-  why.cards.some(c=>/gen-tie|grid tie|utility/i.test(c.k+' '+c.body)
-    &&/wait|earn|stranded|day one/i.test(c.k+' '+c.body)),
-  why.cards.map(c=>c.k).join(' · '));
-check('each move is made in a paragraph, not an essay',
-  why.cards.every(c=>c.n>=25&&c.n<=90),
-  why.cards.map(c=>c.n).join('/')+' words');
-// a thesis with no counterweight is a pitch deck
-// The counterweight used to be a paragraph restating four of the screening
-// conditions in different words. The screen carries it now, a line each.
-check('the thesis names the buyer it is aimed at',
-  /cooperative|municipal/i.test(why.against)&&/data.centre|data.center/i.test(why.against),
-  why.against.split(/\s+/).length+' words');
+check('the section sets its context in one paragraph, before the model',
+  why.cards===0&&why.lists===0&&!!why.beforeModel&&why.intro.split(/\s+/).length<=80,
+  why.intro.split(/\s+/).length+' words');
+check('the context names the buyer it is aimed at',
+  /cooperative|municipal/i.test(why.intro)&&/data.centre|data.center/i.test(why.intro),'');
 
 // ---- time to power, which is what a data centre is actually buying ----
 const clock=await p.evaluate(()=>{
@@ -932,22 +919,9 @@ check('capex is dialled in dollars, not dollars per kW',
 check('capex is built from its parts rather than asserted as a lump',
   Math.abs(capexDial.after.parts.reduce((a,b)=>a+b,0)-capexDial.after.cell)<1e-9,
   capexDial.after.parts.map(x=>x.toFixed(2)).join(' + ')+' = '+capexDial.after.cell.toFixed(2));
-// ---- the screen that comes before the arithmetic ----
-const musts=await p.evaluate(()=>{
-  const ul=document.querySelector('.musts');
-  if(!ul) return {n:0};
-  return {n:ul.children.length,
-    heads:[...ul.querySelectorAll('b')].map(b=>b.textContent.trim()),
-    bodies:[...ul.querySelectorAll('span')].map(x=>x.textContent.trim().length),
-    beforeModel:!!(ul.compareDocumentPosition(document.querySelector('.model'))
-      &Node.DOCUMENT_POSITION_FOLLOWING)};});
-check('the page screens the deal before it models it',
-  musts.n>=4&&musts.beforeModel,
-  musts.n+' preconditions, above the model');
-check('and rail or heavy haul is the first of them, since it gates the rest',
-  /heavy.haul|rail/i.test(musts.heads[0]), musts.heads[0]);
-check('each precondition says why, not just what',
-  musts.bodies.every(l=>l>120), 'shortest '+Math.min(...musts.bodies)+' chars');
+// the screening checklist was removed with the case cards
+check('no checklist sits above the model',
+  await p.evaluate(()=>!document.querySelector('.musts')),'');
 
 // ---- the haul, and what its figures do and do not claim ----
 const haul=await p.evaluate(()=>{

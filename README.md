@@ -140,6 +140,15 @@ steps" is now "Contact", "Terms at a glance" is "At a glance", and its "Level" r
 that pointed at section numbers now names the thing. The older notes below still use the numbers,
 because that is what the page carried when they were written.
 
+## The biopower case, trimmed to match the capture case
+
+The biopower case now has the same shape as the capture case: the question, the answer, a source
+line, one paragraph of context, then the model. The four "Why" cards and the five-item checklist
+are gone. They made claims a reader who knows the business could dispute ("close to unbuyable",
+"a coin flip"), and the dials already carry each risk. The diligence rows say what I would check
+rather than trading in maxims, and the trade note no longer ends on "Nobody builds a new biomass
+plant at these power prices."
+
 ## The low-carbon rebrand, and 4.0, the capture case
 
 The page is now positioned as low-carbon origination rather than origination in energy

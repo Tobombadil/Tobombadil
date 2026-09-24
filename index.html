@@ -158,14 +158,8 @@ h1{margin:10px 0 0;font:400 46px/1.06 var(--serif);letter-spacing:-.012em;text-w
 .job li::before{content:"—";position:absolute;left:0;color:var(--ink-3)}
 
 /* ── the live model ────────────────────────────────────────────────── */
-/* the screening list: preconditions, not priced risks */
+/* a small heading over a block of cards */
 .mustsh{margin:20px 0 8px;font:700 12px var(--sans)}
-.musts{margin:0;padding:0;list-style:none;border-top:1px solid var(--rule-2)}
-.musts li{padding:6px 0;border-bottom:1px solid var(--rule-2);font-size:12.5px;
-          line-height:1.5;color:var(--ink-3)}
-.musts b{font:600 12.5px var(--sans);color:var(--ink)}
-.musts b::before{content:'\2713';color:var(--copper);margin-right:8px;font-weight:700}
-.musts b::after{content:' \00b7'}
 
 /* a heading inside a section, for a block that is not its own section */
 .subh{margin:26px 0 10px;font:700 12px var(--sans)}
@@ -457,7 +451,7 @@ section > .wrap.body{padding-bottom:44px}
 /* a wider, calmer type scale for the document body */
 .lede{font-size:15.5px;line-height:1.68}
 .sched td{line-height:1.55}
-.sched.pairs td:last-child,.sched.risk td{font-size:13px;line-height:1.65}
+.sched.pairs td:last-child{font-size:13px;line-height:1.65}
 
 @media (max-width:820px){
   .toc ol{grid-template-columns:1fr}
@@ -474,14 +468,11 @@ section > .wrap.body{padding-bottom:44px}
 .crow dt{flex:0 0 auto}
 .crow dd{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
 
-/* the mandate map and the risk register both ride on .sched */
+/* the diligence pairs ride on .sched */
 .sched.pairs td{padding:12px 16px 12px 0;font-size:13px;vertical-align:top}
 .sched.pairs td:first-child{width:37%}
 .sched.pairs td:last-child{color:var(--prose);line-height:1.6}
 .sched.pairs .own{display:block;font-weight:700}
-.sched.risk td{vertical-align:top;line-height:1.6;font-size:12.5px;color:var(--prose)}
-.sched.risk td:first-child{width:24%;font-weight:700;color:var(--ink)}
-.sched.risk td:nth-child(2){width:33%;color:var(--ink-2)}
 
 .steps{margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:var(--prose)}
 .steps li{margin-bottom:9px}
@@ -595,11 +586,9 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
   .sched td{display:block;border:0;padding:1px 0}
   .sched td.n{text-align:left}
   .sched td[data-l]::before{content:attr(data-l) " ";color:var(--ink-3);font-size:11px}
-  .sched.pairs td:first-child,.sched.risk td:first-child,
-  .sched.risk td:nth-child(2){width:auto}
-  .sched.pairs td,.sched.risk td{padding:2px 0}
-  .sched.pairs tr,.sched.risk tr{padding:14px 0}
-    .sched.risk td:nth-child(2),.sched.risk td:nth-child(3){margin-top:6px;display:block}
+  .sched.pairs td:first-child{width:auto}
+  .sched.pairs td{padding:2px 0}
+  .sched.pairs tr{padding:14px 0}
   .crow{flex-direction:column;gap:2px}
   .crow dd{text-align:left}
   /* Auto layout ignored the percentages here: the numeric columns and the
@@ -786,43 +775,19 @@ const SITE = {
 
   diligence:[
     ['PPA price and escalation',
-     "Their own load forecast, and the last three contracts they signed. A price nobody else is printing is a price to be nervous about."],
+     "The buyer's load forecast, and the prices on its recent contracts."],
     ['Availability',
-     "The OEM, the operator's fleet history on the same equipment, and the IE. The most reliably optimistic number in any model."],
+     "The manufacturer's data, the operator's record on the same equipment, and the independent engineer's view."],
     ['Capex',
-     "A Class-3 estimate with a real basis, not a developer budget, with contingency priced as its own line."],
+     "An engineering estimate with a stated basis, and contingency as its own line."],
     ['Fuel',
-     "Term, ceiling, indexation, and what happens the year the ceiling binds. Here that outranks the interest rate."],
+     "Term, ceiling, indexation, and what happens in the year the ceiling binds."],
   ],
 
-  /* the argument the model is evidence for. Four moves, then the buyer */
-  thesis:[
-    ['Why now',
-     "Data centres have money and no quick way to get power. Turbine order books are years deep and the interconnection queue is longer than that. Firm, clean power on a short timeline is close to unbuyable."],
-    ['Why these plants',
-     "Small biomass plants sit idle across the country, most of them shut when a PPA expired or the mill next door closed. The boiler, turbine and generator are usually still sound. What you're buying is the equipment, not the site."],
-    ['Why the fuel is cheap',
-     "Restoration thinning produces small-diameter wood nobody has a market for. Sawmill residuals are the same. Both are a disposal cost to whoever holds them, so where a tipping fee is already being paid, the fuel price is the trucking."],
-    ['Why it is not stranded',
-     "Behind the meter to the data centre, with a utility interconnection alongside it. The plant earns from day one instead of idling against someone else's construction schedule."],
-  ],
-  /* The screen, not the risk register: these either hold or there is no deal.
-     One line each, because a reader checking a screen is scanning it. */
-  musts:[
-    ['Both sites reachable by heavy haul',
-     "if you can't get the plant out, nothing else matters."],
-    ['A utility connection as well as the host',
-     "so the plant earns while the data centre is still being built."],
-    ['An air permit you can actually get in time',
-     'the slowest item, and neighbours can object.'],
-    ['Fuel close enough to truck',
-     "past a certain distance the free wood isn't free."],
-    ['Equipment that passes inspection',
-     "a coin flip. Inspect before buying."],
-  ],
-  against:"I built this around a cooperative or municipal with a data centre arriving in its territory. Firm local power years before they could build it themselves. Everything that could sink the deal is a dial below. Change any number that looks wrong.",
-  /* 4.0, the capture case. The same shape as 3.0: the case, the counterweight,
-     the screen, then the model. Figures the workbook owns are templated. */
+  /* one paragraph of context, as in the capture case. The model carries the rest */
+  intro:"Small biomass plants sit idle across the country, many shut when a contract or a nearby mill ended. I built this around a cooperative or municipal utility with a data centre arriving in its territory. The plant sits behind the meter, with a utility connection alongside it. The question is whether moving one beats building new on cost and time.",
+  /* 4.0, the capture case. The same shape as 3.0: the question, a paragraph
+     of context, then the model. Figures the workbook owns are templated. */
   capture:{
     question:"Can an ethanol plant pay enough to ship and store its CO₂ for the pipe to get built, on the value of its credits?",
     /* one paragraph of why, in place of a case argued at people who know it
@@ -1023,11 +988,9 @@ const SHEETS = [
          note:'the utility side, and the number the study can move most'},
     C73:{v:'=IF(C74<=1,C75,0)+IF(C74>=1,C76+C77*C78+C79,0)', f:'num2'},
     /* The one line that is contingent rather than planned: the boiler either
-       passes ultrasonic inspection or it is retubed. The preconditions above
-       call this the genuine coin flip, so the model should carry it. */
-    /* The coin flip the preconditions name, made a dial instead of a footnote.
-       The base case provisions the full retube because the inspection has not
-       been done; clearing it is upside, not the plan. */
+       passes ultrasonic inspection or it is retubed. The base case provisions
+       the full retube because the inspection has not been done; clearing it
+       is upside, not the plan. */
     C80:{v:2,     f:'num0'},                              /* 0 none, 1 partial, 2 full */
     C81:{v:4.15,  f:'num2', input:true, min:1,    max:10,   step:0.05, lbl:'Full retube, if called for', u:'$M', grp:'Acquiring and moving it',
          mkt:[2,8], mpre:'$', msuf:'M', mf:'num0', s:'EST',
@@ -2459,7 +2422,7 @@ function syncControls() {
    stacked blocks with three headings, which read as three sections and ran
    six screens on a phone. */
 const PANES = [
-  ['trade',       'Trade',       'The same plant relocated or built new. The gap is the opportunity.'],
+  ['trade',       'Trade',       'The same plant, relocated or built new.'],
   ['returns',     'Returns',     'What the deal earns, and the cash flow underneath it.'],
   ['sensitivity', 'Sensitivity', 'Which assumptions the answer actually turns on.'],
   ['stress',      'Stress',      'How far each one can be wrong before equity is worth nothing.'],
@@ -2490,35 +2453,11 @@ function secAnalysis(){
   q.appendChild(ans);
 
   q.appendChild($('p', 'qsrc',
-    'A generic version of a trade I sponsor at Compass, rebuilt at a round number. Every input sits in a published or industry range and the tax numbers come straight from the statute. No client, counterparty, site or transaction term appears anywhere in it.'));
+    'A generic version of a project I sponsor at Compass, at round numbers. Inputs come from public and industry ranges, and the tax figures from the statute. No client, counterparty, site or transaction term appears in it.'));
   w.appendChild(q);
 
-  /* the argument, before the arithmetic that serves it */
   const why = $('div', 'why');
-  why.appendChild($('h3', null, 'What the answer rests on'));
-  const wg = $('div', 'whys');
-  SITE.thesis.forEach(([k, v]) => {
-    const c = $('div', 'whyc');
-    c.appendChild($('b', null, k));
-    c.appendChild($('p', null, v));
-    wg.appendChild(c);
-  });
-  why.appendChild(wg);
-  const ag = $('p', 'against');
-  ag.textContent = SITE.against;
-  why.appendChild(ag);
-
-  /* the screen, before the model: these either hold or there is no deal */
-  const mh = $('h4', 'mustsh', 'What has to be true first');
-  why.appendChild(mh);
-  const ml = $('ul', 'musts');
-  SITE.musts.forEach(([k, v]) => {
-    const li = $('li');
-    li.appendChild($('b', null, k));
-    li.append(' ' + v);
-    ml.appendChild(li);
-  });
-  why.appendChild(ml);
+  why.appendChild($('p', 'against', SITE.intro));
   w.appendChild(why);
 
   const box = $('div', 'model');
@@ -2673,7 +2612,7 @@ function secAnalysis(){
   tr.appendChild(tbars);
   const tn = $('p');
   tn.style.cssText = 'margin:14px 0 0;font:italic 11px var(--sans);color:var(--ink-3);line-height:1.6;max-width:78ch';
-  tn.textContent = "Project IRR carries no debt, so that line is the plant alone. DSCR is where the financing shows up. Same plant, same revenue, so both columns support the same size loan. Spending four times as much doesn't let you borrow four times as much. Relocated, the leverage limit caps the loan and the plant covers it comfortably. Built new, the loan stops at what the cash flow carries and equity funds the rest. Lenders lend against cash flow, not against what you spent. Nobody builds a new biomass plant at these power prices.";
+  tn.textContent = "Project IRR carries no debt, so that line is the plant alone. DSCR is where the financing shows up. Both columns earn the same revenue, so both support about the same loan, because lenders size against cash flow, not cost. Relocated, the leverage limit sets the loan. Built new, the cash flow sets it and equity funds the rest.";
   tr.appendChild(tn);
   panes[0].appendChild(tr);
 
@@ -2758,7 +2697,7 @@ function secAnalysis(){
   v4.appendChild($('h4', null, "How I would test the top four"));
   const dnote = $('p', 'cap');
   dnote.style.cssText = 'margin:-4px 0 10px';
-  dnote.textContent = 'Every model I have worked on broke on a bad input rather than bad arithmetic.';
+  dnote.textContent = 'What I would check first, for the inputs that move the answer most.';
   v4.appendChild(dnote);
   /* no header row: the heading above it already says driver and test */
   const dt = $('table', 'sched pairs');
@@ -2783,7 +2722,7 @@ function secAnalysis(){
   const foot = $('div', 'mfoot');
   const gp = $('p');
   gp.append($('b', null, 'What this leaves out. '),
-    "A real financing model would add a proper construction drawdown, a cash sweep, covenant lockup, post-tax sculpting, a tax equity flip, working capital and a merchant tail. I have left all of it out. Reading someone else's model, this is the first thing I would ask about.");
+    "A full financing model would add a construction drawdown, a cash sweep, covenant lockup, post-tax sculpting, a tax equity flip, working capital and a merchant tail.");
   foot.appendChild(gp);
   const tie = $('div', 'tie');
   tie.append('Sources equal uses · debt pays down to zero · loss carryforwards never go negative. ');
@@ -3578,7 +3517,7 @@ function drawTimeline() {
   const max = Math.max(...rows.map(r => r[1]));
 
   host.appendChild($('h4', null, 'Months to first power'));
-  host.appendChild($('p', 'cap', "What someone short of firm power is actually choosing between. My relocation schedule adds up the stages below it. The other three are roughly what those options take today."));
+  host.appendChild($('p', 'cap', "The relocation is this model's schedule, the sum of the stages below it. The other three are rough public ranges for comparison."));
   const wrap = $('div', 'cbars');
   rows.forEach(([lbl, v, cls, band]) => {
     const r = $('div', 'cbar');
