@@ -99,11 +99,12 @@ check('the sheet is white against the ground',
 // ---- the proposal furniture ----
 const memo=await p.evaluate(()=>{
   const idx=[...document.querySelectorAll('.divider .num')].map(e=>e.textContent);
+  const titles=[...document.querySelectorAll('.divider h2')].map(e=>e.textContent);
+  const tnum=document.querySelectorAll('.toc .tnum').length;
   const toc=[...document.querySelectorAll('.toc li')].map(li=>({
-    num:li.querySelector('.tnum').textContent,
     name:li.querySelector('.tname').textContent,
     href:li.querySelector('a').getAttribute('href')}));
-  return {idx,toc,
+  return {idx,toc,titles,tnum,
     cover:!!document.querySelector('.cover h1'),
     // the strands draw into a canvas, so count the pixels they actually lit
     coverLoad:(()=>{const c=document.querySelector('.cover-load canvas');if(!c)return 0;
@@ -166,12 +167,13 @@ check('the strands are decoration, and say so',memo.coverHidden==='true'&&memo.c
   }
   await still.close();
 }
-check('sections are numbered as a filing',memo.idx.join()==='1.0,2.0,3.0,4.0,5.0',memo.idx.join(' '));
+// no filing numbers: they read as a proposal, not a person
+check('sections carry names, not numbers',memo.idx.length===0&&memo.tnum===0,memo.idx.length+' numbers');
 // the contents page and the dividers read the same array, so they cannot disagree
 check('contents matches the dividers',
-  memo.toc.map(t=>t.num).join()===memo.idx.join()
+  memo.toc.map(t=>t.name).join()===memo.titles.join()
   &&memo.toc.map(t=>t.href).join()==='#'+WANT.join(',#'),
-  memo.toc.map(t=>t.num+' '+t.name).join(' · '));
+  memo.toc.map(t=>t.name).join(' · '));
 check('every section states why it is in the document',
   memo.thesis.length===5&&memo.thesis.every(t=>t.trim().length>18),memo.thesis.length);
 // the thesis belongs on the divider only; printing it on the contents page too
@@ -180,7 +182,9 @@ check('the contents page does not repeat the thesis lines',
   await p.evaluate(()=>document.querySelectorAll('.toc .tthesis').length===0));
 check('nav carries names, not numbers',
   memo.navLabels.length===5&&memo.navLabels.every(l=>!/^\d\.\d$/.test(l)),memo.navLabels.join(', '));
-check('terms at a glance is populated',memo.terms>=4,memo.terms+' rows');
+check('the at-a-glance card is populated',memo.terms>=3,memo.terms+' rows');
+// the cover is the name and the work: no reference line, date or tagline over it
+check('the cover carries no date line',await p.evaluate(()=>!document.querySelector('.cover-ref')&&!/\d{4}/.test(document.querySelector('.cover').innerText)),'');
 // ---- the career is continuous: no year counted twice, no year unexplained ----
 // This is what let a reconciliation footnote exist at all; with the dates right
 // there is nothing to reconcile, and the invariant should hold it that way.

@@ -71,7 +71,6 @@ body{
      border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
 .bar-in{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:center;gap:18px;height:38px}
 .fname{font:700 11px var(--sans);letter-spacing:.045em;white-space:nowrap}
-.fname span{color:var(--ink-3);font-weight:400}
 nav{margin-left:auto;display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 nav a{display:block;padding:11px 13px;font:11px var(--sans);color:var(--ink-2);text-decoration:none;
@@ -367,7 +366,6 @@ svg.chart.zone{min-width:0}
 body.at-cover .bar,body.at-cover .fbar{background:transparent;border-bottom-color:rgba(255,255,255,.15);
   border-left-color:transparent;border-right-color:transparent}
 body.at-cover .fname{color:#dde7f1}
-body.at-cover .fname span{color:#8fa8c0}
 body.at-cover nav a{color:#a8bed2;border-left-color:rgba(255,255,255,.15)}
 body.at-cover nav a:last-child{border-right-color:rgba(255,255,255,.15)}
 body.at-cover nav a:hover{color:#fff;background:rgba(255,255,255,.08)}
@@ -390,11 +388,6 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
 .cover [data-cell]{color:#dde7f1}
 .cover [data-cell].calc,.cover [data-cell].link{text-decoration-color:rgba(255,255,255,.4)}
 .cover [data-cell].calc:hover,.cover [data-cell].link:hover{text-decoration-color:#fff}
-.cover-top{padding-top:30px}
-.cover-ref{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
-           font:400 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;
-           color:#8fa8c0;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.16)}
-.cover-ref .rt{margin-left:auto}
 .cover-mid{flex:1 1 auto;display:flex;align-items:center;padding:44px 0 34px}
 .cover-eyebrow{font:500 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;
                color:var(--copper-2);margin:0 0 20px}
@@ -423,8 +416,6 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
 /* second row: the work, rather than what to do about him. Quieter than the
    primary actions, and the arrow marks the ones that leave the page. */
 .cover-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
-.cover-tools .tk{font:700 9.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;
-                 color:rgba(255,255,255,.42);margin-right:2px}
 .cover-tools a{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;
                font:500 12px var(--sans);text-decoration:none;color:#cfdae6;
                border:1px solid rgba(255,255,255,.18)}
@@ -452,17 +443,13 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
 .toc li:nth-child(-n+2){border-top:0}
 .toc a{display:flex;align-items:baseline;gap:12px;padding:13px 0;text-decoration:none;color:inherit}
 .toc a:hover .tname{color:var(--copper)}
-.toc .tnum{flex:0 0 34px;font:500 11.5px var(--mono);color:var(--copper);letter-spacing:.02em}
 .toc .tname{font:500 15px var(--sans);color:var(--ink);white-space:nowrap}
 .toc .lead{flex:1 1 auto;border-bottom:1.5px dotted #b4bfca;transform:translateY(-4px)}
 
 /* section dividers */
 section{padding:0 0 4px}
 .divider{background:var(--deep);color:#fff;margin-bottom:28px}
-.divider .wrap{padding-top:26px;padding-bottom:26px;display:grid;
-               grid-template-columns:auto 1fr;gap:4px 22px;align-items:baseline}
-.divider .num{grid-row:1/3;font:300 clamp(34px,5vw,58px)/.9 var(--serif);
-              color:var(--copper-2);letter-spacing:-.02em}
+.divider .wrap{padding-top:26px;padding-bottom:26px;display:grid;gap:6px}
 .divider h2{margin:0;font:500 15px var(--sans);letter-spacing:.19em;text-transform:uppercase}
 .divider .thesis{margin:0;font:italic 15px/1.45 var(--serif);color:#a9c0d6;max-width:62ch}
 section > .wrap.body{padding-bottom:44px}
@@ -477,11 +464,8 @@ section > .wrap.body{padding-bottom:44px}
   .toc li:nth-child(2){border-top:1px solid var(--rule)}
 }
 @media (max-width:680px){
-  .cover-top{padding-top:22px}
   .cover-mid{padding:32px 0 26px}
   .cover-sub{font-size:16px}
-  .divider .wrap{grid-template-columns:1fr;gap:6px}
-  .divider .num{grid-row:auto}
   .divider .thesis{font-size:14px}
 }
 
@@ -638,18 +622,16 @@ footer p{margin:0 0 6px;font:italic 11px var(--sans);color:var(--ink-3);line-hei
    Audited at 390x844. The nav could show one of eight links, the source
    bar truncated every sentence it was given, and the assumption panel
    pushed the model's own outputs below the fold. */
-nav a .n,nav a .s{display:none}
-nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
+nav a .s{display:none}
 @media (max-width:680px){
   html{scroll-padding-top:56px}
   .bar-in{height:46px}
   .fname{display:none}
   nav{margin-left:0;width:100%}
   nav a{display:flex;align-items:center;height:46px;padding:0 7px;font-size:11px}
-  nav a .n{display:inline}
+  nav a .s{display:inline}
   nav a .t{display:none}
-  nav a.on .n{color:var(--copper)}
-  nav a.on .s{display:inline;margin-left:6px;font-size:11.5px;font-weight:600}
+  nav a.on .s{font-weight:600}
   /* the bar cannot hold a sentence at this width; the tooltip can */
   .fbar{display:none}
   .cover{margin-top:-47px;padding-top:47px}
@@ -659,13 +641,11 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
   /* thumbs need 44px; these were 36 and 38 */
   .cover-cta a{padding:14px 20px;font-size:13px}
   .cover-tools a{padding:11px 15px;font-size:12.5px}
-  .cover-tools .tk{width:100%;margin:2px 0 2px}
   .igh{padding:13px 14px}
   .reset{padding:6px 0}
 
   /* labels that had dropped under 12px */
   .cover-eyebrow{font-size:12px}
-  .toc .tnum{font-size:12px}
     .torn{font-size:12px}
   .viz .cap{font-size:12px}
   .legend li{font-size:12px}
@@ -719,7 +699,7 @@ nav a .n{font:600 11px var(--mono);letter-spacing:.02em}
 
 <div class="bar">
   <div class="bar-in">
-    <span class="fname">ANDREW T. GIBSON <span>· low-carbon origination</span></span>
+    <span class="fname">ANDREW T. GIBSON</span>
     <nav id="nav" aria-label="Sections"></nav>
   </div>
 </div>
@@ -792,13 +772,12 @@ const SITE = {
      the reader stops following and starts scanning. */
   rec:[
     "I originate and structure low-carbon energy projects. That means sourcing the counterparties, negotiating the agreements, and building the economics that get a project approved. Two and a half years of it has been in biomass, pellets, SAF, biopower and carbon credits, with §45Q, §45Y and life cycle analysis inside the models. A decade in commodities and market intelligence came before it.",
-    "Section 2 covers my experience. Sections 3 and 4 are two worked cases with live inputs: a biopower relocation, and ethanol plants sharing a CO₂ pipeline and store.",
+    "Below are my experience and two worked cases with live inputs: a biopower relocation, and ethanol plants sharing a CO₂ pipeline and store.",
   ],
   /* Four rows. Looking for and Based repeated the cover's To and From, and
      Status repeated the booking link in 4.0, so a reader met each of them
      twice within one screen. What is left is the part the cover does not say. */
   terms:[
-    ['Level', 'Open. The desk matters more than the title', null],
     ['Travel', 'To 50%', null],
     ['Markets', 'US low-carbon: biomass, biofuels, biopower, carbon credits', null],
     ['Counterparties', 'Utilities, cooperatives, fuel producers, developers, large loads', null],
@@ -864,8 +843,8 @@ const SITE = {
   },
 
   next:[
-    "Half an hour, no slides. I would rather hear what you are trying to get done.",
-    "Send me a model you would like a second read on, or try sections 3 and 4, which are already open.",
+    "A half-hour call to hear what you are trying to get done.",
+    "Send me a model you would like a second read on, or try the two worked cases above.",
     "References who can speak to my work, whenever they are useful.",
   ],
 
@@ -910,11 +889,11 @@ const SITE = {
    it answers the question a reader already has, which is what the company is. */
 
 const SECTIONS = [
-  ['summary',    '1.0', 'Summary',               'What the job asks for, and where I already meet it', 'Summary'],
-  ['experience', '2.0', 'Experience',            'Four roles, and what I built in each', 'Experience'],
-  ['analysis',   '3.0', 'Supporting analysis',   'A deal I costed out, and the questions I would ask', 'Analysis'],
-  ['capture',    '4.0', 'Capture case',          'What an ethanol plant can pay to store its CO₂, and what a pipe needs', 'Capture'],
-  ['terms',      '5.0', 'Terms and next steps',  'How to reach me, and what I would suggest next', 'Terms'],
+  ['summary',    'Summary',               'What the job asks for, and where I already meet it', 'Summary'],
+  ['experience', 'Experience',            'Four roles, and what I built in each', 'Experience'],
+  ['analysis',   'Supporting analysis',   'A deal I costed out, and the questions I would ask', 'Analysis'],
+  ['capture',    'Capture case',          'What an ethanol plant can pay to store its CO₂, and what a pipe needs', 'Capture'],
+  ['terms',      'Contact',  'How to reach me, and what I would suggest next', 'Contact'],
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1633,7 +1612,7 @@ function paintCells(root = document) {
 
 const SRC = {
   'Assumptions!C9': ['Nameplate capacity', "Two units of the size a relocated biomass plant is usually built in. It sets generation, capex and the maintenance reserve, so it scales the whole model.", '', ' MW'],
-  'Career!E7':  ['Document date', 'Today. The page re-dates itself on every visit, so this is never a stale draft.'],
+  'Career!E7':  ['Today', 'Tenure runs to today, so it is current on every visit.'],
   'Career!F16': ['Board tenure', 'January 2017 to January 2026, on an actual/365 basis.', '', ' yrs'],
 
   'Facts!C7':   ['Rights negotiated', 'Intake of ${C5}M plus offtake of ${C6}M, as exclusive agreements on energy products.', '$', 'M'],
@@ -1854,17 +1833,16 @@ const hideTip = () => tip.classList.remove('on');
 /* ── section helpers ─────────────────────────────────────────────── */
 const SEC_BY_ID = Object.fromEntries(SECTIONS.map(s => [s[0], s]));
 
-/* Each section opens on a full-width band carrying its number, its name and
-   the one line that says why it is in the document. The number and thesis
-   come from SECTIONS, so the contents page and the divider cannot disagree. */
+/* Each section opens on a full-width band carrying its name and the one
+   line that says why it is in the document. Both come from SECTIONS, so the
+   contents page and the divider cannot disagree. */
 function section(id) {
   const meta = SEC_BY_ID[id];
   if (!meta) throw new Error('no such section: ' + id);
-  const [, num, title, thesis] = meta;
+  const [, title, thesis] = meta;
   const s = $('section'); s.id = id;
   const d = $('div', 'divider');
   const dw = $('div', 'wrap');
-  dw.appendChild($('span', 'num', num));
   dw.appendChild($('h2', null, title));
   dw.appendChild($('p', 'thesis', thesis));
   d.appendChild(dw);
@@ -2042,15 +2020,6 @@ function drawStrands(host) {
 function cover(){
   const c = $('div', 'cover');
 
-  const top = $('div', 'wrap cover-top');
-  const ref = $('div', 'cover-ref');
-  ref.appendChild($('span', null, 'Origination'));
-  const rt = $('span', 'rt');
-  rt.appendChild(cell('Career', 'E7', { f:'date' }));
-  ref.appendChild(rt);
-  top.appendChild(ref);
-  c.appendChild(top);
-
   const mid = $('div', 'wrap cover-mid');
   const inner = $('div');
   inner.appendChild($('p', 'cover-eyebrow', SITE.target));
@@ -2067,7 +2036,6 @@ function cover(){
 
   /* the things a reader can open rather than read about */
   const tools = $('div', 'cover-tools');
-  tools.appendChild($('span', 'tk', 'Open'));
   SITE.tools.forEach(([label, href, external]) => {
     const a = $('a', external ? 'ext' : null, label);
     a.href = href;
@@ -2107,11 +2075,10 @@ function contents(){
   const ol = $('ol');
   /* the thesis line is not repeated here: the divider carries it three inches
      further down, and printing it twice is how a document gets long */
-  SECTIONS.forEach(([id, num, title]) => {
+  SECTIONS.forEach(([id, title]) => {
     const li = $('li');
     const a = $('a');
     a.href = '#' + id;
-    a.appendChild($('span', 'tnum', num));
     a.appendChild($('span', 'tname', title));
     a.appendChild($('span', 'lead'));
     li.appendChild(a);
@@ -2130,7 +2097,7 @@ function secSummary(){
   SITE.rec.forEach(t => L.appendChild($('p', 'lede', say(t))));
 
   const R = $('aside', 'covercard');
-  R.appendChild($('h3', null, 'Terms at a glance'));
+  R.appendChild($('h3', null, 'At a glance'));
   SITE.terms.forEach(([k, plain, c, link]) => {
     const d = $('div', 'crow');
     d.appendChild($('dt', null, k));
@@ -3328,7 +3295,7 @@ function secTerms(){
   const f = $('footer');
   const w = $('div', 'wrap');
   const p = $('p');
-  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV. The deal in section 3 is invented and describes no live transaction, and the capture network in section 4 is illustrative. Source at ');
+  p.append('One static HTML file: a small formula engine and a view onto it. No framework, no server, no analytics, no tracking. Career figures are as disclosed on the CV. The biopower deal is invented and describes no live transaction, and the capture network is illustrative. Source at ');
   const a = $('a', 'mail', 'github.com/Tobombadil/Tobombadil'); a.href = SITE.repo; a.target = '_blank'; a.rel = 'noopener';
   p.append(a, '.');
   w.appendChild(p);
@@ -3339,13 +3306,12 @@ function secTerms(){
 /* ── nav ─────────────────────────────────────────────────────────── */
 (function nav(){
   const n = document.getElementById('nav');
-  SECTIONS.forEach(([id, num, title, thesis, short]) => {
+  SECTIONS.forEach(([id, title, thesis, short]) => {
     const a = $('a'); a.href = '#' + id; a.dataset.sec = id;
-    /* the names need 849px and the bar has 390, so the phone gets the numbers
-       and the section it is currently in gets a short label back */
-    a.append($('b', 'n', num), $('span', 't', title), $('span', 's', short));
-    a.title = num + ' ' + title;
-    a.setAttribute('aria-label', num + ' ' + title);
+    /* the names need 849px and the bar has 390, so the phone gets one word each */
+    a.append($('span', 't', title), $('span', 's', short));
+    a.title = title;
+    a.setAttribute('aria-label', title);
     n.appendChild(a);
   });
   const links = [...n.querySelectorAll('a')];

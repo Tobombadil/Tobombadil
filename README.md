@@ -131,6 +131,15 @@ only because the first version of this page was a spreadsheet — `REPT` drew in
 `COUNTIF` counted shipped projects, `SUMPRODUCT` built a weighted capability index, and none of
 those things exist any more. A test now fails if the engine grows a function no formula calls.
 
+## The filing furniture is gone
+
+The page no longer dresses as a proposal. Sections carry names, not `1.0` to `5.0`, and the phone
+nav shows one word each instead of the numbers. The cover lost its reference line and date, the
+top bar lost its second tagline, and the tool links lost their "Open" label. "Terms and next
+steps" is now "Contact", "Terms at a glance" is "At a glance", and its "Level" row is gone. Prose
+that pointed at section numbers now names the thing. The older notes below still use the numbers,
+because that is what the page carried when they were written.
+
 ## The low-carbon rebrand, and 4.0, the capture case
 
 The page is now positioned as low-carbon origination rather than origination in energy
