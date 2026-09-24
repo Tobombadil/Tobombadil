@@ -412,11 +412,6 @@ body.at-cover.scrolled .bar,body.at-cover.scrolled .fbar{background:var(--deep-2
    it is unsupported the text simply fills, which is the same answer. */
 .cover-sub{margin:0;max-width:min(58ch,100%);font:400 clamp(17px,2.1vw,23px)/1.45 var(--serif);
            font-style:italic;color:#c3d2e0;text-wrap:pretty}
-.cover-meta{display:flex;gap:34px;flex-wrap:wrap;margin-top:30px;
-            font:400 12.5px var(--sans);color:#9db2c6}
-.cover-meta b{display:block;font:500 10px var(--sans);letter-spacing:.15em;
-              text-transform:uppercase;color:#6f89a2;margin-bottom:4px}
-.cover-meta span{color:#dde6ee}
 .cover-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:32px}
 .cover-cta a{display:inline-flex;align-items:center;padding:10px 18px;
              font:500 12.5px var(--sans);text-decoration:none;border:1px solid rgba(255,255,255,.3);
@@ -480,7 +475,6 @@ section > .wrap.body{padding-bottom:44px}
 @media (max-width:820px){
   .toc ol{grid-template-columns:1fr}
   .toc li:nth-child(2){border-top:1px solid var(--rule)}
-  .cover-meta{gap:22px}
 }
 @media (max-width:680px){
   .cover-top{padding-top:22px}
@@ -778,7 +772,6 @@ const SITE = {
   site:'https://andrewtgibson.com',
   repo:'https://github.com/Tobombadil/Tobombadil',
 
-  to:'Low-carbon commercial development',
   target:'LOW-CARBON ORIGINATION · CARBON CREDITS · PROJECT DEVELOPMENT',
   headline:'Originating and structuring low-carbon energy projects',
   /* Written against the shape of a low-carbon commercial development seat:
@@ -1883,12 +1876,12 @@ function section(id) {
 }
 
 /* ── the cover ───────────────────────────────────────────────────── */
-/* The cover's one moving thing. On arrival it plays out once: thirty loose
-   ends on the left, each starting in its own place, tangled and out of
-   order, are carried to the right, where they weave into one braid and close
+/* The cover's one moving thing. On arrival it plays out once: thirty
+   strands enter from the left edge, tangled and out of order, and are
+   carried to the right, where they weave into one braid and close
    into a near-solid ribbon, each in its own place and rising as it goes.
    After that it keeps flowing, and scrolling into the document tightens all
-   of it: the loose ends straighten, the braid calms, the ribbon closes. One
+   of it: the tangle straightens, the braid calms, the ribbon closes. One
    copper strand runs unbroken through it, the thread that connects the rest.
    That is origination: disconnected pieces made into one project. A cursor
    or finger parts the strands near it, gently and in every direction, and
@@ -1910,7 +1903,8 @@ function drawStrands(host) {
     f:0.002 + rnd() * 0.003, off:i - (N - 1) / 2,
     a:0.12 + rnd() * 0.28,                      /* out of order while loose */
     b:0.24 + 0.3 * i / (N - 1),                 /* a clean ramp once woven, never glaring */
-    s:i === MID ? 0 : rnd() * 0.3 }));          /* where it begins: loose ends, not one edge */
+    s:0 }));        /* every strand enters from the left edge: loose ends there read as noise
+                       and pull the eye away from the rightward progress */
   const smooth = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
   const cover = host.parentElement;
   let W = 0, H = 0, raf = 0, vis = true, shown = still ? 1 : 0;
@@ -1992,10 +1986,9 @@ function drawStrands(host) {
     drawn.forEach(({ l, i, x0, pts }) => {
       if (i === MID || pts.length < 4) return;
       trace(pts);
-      /* each line fades in from its own loose end */
-      const g = cx.createLinearGradient(x0, 0, W, 0);
-      g.addColorStop(0, 'rgba(207,224,240,0)');
-      g.addColorStop(Math.min(0.5, 60 / Math.max(1, W - x0)), 'rgba(207,224,240,' + l.a + ')');
+      /* out of order on the left, a clean ramp once woven */
+      const g = cx.createLinearGradient(0, 0, W, 0);
+      g.addColorStop(0, 'rgba(207,224,240,' + l.a + ')');
       g.addColorStop(1, 'rgba(207,224,240,' + l.b + ')');
       cx.strokeStyle = g; cx.lineWidth = 1.1;
       cx.stroke();
@@ -2064,15 +2057,6 @@ function cover(){
   inner.appendChild($('h1', null, SITE.name));
   inner.appendChild($('div', 'cover-rule'));
   inner.appendChild($('p', 'cover-sub', SITE.headline));
-
-  const meta = $('div', 'cover-meta');
-  [['From', SITE.location], ['To', SITE.to]].forEach(([k, v]) => {
-    const d = $('div');
-    d.appendChild($('b', null, k));
-    d.appendChild($('span', null, v));
-    meta.appendChild(d);
-  });
-  inner.appendChild(meta);
 
   const cta = $('div', 'cover-cta');
   const a1 = $('a', 'solid', 'Read the summary'); a1.href = '#summary';

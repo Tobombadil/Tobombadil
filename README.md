@@ -39,9 +39,8 @@ machinery kept and pointed at interrogation instead.
 - **Type.** Newsreader for display, IBM Plex Sans for body, UI and the provenance bar, IBM Plex
   Mono for the document reference and the contents leaders. Institutional-technical, with real
   fallback stacks behind each, which the test suite asserts.
-- **The cover.** Thirty strands along the cover's floor. On arrival it plays out once: loose
-  ends on the left, partial lines each starting in its own place, tangled and out of order, are
-  carried right, where they weave into a braid and close into a near-solid, rising ribbon. After
+- **The cover.** Thirty strands along the cover's floor. On arrival it plays out once: strands
+  enter from the left edge, tangled and out of order, and are carried right, where they weave into a braid and close into a near-solid, rising ribbon. After
   that it keeps flowing, and scrolling into the document tightens all of it: the loose ends
   straighten, the braid calms and the ribbon closes, complete a little over half a screen down.
   One copper strand runs unbroken through it, drawn in front of the rest. The idea is origination: disconnected pieces made
