@@ -13,10 +13,11 @@ check('the webfont link is present and self-consistent',await p.evaluate(()=>{
   const l=document.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"]');
   if(!l)return false;
   const h=l.getAttribute('href');
-  return ['Newsreader','IBM+Plex+Sans','IBM+Plex+Mono'].every(f=>h.includes(f))&&h.includes('display=swap');}));
+  // one family, as on Inframation
+  return h.includes('family=Geist')&&!/Newsreader|IBM\+Plex/.test(h)&&h.includes('display=swap');}));
 check('every face declares a real fallback',await p.evaluate(()=>{
   const v=n=>getComputedStyle(document.documentElement).getPropertyValue(n);
-  return /serif\s*$/.test(v('--serif'))&&/sans-serif\s*$/.test(v('--sans'))&&/monospace\s*$/.test(v('--mono'));}));
+  return /sans-serif\s*$/.test(v('--sans'))&&!v('--serif')&&!v('--mono');}));
 
 const nav=await p.evaluate(()=>({secs:[...document.querySelectorAll('main section')].map(s=>s.id),
   links:[...document.querySelectorAll('nav a')].map(a=>a.getAttribute('href'))}));
@@ -1112,7 +1113,7 @@ const cov=await p.evaluate(()=>({
   tools:[...document.querySelectorAll('.cover-tools a')].map(a=>({
     t:a.textContent.trim(), h:a.getAttribute('href'),
     ext:a.target==='_blank', rel:/noopener/.test(a.rel||''),
-    rule:getComputedStyle(a).borderTopColor})),
+    arrow:getComputedStyle(a,'::after').content, arrowColor:getComputedStyle(a,'::after').color})),
   // a URL written in two places is a URL that gets changed in one
   dupes:(()=>{const all=[...document.querySelectorAll('a[href^="http"]')]
     .map(a=>a.getAttribute('href'));
@@ -1126,18 +1127,18 @@ check('and its external links leave the page properly',
   cov.tools.filter(t=>t.ext).length>=1&&cov.tools.filter(t=>t.ext).every(t=>/^https/.test(t.h)),
   cov.tools.filter(t=>t.ext).map(t=>t.h).join(', '));
 // The row mixes a jump within the document with links that open something else.
-// The accent rule is what tells them apart before the click, so it has to stay on
+// The accent arrow is what tells them apart before the click, so it has to stay on
 // the external ones and off the internal one, or the row means nothing.
 {
-  const copper = c => { const m = String(c).match(/(\d+),\s*(\d+),\s*(\d+)/);
-    return !!m && +m[1] > 150 && +m[2] > 80 && +m[2] < 170 && +m[3] < 90; };
+  // the accent arrow: Inframation's evergreen, brightened for the navy
+  const marked = t => /\u2197|↗/.test(t.arrow) && /95,\s*207,\s*159/.test(t.arrowColor);
   const ext = cov.tools.filter(t => t.ext), inn = cov.tools.filter(t => !t.ext);
-  check('the links that leave the page are ruled in the accent',
-    ext.length >= 1 && ext.every(t => copper(t.rule)),
-    ext.map(t => t.t + ' ' + t.rule).join(', '));
-  check('and the one that stays in the document is not',
-    inn.length >= 1 && inn.every(t => !copper(t.rule)),
-    inn.map(t => t.t + ' ' + t.rule).join(', '));
+  check('the links that leave the page carry the accent arrow',
+    ext.length >= 1 && ext.every(marked),
+    ext.map(t => t.t + ' ' + t.arrow + ' ' + t.arrowColor).join(', '));
+  check('and the ones that stay in the document do not',
+    inn.length >= 1 && inn.every(t => !marked(t)),
+    inn.map(t => t.t + ' ' + t.arrow).join(', '));
 }
 
 // A company nobody has heard of, named on a CV with nothing behind it, is a

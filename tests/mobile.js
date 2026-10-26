@@ -213,8 +213,10 @@ for(const vp of [{w:390,h:800,n:'phone'},{w:768,h:1024,n:'tablet'}]){
     });
   };
   const top = await read(0);
-  check('at the very top the chrome is transparent, which is the design',
-    top.bars.every(x => !opaque(x.bg)) && !top.scrolled,
+  // over the cover the bars take the cover's own navy, so they read as part of it
+  const navy = css => /rgb\(11, 16, 35\)/.test(String(css));
+  check('at the very top the chrome is the cover navy, which is the design',
+    top.bars.every(x => navy(x.bg)) && !top.scrolled,
     top.bars.map(x => x.sel + ' ' + x.bg).join(', '));
 
   const bad = [];

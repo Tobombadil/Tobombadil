@@ -52,6 +52,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html _site/
+          cp -r img _site/
           if [ -f CNAME ]; then cp CNAME _site/; fi
           ls -la _site
 

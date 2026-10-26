@@ -140,6 +140,27 @@ steps" is now "Contact", "Terms at a glance" is "At a glance", and its "Level" r
 that pointed at section numbers now names the thing. The older notes below still use the numbers,
 because that is what the page carried when they were written.
 
+## Restyled to Inframation's system, with the taste skill
+
+The page now uses Inframation's type and palette (`docs/31-brand-identity.md` in the Bankable repo)
+and passes the taste skill's gate (`.claude/skills/taste-skill` there): `inspect.mjs` 0 FAIL at 1440,
+768 and 390 (from 12), and `lint.mjs` 0 FAIL (from 53).
+
+- **Type.** Geist, one family, in place of Newsreader, IBM Plex Sans and Plex Mono. Body text is 16px,
+  nothing is read below 13px, and the scale is 13 / 14 / 16 / 18 / 22 / 28 / 36 / 44 plus the name.
+- **Colour.** Compass navy ink on the blue-grey ground, one evergreen accent. Compass orange stays
+  only on the cover's one strand, the way Inframation keeps it only on the dot over its i.
+- **No ornament.** No tracked capitals, no eyebrows, no gradient, no check-mark glyphs, no hairlines
+  outside real tables. Surfaces are told apart by a tone step. The cover's tags became the plain line
+  under the name, and section numbers were already gone.
+- **Pictures.** Inframation's own map, and three found photographs credited in the footer: Siouxland
+  Ethanol (public domain), Desert View biomass plant (CC BY-SA 4.0), and the Yuba Project forest
+  residue (public domain). They live in `img/`, and the deploy copies that folder.
+- **Motion.** Each section's parts rise in once as they arrive, only when the script runs and never
+  with reduced motion; controls answer hover and press.
+- **Fixes found on the way.** The cover had no side margin between 680 and 1120px. Stacked, the
+  sticky assumptions panel slid over the readouts, and on desktop over the model's footer.
+
 ## The biopower case, trimmed to match the capture case
 
 The biopower case now has the same shape as the capture case: the question, the answer, a source
