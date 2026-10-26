@@ -1126,19 +1126,12 @@ check('the cover opens the work, not only the document',
 check('and its external links leave the page properly',
   cov.tools.filter(t=>t.ext).length>=1&&cov.tools.filter(t=>t.ext).every(t=>/^https/.test(t.h)),
   cov.tools.filter(t=>t.ext).map(t=>t.h).join(', '));
-// The row mixes a jump within the document with links that open something else.
-// The accent arrow is what tells them apart before the click, so it has to stay on
-// the external ones and off the internal one, or the row means nothing.
+// every link on the row opens something else, and the accent arrow says so
 {
-  // the accent arrow: Inframation's evergreen, brightened for the navy
   const marked = t => /\u2197|↗/.test(t.arrow) && /95,\s*207,\s*159/.test(t.arrowColor);
-  const ext = cov.tools.filter(t => t.ext), inn = cov.tools.filter(t => !t.ext);
-  check('the links that leave the page carry the accent arrow',
-    ext.length >= 1 && ext.every(marked),
-    ext.map(t => t.t + ' ' + t.arrow + ' ' + t.arrowColor).join(', '));
-  check('and the ones that stay in the document do not',
-    inn.length >= 1 && inn.every(t => !marked(t)),
-    inn.map(t => t.t + ' ' + t.arrow).join(', '));
+  check('the cover row is the three things to open, each with the accent arrow',
+    cov.tools.map(t => t.t).join() === 'Bankable,Inframation,Compass' && cov.tools.every(t => t.ext && marked(t)),
+    cov.tools.map(t => t.t + ' ' + t.arrow).join(', '));
 }
 
 // A company nobody has heard of, named on a CV with nothing behind it, is a
