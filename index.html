@@ -494,6 +494,8 @@ section > .wrap.body{padding-bottom:44px}
 .pic img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;background:var(--chrome)}
 .pic figcaption{margin-top:8px;font:14px/1.45 var(--sans);color:var(--ink-2)}
 .pics{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.job .pics .pic img{object-position:left top}
+.talks{margin:18px 0 0;font:16px/1.6 var(--sans);color:var(--prose);max-width:72ch}
 .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start}
 .split .against{margin-top:0}
 .job-b{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,40%);gap:36px;align-items:start}
@@ -819,7 +821,10 @@ const SITE = {
         'Built the technoeconomic models behind pricing: DCF, NPV, IRR and DSCR across sensitivity cases.',
         'Built §45Q, §45Y and voluntary credit mechanics into project economics, and the life cycle analysis that qualifies them.',
       ] },
-    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', url:'https://pakira.com', where:'Cambridge, MA', span:'August 2018 to March 2024', fig:'pakira',
+    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', url:'https://pakira.com', where:'Cambridge, MA', span:'August 2018 to March 2024', pair:['pakira', 'booth'],
+      /* links rather than players: an embed would load the host's tracking */
+      talks:[['On the lumber market, Marsh & Partners (video)', 'https://www.youtube.com/watch?v=4vlIyuPHfuw'],
+             ['On technology in the hardwood lumber trade, Select and Better Podcast, 2022', 'https://open.spotify.com/episode/5c3jS3J3GmcHtBSU0Xb5Mw']],
       note:'Market intelligence platform for the building materials and forest products industries.',
       bullets:[
         'Built the commercial function from zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth across industries.',
@@ -1524,6 +1529,9 @@ SITE.pics = {
   pakira:['img/pakira-map.jpg',
     'The Pakira search screen: a list of wood products companies beside a map of the United States with clustered company markers',
     'Pakira, the market intelligence platform I built the commercial side of, searching wood products companies on a map.'],
+  booth:['img/pakira-booth-nawla.jpg',
+    'Andrew and two colleagues in green Pakira shirts at the Pakira exhibition booth, with product banners behind them',
+    "Pakira's booth at the NAWLA Traders Market, its first year exhibiting."],
   plant:['img/biomass-plant-desert-view.jpg',
     'A woody-biomass power plant with a single stack and a fuel conveyor, desert hills behind it',
     'Desert View, a woody-biomass power plant in Mecca, California.'],
@@ -2180,6 +2188,17 @@ function secExperience(){
     j.bullets.forEach(t => ul.appendChild($('li', null, say(t))));
     if (j.fig) { const b2 = $('div', 'job-b'); b2.append(ul, fig(j.fig)); d.appendChild(b2); }
     else d.appendChild(ul);
+    /* two pictures sit side by side under the bullets */
+    if (j.pair) { const pp = $('div', 'pics'); pp.append(...j.pair.map(fig)); d.appendChild(pp); }
+    if (j.talks) {
+      const t = $('p', 'talks'); t.append('Interviews: ');
+      j.talks.forEach(([label, href], i) => {
+        const a = $('a', 'mail', label); a.href = href; a.target = '_blank'; a.rel = 'noopener';
+        t.append(i ? '; ' : '', a);
+      });
+      t.append('.');
+      d.appendChild(t);
+    }
     roles.appendChild(d);
   });
   w.appendChild(roles);
