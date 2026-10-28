@@ -497,7 +497,7 @@ section > .wrap.body{padding-bottom:44px}
 .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start}
 .split .against{margin-top:0}
 .job-b{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,40%);gap:36px;align-items:start}
-.job-b .pic img{aspect-ratio:16/10}
+.job-b .pic img{aspect-ratio:16/10;object-position:left top}
 @media (max-width:820px){.pics,.split,.job-b{grid-template-columns:1fr;gap:18px}}
 
 /* ── contact + footer ──────────────────────────────────────────────── */
@@ -819,11 +819,12 @@ const SITE = {
         'Built the technoeconomic models behind pricing: DCF, NPV, IRR and DSCR across sensitivity cases.',
         'Built §45Q, §45Y and voluntary credit mechanics into project economics, and the life cycle analysis that qualifies them.',
       ] },
-    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', url:'https://pakira.com', where:'Cambridge, MA', span:'August 2018 to March 2024',
+    { row:8, title:'Commercial Manager', co:'Pakira, Inc.', url:'https://pakira.com', where:'Cambridge, MA', span:'August 2018 to March 2024', fig:'pakira',
       note:'Market intelligence platform for the building materials and forest products industries.',
       bullets:[
         'Built the commercial function from zero to {Facts!C16:num0}+ enterprise clients at 30%+ month-over-month growth across industries.',
         'Raised $1 million; worked with a 10-person team and 40 interns across product, engineering, data, marketing and sales.',
+        'Pakira won the MIT FinTech Conference pitch competition ($10,000, 2020), was named a winner at the MIT Enterprise Forum, received a $25,000 MIT Sandbox award, and went through MassChallenge twice.',
       ] },
     { row:9, title:'Commodity Trader', co:'Forest City Trading Group', where:'Nashua, NH', span:'May 2017 to August 2018',
       bullets:[
@@ -1520,6 +1521,9 @@ SITE.pics = {
   inframation:['img/inframation-map.jpg',
     'The Inframation map of the United States, with planned, under construction and operating energy projects drawn as dots',
     'Inframation, the project map I built at Compass. Basemap © OpenStreetMap contributors.'],
+  pakira:['img/pakira-map.jpg',
+    'The Pakira search screen: a list of wood products companies beside a map of the United States with clustered company markers',
+    'Pakira, the market intelligence platform I built the commercial side of, searching wood products companies on a map.'],
   plant:['img/biomass-plant-desert-view.jpg',
     'A woody-biomass power plant with a single stack and a fuel conveyor, desert hills behind it',
     'Desert View, a woody-biomass power plant in Mecca, California.'],
